@@ -1,32 +1,36 @@
 "use client";
 
 import { use } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Footer from "@/components/layout/footer";
 import { ApplyModal } from "@/components/jobs/apply-modal";
-import { JOBS } from "@/lib/data";
+import { getJob, daysAgo, type JobDto } from "@/lib/api";
 import {
   MapPin, Clock, Users, ChevronLeft,
   CheckCircle, Briefcase, AlertCircle, ArrowRight,
 } from "lucide-react";
 
 const fmt = (n: number) => `RWF ${n.toLocaleString()}`;
-const postedLabel = (d: number) => d === 0 ? "Posted today" : `Posted ${d}d ago`;
 
 const CSS = `
   * { box-sizing: border-box; }
   .back-btn:hover { border-color: #f97316 !important; color: #f97316 !important; }
-  .apply-btn:hover { background: #ea6a0a !important; }
-  .req-item::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 999px; background: #f97316; margin-right: 10px; flex-shrink: 0; margin-top: 6px; }
+  .apply-btn-cta:hover { background: #ea6a0a !important; }
 `;
 
 export default function JobDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [showApply, setShowApply] = useState(false);
+  const [job, setJob] = useState<JobDto | null>(null);
+  const [notFound, setNotFound] = useState(false);
 
-  const job = JOBS.find(j => String(j.id) === id);
+  useEffect(() => {
+    getJob(id)
+      .then(setJob)
+      .catch(() => setNotFound(true));
+  }, [id]);
 
-  if (!job) {
+  if (notFound) {
     return (
       <main style={{ background: "#111", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "Inter, DM Sans, system-ui, sans-serif" }}>
         <p style={{ fontSize: 40, margin: "0 0 16px" }}>📋</p>
@@ -37,12 +41,22 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
     );
   }
 
+  if (!job) {
+    return (
+      <main style={{ background: "#111", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Inter, DM Sans, system-ui, sans-serif" }}>
+        <p style={{ color: "#555", fontSize: 14 }}>Loading…</p>
+      </main>
+    );
+  }
+
+  const posted = daysAgo(job.createdAt);
+
   return (
     <main style={{ background: "#111", minHeight: "100vh", color: "#f5f5f5", fontFamily: "Inter, DM Sans, system-ui, sans-serif" }}>
       <style>{CSS}</style>
       {showApply && <ApplyModal job={job} onClose={() => setShowApply(false)} />}
 
-      <div style={{ maxWidth: 680, margin: "0 auto", padding: "28px 20px 120px" }}>
+      <div style={{ maxWidth: 680, margin: "0 auto", padding: "28px 20px 140px" }}>
 
         {/* BACK */}
         <a href="/jobs" className="back-btn" style={{
@@ -60,7 +74,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
             <h1 style={{ margin: 0, fontSize: 26, fontWeight: 900, color: "#fff", letterSpacing: "-0.6px", flex: 1, lineHeight: 1.2 }}>
               {job.title}
             </h1>
-            {job.urgent && (
+            {job.urgency === "IMMEDIATE" && (
               <span style={{
                 flexShrink: 0, display: "flex", alignItems: "center", gap: 5,
                 fontSize: 11, fontWeight: 700, borderRadius: 999, padding: "4px 10px",
@@ -72,7 +86,6 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
             )}
           </div>
 
-          {/* Meta row */}
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10 }}>
             <span style={{
               fontSize: 11, fontWeight: 700, borderRadius: 999, padding: "4px 12px",
@@ -81,56 +94,54 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
               {job.category}
             </span>
             <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "#555" }}>
-              <MapPin size={12} color="#555" /> {job.location}
+              <MapPin size={12} color="#555" /> {job.district}
             </span>
             <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "#555" }}>
-              <Clock size={12} color="#555" /> {postedLabel(job.posted)}
+              <Clock size={12} color="#555" /> {posted === 0 ? "Posted today" : `Posted ${posted}d ago`}
             </span>
-            {job.slots > 1 && (
+            {job.headcount > 1 && (
               <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "#555" }}>
-                <Users size={12} color="#555" /> {job.slots} slots open
+                <Users size={12} color="#555" /> {job.headcount} slots open
               </span>
             )}
           </div>
         </div>
 
-        {/* PAY - prominent */}
+        {/* PAY */}
         <div style={{
           background: "rgba(249,115,22,0.06)", border: "1px solid rgba(249,115,22,0.2)",
           borderRadius: 14, padding: "20px 22px", marginBottom: 24,
           display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12,
         }}>
           <div>
-            <p style={{ margin: "0 0 2px", fontSize: 11, fontWeight: 700, color: "#f97316", textTransform: "uppercase", letterSpacing: "0.08em" }}>Pay</p>
+            <p style={{ margin: "0 0 2px", fontSize: 11, fontWeight: 700, color: "#f97316", textTransform: "uppercase", letterSpacing: "0.08em" }}>Rate</p>
             <p style={{ margin: 0, fontSize: 30, fontWeight: 900, color: "#f97316", letterSpacing: "-1px", lineHeight: 1 }}>
-              {fmt(job.amount)}
+              {fmt(job.ratePerHour)}
             </p>
-            <p style={{ margin: "4px 0 0", fontSize: 12, color: "#555" }}>per {job.period}</p>
+            <p style={{ margin: "4px 0 0", fontSize: 12, color: "#555" }}>per hour · {job.durationHours}h duration</p>
           </div>
-          {job.slots > 1 && (
+          {job.headcount > 1 && (
             <div style={{ textAlign: "right" }}>
               <p style={{ margin: "0 0 2px", fontSize: 11, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: "0.08em" }}>Total slots</p>
-              <p style={{ margin: 0, fontSize: 24, fontWeight: 900, color: "#fff" }}>{job.slots}</p>
+              <p style={{ margin: 0, fontSize: 24, fontWeight: 900, color: "#fff" }}>{job.headcount}</p>
               <p style={{ margin: "2px 0 0", fontSize: 11, color: "#444" }}>positions available</p>
             </div>
           )}
         </div>
 
         {/* DESCRIPTION */}
-        <Section title="About this job">
-          <p style={{ margin: 0, fontSize: 13, color: "#aaa", lineHeight: 1.85 }}>{job.description}</p>
-        </Section>
+        {job.description && (
+          <Section title="About this job">
+            <p style={{ margin: 0, fontSize: 13, color: "#aaa", lineHeight: 1.85 }}>{job.description}</p>
+          </Section>
+        )}
 
-        {/* REQUIREMENTS */}
-        <Section title="Requirements">
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {job.requirements.map((r, i) => (
-              <div key={i} className="req-item" style={{ display: "flex", alignItems: "flex-start", fontSize: 13, color: "#aaa", lineHeight: 1.6 }}>
-                {r}
-              </div>
-            ))}
-          </div>
-        </Section>
+        {/* NOTES */}
+        {job.locationNotes && (
+          <Section title="Additional notes">
+            <p style={{ margin: 0, fontSize: 13, color: "#aaa", lineHeight: 1.85 }}>{job.locationNotes}</p>
+          </Section>
+        )}
 
         {/* EMPLOYER */}
         <Section title="Posted by">
@@ -147,16 +158,9 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
             </div>
             <div style={{ flex: 1 }}>
               <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{job.employerName}</p>
-              <p style={{ margin: "2px 0 0", fontSize: 11, color: "#555" }}>
-                {job.employerJobs > 0 ? `${job.employerJobs} jobs posted on Ikibando` : "New employer"}
-              </p>
+              <p style={{ margin: "2px 0 0", fontSize: 11, color: "#555" }}>Employer on MpahMapu</p>
             </div>
-            {job.employerJobs >= 5 && (
-              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                <CheckCircle size={14} color="#22c55e" />
-                <span style={{ fontSize: 11, fontWeight: 700, color: "#22c55e" }}>Trusted</span>
-              </div>
-            )}
+            <CheckCircle size={14} color="#22c55e" />
           </div>
         </Section>
 
@@ -168,37 +172,61 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
         }}>
           <Briefcase size={16} color="#22c55e" style={{ flexShrink: 0, marginTop: 1 }} />
           <p style={{ margin: 0, fontSize: 12, color: "#555", lineHeight: 1.7 }}>
-            Payments on Ikibando are held in escrow and only released after you mark the work complete.
+            Payments on MpahMapu are held in escrow and only released after you mark the work complete.
             Raise a dispute within <strong style={{ color: "#aaa" }}>24 hours</strong> for a full refund.
           </p>
         </div>
 
       </div>
 
-      {/* STICKY FOOTER */}
+      {/* STICKY CTA — matches navbar pill style */}
       <div style={{
         position: "fixed", bottom: 0, left: 0, right: 0,
-        background: "#111", borderTop: "1px solid #1e1e1e",
-        padding: "16px 20px", zIndex: 50,
+        padding: "0 20px 20px",
+        backdropFilter: "blur(14px)",
+        WebkitBackdropFilter: "blur(14px)",
+        fontFamily: "Inter, DM Sans, system-ui, sans-serif",
       }}>
-        <div style={{ maxWidth: 680, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
-          <div>
-            <p style={{ margin: 0, fontSize: 11, color: "#555" }}>{job.category} · {job.location}</p>
-            <p style={{ margin: 0, fontSize: 18, fontWeight: 900, color: "#f97316", letterSpacing: "-0.4px" }}>
-              {fmt(job.amount)} <span style={{ fontSize: 12, fontWeight: 500, color: "#555" }}>/ {job.period}</span>
+        <div style={{
+          maxWidth: 680, margin: "0 auto",
+          background: "rgba(22,22,22,0.85)",
+          border: "1px solid rgba(45,45,45,0.9)",
+          borderRadius: 999,
+          height: 64,
+          padding: "0 10px 0 24px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          boxSizing: "border-box",
+        }}>
+          {/* Left: job summary */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div>
+              <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#e0e0e0", letterSpacing: "-0.2px" }}>
+                {job.title}
+              </p>
+              <p style={{ margin: 0, fontSize: 11, color: "#555" }}>
+                {job.category} · {job.district}
+              </p>
+            </div>
+            <div style={{ width: 1, height: 28, background: "#2a2a2a", flexShrink: 0 }} />
+            <p style={{ margin: 0, fontSize: 15, fontWeight: 900, color: "#f97316", letterSpacing: "-0.4px", whiteSpace: "nowrap" }}>
+              {fmt(job.ratePerHour)} <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}>/hr</span>
             </p>
           </div>
+
+          {/* Right: CTA */}
           <button
-            className="apply-btn"
+            className="apply-btn-cta"
             onClick={() => setShowApply(true)}
             style={{
-              display: "flex", alignItems: "center", gap: 8,
+              display: "flex", alignItems: "center", gap: 7,
               background: "#f97316", color: "#fff", border: "none",
-              borderRadius: 10, padding: "12px 28px", fontSize: 14, fontWeight: 700,
+              borderRadius: 999, padding: "0 20px", height: 40,
+              fontSize: 13, fontWeight: 700,
               cursor: "pointer", fontFamily: "inherit", transition: "background 0.15s",
+              whiteSpace: "nowrap", flexShrink: 0,
             }}
           >
-            Apply for this job <ArrowRight size={14} />
+            Apply now <ArrowRight size={13} />
           </button>
         </div>
       </div>

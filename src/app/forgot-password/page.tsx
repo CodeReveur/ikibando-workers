@@ -3,14 +3,25 @@
 import { useState } from "react";
 import { Mail, ArrowLeft } from "lucide-react";
 import { AuthCarousel } from "@/components/auth/auth-carousel";
+import { forgotPassword } from "@/lib/api";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = () => {
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
     if (!email) return;
-    setSubmitted(true);
+    setLoading(true);
+    try {
+      await forgotPassword(email);
+    } catch {
+      // Ignore errors so we don't leak account existence
+    } finally {
+      setLoading(false);
+      setSubmitted(true);
+    }
   };
 
   return (
@@ -63,7 +74,7 @@ export default function ForgotPasswordPage() {
                   Forgot your password?
                 </h1>
                 <p style={{ fontSize: 13, color: "#555", margin: "0 0 28px", lineHeight: 1.6 }}>
-                  Enter the email linked to your Ikibando account and we'll send you a reset link.
+                  Enter the email linked to your MpahMapu account and we'll send you a reset link.
                 </p>
 
                 <div style={{ marginBottom: 18 }}>
@@ -94,15 +105,17 @@ export default function ForgotPasswordPage() {
                 <button
                   type="button"
                   onClick={handleSubmit}
+                  disabled={loading}
                   style={{
                     width: "100%", background: "#f97316", color: "#fff", border: "none",
                     borderRadius: 10, padding: "13px", fontSize: 14, fontWeight: 700,
-                    cursor: "pointer", marginTop: 4,
+                    cursor: loading ? "not-allowed" : "pointer", marginTop: 4,
+                    opacity: loading ? 0.7 : 1,
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "#ea6a0a")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "#f97316")}
+                  onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = "#ea6a0a"; }}
+                  onMouseLeave={(e) => { if (!loading) e.currentTarget.style.background = "#f97316"; }}
                 >
-                  Send reset link
+                  {loading ? "Sending..." : "Send reset link"}
                 </button>
               </>
             ) : (

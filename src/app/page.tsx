@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Footer from "@/components/layout/footer";
 import { PostJobModal } from "@/components/jobs/post-job-modal";
-import { WORKERS as ALL_WORKERS, JOBS as ALL_JOBS } from "@/lib/data";
+import { getWorkers, getJobs, daysAgo, type WorkerProfileDto, type JobDto } from "@/lib/api";
 import {
   UtensilsCrossed, Sparkles, Shield, Car, Zap, Wrench, Leaf,
-  MapPin, Star, ChevronRight, Briefcase, Users,
+  MapPin, ChevronRight, Briefcase,
 } from "lucide-react";
 
 const categories = [
@@ -19,11 +19,17 @@ const categories = [
   { icon: Leaf,            label: "Gardeners" },
 ];
 
-const workers = ALL_WORKERS.slice(0, 7);
-const jobs    = ALL_JOBS.slice(0, 6);
+const fmt = (n: number) => `RWF ${n.toLocaleString()}`;
 
 export default function Home() {
   const [showPostJob, setShowPostJob] = useState(false);
+  const [workers, setWorkers] = useState<WorkerProfileDto[]>([]);
+  const [jobs, setJobs] = useState<JobDto[]>([]);
+
+  useEffect(() => {
+    getWorkers({ size: 7 }).then(p => setWorkers(p.content)).catch(() => {});
+    getJobs({ size: 6 }).then(p => setJobs(p.content)).catch(() => {});
+  }, []);
 
   return (
     <main style={{ background: "#111", minHeight: "100vh", fontFamily: "Inter, DM Sans, system-ui, sans-serif", color: "#f5f5f5" }}>
@@ -113,76 +119,82 @@ export default function Home() {
 
       {/* AVAILABLE WORKERS */}
       <section style={{ maxWidth: 760, margin: "0 auto", padding: "32px 20px 20px" }}>
-        <SectionHeader title="Available workers" href="/browse" Icon={Users} />
+        <SectionHeader title="Available workers" href="/browse" Icon={Briefcase} />
         <div className="card-grid">
-          {workers.map(w => (
-            <a
-              key={w.slug}
-              href={`/browse/${w.slug}`}
-              className="card-hover"
-              style={{
-                textDecoration: "none",
-                background: "#1c1c1c", border: "1px solid #272727", borderRadius: 14,
-                padding: "16px", display: "flex", flexDirection: "column", gap: 14,
-              }}
-            >
-              {/* avatar + name */}
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <div style={{
-                  width: 40, height: 40, borderRadius: 999, flexShrink: 0,
-                  background: "rgba(249,115,22,0.12)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 15, fontWeight: 800, color: "#f97316",
-                }}>
-                  {w.name[0]}
+          {workers.length === 0
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} style={{ background:"#1c1c1c", border:"1px solid #272727", borderRadius:14, padding:16, height:90, animation:"pulse 1.5s ease-in-out infinite" }} />
+              ))
+            : workers.map((w: WorkerProfileDto) => (
+              <div
+                key={w.id}
+                className="card-hover"
+                style={{
+                  background: "#1c1c1c", border: "1px solid #272727", borderRadius: 14,
+                  padding: "16px", display: "flex", flexDirection: "column", gap: 14,
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <div style={{
+                    width: 40, height: 40, borderRadius: 999, flexShrink: 0,
+                    background: "rgba(249,115,22,0.12)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 15, fontWeight: 800, color: "#f97316",
+                  }}>
+                    {w.name[0]}
+                  </div>
+                  <div>
+                    <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
+                    <p style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2 }}>{w.experienceType ?? "Worker"}</p>
+                  </div>
                 </div>
-                <div>
-                  <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
-                  <p style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2 }}>{w.category}</p>
-                </div>
+                {w.district && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <MapPin size={11} color="#555" />
+                    <span style={{ fontSize: 11, color: "#555" }}>{w.district}</span>
+                  </div>
+                )}
               </div>
-              {/* rating + job count */}
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                  <Star size={12} color="#f97316" fill="#f97316" />
-                  <span style={{ fontSize: 13, fontWeight: 700, color: "#f97316" }}>{w.rating}</span>
-                </div>
-                <span style={{ fontSize: 11, color: "#444" }}>{w.jobs} jobs done</span>
-              </div>
-            </a>
-          ))}
+            ))
+          }
         </div>
+        <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}`}</style>
       </section>
 
       {/* AVAILABLE JOBS */}
       <section id="jobs" style={{ maxWidth: 760, margin: "0 auto", padding: "32px 20px 64px" }}>
         <SectionHeader title="Available jobs" href="/jobs" Icon={Briefcase} />
         <div className="card-grid">
-          {jobs.map(j => (
-            <a
-              key={j.id}
-              href={`/jobs/${j.id}`}
-              className="card-hover"
-              style={{
-                display: "flex", flexDirection: "column", gap: 10,
-                background: "#1c1c1c", border: "1px solid #272727", borderRadius: 14,
-                padding: "16px", textDecoration: "none",
-              }}
-            >
-              <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: "#f0f0f0" }}>{j.title}</p>
-              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                <MapPin size={11} color="#555" />
-                <span style={{ fontSize: 11, color: "#555" }}>{j.location}</span>
-              </div>
-              <span style={{
-                alignSelf: "flex-start", marginTop: "auto",
-                background: "rgba(249,115,22,0.1)", borderRadius: 999,
-                padding: "4px 12px", fontSize: 11, fontWeight: 700, color: "#f97316",
-              }}>
-                RWF {j.amount.toLocaleString()} / {j.period}
-              </span>
-            </a>
-          ))}
+          {jobs.length === 0
+            ? Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} style={{ background:"#1c1c1c", border:"1px solid #272727", borderRadius:14, padding:16, height:110, animation:"pulse 1.5s ease-in-out infinite" }} />
+              ))
+            : jobs.map((j: JobDto) => (
+              <a
+                key={j.id}
+                href={`/jobs/${j.id}`}
+                className="card-hover"
+                style={{
+                  display: "flex", flexDirection: "column", gap: 10,
+                  background: "#1c1c1c", border: "1px solid #272727", borderRadius: 14,
+                  padding: "16px", textDecoration: "none",
+                }}
+              >
+                <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: "#f0f0f0" }}>{j.title}</p>
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  <MapPin size={11} color="#555" />
+                  <span style={{ fontSize: 11, color: "#555" }}>{j.district}</span>
+                </div>
+                <span style={{
+                  alignSelf: "flex-start", marginTop: "auto",
+                  background: "rgba(249,115,22,0.1)", borderRadius: 999,
+                  padding: "4px 12px", fontSize: 11, fontWeight: 700, color: "#f97316",
+                }}>
+                  {fmt(j.ratePerHour)} / hr
+                </span>
+              </a>
+            ))
+          }
         </div>
       </section>
 

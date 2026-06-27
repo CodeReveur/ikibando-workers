@@ -56,7 +56,7 @@ export default function AboutPage() {
             borderRadius: 999, padding: "4px 14px", fontSize: 11, fontWeight: 700,
             letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 18,
           }}>
-            About Ikibando
+            About MpahMapu
           </span>
           <h1 style={{
             fontSize: "clamp(32px, 6vw, 48px)", fontWeight: 900, color: "#fff",
@@ -66,7 +66,7 @@ export default function AboutPage() {
             <span style={{ color: "#f97316" }}>workforce platform.</span>
           </h1>
           <p style={{ fontSize: 15, color: "#666", lineHeight: 1.75, maxWidth: 500, margin: 0 }}>
-            Ikibando connects employers with ID-verified, rated workers across Rwanda -
+            MpahMapu connects employers with ID-verified, rated workers across Rwanda -
             for events, cleaning, security, driving and more. Hired in minutes, paid via MoMo.
           </p>
         </div>
@@ -95,12 +95,12 @@ export default function AboutPage() {
           </h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <p style={{ fontSize: 14, color: "#666", lineHeight: 1.8, margin: 0 }}>
-              Ikibando was founded in Rwanda in 2025 after watching skilled workers struggle to find consistent work
+              MpahMapu was founded in Rwanda in 2025 after watching skilled workers struggle to find consistent work
               and employers scramble to find reliable help on short notice. The solution was simple: a platform that
               makes both sides fast, transparent, and safe.
             </p>
             <p style={{ fontSize: 14, color: "#666", lineHeight: 1.8, margin: 0 }}>
-              The name <em style={{ color: "#aaa" }}>Ikibando</em> means &ldquo;a group that comes together to work&rdquo; in Kinyarwanda -
+              The name <em style={{ color: "#aaa" }}>MpahMapu</em> means &ldquo;a group that comes together to work&rdquo; in Kinyarwanda -
               which is exactly what we&apos;re building. A community where every job is done with pride and every worker
               is treated with respect.
             </p>
@@ -196,7 +196,7 @@ export default function AboutPage() {
             Ready to get started?
           </h2>
           <p style={{ margin: "0 0 22px", fontSize: 13, color: "#666" }}>
-            Join thousands of workers and employers already on Ikibando.
+            Join thousands of workers and employers already on MpahMapu.
           </p>
           <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
             <a href="/signup" style={{

@@ -63,3 +63,26 @@ export const JOB_CATEGORIES = [
 export const PLATFORM_COMMISSION = 0.10; // 10%
 export const CURRENCY = "RWF";
 export const DEFAULT_CITY = "Kigali";
+
+export const RWANDA_PROVINCES = [
+  {
+    label: "City of Kigali",
+    districts: ["Gasabo", "Kicukiro", "Nyarugenge"],
+  },
+  {
+    label: "Northern Province",
+    districts: ["Burera", "Gakenke", "Gicumbi", "Musanze", "Rulindo"],
+  },
+  {
+    label: "Southern Province",
+    districts: ["Gisagara", "Huye", "Kamonyi", "Muhanga", "Nyamagabe", "Nyanza", "Nyaruguru", "Ruhango"],
+  },
+  {
+    label: "Eastern Province",
+    districts: ["Bugesera", "Gatsibo", "Kayonza", "Kirehe", "Ngoma", "Nyagatare", "Rwamagana"],
+  },
+  {
+    label: "Western Province",
+    districts: ["Karongi", "Ngororero", "Nyabihu", "Nyamasheke", "Rubavu", "Rutsiro", "Rusizi"],
+  },
+] as const;

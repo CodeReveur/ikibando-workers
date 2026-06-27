@@ -45,12 +45,12 @@ const sections = [
   {
     id: "04",
     title: "ID verification",
-    body: `Workers submit a national ID document during onboarding. This document is reviewed by our verification team and then stored in an encrypted, access-restricted environment. Only authorised Ikibando staff can access raw ID documents, and only for the purpose of resolving disputes or meeting legal obligations. Verified status is displayed as a badge; the underlying document is never shared with employers.`,
+    body: `Workers submit a national ID document during onboarding. This document is reviewed by our verification team and then stored in an encrypted, access-restricted environment. Only authorised MpahMapu staff can access raw ID documents, and only for the purpose of resolving disputes or meeting legal obligations. Verified status is displayed as a badge; the underlying document is never shared with employers.`,
   },
   {
     id: "05",
     title: "MoMo and payment data",
-    body: `We store only the MoMo phone number associated with your account. Full transaction records are held by MTN MoMo under their own privacy policy. Ikibando retains payment records (amount, date, job reference) for up to 7 years as required by Rwandan tax law.`,
+    body: `We store only the MoMo phone number associated with your account. Full transaction records are held by MTN MoMo under their own privacy policy. MpahMapu retains payment records (amount, date, job reference) for up to 7 years as required by Rwandan tax law.`,
   },
   {
     id: "06",
@@ -65,7 +65,7 @@ const sections = [
   {
     id: "08",
     title: "Your rights",
-    body: `Under Rwandan law and in the spirit of fair data practice, you have the right to access a copy of your personal data, correct inaccurate information, request deletion of your account and data, and object to certain processing. To exercise any of these rights, contact privacy@ikibando.rw or use the in-app support form. We will respond within 10 business days.`,
+    body: `Under Rwandan law and in the spirit of fair data practice, you have the right to access a copy of your personal data, correct inaccurate information, request deletion of your account and data, and object to certain processing. To exercise any of these rights, contact privacy@MpahMapu.rw or use the in-app support form. We will respond within 10 business days.`,
   },
   {
     id: "09",
@@ -75,12 +75,12 @@ const sections = [
   {
     id: "10",
     title: "Changes to this policy",
-    body: `We may update this Privacy Policy to reflect changes in the law or the platform. If changes are material, we will notify you via SMS or in-app notification at least 7 days before they take effect. Continued use of Ikibando after that date constitutes acceptance.`,
+    body: `We may update this Privacy Policy to reflect changes in the law or the platform. If changes are material, we will notify you via SMS or in-app notification at least 7 days before they take effect. Continued use of MpahMapu after that date constitutes acceptance.`,
   },
   {
     id: "11",
     title: "Contact us",
-    body: `For privacy questions, data requests, or to report a concern, contact our data team at privacy@ikibando.rw. For general queries use legal@ikibando.rw or the contact form on our website.`,
+    body: `For privacy questions, data requests, or to report a concern, contact our data team at privacy@MpahMapu.rw. For general queries use legal@MpahMapu.rw or the contact form on our website.`,
   },
 ];
 
@@ -129,7 +129,7 @@ export default function PrivacyPage() {
           </h1>
           <p style={{ fontSize: 14, color: "#666", lineHeight: 1.75, maxWidth: 480, margin: "0 0 12px" }}>
             We collect only what we need, protect it carefully, and never sell it.
-            Here is exactly how your data is handled on Ikibando.
+            Here is exactly how your data is handled on MpahMapu.
           </p>
           <p style={{ fontSize: 12, color: "#444", margin: 0 }}>
             Last updated: <span style={{ color: "#555" }}>1 June 2025</span>
@@ -301,10 +301,10 @@ export default function PrivacyPage() {
             <p style={{ margin: 0, fontSize: 12, color: "#555" }}>
               Email{" "}
               <a
-                href="mailto:privacy@ikibando.rw"
+                href="mailto:privacy@MpahMapu.rw"
                 style={{ color: "#f97316", textDecoration: "none", fontWeight: 600 }}
               >
-                privacy@ikibando.rw
+                privacy@MpahMapu.rw
               </a>{" "}
               - we respond within 10 business days.
             </p>
@@ -333,7 +333,7 @@ export default function PrivacyPage() {
             Ready to get started?
           </h2>
           <p style={{ margin: "0 0 22px", fontSize: 13, color: "#666" }}>
-            Join thousands of workers and employers already on Ikibando.
+            Join thousands of workers and employers already on MpahMapu.
           </p>
           <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
             <a

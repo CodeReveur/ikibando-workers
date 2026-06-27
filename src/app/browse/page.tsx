@@ -1,13 +1,12 @@
 "use client";
 
 import Footer from "@/components/layout/footer";
-import { useState, useMemo } from "react";
-import { WORKERS as ALL_WORKERS, JOBS as ALL_JOBS } from "@/lib/data";
+import { useState, useMemo, useEffect } from "react";
+import { getWorkers, getJobs, daysAgo, type WorkerProfileDto, type JobDto } from "@/lib/api";
 import {
   UtensilsCrossed, Sparkles, Shield, Car, Zap, Wrench, Leaf,
   Camera, Package, Home, HardHat, Search, SlidersHorizontal,
-  MapPin, Star, Briefcase, Users, X, ChevronDown,
-  User, Building2,
+  MapPin, Briefcase, Users, X, ChevronDown,
 } from "lucide-react";
 
 // ── types ──────────────────────────────────────────────────────────────────
@@ -32,15 +31,7 @@ const CATEGORIES = [
 
 const LOCATIONS = ["Kacyiru", "Nyamirambo", "Kimihurura", "Remera", "Gisozi", "Kicukiro", "Gikondo", "Kanombe", "Kigali-wide"];
 
-const WORKERS = ALL_WORKERS;
-const JOBS    = ALL_JOBS;
 
-const TYPE_ICON: Record<string, React.ElementType> = { individual: User, team: Users, company: Building2 };
-const TYPE_COLOR: Record<string, string> = { individual: "#3b82f6", team: "#a855f7", company: "#f97316" };
-const typeLabel = (w: typeof WORKERS[0]) =>
-  w.type === "individual" ? "Individual"
-  : w.type === "team" ? `Team · ${w.teamSize ?? 2}`
-  : `Company · ${w.teamSize ?? 0}`;
 
 // ── styles ─────────────────────────────────────────────────────────────────
 const CSS = `
@@ -125,67 +116,70 @@ export default function BrowsePage() {
   const [tab, setTab] = useState<Tab>("workers");
   const [search, setSearch] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const [workers, setWorkers] = useState<WorkerProfileDto[]>([]);
+  const [jobs, setJobs] = useState<JobDto[]>([]);
+  const [loadingData, setLoadingData] = useState(true);
 
   // shared
   const [filterCategory, setFilterCategory] = useState("");
   const [filterLocation, setFilterLocation] = useState("");
 
   // workers
-  const [filterAvailable, setFilterAvailable] = useState(false);
-  const [filterMinRating, setFilterMinRating] = useState("");
-  const [sortWorker, setSortWorker] = useState<SortWorker>("rating");
+  const [sortWorker, setSortWorker] = useState<SortWorker>("name");
 
   // jobs
   const [filterMinAmount, setFilterMinAmount] = useState("");
   const [filterMaxAmount, setFilterMaxAmount] = useState("");
   const [sortJob, setSortJob] = useState<SortJob>("newest");
 
+  useEffect(() => {
+    Promise.all([
+      getWorkers({ size: 100 }).then(p => setWorkers(p.content)),
+      getJobs({ size: 100 }).then(p => setJobs(p.content)),
+    ]).catch(() => {}).finally(() => setLoadingData(false));
+  }, []);
+
   // active filter chips
   const activeFilters = [
-    filterCategory  && { label: filterCategory,                  clear: () => setFilterCategory("") },
-    filterLocation  && { label: filterLocation,                  clear: () => setFilterLocation("") },
-    filterAvailable && tab === "workers" && { label: "Available now", clear: () => setFilterAvailable(false) },
-    filterMinRating && tab === "workers" && { label: `★ ${filterMinRating}+`, clear: () => setFilterMinRating("") },
-    filterMinAmount && tab === "jobs"    && { label: `Min RWF ${Number(filterMinAmount).toLocaleString()}`, clear: () => setFilterMinAmount("") },
-    filterMaxAmount && tab === "jobs"    && { label: `Max RWF ${Number(filterMaxAmount).toLocaleString()}`, clear: () => setFilterMaxAmount("") },
+    filterCategory  && { label: filterCategory,  clear: () => setFilterCategory("") },
+    filterLocation  && { label: filterLocation,  clear: () => setFilterLocation("") },
+    filterMinAmount && tab === "jobs" && { label: `Min RWF ${Number(filterMinAmount).toLocaleString()}`, clear: () => setFilterMinAmount("") },
+    filterMaxAmount && tab === "jobs" && { label: `Max RWF ${Number(filterMaxAmount).toLocaleString()}`, clear: () => setFilterMaxAmount("") },
   ].filter(Boolean) as { label: string; clear: () => void }[];
 
   const clearAll = () => {
-    setFilterCategory(""); setFilterLocation(""); setFilterAvailable(false);
-    setFilterMinRating(""); setFilterMinAmount(""); setFilterMaxAmount("");
+    setFilterCategory(""); setFilterLocation(""); setFilterMinAmount(""); setFilterMaxAmount("");
   };
 
   // filtered workers
   const filteredWorkers = useMemo(() => {
-    let list = WORKERS.filter(w => {
-      if (search && !w.name.toLowerCase().includes(search.toLowerCase()) && !w.category.toLowerCase().includes(search.toLowerCase())) return false;
-      if (filterCategory && w.category !== filterCategory) return false;
-      if (filterLocation && w.location !== filterLocation) return false;
-      if (filterAvailable && !w.available) return false;
-      if (filterMinRating && w.rating < Number(filterMinRating)) return false;
+    let list = workers.filter((w: WorkerProfileDto) => {
+      if (search && !w.name.toLowerCase().includes(search.toLowerCase())
+        && !(w.experienceType ?? "").toLowerCase().includes(search.toLowerCase())) return false;
+      if (filterCategory && (w.experienceType ?? "").toLowerCase() !== filterCategory.toLowerCase()) return false;
+      if (filterLocation && (w.district ?? "").toLowerCase() !== filterLocation.toLowerCase()) return false;
       return true;
     });
-    if (sortWorker === "rating") list = [...list].sort((a, b) => b.rating - a.rating);
-    if (sortWorker === "jobs")   list = [...list].sort((a, b) => b.jobs - a.jobs);
-    if (sortWorker === "name")   list = [...list].sort((a, b) => a.name.localeCompare(b.name));
+    if (sortWorker === "name") list = [...list].sort((a, b) => a.name.localeCompare(b.name));
     return list;
-  }, [search, filterCategory, filterLocation, filterAvailable, filterMinRating, sortWorker]);
+  }, [workers, search, filterCategory, filterLocation, sortWorker]);
 
   // filtered jobs
   const filteredJobs = useMemo(() => {
-    let list = JOBS.filter(j => {
-      if (search && !j.title.toLowerCase().includes(search.toLowerCase()) && !j.category.toLowerCase().includes(search.toLowerCase())) return false;
-      if (filterCategory && j.category !== filterCategory) return false;
-      if (filterLocation && j.location !== filterLocation) return false;
-      if (filterMinAmount && j.amount < Number(filterMinAmount)) return false;
-      if (filterMaxAmount && j.amount > Number(filterMaxAmount)) return false;
+    let list = jobs.filter((j: JobDto) => {
+      if (search && !j.title.toLowerCase().includes(search.toLowerCase())
+        && !j.category.toLowerCase().includes(search.toLowerCase())) return false;
+      if (filterCategory && j.category.toLowerCase() !== filterCategory.toLowerCase()) return false;
+      if (filterLocation && j.district.toLowerCase() !== filterLocation.toLowerCase()) return false;
+      if (filterMinAmount && j.ratePerHour < Number(filterMinAmount)) return false;
+      if (filterMaxAmount && j.ratePerHour > Number(filterMaxAmount)) return false;
       return true;
     });
-    if (sortJob === "amount_asc")  list = [...list].sort((a, b) => a.amount - b.amount);
-    if (sortJob === "amount_desc") list = [...list].sort((a, b) => b.amount - a.amount);
-    if (sortJob === "newest")      list = [...list].sort((a, b) => a.posted - b.posted);
+    if (sortJob === "amount_asc")  list = [...list].sort((a, b) => a.ratePerHour - b.ratePerHour);
+    if (sortJob === "amount_desc") list = [...list].sort((a, b) => b.ratePerHour - a.ratePerHour);
+    if (sortJob === "newest")      list = [...list].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     return list;
-  }, [search, filterCategory, filterLocation, filterMinAmount, filterMaxAmount, sortJob]);
+  }, [jobs, search, filterCategory, filterLocation, filterMinAmount, filterMaxAmount, sortJob]);
 
   const S: React.CSSProperties = { fontFamily: "Inter, DM Sans, system-ui, sans-serif" };
 
@@ -268,12 +262,10 @@ export default function BrowsePage() {
               <SelectField label="Location" value={filterLocation} onChange={setFilterLocation}
                 options={LOCATIONS} />
 
-              {tab === "workers" && <>
-                <SelectField label="Min rating" value={filterMinRating} onChange={setFilterMinRating}
-                  options={["4.0", "4.5", "4.7", "4.9"]} />
+              {tab === "workers" && (
                 <SelectField label="Sort by" value={sortWorker} onChange={v => setSortWorker(v as SortWorker)}
-                  options={["rating", "jobs", "name"]} />
-              </>}
+                  options={["name"]} />
+              )}
 
               {tab === "jobs" && <>
                 <SelectField label="Min pay (RWF)" value={filterMinAmount} onChange={setFilterMinAmount}
@@ -285,26 +277,6 @@ export default function BrowsePage() {
               </>}
             </div>
 
-            {tab === "workers" && (
-              <div style={{ marginTop: 16 }}>
-                <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 13, color: "#aaa" }}>
-                  <div
-                    onClick={() => setFilterAvailable(a => !a)}
-                    style={{
-                      width: 36, height: 20, borderRadius: 999, position: "relative", cursor: "pointer",
-                      background: filterAvailable ? "#f97316" : "#2a2a2a", transition: "background 0.2s",
-                    }}
-                  >
-                    <div style={{
-                      position: "absolute", top: 2, left: filterAvailable ? 18 : 2,
-                      width: 16, height: 16, borderRadius: 999, background: "#fff",
-                      transition: "left 0.2s",
-                    }} />
-                  </div>
-                  Available now only
-                </label>
-              </div>
-            )}
           </div>
         )}
 
@@ -325,72 +297,112 @@ export default function BrowsePage() {
 
         {/* RESULTS COUNT */}
         <p style={{ fontSize: 12, color: "#444", marginBottom: 14, fontWeight: 600 }}>
-          {tab === "workers"
+          {loadingData ? "Loading…"
+            : tab === "workers"
             ? `${filteredWorkers.length} worker${filteredWorkers.length !== 1 ? "s" : ""} found`
             : `${filteredJobs.length} job${filteredJobs.length !== 1 ? "s" : ""} found`}
         </p>
 
         {/* WORKERS GRID */}
         {tab === "workers" && (
-          filteredWorkers.length === 0
+          loadingData ? <BrowseLoading />
+          : filteredWorkers.length === 0
             ? <Empty label="No workers match your filters." />
             : <div className="browse-grid">
-                {filteredWorkers.map(w => {
-                  const TIcon = TYPE_ICON[w.type] ?? User;
-                  const tColor = TYPE_COLOR[w.type] ?? "#555";
-                  return (
-                    <a key={w.id} href={`/browse/${w.slug}`} className="bcard" style={{
-                      textDecoration: "none",
-                      background: "#1c1c1c", border: "1px solid #272727", borderRadius: 14,
-                      padding: "16px", display: "flex", flexDirection: "column", gap: 12,
-                    }}>
-                      {/* top row */}
-                      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                          <div style={{
-                            width: 42, height: 42, borderRadius: 999, flexShrink: 0,
-                            background: "rgba(249,115,22,0.12)",
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            fontSize: 16, fontWeight: 800, color: "#f97316",
-                          }}>
-                            {w.name[0]}
-                          </div>
-                          <div>
-                            <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
-                            <p style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2 }}>{w.category}</p>
-                          </div>
+                {filteredWorkers.map((w: WorkerProfileDto) => (
+                  <a key={w.id} href={`/browse/${w.id}`} className="bcard" style={{
+                    background: "#1c1c1c", border: "1px solid #272727", borderRadius: 14,
+                    padding: "16px", display: "flex", flexDirection: "column", gap: 12,
+                    textDecoration: "none",
+                  }}>
+                    {/* top row */}
+                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <div style={{
+                          width: 42, height: 42, borderRadius: 999, flexShrink: 0,
+                          background: "rgba(249,115,22,0.12)",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontSize: 16, fontWeight: 800, color: "#f97316",
+                        }}>
+                          {w.name[0]}
                         </div>
+                        <div>
+                          <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
+                          <p style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2 }}>{w.experienceType ?? "Worker"}</p>
+                        </div>
+                      </div>
+                      {w.availability.length > 0 && (
                         <span style={{
                           fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "3px 8px",
-                          background: w.available ? "rgba(34,197,94,0.1)" : "rgba(255,255,255,0.05)",
-                          color: w.available ? "#22c55e" : "#444",
+                          background: "rgba(34,197,94,0.1)", color: "#22c55e",
                         }}>
-                          {w.available ? "Available" : "Busy"}
+                          Available
+                        </span>
+                      )}
+                    </div>
+
+                    {/* location */}
+                    {w.district && (
+                      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                        <MapPin size={11} color="#555" />
+                        <span style={{ fontSize: 11, color: "#555" }}>{w.district}</span>
+                      </div>
+                    )}
+
+                    {/* equipment tags */}
+                    {w.equipment.length > 0 && (
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                        {w.equipment.slice(0, 3).map(eq => (
+                          <span key={eq} style={{
+                            fontSize: 9, fontWeight: 600, borderRadius: 999, padding: "2px 7px",
+                            background: "rgba(249,115,22,0.07)", color: "#f97316",
+                          }}>{eq}</span>
+                        ))}
+                        {w.equipment.length > 3 && (
+                          <span style={{ fontSize: 9, color: "#555" }}>+{w.equipment.length - 3} more</span>
+                        )}
+                      </div>
+                    )}
+                  </a>
+                ))}
+              </div>
+        )}
+
+        {/* JOBS GRID */}
+        {tab === "jobs" && (
+          loadingData ? <BrowseLoading />
+          : filteredJobs.length === 0
+            ? <Empty label="No jobs match your filters." />
+            : <div className="browse-grid">
+                {filteredJobs.map((j: JobDto) => {
+                  const posted = daysAgo(j.createdAt);
+                  return (
+                    <a key={j.id} href={`/jobs/${j.id}`} className="bcard" style={{
+                      display: "flex", flexDirection: "column", gap: 12,
+                      background: "#1c1c1c", border: "1px solid #272727", borderRadius: 14,
+                      padding: "16px", textDecoration: "none",
+                    }}>
+                      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
+                        <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: "#f0f0f0", lineHeight: 1.3 }}>{j.title}</p>
+                        <span style={{
+                          fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "3px 8px", flexShrink: 0,
+                          background: "rgba(249,115,22,0.1)", color: "#f97316",
+                        }}>
+                          {j.category}
                         </span>
                       </div>
-
-                      {/* type badge */}
-                      <span style={{
-                        alignSelf: "flex-start",
-                        display: "inline-flex", alignItems: "center", gap: 4,
-                        fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "3px 9px",
-                        background: `${tColor}18`, border: `1px solid ${tColor}38`, color: tColor,
-                      }}>
-                        <TIcon size={10} />
-                        {typeLabel(w)}
-                      </span>
-
-                      {/* location + rating */}
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                          <MapPin size={11} color="#555" />
-                          <span style={{ fontSize: 11, color: "#555" }}>{w.location}</span>
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                          <Star size={11} color="#f97316" fill="#f97316" />
-                          <span style={{ fontSize: 12, fontWeight: 700, color: "#f97316" }}>{w.rating}</span>
-                          <span style={{ fontSize: 11, color: "#444" }}>· {w.jobs} jobs</span>
-                        </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                        <MapPin size={11} color="#555" />
+                        <span style={{ fontSize: 11, color: "#555" }}>{j.district}</span>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
+                        <span style={{ fontSize: 15, fontWeight: 800, color: "#f97316" }}>
+                          {fmt(j.ratePerHour)}
+                          <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}> / hr</span>
+                        </span>
+                        <span style={{ fontSize: 11, color: "#444" }}>
+                          {posted === 0 ? "Today" : `${posted}d ago`}
+                        </span>
                       </div>
                     </a>
                   );
@@ -398,48 +410,26 @@ export default function BrowsePage() {
               </div>
         )}
 
-        {/* JOBS GRID */}
-        {tab === "jobs" && (
-          filteredJobs.length === 0
-            ? <Empty label="No jobs match your filters." />
-            : <div className="browse-grid">
-                {filteredJobs.map(j => (
-                  <a key={j.id} href={`/jobs/${j.id}`} className="bcard" style={{
-                    display: "flex", flexDirection: "column", gap: 12,
-                    background: "#1c1c1c", border: "1px solid #272727", borderRadius: 14,
-                    padding: "16px", textDecoration: "none",
-                  }}>
-                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
-                      <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: "#f0f0f0", lineHeight: 1.3 }}>{j.title}</p>
-                      <span style={{
-                        fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "3px 8px", flexShrink: 0,
-                        background: "rgba(249,115,22,0.1)", color: "#f97316",
-                      }}>
-                        {j.category}
-                      </span>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                      <MapPin size={11} color="#555" />
-                      <span style={{ fontSize: 11, color: "#555" }}>{j.location}</span>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
-                      <span style={{ fontSize: 15, fontWeight: 800, color: "#f97316" }}>
-                        {fmt(j.amount)}
-                        <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}> / {j.period}</span>
-                      </span>
-                      <span style={{ fontSize: 11, color: "#444" }}>
-                        {j.posted === 1 ? "Today" : `${j.posted}d ago`}
-                      </span>
-                    </div>
-                  </a>
-                ))}
-              </div>
-        )}
-
       </div>
 
       <Footer />
     </main>
+  );
+}
+
+function BrowseLoading() {
+  return (
+    <>
+      <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}`}</style>
+      <div className="browse-grid">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} style={{
+            background: "#1c1c1c", border: "1px solid #272727", borderRadius: 14,
+            padding: 16, height: 140, animation: "pulse 1.5s ease-in-out infinite",
+          }} />
+        ))}
+      </div>
+    </>
   );
 }
 

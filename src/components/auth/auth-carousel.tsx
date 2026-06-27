@@ -76,7 +76,7 @@ export function AuthCarousel() {
 
       {/* Logo */}
       <a href="/" style={{ fontWeight: 900, fontSize: 20, color: "#f97316", textDecoration: "none", letterSpacing: "-0.5px", position: "relative", zIndex: 1 }}>
-        Ikibando
+        MpahMapu
       </a>
 
       {/* Slide content */}

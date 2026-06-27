@@ -2,9 +2,10 @@
 
 import Footer from "@/components/layout/footer";
 import { PostJobModal } from "@/components/jobs/post-job-modal";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { getJobs, daysAgo, type JobDto } from "@/lib/api";
 import {
-  MapPin, Star, Search, SlidersHorizontal, ChevronDown,
+  MapPin, Search, SlidersHorizontal, ChevronDown,
   X, Clock, Briefcase, Plus, ArrowRight,
   UtensilsCrossed, Sparkles, Shield, Car, Zap, Wrench,
   Leaf, Camera, Package, Home, HardHat,
@@ -26,24 +27,6 @@ const CATEGORIES = [
 ];
 
 const LOCATIONS = ["Kacyiru", "Nyamirambo", "Kimihurura", "Remera", "Gisozi", "Kicukiro", "Gikondo", "Kanombe"];
-
-const JOBS = [
-  { id: 1,  title: "Event Waiter Needed",        category: "Waiters",      location: "Kacyiru",    amount: 8000,  period: "day",      posted: 0, slots: 3,  urgent: true  },
-  { id: 2,  title: "Office Cleaner",             category: "Cleaners",     location: "Nyamirambo", amount: 6500,  period: "day",      posted: 1, slots: 1,  urgent: false },
-  { id: 3,  title: "Night Security Guard",       category: "Security",     location: "Kimihurura", amount: 10000, period: "night",    posted: 0, slots: 2,  urgent: true  },
-  { id: 4,  title: "Personal Driver",            category: "Drivers",      location: "Remera",     amount: 12000, period: "day",      posted: 2, slots: 1,  urgent: false },
-  { id: 5,  title: "Garden Maintenance",         category: "Gardeners",    location: "Gisozi",     amount: 5000,  period: "half-day", posted: 0, slots: 1,  urgent: false },
-  { id: 6,  title: "Electrician - Full Wiring",  category: "Electricians", location: "Kicukiro",   amount: 15000, period: "job",      posted: 3, slots: 1,  urgent: false },
-  { id: 7,  title: "House Deep Clean",           category: "Cleaners",     location: "Gikondo",    amount: 7000,  period: "day",      posted: 1, slots: 2,  urgent: true  },
-  { id: 8,  title: "Wedding Photographer",       category: "Photographers",location: "Kimihurura", amount: 25000, period: "event",    posted: 0, slots: 1,  urgent: false },
-  { id: 9,  title: "Moving Help (Heavy Loads)",  category: "Movers",       location: "Kanombe",    amount: 9000,  period: "day",      posted: 4, slots: 4,  urgent: false },
-  { id: 10, title: "Live-in Domestic Helper",    category: "Domestic Help",location: "Kacyiru",    amount: 6000,  period: "day",      posted: 2, slots: 1,  urgent: false },
-  { id: 11, title: "Plumber - Fix Pipe Leak",   category: "Plumbers",     location: "Remera",     amount: 12000, period: "job",      posted: 1, slots: 1,  urgent: true  },
-  { id: 12, title: "Construction Labourer",      category: "Construction", location: "Gikondo",    amount: 8500,  period: "day",      posted: 5, slots: 6,  urgent: false },
-  { id: 13, title: "Restaurant Waiter x2",       category: "Waiters",      location: "Kicukiro",   amount: 7500,  period: "day",      posted: 0, slots: 2,  urgent: true  },
-  { id: 14, title: "School Cleaner",             category: "Cleaners",     location: "Gisozi",     amount: 5500,  period: "day",      posted: 3, slots: 1,  urgent: false },
-  { id: 15, title: "Night Club Security",        category: "Security",     location: "Nyamirambo", amount: 11000, period: "night",    posted: 1, slots: 3,  urgent: false },
-];
 
 type SortKey = "newest" | "amount_asc" | "amount_desc";
 
@@ -69,39 +52,48 @@ const CSS = `
 `;
 
 export default function JobsPage() {
-  const [search, setSearch]             = useState("");
-  const [filterCategory, setFilterCat] = useState("");
-  const [filterLocation, setFilterLoc] = useState("");
+  const [jobs, setJobs]                  = useState<JobDto[]>([]);
+  const [loadingJobs, setLoadingJobs]    = useState(true);
+  const [search, setSearch]              = useState("");
+  const [filterCategory, setFilterCat]  = useState("");
+  const [filterLocation, setFilterLoc]  = useState("");
   const [filterUrgent, setFilterUrgent] = useState(false);
   const [filterMinAmt, setFilterMinAmt] = useState("");
-  const [sort, setSort]                 = useState<SortKey>("newest");
+  const [sort, setSort]                  = useState<SortKey>("newest");
   const [showFilters, setShowFilters]   = useState(false);
   const [showPostJob, setShowPostJob]   = useState(false);
 
+  useEffect(() => {
+    getJobs({ size: 100 })
+      .then(page => setJobs(page.content))
+      .catch(() => setJobs([]))
+      .finally(() => setLoadingJobs(false));
+  }, []);
+
   const activeFilters = [
-    filterCategory && { label: filterCategory,                              clear: () => setFilterCat("") },
-    filterLocation && { label: filterLocation,                              clear: () => setFilterLoc("") },
-    filterUrgent   && { label: "Urgent only",                              clear: () => setFilterUrgent(false) },
-    filterMinAmt   && { label: `Min ${fmt(Number(filterMinAmt))}`,         clear: () => setFilterMinAmt("") },
+    filterCategory && { label: filterCategory,                     clear: () => setFilterCat("") },
+    filterLocation && { label: filterLocation,                     clear: () => setFilterLoc("") },
+    filterUrgent   && { label: "Urgent only",                      clear: () => setFilterUrgent(false) },
+    filterMinAmt   && { label: `Min ${fmt(Number(filterMinAmt))}`, clear: () => setFilterMinAmt("") },
   ].filter(Boolean) as { label: string; clear: () => void }[];
 
   const clearAll = () => { setFilterCat(""); setFilterLoc(""); setFilterUrgent(false); setFilterMinAmt(""); };
 
   const filtered = useMemo(() => {
-    let list = JOBS.filter(j => {
+    let list = jobs.filter((j: JobDto) => {
       const q = search.toLowerCase();
       if (q && !j.title.toLowerCase().includes(q) && !j.category.toLowerCase().includes(q)) return false;
-      if (filterCategory && j.category !== filterCategory) return false;
-      if (filterLocation && j.location !== filterLocation) return false;
-      if (filterUrgent && !j.urgent) return false;
-      if (filterMinAmt && j.amount < Number(filterMinAmt)) return false;
+      if (filterCategory && j.category.toLowerCase() !== filterCategory.toLowerCase()) return false;
+      if (filterLocation && j.district.toLowerCase() !== filterLocation.toLowerCase()) return false;
+      if (filterUrgent && j.urgency !== "IMMEDIATE") return false;
+      if (filterMinAmt && j.ratePerHour < Number(filterMinAmt)) return false;
       return true;
     });
-    if (sort === "amount_asc")  list = [...list].sort((a, b) => a.amount - b.amount);
-    if (sort === "amount_desc") list = [...list].sort((a, b) => b.amount - a.amount);
-    if (sort === "newest")      list = [...list].sort((a, b) => a.posted - b.posted);
+    if (sort === "amount_asc")  list = [...list].sort((a, b) => a.ratePerHour - b.ratePerHour);
+    if (sort === "amount_desc") list = [...list].sort((a, b) => b.ratePerHour - a.ratePerHour);
+    if (sort === "newest")      list = [...list].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     return list;
-  }, [search, filterCategory, filterLocation, filterUrgent, filterMinAmt, sort]);
+  }, [jobs, search, filterCategory, filterLocation, filterUrgent, filterMinAmt, sort]);
 
   return (
     <main style={{ background: "#111", minHeight: "100vh", color: "#f5f5f5", fontFamily: "Inter, DM Sans, system-ui, sans-serif" }}>
@@ -233,74 +225,79 @@ export default function JobsPage() {
 
         {/* COUNT */}
         <p style={{ fontSize: 12, color: "#444", marginBottom: 14, fontWeight: 600 }}>
-          {filtered.length} job{filtered.length !== 1 ? "s" : ""} found
+          {loadingJobs ? "Loading…" : `${filtered.length} job${filtered.length !== 1 ? "s" : ""} found`}
         </p>
 
         {/* GRID */}
-        {filtered.length === 0
+        {loadingJobs
+          ? <LoadingGrid />
+          : filtered.length === 0
           ? <Empty />
           : (
             <div className="jobs-grid">
-              {filtered.map(j => (
-                <a key={j.id} href={`/jobs/${j.id}`} className="jcard" style={{
-                  display: "flex", flexDirection: "column", gap: 12,
-                  background: "#1c1c1c", border: "1px solid #272727",
-                  borderRadius: 14, padding: "16px",
-                }}>
-                  {/* top row */}
-                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
-                    <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: "#f0f0f0", lineHeight: 1.35 }}>{j.title}</p>
-                    {j.urgent && (
-                      <span style={{
-                        flexShrink: 0, fontSize: 10, fontWeight: 700, borderRadius: 999,
-                        padding: "3px 8px", background: "rgba(239,68,68,0.1)", color: "#ef4444",
-                      }}>
-                        Urgent
-                      </span>
-                    )}
-                  </div>
-
-                  {/* category */}
-                  <span style={{
-                    alignSelf: "flex-start", fontSize: 10, fontWeight: 700, borderRadius: 999,
-                    padding: "3px 10px", background: "rgba(249,115,22,0.08)", color: "#f97316",
+              {filtered.map((j: JobDto) => {
+                const posted = daysAgo(j.createdAt);
+                return (
+                  <a key={j.id} href={`/jobs/${j.id}`} className="jcard" style={{
+                    display: "flex", flexDirection: "column", gap: 12,
+                    background: "#1c1c1c", border: "1px solid #272727",
+                    borderRadius: 14, padding: "16px",
                   }}>
-                    {j.category}
-                  </span>
-
-                  {/* meta */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                      <MapPin size={11} color="#555" />
-                      <span style={{ fontSize: 11, color: "#555" }}>{j.location}</span>
+                    {/* top row */}
+                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
+                      <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: "#f0f0f0", lineHeight: 1.35 }}>{j.title}</p>
+                      {j.urgency === "IMMEDIATE" && (
+                        <span style={{
+                          flexShrink: 0, fontSize: 10, fontWeight: 700, borderRadius: 999,
+                          padding: "3px 8px", background: "rgba(239,68,68,0.1)", color: "#ef4444",
+                        }}>
+                          Urgent
+                        </span>
+                      )}
                     </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                      <Clock size={11} color="#555" />
-                      <span style={{ fontSize: 11, color: "#555" }}>{postedLabel(j.posted)}</span>
-                    </div>
-                    {j.slots > 1 && (
-                      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                        <Briefcase size={11} color="#555" />
-                        <span style={{ fontSize: 11, color: "#555" }}>{j.slots} slots open</span>
-                      </div>
-                    )}
-                  </div>
 
-                  {/* footer */}
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
-                    <span style={{ fontSize: 15, fontWeight: 800, color: "#f97316" }}>
-                      {fmt(j.amount)}
-                      <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}> / {j.period}</span>
-                    </span>
+                    {/* category */}
                     <span style={{
-                      display: "flex", alignItems: "center", gap: 4,
-                      fontSize: 12, fontWeight: 600, color: "#666",
+                      alignSelf: "flex-start", fontSize: 10, fontWeight: 700, borderRadius: 999,
+                      padding: "3px 10px", background: "rgba(249,115,22,0.08)", color: "#f97316",
                     }}>
-                      Apply <ArrowRight size={12} />
+                      {j.category}
                     </span>
-                  </div>
-                </a>
-              ))}
+
+                    {/* meta */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                        <MapPin size={11} color="#555" />
+                        <span style={{ fontSize: 11, color: "#555" }}>{j.district}</span>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                        <Clock size={11} color="#555" />
+                        <span style={{ fontSize: 11, color: "#555" }}>{postedLabel(posted)}</span>
+                      </div>
+                      {j.headcount > 1 && (
+                        <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                          <Briefcase size={11} color="#555" />
+                          <span style={{ fontSize: 11, color: "#555" }}>{j.headcount} slots open</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* footer */}
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
+                      <span style={{ fontSize: 15, fontWeight: 800, color: "#f97316" }}>
+                        {fmt(j.ratePerHour)}
+                        <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}> / hr</span>
+                      </span>
+                      <span style={{
+                        display: "flex", alignItems: "center", gap: 4,
+                        fontSize: 12, fontWeight: 600, color: "#666",
+                      }}>
+                        Apply <ArrowRight size={12} />
+                      </span>
+                    </div>
+                  </a>
+                );
+              })}
             </div>
           )}
 
@@ -339,6 +336,22 @@ export default function JobsPage() {
 }
 
 // ── helpers ────────────────────────────────────────────────────────────────
+function LoadingGrid() {
+  return (
+    <>
+      <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}`}</style>
+      <div className="jobs-grid">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} style={{
+            background: "#1c1c1c", border: "1px solid #272727", borderRadius: 14,
+            padding: 16, height: 160, animation: "pulse 1.5s ease-in-out infinite",
+          }} />
+        ))}
+      </div>
+    </>
+  );
+}
+
 function ActiveChip({ label, onRemove }: { label: string; onRemove: () => void }) {
   return (
     <span style={{

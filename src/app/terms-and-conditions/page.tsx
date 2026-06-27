@@ -7,11 +7,11 @@ const sections = [
   {
     id: "01",
     title: "Acceptance of terms",
-    body: `By creating an account or using Ikibando - whether as a worker or an employer - you agree to be bound by these Terms and Conditions. If you do not agree, please do not use the platform. We may update these terms from time to time; continued use after any change means you accept the revised terms.`,
+    body: `By creating an account or using MpahMapu - whether as a worker or an employer - you agree to be bound by these Terms and Conditions. If you do not agree, please do not use the platform. We may update these terms from time to time; continued use after any change means you accept the revised terms.`,
   },
   {
     id: "02",
-    title: "Who can use Ikibando",
+    title: "Who can use MpahMapu",
     body: `You must be at least 18 years old and legally permitted to work or hire in Rwanda to create an account. Workers must complete ID verification before accepting jobs. Employers must provide accurate business or personal details when posting jobs. Accounts are non-transferable.`,
   },
   {
@@ -22,7 +22,7 @@ const sections = [
   {
     id: "04",
     title: "Payments via MoMo",
-    body: `All payments are processed through MTN Mobile Money (MoMo). Employers are charged the agreed rate plus the Ikibando service fee at the time of job confirmation. Funds are released to workers upon job completion. Ikibando does not hold funds for longer than necessary and is not responsible for delays caused by MoMo's own processing times.`,
+    body: `All payments are processed through MTN Mobile Money (MoMo). Employers are charged the agreed rate plus the MpahMapu service fee at the time of job confirmation. Funds are released to workers upon job completion. MpahMapu does not hold funds for longer than necessary and is not responsible for delays caused by MoMo's own processing times.`,
   },
   {
     id: "05",
@@ -32,27 +32,27 @@ const sections = [
   {
     id: "06",
     title: "Disputes and refunds",
-    body: `If a dispute arises - for example, a job was not completed as agreed - either party can raise a claim within 48 hours of the job end time. Ikibando will review available evidence and make a binding decision. Refunds, where applicable, are processed back via MoMo within 3–5 business days.`,
+    body: `If a dispute arises - for example, a job was not completed as agreed - either party can raise a claim within 48 hours of the job end time. MpahMapu will review available evidence and make a binding decision. Refunds, where applicable, are processed back via MoMo within 3–5 business days.`,
   },
   {
     id: "07",
     title: "Prohibited uses",
-    body: `You may not use Ikibando to solicit workers off-platform to avoid fees, post illegal or hazardous work, collect personal data from other users without consent, or attempt to reverse-engineer, scrape, or interfere with the platform. Violations may result in immediate account termination and, where applicable, legal action.`,
+    body: `You may not use MpahMapu to solicit workers off-platform to avoid fees, post illegal or hazardous work, collect personal data from other users without consent, or attempt to reverse-engineer, scrape, or interfere with the platform. Violations may result in immediate account termination and, where applicable, legal action.`,
   },
   {
     id: "08",
     title: "Limitation of liability",
-    body: `Ikibando is a marketplace and is not the employer or employee of any party. We do not guarantee the quality of work performed, the conduct of any user, or the availability of jobs. To the maximum extent permitted by Rwandan law, Ikibando's liability for any claim is limited to the fees you paid to us in the 30 days preceding the event giving rise to the claim.`,
+    body: `MpahMapu is a marketplace and is not the employer or employee of any party. We do not guarantee the quality of work performed, the conduct of any user, or the availability of jobs. To the maximum extent permitted by Rwandan law, MpahMapu's liability for any claim is limited to the fees you paid to us in the 30 days preceding the event giving rise to the claim.`,
   },
   {
     id: "09",
     title: "Governing law",
-    body: `These terms are governed by the laws of the Republic of Rwanda. Any disputes that cannot be resolved through Ikibando's internal process will be subject to the exclusive jurisdiction of the courts of Rwanda.`,
+    body: `These terms are governed by the laws of the Republic of Rwanda. Any disputes that cannot be resolved through MpahMapu's internal process will be subject to the exclusive jurisdiction of the courts of Rwanda.`,
   },
   {
     id: "10",
     title: "Contact",
-    body: `Questions about these terms? Reach us at legal@ikibando.rw or through the contact form on our website. We aim to respond within 2 business days.`,
+    body: `Questions about these terms? Reach us at legal@MpahMapu.rw or through the contact form on our website. We aim to respond within 2 business days.`,
   },
 ];
 
@@ -100,7 +100,7 @@ export default function TermsPage() {
             <span style={{ color: "#f97316" }}>Conditions</span>
           </h1>
           <p style={{ fontSize: 14, color: "#666", lineHeight: 1.75, maxWidth: 480, margin: "0 0 12px" }}>
-            These terms govern your use of Ikibando as a worker or employer.
+            These terms govern your use of MpahMapu as a worker or employer.
             Please read them carefully before creating an account.
           </p>
           <p style={{ fontSize: 12, color: "#444", margin: 0 }}>
@@ -122,7 +122,7 @@ export default function TermsPage() {
           }}
         >
           <strong style={{ color: "#f97316", fontWeight: 700 }}>Quick summary: </strong>
-          Ikibando connects workers and employers in Rwanda. You own your work
+          MpahMapu connects workers and employers in Rwanda. You own your work
           and your earnings. We handle trust, verification, and MoMo payments.
           Be honest, be respectful, show up on time.
         </div>

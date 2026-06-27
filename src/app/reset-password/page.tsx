@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { AuthCarousel } from "@/components/auth/auth-carousel";
+import { useSearchParams } from "next/navigation";
+import { resetPassword } from "@/lib/api";
+import { useToast } from "@/components/ui/toast";
 
 function StrengthBar({ password }: { password: string }) {
   const score = (() => {
@@ -38,25 +41,43 @@ function StrengthBar({ password }: { password: string }) {
   );
 }
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
+  const { error: toastError, success: toastSuccess } = useToast();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [mismatch, setMismatch] = useState(false);
   const [done, setDone] = useState(false);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
 
-  const handleSubmit = () => {
-    setError("");
+  const handleSubmit = async () => {
+    setMismatch(false);
+    if (!token) {
+      toastError("Missing or invalid reset token.", { title: "Reset Failed" });
+      return;
+    }
     if (password.length < 8) {
-      setError("Password must be at least 8 characters.");
+      toastError("Password must be at least 8 characters.", { title: "Reset Failed" });
       return;
     }
     if (password !== confirm) {
-      setError("Passwords don't match.");
+      setMismatch(true);
+      toastError("Passwords don't match.", { title: "Reset Failed" });
       return;
     }
-    setDone(true);
+    setLoading(true);
+    try {
+      await resetPassword(token, password);
+      toastSuccess("Your password has been reset. You can now sign in.", { title: "Password Updated" });
+      setDone(true);
+    } catch (e: any) {
+      toastError(e?.response?.data?.message ?? "Password reset failed. Token may be expired.", { title: "Reset Failed" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -160,12 +181,12 @@ export default function ResetPasswordPage() {
                       onChange={(e) => setConfirm(e.target.value)}
                       style={{
                         width: "100%", background: "#141414",
-                        border: `1px solid ${error && error.includes("match") ? "#ef4444" : "#2a2a2a"}`,
+                        border: `1px solid ${mismatch ? "#ef4444" : "#2a2a2a"}`,
                         borderRadius: 10, padding: "11px 36px 11px 36px",
                         fontSize: 13, color: "#f0f0f0", outline: "none", boxSizing: "border-box",
                       }}
-                      onFocus={(e) => (e.currentTarget.style.borderColor = error && error.includes("match") ? "#ef4444" : "#f97316")}
-                      onBlur={(e) => (e.currentTarget.style.borderColor = error && error.includes("match") ? "#ef4444" : "#2a2a2a")}
+                      onFocus={(e) => (e.currentTarget.style.borderColor = mismatch ? "#ef4444" : "#f97316")}
+                      onBlur={(e) => (e.currentTarget.style.borderColor = mismatch ? "#ef4444" : "#2a2a2a")}
                     />
                     <button
                       type="button"
@@ -177,28 +198,20 @@ export default function ResetPasswordPage() {
                   </div>
                 </div>
 
-                {error && (
-                  <div style={{
-                    background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)",
-                    borderRadius: 8, padding: "10px 14px", fontSize: 12, color: "#f87171",
-                    marginBottom: 16, fontWeight: 500,
-                  }}>
-                    {error}
-                  </div>
-                )}
-
                 <button
                   type="button"
                   onClick={handleSubmit}
+                  disabled={loading}
                   style={{
                     width: "100%", background: "#f97316", color: "#fff", border: "none",
                     borderRadius: 10, padding: "13px", fontSize: 14, fontWeight: 700,
-                    cursor: "pointer",
+                    cursor: loading ? "not-allowed" : "pointer",
+                    opacity: loading ? 0.7 : 1,
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "#ea6a0a")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "#f97316")}
+                  onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = "#ea6a0a"; }}
+                  onMouseLeave={(e) => { if (!loading) e.currentTarget.style.background = "#f97316"; }}
                 >
-                  Reset password
+                  {loading ? "Resetting..." : "Reset password"}
                 </button>
               </>
             ) : (
@@ -239,5 +252,13 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div style={{ display: "flex", height: "100vh", background: "#111" }} />}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }

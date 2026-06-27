@@ -1,117 +1,230 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import {
-  X, Star, MapPin, Shield, ChevronDown,
-  Calendar, Clock, Phone, CheckCircle, Users,
+  X, MapPin, Shield, ChevronDown,
+  Calendar, Clock, CheckCircle, Users,
+  AlarmClock, Search, Navigation, Loader2,
 } from "lucide-react";
+import { JOB_CATEGORIES, RWANDA_PROVINCES } from "@/lib/constants";
+import { getWorkers, postJob, applyForJob, updateApplicationStatus, getWallet, type WorkerProfileDto } from "@/lib/api";
+import { useToast } from "@/components/ui/toast";
 
-// ── data ───────────────────────────────────────────────────────────────────
-const CATEGORIES = [
-  "Waiters","Cleaners","Security","Drivers","Electricians",
-  "Plumbers","Gardeners","Photographers","Movers","Domestic Help","Construction",
-];
-const LOCATIONS = [
-  "Kacyiru","Nyamirambo","Kimihurura","Remera",
-  "Gisozi","Kicukiro","Gikondo","Kanombe",
-];
-const WORKERS = [
-  { id:1,  name:"Jean Pierre M.", category:"Waiters",       location:"Kacyiru",    rating:4.9, jobs:42 },
-  { id:2,  name:"Diane U.",       category:"Cleaners",      location:"Remera",     rating:4.8, jobs:67 },
-  { id:3,  name:"Eric N.",        category:"Drivers",       location:"Gisozi",     rating:5.0, jobs:28 },
-  { id:4,  name:"Alice K.",       category:"Security",      location:"Kimihurura", rating:4.7, jobs:51 },
-  { id:5,  name:"Patrick H.",     category:"Electricians",  location:"Kicukiro",   rating:4.9, jobs:33 },
-  { id:6,  name:"Grace I.",       category:"Cleaners",      location:"Nyamirambo", rating:4.8, jobs:89 },
-  { id:7,  name:"Samuel B.",      category:"Plumbers",      location:"Gikondo",    rating:4.6, jobs:19 },
-  { id:8,  name:"Marie C.",       category:"Domestic Help", location:"Kacyiru",    rating:4.9, jobs:55 },
-  { id:9,  name:"Olivier T.",     category:"Construction",  location:"Kanombe",    rating:4.5, jobs:37 },
-  { id:10, name:"Claudine M.",    category:"Photographers", location:"Kimihurura", rating:5.0, jobs:14 },
-  { id:11, name:"Bosco R.",       category:"Movers",        location:"Remera",     rating:4.7, jobs:23 },
-  { id:12, name:"Yvonne N.",      category:"Gardeners",     location:"Gisozi",     rating:4.8, jobs:41 },
-  { id:13, name:"Claude M.",      category:"Waiters",       location:"Kimihurura", rating:4.7, jobs:31 },
-  { id:14, name:"Solange K.",     category:"Cleaners",      location:"Kacyiru",    rating:4.9, jobs:52 },
-  { id:15, name:"David N.",       category:"Drivers",       location:"Remera",     rating:4.8, jobs:44 },
-];
+// Leaflet must render client-side only
+const MapPicker = dynamic(
+  () => import("../jobs/map-picker").then(m => m.MapPicker),
+  {
+    ssr: false,
+    loading: () => (
+      <div style={{
+        height: 220, borderRadius: 10, border: "1px solid #2a2a2a",
+        background: "#141414", display: "flex", alignItems: "center",
+        justifyContent: "center", fontSize: 12, color: "#555",
+      }}>Loading map…</div>
+    ),
+  }
+);
 
-type Worker = typeof WORKERS[number];
-type PayMethod = "mtn" | "airtel";
-interface Form {
-  category: string; budget: string; experience: string;
-  headcount: string;
-  date: string; time: string; location: string; notes: string;
+// ── helpers ──────────────────────────────────────────────────────────────────
+function districtsFor(province: string) {
+  const p = RWANDA_PROVINCES.find(p => p.label === province);
+  return p ? [...p.districts] : RWANDA_PROVINCES.flatMap(p => [...p.districts]);
+}
+function catLabel(slug: string) {
+  return JOB_CATEGORIES.find(c => c.value === slug)?.label ?? slug;
+}
+function sinceYear(iso: string) {
+  return new Date(iso).getFullYear();
 }
 
-const STEPS = ["Job details", "Best matches", "Summary & Pay"];
-const fmt = (n: number) => `RWF ${n.toLocaleString()}`;
-const todayStr = () => new Date().toISOString().split("T")[0];
+// ── types ────────────────────────────────────────────────────────────────────
+type RateType  = "hr" | "day" | "week" | "month" | "year";
 
-// ── styles ──────────────────────────────────────────────────────────────────
+interface Form {
+  category: string; budget: string;
+  headcount: string; rateType: RateType; durationHours: string;
+  date: string; time: string;
+  province: string; district: string;
+  latitude: number | null; longitude: number | null;
+  requirements: string;
+}
+
+const STEPS    = ["Job details", "Best matches", "Summary"];
+const getDurations = (rt: RateType) => {
+  if (rt === "hr") return [1, 2, 3, 4, 6, 8, 10, 12];
+  if (rt === "day") return Array.from({length: 30}, (_, i) => i + 1);
+  if (rt === "week") return Array.from({length: 12}, (_, i) => i + 1);
+  if (rt === "month") return Array.from({length: 12}, (_, i) => i + 1);
+  if (rt === "year") return Array.from({length: 5}, (_, i) => i + 1);
+  return [1];
+};
+const getUnit = (rt: RateType, n: number) => {
+  if (rt === "hr") return `hour${n !== 1 ? "s" : ""}`;
+  if (rt === "day") return `day${n !== 1 ? "s" : ""}`;
+  if (rt === "week") return `week${n !== 1 ? "s" : ""}`;
+  if (rt === "month") return `month${n !== 1 ? "s" : ""}`;
+  if (rt === "year") return `year${n !== 1 ? "s" : ""}`;
+  return "";
+};
+const fmt       = (n: number) => `RWF ${n.toLocaleString()}`;
+const todayStr  = () => new Date().toISOString().split("T")[0];
+const RATE_LABEL: Record<RateType, string> = { hr:"/hr", day:"/day", week:"/wk", month:"/mo", year:"/yr" };
+
+// ── styles ───────────────────────────────────────────────────────────────────
 const CSS = `
-  .hire-sel { appearance: none; -webkit-appearance: none; }
-  .hire-inp::placeholder, .hire-ta::placeholder { color: #444; }
   .hire-ta { resize: vertical; }
   .wrow { transition: border-color 0.12s, background 0.12s; cursor: pointer; }
   .wrow:hover { border-color: #f97316 !important; }
+  .wrow.disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
   @media (max-width: 500px) { .h2col { grid-template-columns: 1fr !important; } }
 `;
-
 const inp: React.CSSProperties = {
   width: "100%", background: "#141414", border: "1px solid #2a2a2a",
   borderRadius: 10, padding: "10px 14px", fontSize: 13, color: "#f0f0f0",
   outline: "none", boxSizing: "border-box", fontFamily: "inherit",
 };
+const modalCard: React.CSSProperties = {
+  background: "#1a1a1a", border: "1px solid #272727", borderRadius: 20,
+  width: "100%", maxWidth: 520, maxHeight: "92vh",
+  display: "flex", flexDirection: "column", overflow: "hidden",
+};
+const btnPrimary: React.CSSProperties = {
+  background: "#f97316", color: "#fff", border: "none",
+  borderRadius: 10, padding: "12px 20px", fontSize: 13,
+  fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
+};
+const btnBack: React.CSSProperties = {
+  background: "#141414", border: "1px solid #2a2a2a",
+  borderRadius: 10, padding: "12px 18px", fontSize: 13,
+  fontWeight: 600, color: "#aaa", cursor: "pointer", fontFamily: "inherit",
+};
+const iconL: React.CSSProperties = {
+  position: "absolute", left: 12, top: "50%",
+  transform: "translateY(-50%)", pointerEvents: "none",
+};
 
 // ── component ────────────────────────────────────────────────────────────────
 export function HireModal({ onClose }: { onClose: () => void }) {
-  const [step, setStep]       = useState(0);
-  const [form, setForm]       = useState<Form>({
-    category:"", budget:"", experience:"any", headcount:"1",
-    date:"", time:"", location:"", notes:"",
+  const { error: toastError } = useToast();
+  const [step, setStep]     = useState(0);
+  const [form, setForm]     = useState<Form>({
+    category:"", budget:"", headcount:"1", rateType:"day",
+    durationHours:"4", date:"", time:"",
+    province:"", district:"", latitude:null, longitude:null,
+    requirements:"",
   });
-  const [selected, setSel]    = useState<Worker | null>(null);
-  const [payMethod, setPay]   = useState<PayMethod>("mtn");
-  const [momoNum, setMomo]    = useState("");
-  const [done, setDone]       = useState(false);
+  const [selected, setSel]  = useState<WorkerProfileDto[]>([]);
+  const [walletBal, setWalletBal] = useState<number | null>(null);
+  const [done, setDone]    = useState(false);
+  const [submitting, setSub]   = useState(false);
+  const [gpsStatus, setGps] = useState<"idle"|"loading"|"ok"|"error">("idle");
 
-  // body scroll lock
+  const DRAFT_KEY = "MpahMapu_draft_hire";
+
+  // Restore draft on open
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        const { form: saved } = JSON.parse(raw);
+        if (saved) setForm(f => ({ ...f, ...saved }));
+      }
+      const token = localStorage.getItem("access_token");
+      if (token) getWallet(token).then(w => setWalletBal(w.balance)).catch(() => {});
+    } catch {}
+  }, []);
+
+  // Save draft on change
+  useEffect(() => {
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ form })); } catch {}
+  }, [form]);
+
+  // Real worker data
+  const [workers, setWorkers]         = useState<WorkerProfileDto[]>([]);
+  const [loadingWorkers, setLoading]  = useState(false);
+  const [workerError, setWorkerError] = useState(false);
+
+  // Fetch workers when reaching Step 1
+  useEffect(() => {
+    if (step !== 1) return;
+    setLoading(true);
+    setWorkerError(false);
+    setSel([]);
+    getWorkers({ category: form.category || undefined, size: 50 })
+      .then(page => setWorkers(page.content))
+      .catch(() => { setWorkers([]); setWorkerError(true); })
+      .finally(() => setLoading(false));
+  }, [step]);
+
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = ""; };
   }, []);
 
-  // Escape to close
   useEffect(() => {
     const fn = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", fn);
     return () => window.removeEventListener("keydown", fn);
   }, [onClose]);
 
-  const setF = (k: keyof Form) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
-      setForm(f => ({ ...f, [k]: e.target.value }));
+  function detectGps() {
+    if (!navigator.geolocation) { setGps("error"); return; }
+    setGps("loading");
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        setForm(f => ({
+          ...f,
+          latitude:  +pos.coords.latitude.toFixed(7),
+          longitude: +pos.coords.longitude.toFixed(7),
+        }));
+        setGps("ok");
+      },
+      () => setGps("error"),
+      { timeout: 10000 }
+    );
+  }
 
-  // Worker matching: filter → sort (location priority, then rating)
-  const matches = WORKERS.filter(w => {
-    if (form.category && w.category !== form.category) return false;
-    if (form.experience === "some"        && w.jobs < 1)  return false;
-    if (form.experience === "experienced" && w.jobs < 10) return false;
-    if (form.experience === "expert"      && w.jobs < 50) return false;
-    return true;
-  }).sort((a, b) => {
-    const aL = a.location === form.location ? 1 : 0;
-    const bL = b.location === form.location ? 1 : 0;
-    return bL - aL || b.rating - a.rating;
+  const headcountNum = Math.max(1, parseInt(form.headcount, 10) || 1);
+  const isMulti      = headcountNum > 1;
+
+  // Sort: workers in the selected district first, then by join date (oldest = most experienced)
+  const matches = [...workers].sort((a, b) => {
+    const aM = (a.district ?? "") === form.district ? 1 : 0;
+    const bM = (b.district ?? "") === form.district ? 1 : 0;
+    if (bM !== aM) return bM - aM;
+    return new Date(a.memberSince as any).getTime() - new Date(b.memberSince as any).getTime();
   });
 
-  const budget  = parseInt(form.budget, 10) || 0;
-  const fee     = Math.round(budget * 0.05);
-  const total   = budget + fee;
+  const toggleWorker = (w: WorkerProfileDto) => {
+    const alreadySel = selected.some(s => s.id === w.id);
+    if (alreadySel) { setSel(selected.filter(s => s.id !== w.id)); return; }
+    if (!isMulti) { setSel([w]); return; }
+    if (selected.length >= headcountNum) return;
+    setSel([...selected, w]);
+  };
+
+  const budget      = parseInt(form.budget, 10) || 0;
+  const durationNum = parseInt(form.durationHours, 10) || 1;
+  const jobAmount   = budget * headcountNum * durationNum;
+  const fee         = Math.round(jobAmount * 0.05);
+  const total       = jobAmount + fee;
+
+  const selectionValid = isMulti ? selected.length === headcountNum : selected.length === 1;
+
+  const locationLabel = [form.province, form.district].filter(Boolean).join(" › ");
+  const cat           = catLabel(form.category);
+  const dateLabel     = form.date
+    ? new Date(form.date + "T00:00").toLocaleDateString("en-GB", { weekday:"short", day:"numeric", month:"short" })
+    : "-";
 
   const canNext = [
-    !!(form.category && form.budget && form.date && form.time && form.location),
-    !!selected,
-    momoNum.replace(/\D/g, "").length >= 9,
+    !!(form.category && form.budget && form.date && form.time && form.district),
+    selectionValid,
+    walletBal === null || walletBal >= total,   // hard block if balance is known and insufficient
   ];
+
+  const selectedNames = selected.map(w => w.name).join(", ");
 
   // ── SUCCESS ───────────────────────────────────────────────────────────────
   if (done) return (
@@ -119,9 +232,9 @@ export function HireModal({ onClose }: { onClose: () => void }) {
       <style>{CSS}</style>
       <Overlay onClose={onClose}>
         <div onClick={e => e.stopPropagation()} style={modalCard}>
-          <div style={{ padding: "48px 28px 36px", textAlign: "center" }}>
+          <div style={{ padding: "48px 28px 36px", textAlign: "center", overflowY: "auto" }}>
             <div style={{
-              width: 80, height: 62, borderRadius: 999, margin: "0 auto 20px",
+              width: 64, height: 64, borderRadius: 999, margin: "0 auto 20px",
               background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)",
               display: "flex", alignItems: "center", justifyContent: "center",
             }}>
@@ -131,28 +244,24 @@ export function HireModal({ onClose }: { onClose: () => void }) {
               Booking confirmed!
             </h2>
             <p style={{ margin: "0 0 4px", fontSize: 14, color: "#aaa" }}>
-              <strong style={{ color: "#f0f0f0" }}>{selected?.name}</strong> has been notified and will confirm shortly.
+              <strong style={{ color: "#f0f0f0" }}>{selectedNames}</strong>{" "}
+              {selected.length > 1 ? "have" : "has"} been notified and will confirm shortly.
             </p>
-            <p style={{ margin: "0 0 28px", fontSize: 13, color: "#555", lineHeight: 1.7 }}>
-              {fmt(total)} is held securely by Ikibando and released only after you mark the job complete.
-              Not satisfied? Raise a dispute within 24 hours for a full refund.
+            <p style={{ margin: "0 0 20px", fontSize: 13, color: "#555", lineHeight: 1.7 }}>
+              The job has been created successfully.
             </p>
-            {/* Booking summary */}
-            <div style={{
-              background: "#141414", border: "1px solid #1e1e1e",
-              borderRadius: 12, padding: "14px 16px", marginBottom: 24, textAlign: "left",
-            }}>
+            <div style={{ background: "#141414", border: "1px solid #1e1e1e", borderRadius: 12, padding: "14px 16px", marginBottom: 24, textAlign: "left" }}>
               {([
-                ["Category",  form.category],
-                ["Workers",   `${parseInt(form.headcount) || 1}`],
-                ["Worker",    selected?.name ?? ""],
-                ["Date",      form.date ? new Date(form.date + "T00:00").toDateString() : "-"],
+                ["Category",  cat],
+                ["Workers",   String(headcountNum)],
+                [headcountNum > 1 ? "Assigned to" : "Worker", selectedNames],
+                ["Date",      dateLabel],
                 ["Time",      form.time || "-"],
-                ["Location",  form.location],
-                ["Paid",      fmt(total) + " (held)"],
-              ] as [string, string][]).map(([k, v]) => (
-                <SRow key={k} k={k} v={v} />
-              ))}
+                ["Province",  form.province || "-"],
+                ["District",  form.district],
+                ...(form.latitude != null ? [["GPS", `${form.latitude.toFixed(5)}, ${form.longitude!.toFixed(5)}`]] : []),
+                ...(form.requirements ? [["Requirements", form.requirements]] : []),
+              ] as [string, string][]).map(([k, v]) => <SRow key={k} k={k} v={v} />)}
             </div>
             <button onClick={onClose} style={{ ...btnPrimary, width: "100%" }}>Done</button>
           </div>
@@ -188,7 +297,6 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                 <X size={14} />
               </button>
             </div>
-            {/* Progress bar */}
             <div style={{ display: "flex", gap: 4, marginBottom: 20 }}>
               {STEPS.map((_, i) => (
                 <div key={i} style={{
@@ -200,167 +308,232 @@ export function HireModal({ onClose }: { onClose: () => void }) {
             </div>
           </div>
 
-          {/* SCROLLABLE CONTENT */}
+          {/* CONTENT */}
           <div style={{ flex: 1, overflowY: "auto", padding: "4px 24px 4px" }}>
 
             {/* ── STEP 0: JOB DETAILS ── */}
             {step === 0 && (
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+
                 <FField label="Job category *">
-                  <Sel value={form.category} onChange={setF("category")} placeholder="Select a category">
-                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                  </Sel>
+                  <SearchSelect
+                    options={JOB_CATEGORIES.map(c => ({ value: c.value, label: c.label }))}
+                    value={form.category}
+                    onChange={v => setForm(f => ({ ...f, category: v }))}
+                    placeholder="Search category…"
+                    icon={<Search size={13} color="#444" style={iconL} />}
+                  />
                 </FField>
 
                 <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  <FField label="Your budget (RWF) *">
-                    <input className="hire-inp" type="number" min="0" placeholder="e.g. 8000"
-                      value={form.budget} onChange={setF("budget")} style={inp}
-                      onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-                      onBlur={e => (e.currentTarget.style.borderColor = "#2a2a2a")}
-                    />
-                  </FField>
                   <FField label="No. of workers">
                     <div style={{ position: "relative" }}>
                       <Users size={13} color="#444" style={iconL} />
-                      <input className="hire-inp" type="number" min="1" max="50"
-                        value={form.headcount} onChange={setF("headcount")} style={{ ...inp, paddingLeft: 32 }}
+                      <input type="number" min="1" max="50"
+                        value={form.headcount}
+                        onChange={e => setForm(f => ({ ...f, headcount: e.target.value }))}
+                        style={{ ...inp, paddingLeft: 32 }}
                         onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-                        onBlur={e => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                        onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
                       />
+                    </div>
+                  </FField>
+                  <FField label="Rate per worker (RWF) *">
+                    <input type="number" min="0" placeholder="e.g. 8000"
+                      value={form.budget}
+                      onChange={e => setForm(f => ({ ...f, budget: e.target.value }))}
+                      style={inp}
+                      onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
+                      onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                    />
+                  </FField>
+                </div>
+
+                <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <FField label="Rate period">
+                    <div style={{ position: "relative" }}>
+                      <select value={form.rateType} onChange={e => setForm(f => ({ ...f, rateType: e.target.value as RateType }))}
+                        style={{ ...inp, appearance: "none", paddingRight: 28, color: "#f0f0f0" }}
+                        onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
+                        onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                      >
+                        <option value="hr">Per hour</option>
+                        <option value="day">Per day</option>
+                        <option value="week">Per week</option>
+                        <option value="month">Per month</option>
+                        <option value="year">Per year</option>
+                      </select>
+                      <ChevronDown size={13} color="#555" style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
+                    </div>
+                  </FField>
+                  <FField label="Duration">
+                    <div style={{ position: "relative" }}>
+                      <AlarmClock size={13} color="#444" style={iconL} />
+                      <select value={form.durationHours} onChange={e => setForm(f => ({ ...f, durationHours: e.target.value }))}
+                        style={{ ...inp, appearance: "none", paddingLeft: 32, paddingRight: 28, color: "#f0f0f0" }}
+                        onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
+                        onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                      >
+                        {getDurations(form.rateType).map(h => <option key={h} value={String(h)}>{h} {getUnit(form.rateType, h)}</option>)}
+                      </select>
+                      <ChevronDown size={13} color="#555" style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
                     </div>
                   </FField>
                 </div>
 
-                <FField label="Experience needed">
-                  <Sel value={form.experience} onChange={setF("experience")}>
-                    <option value="any">Any level</option>
-                    <option value="some">Some (1–10 jobs)</option>
-                    <option value="experienced">Experienced (10–50)</option>
-                    <option value="expert">Expert (50+ jobs)</option>
-                  </Sel>
-                </FField>
+                {headcountNum > 1 && budget > 0 && (
+                  <div style={{
+                    background: "rgba(249,115,22,0.05)", border: "1px solid rgba(249,115,22,0.15)",
+                    borderRadius: 10, padding: "10px 14px", display: "flex", justifyContent: "space-between", alignItems: "center",
+                  }}>
+                    <span style={{ fontSize: 12, color: "#888" }}>{fmt(budget)}{RATE_LABEL[form.rateType]} × {headcountNum} worker{headcountNum !== 1 ? "s" : ""} × {durationNum} {getUnit(form.rateType, durationNum)}</span>
+                    <span style={{ fontSize: 13, fontWeight: 800, color: "#f97316" }}>{fmt(jobAmount)}</span>
+                  </div>
+                )}
 
                 <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                   <FField label="Start date *">
                     <div style={{ position: "relative" }}>
                       <Calendar size={13} color="#444" style={iconL} />
-                      <input className="hire-inp" type="date" min={todayStr()}
-                        value={form.date} onChange={setF("date")}
+                      <input type="date" min={todayStr()}
+                        value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
                         style={{ ...inp, paddingLeft: 32, colorScheme: "dark" }}
                         onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-                        onBlur={e => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                        onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
                       />
                     </div>
                   </FField>
                   <FField label="Start time *">
                     <div style={{ position: "relative" }}>
                       <Clock size={13} color="#444" style={iconL} />
-                      <input className="hire-inp" type="time"
-                        value={form.time} onChange={setF("time")}
+                      <input type="time"
+                        value={form.time} onChange={e => setForm(f => ({ ...f, time: e.target.value }))}
                         style={{ ...inp, paddingLeft: 32, colorScheme: "dark" }}
                         onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-                        onBlur={e => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                        onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
                       />
                     </div>
                   </FField>
                 </div>
 
-                <FField label="Location *">
-                  <Sel value={form.location} onChange={setF("location")} placeholder="Select location">
-                    {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
-                  </Sel>
+                <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <FField label="Province">
+                    <SearchSelect
+                      options={RWANDA_PROVINCES.map(p => ({ value: p.label, label: p.label }))}
+                      value={form.province}
+                      onChange={v => setForm(f => ({ ...f, province: v, district: "" }))}
+                      placeholder="Province…"
+                      icon={<MapPin size={13} color="#444" style={iconL} />}
+                    />
+                  </FField>
+                  <FField label="District *">
+                    <SearchSelect
+                      options={districtsFor(form.province).map(d => ({ value: d, label: d }))}
+                      value={form.district}
+                      onChange={v => setForm(f => ({ ...f, district: v }))}
+                      placeholder="District…"
+                      icon={<MapPin size={13} color="#444" style={iconL} />}
+                    />
+                  </FField>
+                </div>
+
+                <FField label="Precise location (click map or use GPS)">
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    <MapPicker
+                      lat={form.latitude} lng={form.longitude}
+                      onChange={(lat, lng) => setForm(f => ({ ...f, latitude: lat, longitude: lng }))}
+                    />
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <button type="button" onClick={detectGps} disabled={gpsStatus === "loading"} style={{
+                        display: "flex", alignItems: "center", gap: 6,
+                        background: "#141414", border: "1px solid #2a2a2a",
+                        borderRadius: 8, padding: "7px 12px", fontSize: 12,
+                        color: gpsStatus === "ok" ? "#22c55e" : "#aaa",
+                        cursor: gpsStatus === "loading" ? "default" : "pointer",
+                        fontFamily: "inherit",
+                      }}>
+                        {gpsStatus === "loading" ? <Loader2 size={12} style={{ animation: "spin 1s linear infinite" }} /> : <Navigation size={12} />}
+                        {gpsStatus === "loading" ? "Detecting…" : gpsStatus === "ok" ? "GPS detected" : "Detect my GPS"}
+                      </button>
+                      {gpsStatus === "error" && <span style={{ fontSize: 11, color: "#ef4444" }}>Could not access GPS</span>}
+                      {form.latitude != null && form.longitude != null && (
+                        <span style={{ fontSize: 11, color: "#555", marginLeft: "auto" }}>
+                          {form.latitude.toFixed(5)}, {form.longitude.toFixed(5)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </FField>
 
-                <FField label="Additional notes (optional)">
-                  <textarea className="hire-ta hire-inp" rows={3}
-                    placeholder="e.g. formal attire, bring own tools, 3-hour shift…"
-                    value={form.notes} onChange={setF("notes")}
+                <FField label="Requirements (optional)">
+                  <textarea className="hire-ta" rows={3}
+                    placeholder="e.g. must have own transport, certified electrician, fluent in English…"
+                    value={form.requirements} onChange={e => setForm(f => ({ ...f, requirements: e.target.value }))}
                     style={{ ...inp, padding: "10px 14px", lineHeight: 1.65 }}
                     onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-                    onBlur={e => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                    onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
                   />
                 </FField>
               </div>
             )}
 
-            {/* ── STEP 1: BEST MATCHES ── */}
+            {/* ── STEP 1: BEST MATCHES (real workers) ── */}
             {step === 1 && (
               <div>
-                <p style={{ margin: "0 0 14px", fontSize: 12, color: "#555" }}>
-                  {matches.length} worker{matches.length !== 1 ? "s" : ""} match your request
-                  {form.category ? ` for ${form.category}` : ""} · sorted by proximity then rating
-                </p>
+                {/* Selection progress for multi-hire */}
+                {isMulti && !loadingWorkers && (
+                  <div style={{
+                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                    marginBottom: 12, padding: "8px 12px",
+                    background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10,
+                  }}>
+                    <span style={{ fontSize: 12, color: "#555" }}>
+                      {selected.length} of {headcountNum} workers selected
+                    </span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: selectionValid ? "#22c55e" : "#f97316" }}>
+                      {selectionValid ? "✓ Ready" : "Select more"}
+                    </span>
+                  </div>
+                )}
 
-                {matches.length === 0 ? (
+                {loadingWorkers ? (
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "48px 0", gap: 12 }}>
+                    <Loader2 size={24} color="#f97316" style={{ animation: "spin 1s linear infinite" }} />
+                    <p style={{ margin: 0, fontSize: 13, color: "#555" }}>Finding workers for {cat}…</p>
+                  </div>
+                ) : workerError ? (
+                  <div style={{ textAlign: "center", padding: "40px 0" }}>
+                    <p style={{ fontSize: 28, margin: "0 0 10px" }}>⚠️</p>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: "#555", margin: 0 }}>Could not load workers</p>
+                    <p style={{ fontSize: 12, color: "#333", marginTop: 6 }}>Check your connection and go back to try again.</p>
+                  </div>
+                ) : matches.length === 0 ? (
                   <div style={{ textAlign: "center", padding: "40px 0" }}>
                     <p style={{ fontSize: 28, margin: "0 0 10px" }}>😔</p>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: "#555", margin: 0 }}>No workers match your criteria</p>
-                    <p style={{ fontSize: 12, color: "#333", marginTop: 6 }}>Go back and try a different category or experience level.</p>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: "#555", margin: 0 }}>No workers found for {cat}</p>
+                    <p style={{ fontSize: 12, color: "#333", marginTop: 6 }}>Go back and try a different category.</p>
                   </div>
                 ) : (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                    {matches.map((w, i) => {
-                      const nearby = w.location === form.location;
-                      const isSel  = selected?.id === w.id;
-                      return (
-                        <div key={w.id} className="wrow" onClick={() => setSel(w)} style={{
-                          display: "flex", alignItems: "center", gap: 12,
-                          background: isSel ? "rgba(249,115,22,0.05)" : "#141414",
-                          border: `1px solid ${isSel ? "#f97316" : "#2a2a2a"}`,
-                          borderRadius: 12, padding: "12px 14px",
-                        }}>
-                          {/* avatar */}
-                          <div style={{
-                            flexShrink: 0, width: 40, height: 40, borderRadius: 999,
-                            background: "rgba(249,115,22,0.1)",
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            fontSize: 15, fontWeight: 800, color: "#f97316",
-                          }}>
-                            {w.name[0]}
-                          </div>
-                          {/* info */}
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                              <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
-                              {i === 0 && (
-                                <span style={{
-                                  fontSize: 9, fontWeight: 800, borderRadius: 999,
-                                  padding: "2px 7px", background: "rgba(249,115,22,0.12)", color: "#f97316",
-                                }}>
-                                  BEST MATCH
-                                </span>
-                              )}
-                            </div>
-                            <div style={{ display: "flex", alignItems: "center", gap: 7, marginTop: 4, flexWrap: "wrap" }}>
-                              <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
-                                <Star size={10} color="#f97316" fill="#f97316" />
-                                <span style={{ fontSize: 11, fontWeight: 700, color: "#f97316" }}>{w.rating}</span>
-                              </span>
-                              <span style={{ fontSize: 11, color: "#333" }}>·</span>
-                              <span style={{ fontSize: 11, color: "#444" }}>{w.jobs} jobs</span>
-                              <span style={{ fontSize: 11, color: "#333" }}>·</span>
-                              <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
-                                <MapPin size={10} color={nearby ? "#22c55e" : "#444"} />
-                                <span style={{ fontSize: 11, color: nearby ? "#22c55e" : "#444" }}>
-                                  {w.location}{nearby ? " · Nearby" : ""}
-                                </span>
-                              </span>
-                            </div>
-                          </div>
-                          {/* radio */}
-                          <div style={{
-                            flexShrink: 0, width: 20, height: 20, borderRadius: 999,
-                            border: `2px solid ${isSel ? "#f97316" : "#2a2a2a"}`,
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            transition: "border-color 0.15s",
-                          }}>
-                            {isSel && <div style={{ width: 10, height: 10, borderRadius: 999, background: "#f97316" }} />}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+                  <>
+                    <p style={{ margin: "0 0 14px", fontSize: 12, color: "#555" }}>
+                      {matches.length} worker{matches.length !== 1 ? "s" : ""} available for <strong style={{ color: "#aaa" }}>{cat}</strong>
+                      {form.district ? ` · sorted by proximity to ${form.district}` : ""}
+                    </p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      {matches.map((w, i) => {
+                        const isSel     = selected.some(s => s.id === w.id);
+                        const nearby    = (w.district ?? "") === form.district;
+                        const disabled  = isMulti && !isSel && selected.length >= headcountNum;
+                        return (
+                          <WorkerRow
+                            key={w.id} w={w} isSel={isSel} nearby={nearby}
+                            isFirst={i === 0} isMulti={isMulti} disabled={disabled}
+                            onClick={() => { if (!disabled) toggleWorker(w); }}
+                          />
+                        );
+                      })}
+                    </div>
+                  </>
                 )}
               </div>
             )}
@@ -368,151 +541,310 @@ export function HireModal({ onClose }: { onClose: () => void }) {
             {/* ── STEP 2: SUMMARY & PAY ── */}
             {step === 2 && (
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-
-                {/* Job summary */}
                 <SCard title="Job summary">
                   {([
-                    ["Category",    form.category],
-                    ["Workers",     `${parseInt(form.headcount) || 1}`],
-                    ["Date",        form.date ? new Date(form.date + "T00:00").toLocaleDateString("en-GB", { weekday:"short", day:"numeric", month:"short" }) : "-"],
-                    ["Time",        form.time || "-"],
-                    ["Location",    form.location],
-                    ...(form.notes ? [["Notes", form.notes]] : []),
+                    ["Category",  cat],
+                    ["Workers",   String(headcountNum)],
+                    ["Rate",      `${fmt(budget)}${RATE_LABEL[form.rateType]} × ${headcountNum} worker${headcountNum !== 1 ? "s" : ""} × ${durationNum} ${getUnit(form.rateType, durationNum)}`],
+                    ["Duration",  `${durationNum} ${getUnit(form.rateType, durationNum)}`],
+                    ["Date",      dateLabel],
+                    ["Time",      form.time || "-"],
+                    ["Province",  form.province || "-"],
+                    ["District",  form.district],
+                    ...(form.latitude != null ? [["GPS", `${form.latitude.toFixed(5)}, ${form.longitude!.toFixed(5)}`]] : []),
+                    ...(form.requirements ? [["Requirements", form.requirements]] : []),
                   ] as [string, string][]).map(([k, v]) => <SRow key={k} k={k} v={v} />)}
                 </SCard>
 
-                {/* Worker */}
-                {selected && (
-                  <SCard title="Your worker">
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "4px 0" }}>
-                      <div style={{
-                        width: 40, height: 40, borderRadius: 999, flexShrink: 0,
-                        background: "rgba(249,115,22,0.1)",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: 15, fontWeight: 800, color: "#f97316",
-                      }}>
-                        {selected.name[0]}
-                      </div>
-                      <div>
-                        <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{selected.name}</p>
-                        <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 3 }}>
-                          <Star size={10} color="#f97316" fill="#f97316" />
-                          <span style={{ fontSize: 11, color: "#f97316", fontWeight: 700 }}>{selected.rating}</span>
-                          <span style={{ fontSize: 11, color: "#444" }}>· {selected.jobs} jobs done</span>
+                {selected.length > 0 && (
+                  <SCard title={selected.length > 1 ? "Your workers" : "Your worker"}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      {selected.map(w => (
+                        <div key={w.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "4px 0" }}>
+                          <Avatar name={w.name} />
+                          <div>
+                            <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
+                            <p style={{ margin: "2px 0 0", fontSize: 11, color: "#555" }}>
+                              {catLabel(w.experienceType ?? "")}
+                              {w.district ? ` · ${w.district}` : ""}
+                            </p>
+                          </div>
                         </div>
-                      </div>
+                      ))}
                     </div>
                   </SCard>
                 )}
 
-                {/* Payment breakdown */}
-                <SCard title="Payment breakdown">
-                  <SRow k="Job amount"        v={fmt(budget)} />
-                  <SRow k="Platform fee (5%)" v={fmt(fee)} />
-                  <div style={{ borderTop: "1px solid #1e1e1e", marginTop: 8, paddingTop: 10, display: "flex", justifyContent: "space-between" }}>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: "#f0f0f0" }}>Total</span>
-                    <span style={{ fontSize: 15, fontWeight: 900, color: "#f97316" }}>{fmt(total)}</span>
-                  </div>
-                </SCard>
+                {/* ESCROW / WALLET BLOCK */}
+                <div style={{ marginTop: 24 }}>
+                  <p style={{ margin: "0 0 12px", fontSize: 13, fontWeight: 700, color: "#fff" }}>Payment</p>
 
-                {/* Payment method */}
-                <div>
-                  <p style={{ margin: "0 0 8px", fontSize: 11, fontWeight: 700, color: "#666", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                    Payment method
-                  </p>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
-                    {(["mtn", "airtel"] as PayMethod[]).map(m => (
-                      <button key={m} type="button" onClick={() => setPay(m)} style={{
-                        display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                        background: payMethod === m ? "rgba(249,115,22,0.07)" : "#141414",
-                        border: `1px solid ${payMethod === m ? "#f97316" : "#2a2a2a"}`,
-                        borderRadius: 10, padding: "11px", cursor: "pointer",
-                        transition: "border-color 0.15s",
-                      }}>
-                        <span style={{ fontSize: 15 }}>{m === "mtn" ? "🟡" : "🔴"}</span>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: payMethod === m ? "#f97316" : "#666" }}>
-                          {m === "mtn" ? "MTN MoMo" : "Airtel Money"}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                  <FField label="MoMo phone number *">
-                    <div style={{ position: "relative" }}>
-                      <Phone size={13} color="#444" style={iconL} />
-                      <input className="hire-inp" type="tel" placeholder="+250 7XX XXX XXX"
-                        value={momoNum} onChange={e => setMomo(e.target.value)}
-                        style={{ ...inp, paddingLeft: 32 }}
-                        onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-                        onBlur={e => (e.currentTarget.style.borderColor = "#2a2a2a")}
-                      />
+                  {/* escrow breakdown */}
+                  {total > 0 && (
+                    <div style={{ background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10, padding: "12px 14px", marginBottom: 12 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                        <span style={{ fontSize: 12, color: "#666" }}>Worker payout ({headcountNum} × {durationNum}h × {fmt(budget)})</span>
+                        <span style={{ fontSize: 12, color: "#d0d0d0", fontWeight: 600 }}>{fmt(jobAmount)}</span>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, paddingBottom: 8, borderBottom: "1px solid #1e1e1e" }}>
+                        <span style={{ fontSize: 12, color: "#666" }}>Platform fee (5%)</span>
+                        <span style={{ fontSize: 12, color: "#d0d0d0", fontWeight: 600 }}>{fmt(fee)}</span>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span style={{ fontSize: 13, color: "#aaa", fontWeight: 700 }}>Total escrow required</span>
+                        <span style={{ fontSize: 14, color: "#f97316", fontWeight: 800 }}>{fmt(total)}</span>
+                      </div>
                     </div>
-                  </FField>
-                </div>
+                  )}
 
-                {/* Escrow / refund notice */}
-                <div style={{
-                  background: "rgba(34,197,94,0.04)", border: "1px solid rgba(34,197,94,0.14)",
-                  borderRadius: 12, padding: "14px 16px", display: "flex", gap: 12,
-                }}>
-                  <Shield size={18} color="#22c55e" style={{ flexShrink: 0, marginTop: 2 }} />
-                  <div>
-                    <p style={{ margin: "0 0 5px", fontSize: 12, fontWeight: 700, color: "#22c55e" }}>
-                      Your payment is held until the work is done
-                    </p>
-                    <p style={{ margin: 0, fontSize: 11, color: "#555", lineHeight: 1.7 }}>
-                      {fmt(total)} is locked in escrow and only released to{" "}
-                      <strong style={{ color: "#aaa" }}>{selected?.name}</strong> after you confirm
-                      the job is complete. If the work is not done as agreed, raise a dispute within{" "}
-                      <strong style={{ color: "#aaa" }}>24 hours</strong> for a{" "}
-                      <strong style={{ color: "#aaa" }}>full refund</strong> - no questions asked.
-                    </p>
+                  {/* wallet balance */}
+                  <div style={{
+                    background: walletBal !== null && walletBal < total ? "rgba(239,68,68,0.06)" : "rgba(34,197,94,0.04)",
+                    border: `1px solid ${walletBal !== null && walletBal < total ? "rgba(239,68,68,0.2)" : "rgba(34,197,94,0.15)"}`,
+                    borderRadius: 10, padding: "12px 14px",
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: walletBal !== null && walletBal < total ? 8 : 0 }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={walletBal !== null && walletBal < total ? "#ef4444" : "#22c55e"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                      <span style={{ fontSize: 12, color: "#aaa" }}>Wallet balance</span>
+                      <span style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginLeft: "auto" }}>
+                        {walletBal !== null ? fmt(walletBal) : "—"}
+                      </span>
+                    </div>
+                    {walletBal !== null && walletBal < total && (
+                      <p style={{ margin: 0, fontSize: 12, color: "#ef4444", lineHeight: 1.5 }}>
+                        You need <strong>{fmt(total - walletBal)}</strong> more.{" "}
+                        <a href="/owner/payments" style={{ color: "#f97316", fontWeight: 700, textDecoration: "underline" }}>Top up wallet →</a>
+                      </p>
+                    )}
                   </div>
                 </div>
 
+                <p style={{ margin: "24px 0 0", fontSize: 11, color: "#444", lineHeight: 1.7, textAlign: "center" }}>
+                  By confirming, you agree to our terms of service.
+                </p>
               </div>
             )}
 
           </div>
 
           {/* FOOTER NAV */}
-          <div style={{
-            padding: "16px 24px 20px", flexShrink: 0,
-            borderTop: "1px solid #1e1e1e",
-            display: "flex", gap: 10,
-          }}>
+          <div style={{ padding: "16px 24px 20px", flexShrink: 0, borderTop: "1px solid #1e1e1e", display: "flex", gap: 10 }}>
             {step > 0 && (
-              <button onClick={() => setStep(s => s - 1)} style={btnBack}>
-                ← Back
-              </button>
+              <button onClick={() => setStep(s => s - 1)} style={btnBack}>← Back</button>
             )}
-
             {step < 2 ? (
               <button
                 onClick={() => { if (canNext[step]) setStep(s => s + 1); }}
                 disabled={!canNext[step]}
                 style={{ ...btnPrimary, flex: 1, opacity: canNext[step] ? 1 : 0.45, cursor: canNext[step] ? "pointer" : "not-allowed" }}
               >
-                {step === 1 && !selected ? "Select a worker to continue" : "Continue →"}
+                {step === 1 && !selectionValid && matches.length > 0
+                  ? `Select ${headcountNum - selected.length} more worker${headcountNum - selected.length !== 1 ? "s" : ""}`
+                  : "Continue →"}
               </button>
             ) : (
               <button
-                onClick={() => { if (canNext[2]) setDone(true); }}
-                disabled={!canNext[2]}
-                style={{ ...btnPrimary, flex: 1, opacity: canNext[2] ? 1 : 0.45, cursor: canNext[2] ? "pointer" : "not-allowed" }}
+                onClick={async () => {
+                  if (!canNext[2] || submitting) return;
+                  const token = localStorage.getItem("access_token");
+                  if (!token) { toastError("You must be signed in.", { title: "Not Signed In" }); return; }
+                  setSub(true);
+                  try {
+                    const startTime = form.date && form.time
+                      ? `${form.date}T${form.time}:00Z`
+                      : new Date().toISOString();
+                    const job = await postJob({
+                      category: form.category, district: form.district,
+                      province: form.province || undefined,
+                      latitude: form.latitude ?? undefined, longitude: form.longitude ?? undefined,
+                      ratePerHour: parseInt(form.budget) || 0,
+                      headcount: selected.length || 1,
+                      urgency: "IMMEDIATE",
+                      startTime, durationHours: parseInt(form.durationHours) || 1,
+                      rateType: form.rateType === "hr" ? "PER_HOUR" : form.rateType === "day" ? "PER_DAY" : form.rateType === "week" ? "PER_WEEK" : form.rateType === "month" ? "PER_MONTH" : "PER_YEAR",
+                    }, token);
+                    await Promise.all(selected.map(async w => {
+                      const app = await applyForJob(job.id as unknown as string, { bestFit: "Hire Now selection", appliedVia: "HIRE_NOW" }, token);
+                      await updateApplicationStatus(app.id as unknown as string, { status: "ACCEPTED" }, token);
+                    }));
+                    try { localStorage.removeItem(DRAFT_KEY); } catch {}
+                    setDone(true);
+                  } catch (e: any) {
+                    toastError(e?.response?.data?.message ?? "Payment failed. Please try again.", { title: "Hire Failed" });
+                  } finally { setSub(false); }
+                }}
+                disabled={!canNext[2] || submitting}
+                style={{ ...btnPrimary, flex: 1, opacity: (canNext[2] && !submitting) ? 1 : 0.45, cursor: (canNext[2] && !submitting) ? "pointer" : "not-allowed" }}
               >
-                {canNext[2] ? `Confirm & Pay ${fmt(total)}` : "Enter MoMo number to pay"}
+                {submitting
+                  ? "Processing…"
+                  : walletBal !== null && walletBal < total
+                  ? `Insufficient balance`
+                  : canNext[2]
+                  ? "Confirm & freeze funds"
+                  : "Complete all fields"}
               </button>
             )}
           </div>
-
+          <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
         </div>
       </Overlay>
     </>
   );
 }
 
-// ── primitives ───────────────────────────────────────────────────────────────
+// ── WorkerRow ─────────────────────────────────────────────────────────────────
+function WorkerRow({ w, isSel, nearby, isFirst, isMulti, disabled, onClick }: {
+  w: WorkerProfileDto; isSel: boolean; nearby: boolean;
+  isFirst: boolean; isMulti: boolean; disabled: boolean;
+  onClick: () => void;
+}) {
+  const year = sinceYear(w.memberSince as any);
+  const days = w.availability?.slice(0, 3) ?? [];
 
+  return (
+    <div className={`wrow${disabled ? " disabled" : ""}`} onClick={onClick} style={{
+      display: "flex", alignItems: "center", gap: 12,
+      background: isSel ? "rgba(249,115,22,0.05)" : "#141414",
+      border: `1px solid ${isSel ? "#f97316" : "#2a2a2a"}`,
+      borderRadius: 12, padding: "12px 14px",
+    }}>
+      <Avatar name={w.name} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+          <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
+          {isFirst && (
+            <span style={{ fontSize: 9, fontWeight: 800, borderRadius: 999, padding: "2px 7px", background: "rgba(249,115,22,0.12)", color: "#f97316" }}>
+              BEST MATCH
+            </span>
+          )}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4, flexWrap: "wrap" }}>
+          {w.experienceType && (
+            <span style={{ fontSize: 11, color: "#666" }}>{catLabel(w.experienceType)}</span>
+          )}
+          {w.district && (
+            <>
+              <span style={{ fontSize: 11, color: "#333" }}>·</span>
+              <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                <MapPin size={10} color={nearby ? "#22c55e" : "#444"} />
+                <span style={{ fontSize: 11, color: nearby ? "#22c55e" : "#555" }}>
+                  {w.district}{nearby ? " · Nearby" : ""}
+                </span>
+              </span>
+            </>
+          )}
+          <span style={{ fontSize: 11, color: "#333" }}>·</span>
+          <span style={{ fontSize: 11, color: "#444" }}>Since {year}</span>
+        </div>
+        {days.length > 0 && (
+          <div style={{ display: "flex", gap: 4, marginTop: 6, flexWrap: "wrap" }}>
+            {days.map(d => (
+              <span key={d} style={{
+                fontSize: 10, padding: "2px 6px", borderRadius: 6,
+                background: "#1e1e1e", border: "1px solid #2a2a2a", color: "#666",
+              }}>{d}</span>
+            ))}
+            {w.availability.length > 3 && (
+              <span style={{ fontSize: 10, color: "#444" }}>+{w.availability.length - 3} more</span>
+            )}
+          </div>
+        )}
+      </div>
+      {/* Selector */}
+      {isMulti ? (
+        <div style={{
+          flexShrink: 0, width: 18, height: 18, borderRadius: 4,
+          border: `2px solid ${isSel ? "#f97316" : "#2a2a2a"}`,
+          background: isSel ? "#f97316" : "transparent",
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>
+          {isSel && <span style={{ fontSize: 11, color: "#fff", fontWeight: 900, lineHeight: 1 }}>✓</span>}
+        </div>
+      ) : (
+        <div style={{
+          flexShrink: 0, width: 20, height: 20, borderRadius: 999,
+          border: `2px solid ${isSel ? "#f97316" : "#2a2a2a"}`,
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>
+          {isSel && <div style={{ width: 10, height: 10, borderRadius: 999, background: "#f97316" }} />}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Avatar ────────────────────────────────────────────────────────────────────
+function Avatar({ name }: { name: string }) {
+  return (
+    <div style={{
+      flexShrink: 0, width: 40, height: 40, borderRadius: 999,
+      background: "rgba(249,115,22,0.1)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      fontSize: 15, fontWeight: 800, color: "#f97316",
+    }}>
+      {name[0]?.toUpperCase()}
+    </div>
+  );
+}
+
+// ── SearchSelect ──────────────────────────────────────────────────────────────
+function SearchSelect({ options, value, onChange, placeholder, icon }: {
+  options: { value: string; label: string }[];
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  icon?: React.ReactNode;
+}) {
+  const [query, setQuery] = useState(options.find(o => o.value === value)?.label ?? "");
+  const [open,  setOpen]  = useState(false);
+
+  useEffect(() => {
+    setQuery(options.find(o => o.value === value)?.label ?? "");
+  }, [value, options]);
+
+  const filtered = options.filter(o => o.label.toLowerCase().includes(query.toLowerCase()));
+
+  return (
+    <div style={{ position: "relative" }}>
+      {icon}
+      <input
+        type="text" value={query} placeholder={placeholder}
+        onChange={e => { setQuery(e.target.value); setOpen(true); }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => {
+          setTimeout(() => {
+            setOpen(false);
+            setQuery(options.find(o => o.value === value)?.label ?? "");
+          }, 150);
+        }}
+        style={{ ...inp, paddingLeft: icon ? 32 : 14 }}
+        onFocusCapture={e => (e.currentTarget.style.borderColor = "#f97316")}
+        onBlurCapture={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+      />
+      {open && filtered.length > 0 && (
+        <div style={{
+          position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, zIndex: 300,
+          background: "#1a1a1a", border: "1px solid #2a2a2a", borderRadius: 10,
+          maxHeight: 200, overflowY: "auto", boxShadow: "0 8px 24px rgba(0,0,0,0.6)",
+        }}>
+          {filtered.map(o => (
+            <div key={o.value}
+              onMouseDown={e => { e.preventDefault(); onChange(o.value); setQuery(o.label); setOpen(false); }}
+              style={{ padding: "9px 14px", cursor: "pointer", fontSize: 13, color: value === o.value ? "#f97316" : "#d0d0d0" }}
+              onMouseEnter={e => (e.currentTarget.style.background = "#252525")}
+              onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+            >
+              {o.label}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── primitives ───────────────────────────────────────────────────────────────
 function Overlay({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
   return (
     <div onClick={onClose} style={{
@@ -538,33 +870,10 @@ function FField({ label, children }: { label: string; children: React.ReactNode 
   );
 }
 
-function Sel({ value, onChange, placeholder, children }: {
-  value: string;
-  onChange: React.ChangeEventHandler<HTMLSelectElement>;
-  placeholder?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div style={{ position: "relative" }}>
-      <select className="hire-sel" value={value} onChange={onChange}
-        style={{ ...inp, color: value ? "#f0f0f0" : "#444", paddingRight: 32 }}
-        onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-        onBlur={e => (e.currentTarget.style.borderColor = "#2a2a2a")}
-      >
-        {placeholder && <option value="">{placeholder}</option>}
-        {children}
-      </select>
-      <ChevronDown size={13} color="#555" style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
-    </div>
-  );
-}
-
 function SCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div style={{ background: "#141414", border: "1px solid #1e1e1e", borderRadius: 12, padding: "14px 16px" }}>
-      <p style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-        {title}
-      </p>
+      <p style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: "0.06em" }}>{title}</p>
       {children}
     </div>
   );
@@ -578,27 +887,3 @@ function SRow({ k, v }: { k: string; v: string }) {
     </div>
   );
 }
-
-// ── button styles ─────────────────────────────────────────────────────────────
-const modalCard: React.CSSProperties = {
-  background: "#1a1a1a", border: "1px solid #272727", borderRadius: 20,
-  width: "100%", maxWidth: 520, maxHeight: "92vh",
-  display: "flex", flexDirection: "column", overflow: "hidden",
-};
-
-const btnPrimary: React.CSSProperties = {
-  background: "#f97316", color: "#fff", border: "none",
-  borderRadius: 10, padding: "12px 20px", fontSize: 13,
-  fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
-};
-
-const btnBack: React.CSSProperties = {
-  background: "#141414", border: "1px solid #2a2a2a",
-  borderRadius: 10, padding: "12px 18px", fontSize: 13,
-  fontWeight: 600, color: "#aaa", cursor: "pointer", fontFamily: "inherit",
-};
-
-const iconL: React.CSSProperties = {
-  position: "absolute", left: 12, top: "50%",
-  transform: "translateY(-50%)", pointerEvents: "none",
-};

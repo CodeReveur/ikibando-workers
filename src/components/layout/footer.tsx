@@ -18,8 +18,8 @@ export default function Footer() {
       fontFamily: "Inter, DM Sans, system-ui, sans-serif",
     }}>
       <div>
-        <p style={{ margin: 0, fontWeight: 900, fontSize: 15, color: "#f97316" }}>Ikibando</p>
-        <p style={{ margin: "3px 0 0", fontSize: 11, color: "#444" }}>© 2026 Ikibando Company Ltd · Kigali, Rwanda</p>
+        <p style={{ margin: 0, fontWeight: 900, fontSize: 15, color: "#f97316" }}>MpahMapu</p>
+        <p style={{ margin: "3px 0 0", fontSize: 11, color: "#444" }}>© 2026 MpahMapu Company Ltd · Kigali, Rwanda</p>
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 18, fontSize: 12 }}>
         {links.map(({ href, label }) => (

@@ -2,14 +2,16 @@
 
 import { useState } from "react";
 import Footer from "@/components/layout/footer";
-import { Mail, Phone, MapPin, Send, MessageSquare, Clock } from "lucide-react";
+import { Mail, Phone, MapPin, Send, MessageSquare, Clock, Loader2 } from "lucide-react";
+import { submitContact } from "@/lib/api";
+import { useToast } from "@/components/ui/toast";
 
 const info = [
   {
     Icon: Mail,
     label: "Email us",
-    value: "ikibandoh@gmail.com",
-    href: "mailto:ikibandoh@gmail.com",
+    value: "MpahMapuh@gmail.com",
+    href: "mailto:MpahMapuh@gmail.com",
   },
   {
     Icon: Phone,
@@ -32,16 +34,31 @@ const info = [
 ];
 
 export default function ContactPage() {
-  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
-  const [sent, setSent] = useState(false);
+  const { error: toastError, success: toastSuccess } = useToast();
+  const [form, setForm]       = useState({ name: "", email: "", subject: "", message: "" });
+  const [sent, setSent]       = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const set = (k: keyof typeof form) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => setForm(f => ({ ...f, [k]: e.target.value }));
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSent(true);
+    if (!form.name || !form.email || !form.message) {
+      toastError("Please fill in all required fields.", { title: "Incomplete Form" });
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await submitContact(form);
+      toastSuccess("Your message has been sent. We'll get back to you within 24 hours.", { title: "Message Sent" });
+      setSent(true);
+    } catch {
+      toastError("Failed to send message. Please try again or email us directly.", { title: "Send Failed" });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -174,16 +191,19 @@ export default function ContactPage() {
                         />
                       </Field>
 
-                      <button type="submit" style={{
+                      <button type="submit" disabled={submitting} style={{
                         display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                        background: "#f97316", color: "#fff", border: "none",
-                        borderRadius: 10, padding: "13px", fontSize: 14, fontWeight: 700, cursor: "pointer",
+                        background: submitting ? "#c2601a" : "#f97316", color: "#fff", border: "none",
+                        borderRadius: 10, padding: "13px", fontSize: 14, fontWeight: 700,
+                        cursor: submitting ? "not-allowed" : "pointer", opacity: submitting ? 0.8 : 1,
                       }}
-                        onMouseEnter={e => (e.currentTarget.style.background = "#ea6a0a")}
-                        onMouseLeave={e => (e.currentTarget.style.background = "#f97316")}
+                        onMouseEnter={e => { if (!submitting) e.currentTarget.style.background = "#ea6a0a"; }}
+                        onMouseLeave={e => { if (!submitting) e.currentTarget.style.background = "#f97316"; }}
                       >
-                        <Send size={14} /> Send message
+                        {submitting ? <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} /> : <Send size={14} />}
+                        {submitting ? "Sending…" : "Send message"}
                       </button>
+                      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
                     </form>
                   )}
                 </div>

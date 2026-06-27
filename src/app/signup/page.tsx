@@ -1,18 +1,210 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, Mail, Lock, User, Phone } from "lucide-react";
 import { AuthCarousel } from "@/components/auth/auth-carousel";
+import { saveRedirect } from "@/lib/auth-redirect";
+import { useGoogleLogin } from "@react-oauth/google";
+import { loginWithGoogle, loginWithFacebook, registerWithEmail } from "@/lib/api";
+import { getAndClearRedirect } from "@/lib/auth-redirect";
+import { RegistrationWizard } from "@/components/auth/registration-wizard";
+import { useToast } from "@/components/ui/toast";
 
-type Role = "worker" | "employer";
+declare global {
+  interface Window {
+    FB?: {
+      init: (opts: object) => void;
+      login: (
+        cb: (res: { authResponse?: { accessToken: string } }) => void,
+        opts: object
+      ) => void;
+    };
+    fbAsyncInit?: () => void;
+  }
+}
 
 export default function SignUpPage() {
-  const [role, setRole] = useState<Role>("worker");
+  const { error: toastError } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", password: "" });
+  const [loading, setLoading] = useState<"google" | "facebook" | "email" | null>(null);
+  const [fieldErrors, setFieldErrors] = useState({ name: "", email: "", phone: "", password: "" });
+  const [showWizard, setShowWizard] = useState(false);
+  const [authResult, setAuthResult] = useState<any>(null);
+  const [showRoleSelect, setShowRoleSelect] = useState(false);
+  const fbReady = useRef(false);
 
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((f) => ({ ...f, [k]: e.target.value }));
+    if (fieldErrors[k]) setFieldErrors((f) => ({ ...f, [k]: "" }));
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let raw = e.target.value;
+    if (!raw.startsWith("+")) raw = "+" + raw.replace(/\+/g, "");
+    
+    let formatted = raw;
+    const spaceIdx = raw.indexOf(" ");
+    
+    if (spaceIdx > 0 && spaceIdx <= 5) {
+      let cc = raw.slice(0, spaceIdx).replace(/[^\d+]/g, "");
+      let rest = raw.slice(spaceIdx).replace(/\D/g, "");
+      let grouped = rest.match(/.{1,3}/g)?.join(" ") || "";
+      formatted = grouped ? `${cc} ${grouped}` : cc + " ";
+    } else {
+      let cleaned = raw.replace(/[^\d+]/g, "");
+      let cc = cleaned.slice(0, 4);
+      let rest = cleaned.slice(4).match(/.{1,3}/g)?.join(" ") || "";
+      formatted = rest ? `${cc} ${rest}` : cc;
+    }
+    
+    setForm((f) => ({ ...f, phone: formatted }));
+    if (fieldErrors.phone) setFieldErrors((f) => ({ ...f, phone: "" }));
+  };
+
+  const handleBlur = (field: keyof typeof form) => {
+    let err = "";
+    if (field === "name" && !form.name.trim()) err = "Name is required.";
+    if (field === "email") {
+      if (!form.email) err = "Email is required.";
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) err = "Please enter a valid email address.";
+    }
+    if (field === "phone") {
+      if (!form.phone) err = "Phone number is required.";
+      else if (!/^\+\d{1,4}\s?\d{6,14}$/.test(form.phone.replace(/[\s-]/g, ""))) err = "Invalid phone number format.";
+    }
+    if (field === "password") {
+      if (!form.password) err = "Password is required.";
+      else if (form.password.length < 8) err = "Password must be at least 8 characters.";
+    }
+    setFieldErrors((f) => ({ ...f, [field]: err }));
+  };
+
+  /* ── Facebook SDK bootstrap ──────────────────────────────────────────── */
+  useEffect(() => {
+    const appId = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID;
+    if (!appId) return;
+
+    window.fbAsyncInit = () => {
+      window.FB?.init({ appId, version: "v19.0", xfbml: false, cookie: false });
+      fbReady.current = true;
+    };
+
+    if (!document.getElementById("facebook-jssdk")) {
+      const s = document.createElement("script");
+      s.id = "facebook-jssdk";
+      s.src = "https://connect.facebook.net/en_US/sdk.js";
+      s.async = true;
+      s.defer = true;
+      document.body.appendChild(s);
+    }
+
+    // Auto-detect country code for phone number
+    fetch("https://ipapi.co/country_calling_code/")
+      .then((res) => res.text())
+      .then((code) => {
+        if (code && code.startsWith("+")) {
+          setForm((f) => ({ ...f, phone: code + " " }));
+        }
+      })
+      .catch(() => {
+        setForm((f) => ({ ...f, phone: "+250 " }));
+      });
+  }, []);
+
+  /* ── Google handler ─────────────────────────────────────────────────── */
+  const handleGoogle = useGoogleLogin({
+    onSuccess: async ({ access_token }) => {
+      setLoading("google");
+      try {
+        const result = await loginWithGoogle(access_token);
+        if (!result.user.onboardingCompleted) {
+          setAuthResult(result);
+          setShowRoleSelect(true);
+          setShowWizard(true);
+        } else {
+          saveAndRedirect(result);
+        }
+      } catch {
+        toastError("Google sign-up failed. Please try again.", { title: "Sign Up Failed" });
+      } finally {
+        setLoading(null);
+      }
+    },
+    onError: () => toastError("Google sign-up was cancelled or failed.", { title: "Sign Up Failed" }),
+  });
+
+  /* ── Facebook handler ───────────────────────────────────────────────── */
+  const handleFacebook = () => {
+    if (window.location.protocol !== "https:") {
+      toastError("Facebook sign-up requires HTTPS. Use email or Google during local development.", { title: "Sign Up Failed" });
+      return;
+    }
+    if (!window.FB) {
+      toastError("Facebook sign-in is not available (App ID not configured).", { title: "Sign Up Failed" });
+      return;
+    }
+    window.FB.login(
+      (res) => {
+        if (!res.authResponse?.accessToken) return;
+        setLoading("facebook");
+        loginWithFacebook(res.authResponse.accessToken)
+          .then((result) => {
+            if (!result.user.onboardingCompleted) {
+              setAuthResult(result);
+              setShowRoleSelect(true);
+              setShowWizard(true);
+            } else {
+              saveAndRedirect(result);
+            }
+          })
+          .catch(() => {
+            toastError("Facebook sign-up failed. Please try again.", { title: "Sign Up Failed" });
+          })
+          .finally(() => {
+            setLoading(null);
+          });
+      },
+      { scope: "public_profile,email" }
+    );
+  };
+
+  /* ── Email / password handler ───────────────────────────────────────── */
+  const handleSubmit = async () => {
+    // Validate all
+    let hasError = false;
+    const newErrors = { name: "", email: "", phone: "", password: "" };
+
+    if (!form.name.trim()) { newErrors.name = "Name is required."; hasError = true; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) { newErrors.email = "Please enter a valid email address."; hasError = true; }
+    if (!/^\+\d{1,4}\s?\d{6,14}$/.test(form.phone.replace(/[\s-]/g, ""))) { newErrors.phone = "Invalid phone number format."; hasError = true; }
+    if (form.password.length < 8) { newErrors.password = "Password must be at least 8 characters."; hasError = true; }
+
+    setFieldErrors(newErrors);
+    if (hasError) {
+      toastError("Please fill in all required fields correctly.", { title: "Sign Up Failed" });
+      return;
+    }
+
+    setLoading("email");
+    try {
+      const result = await registerWithEmail({ ...form, role: "WORKER" });
+      if (!result.user.onboardingCompleted) {
+        setAuthResult(result);
+        setShowRoleSelect(true);
+        setShowWizard(true);
+      } else {
+        saveAndRedirect(result);
+      }
+    } catch (e: unknown) {
+      const msg =
+        (e as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+        "Registration failed. Please try again.";
+      toastError(msg, { title: "Sign Up Failed" });
+    } finally {
+      setLoading(null);
+    }
+  };
 
   return (
     <>
@@ -23,23 +215,21 @@ export default function SignUpPage() {
       `}</style>
 
       <div style={{
-        display: "flex", height: "100vh", overflow: "hidden", 
+        display: "flex", height: "100vh", overflow: "hidden",
         background: "#111", fontFamily: "Inter, DM Sans, system-ui, sans-serif",
       }}>
-        {/* LEFT - Carousel */}
+        {/* LEFT */}
         <div className="auth-left" style={{ flex: "0 0 48%", borderRight: "1px solid #1e1e1e" }}>
           <AuthCarousel />
         </div>
 
-        {/* RIGHT - Form */}
+        {/* RIGHT */}
         <div style={{
           flex: 1, overflowY: "auto",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          padding: "40px 24px",
+          display: "flex", alignItems: "flex-start", justifyContent: "center",
+          padding: "60px 24px 40px",
         }}>
-          <div style={{ width: "100%", maxWidth: 380 , marginTop: 240 }}>
-
-            <style>{`.auth-mobile-logo { display: block; } @media (min-width: 860px) { .auth-mobile-logo { display: none; } }`}</style>
+          <div style={{ width: "100%", maxWidth: 380 }}>
 
             <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 6px", letterSpacing: "-0.5px" }}>
               Create an account
@@ -48,68 +238,55 @@ export default function SignUpPage() {
               Join Rwanda&apos;s trusted workforce platform
             </p>
 
-            {/* Role toggle */}
-            <div style={{
-              display: "grid", gridTemplateColumns: "1fr 1fr",
-              background: "#141414", border: "1px solid #272727",
-              borderRadius: 12, padding: 4, marginBottom: 22,
-            }}>
-              {(["worker", "employer"] as Role[]).map((r) => (
-                <button key={r} type="button" onClick={() => setRole(r)} style={{
-                  background: role === r ? "#f97316" : "transparent",
-                  color: role === r ? "#fff" : "#555",
-                  border: "none", borderRadius: 9, padding: "9px",
-                  fontSize: 13, fontWeight: 700, cursor: "pointer",
-                  transition: "background 0.15s, color 0.15s",
-                }}>
-                  {r === "worker" ? "Find Work" : "Hire Workers"}
-                </button>
-              ))}
-            </div>
-
             {/* Social */}
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 22 }}>
-              <SocialBtn icon={<GoogleIcon />} label="Continue with Google" />
-              <SocialBtn icon={<FacebookIcon />} label="Continue with Facebook" />
+              <SocialBtn
+                icon={<GoogleIcon />}
+                label={loading === "google" ? "Signing in…" : "Continue with Google"}
+                disabled={loading !== null}
+                onClick={() => handleGoogle()}
+              />
+              <SocialBtn
+                icon={<FacebookIcon />}
+                label={loading === "facebook" ? "Signing in…" : "Continue with Facebook"}
+                disabled={loading !== null}
+                onClick={handleFacebook}
+              />
             </div>
 
             <Divider />
 
-            {/* Full name */}
-            <Field label="Full name">
+            <Field label="Full name" error={fieldErrors.name}>
               <InputRow icon={<User size={14} color="#444" />}>
                 <input type="text" placeholder="Jean Pierre Mugisha" value={form.name}
                   onChange={set("name")} style={inputStyle}
                   onFocus={(e) => (e.currentTarget.style.borderColor = "#f97316")}
-                  onBlur={(e) => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = "#2a2a2a"; handleBlur("name"); }}
                 />
               </InputRow>
             </Field>
 
-            {/* Email */}
-            <Field label="Email">
+            <Field label="Email" error={fieldErrors.email}>
               <InputRow icon={<Mail size={14} color="#444" />}>
                 <input type="email" placeholder="you@example.com" value={form.email}
                   onChange={set("email")} style={inputStyle}
                   onFocus={(e) => (e.currentTarget.style.borderColor = "#f97316")}
-                  onBlur={(e) => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = "#2a2a2a"; handleBlur("email"); }}
                 />
               </InputRow>
             </Field>
 
-            {/* Phone */}
-            <Field label="Phone (MoMo)">
+            <Field label="Phone (MoMo)" error={fieldErrors.phone}>
               <InputRow icon={<Phone size={14} color="#444" />}>
                 <input type="tel" placeholder="+250 7XX XXX XXX" value={form.phone}
-                  onChange={set("phone")} style={inputStyle}
+                  onChange={handlePhoneChange} style={inputStyle}
                   onFocus={(e) => (e.currentTarget.style.borderColor = "#f97316")}
-                  onBlur={(e) => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = "#2a2a2a"; handleBlur("phone"); }}
                 />
               </InputRow>
             </Field>
 
-            {/* Password */}
-            <Field label="Password">
+            <Field label="Password" error={fieldErrors.password}>
               <InputRow icon={<Lock size={14} color="#444" />} suffix={
                 <button type="button" onClick={() => setShowPassword(!showPassword)}
                   style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: "#444", display: "flex" }}>
@@ -119,16 +296,20 @@ export default function SignUpPage() {
                 <input type={showPassword ? "text" : "password"} placeholder="Min. 8 characters" value={form.password}
                   onChange={set("password")} style={inputStyle}
                   onFocus={(e) => (e.currentTarget.style.borderColor = "#f97316")}
-                  onBlur={(e) => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = "#2a2a2a"; handleBlur("password"); }}
                 />
               </InputRow>
             </Field>
 
-            <button type="submit" style={submitStyle}
+            <button
+              type="button"
+              disabled={loading === "email"}
+              onClick={handleSubmit}
+              style={{ ...submitStyle, opacity: loading === "email" ? 0.7 : 1 }}
               onMouseEnter={(e) => (e.currentTarget.style.background = "#ea6a0a")}
               onMouseLeave={(e) => (e.currentTarget.style.background = "#f97316")}
             >
-              Create account
+              {loading === "email" ? "Creating account…" : "Create account"}
             </button>
 
             <p style={{ fontSize: 11, color: "#444", textAlign: "center", margin: "14px 0 0", lineHeight: 1.6 }}>
@@ -139,27 +320,66 @@ export default function SignUpPage() {
 
             <p style={{ textAlign: "center", fontSize: 13, color: "#555", marginTop: 18 }}>
               Already have an account?{" "}
-              <a href="/signin" style={{ color: "#f97316", textDecoration: "none", fontWeight: 700 }}>Sign in</a>
+              <a
+                href="/signin"
+                style={{ color: "#f97316", textDecoration: "none", fontWeight: 700 }}
+                onClick={() => {
+                  const existing = sessionStorage.getItem("auth_redirect");
+                  if (!existing) saveRedirect();
+                }}
+              >Sign in</a>
             </p>
           </div>
         </div>
       </div>
+      {showWizard && authResult && (
+        <RegistrationWizard
+          email={form.email || authResult?.user?.email || ""}
+          authResult={authResult}
+          showRoleSelect={showRoleSelect}
+          onComplete={() => saveAndRedirect(authResult)}
+        />
+      )}
     </>
   );
 }
 
-/* ── shared sub-components ── */
+/* ── Helpers ─────────────────────────────────────────────────────────────── */
 
-function SocialBtn({ icon, label }: { icon: React.ReactNode; label: string }) {
+type AuthResult = Awaited<ReturnType<typeof registerWithEmail>>;
+
+function saveAndRedirect(result: AuthResult) {
+  localStorage.setItem("access_token", result.accessToken);
+  localStorage.setItem("refresh_token", result.refreshToken);
+  localStorage.setItem("user", JSON.stringify(result.user));
+  const stored = getAndClearRedirect();
+  const defaultDest = result.user.role === "EMPLOYER" ? "/owner" : "/seeker";
+  window.location.href = stored || defaultDest;
+}
+
+/* ── Sub-components ──────────────────────────────────────────────────────── */
+
+function SocialBtn({
+  icon, label, disabled, onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  disabled?: boolean;
+  onClick: () => void;
+}) {
   return (
-    <button type="button" style={{
-      display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
-      width: "100%", background: "#1a1a1a", border: "1px solid #2a2a2a",
-      borderRadius: 10, padding: "11px 16px", fontSize: 13, fontWeight: 600,
-      color: "#d0d0d0", cursor: "pointer",
-    }}
-      onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#f97316")}
-      onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#2a2a2a")}
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      style={{
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+        width: "100%", background: "#1a1a1a", border: "1px solid #2a2a2a",
+        borderRadius: 10, padding: "11px 16px", fontSize: 13, fontWeight: 600,
+        color: disabled ? "#555" : "#d0d0d0", cursor: disabled ? "not-allowed" : "pointer",
+      }}
+      onMouseEnter={(e) => { if (!disabled) e.currentTarget.style.borderColor = "#f97316"; }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#2a2a2a"; }}
     >
       {icon}{label}
     </button>
@@ -176,11 +396,12 @@ function Divider() {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 14 }}>
       <label style={{ fontSize: 12, fontWeight: 600, color: "#aaa", display: "block", marginBottom: 6 }}>{label}</label>
       {children}
+      {error && <div style={{ color: "#f87171", fontSize: 11, marginTop: 6 }}>{error}</div>}
     </div>
   );
 }

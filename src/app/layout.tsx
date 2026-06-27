@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/navbar";
 import { ContentWrapper } from "@/components/layout/content-wrapper";
+import { Providers } from "@/components/providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -11,13 +12,13 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Ikibando",
-    template: "%s | Ikibando",
+    default: "MpahMapu",
+    template: "%s | MpahMapu",
   },
   description:
     "Find verified workers instantly or get hired for a job today. Rwanda's trusted on-demand workforce platform.",
   keywords: [
-    "Ikibando",
+    "MpahMapu",
     "Rwanda jobs",
     "Kigali jobs",
     "casual work",
@@ -28,23 +29,23 @@ export const metadata: Metadata = {
   ],
   authors: [
     {
-      name: "Ikibando",
+      name: "MpahMapu",
     },
   ],
-  creator: "Ikibando",
-  applicationName: "Ikibando",
+  creator: "MpahMapu",
+  applicationName: "MpahMapu",
   openGraph: {
-    title: "Ikibando",
+    title: "MpahMapu",
     description:
       "Find verified workers instantly or get hired for a job today.",
     url: "/",
-    siteName: "Ikibando",
+    siteName: "MpahMapu",
     locale: "en_RW",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ikibando",
+    title: "MpahMapu",
     description:
       "Find verified workers instantly or get hired for a job today.",
   },
@@ -71,8 +72,10 @@ export default function RootLayout({
       <body
         className={`${inter.className} min-h-screen bg-white text-gray-900 antialiased`}
       >
-        <Navbar />
-        <ContentWrapper>{children}</ContentWrapper>
+        <Providers>
+          <Navbar />
+          <ContentWrapper>{children}</ContentWrapper>
+        </Providers>
       </body>
     </html>
   );

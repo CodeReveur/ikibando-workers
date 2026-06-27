@@ -1,13 +1,152 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { AuthCarousel } from "@/components/auth/auth-carousel";
+import { saveRedirect } from "@/lib/auth-redirect";
+import { useGoogleLogin } from "@react-oauth/google";
+import { loginWithGoogle, loginWithFacebook, loginWithEmail } from "@/lib/api";
+import { getAndClearRedirect } from "@/lib/auth-redirect";
+import { RegistrationWizard } from "@/components/auth/registration-wizard";
+import { BadgeSubmissionWizard } from "@/components/auth/badge-submission-wizard";
+import { useToast } from "@/components/ui/toast";
+
+declare global {
+  interface Window {
+    FB?: {
+      init: (opts: object) => void;
+      login: (
+        cb: (res: { authResponse?: { accessToken: string } }) => void,
+        opts: object
+      ) => void;
+    };
+    fbAsyncInit?: () => void;
+  }
+}
 
 export default function SignInPage() {
+  const { error: toastError } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState<"google" | "facebook" | "email" | null>(null);
+  const [showWizard, setShowWizard] = useState(false);
+  const [showBadgeWizard, setShowBadgeWizard] = useState(false);
+  const [authResult, setAuthResult] = useState<any>(null);
+  const fbReady = useRef(false);
+
+  /* ── Facebook SDK bootstrap ──────────────────────────────────────────── */
+  useEffect(() => {
+    const appId = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID;
+    if (!appId) return;
+
+    window.fbAsyncInit = () => {
+      window.FB?.init({ appId, version: "v19.0", xfbml: false, cookie: false });
+      fbReady.current = true;
+    };
+
+    if (!document.getElementById("facebook-jssdk")) {
+      const s = document.createElement("script");
+      s.id = "facebook-jssdk";
+      s.src = "https://connect.facebook.net/en_US/sdk.js";
+      s.async = true;
+      s.defer = true;
+      document.body.appendChild(s);
+    }
+  }, []);
+
+  /* ── Google handler ─────────────────────────────────────────────────── */
+  const handleGoogle = useGoogleLogin({
+    onSuccess: async ({ access_token }) => {
+      setLoading("google");
+      try {
+        const result = await loginWithGoogle(access_token);
+        if (!result.user.onboardingCompleted) {
+          setAuthResult(result);
+          setShowWizard(true);
+        } else if (result.user.role === "WORKER" && !result.user.badgeSubmitted) {
+          setAuthResult(result);
+          setShowBadgeWizard(true);
+        } else {
+          saveAndRedirect(result);
+        }
+      } catch {
+        toastError("Google sign-in failed. Please try again.", { title: "Login Failed" });
+      } finally {
+        setLoading(null);
+      }
+    },
+    onError: () => toastError("Google sign-in was cancelled or failed.", { title: "Login Failed" }),
+  });
+
+  /* ── Facebook handler ───────────────────────────────────────────────── */
+  const handleFacebook = () => {
+    if (window.location.protocol !== "https:") {
+      toastError("Facebook sign-in requires HTTPS. Use email or Google during local development.", { title: "Login Failed" });
+      return;
+    }
+    if (!window.FB) {
+      toastError("Facebook sign-in is not available (App ID not configured).", { title: "Login Failed" });
+      return;
+    }
+    window.FB.login(
+      (res) => {
+        if (!res.authResponse?.accessToken) return;
+        setLoading("facebook");
+        loginWithFacebook(res.authResponse.accessToken)
+          .then((result) => {
+            if (!result.user.onboardingCompleted) {
+              setAuthResult(result);
+              setShowWizard(true);
+            } else if (result.user.role === "WORKER" && !result.user.badgeSubmitted) {
+              setAuthResult(result);
+              setShowBadgeWizard(true);
+            } else {
+              saveAndRedirect(result);
+            }
+          })
+          .catch(() => {
+            toastError("Facebook sign-in failed. Please try again.", { title: "Login Failed" });
+          })
+          .finally(() => {
+            setLoading(null);
+          });
+      },
+      { scope: "public_profile,email" }
+    );
+  };
+
+  /* ── Email / password handler ───────────────────────────────────────── */
+  const handleSubmit = async () => {
+    if (!email || !password) {
+      toastError("Please enter your email and password.", { title: "Login Failed" });
+      return;
+    }
+    setLoading("email");
+    try {
+      const result = await loginWithEmail({ email, password });
+      if (!result.user.onboardingCompleted) {
+        setAuthResult(result);
+        setShowWizard(true);
+      } else if (result.user.role === "WORKER" && !result.user.badgeSubmitted) {
+        setAuthResult(result);
+        setShowBadgeWizard(true);
+      } else {
+        saveAndRedirect(result);
+      }
+    } catch (e: unknown) {
+      const msg =
+        (e as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+        "Invalid email or password.";
+      const isSocial = msg.includes("Google or Facebook");
+      toastError(msg, {
+        title: "Login Failed",
+        action: isSocial ? { label: "Set a password via Forgot Password", href: "/forgot-password" } : undefined,
+      });
+    } finally {
+      setLoading(null);
+    }
+  };
 
   return (
     <>
@@ -34,19 +173,27 @@ export default function SignInPage() {
         }}>
           <div style={{ width: "100%", maxWidth: 380 }}>
 
-            <style>{`.auth-mobile-logo { display: block; } @media (min-width: 860px) { .auth-mobile-logo { display: none; } }`}</style>
-
             <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 6px", letterSpacing: "-0.5px" }}>
               Welcome back
             </h1>
             <p style={{ fontSize: 13, color: "#555", margin: "0 0 28px" }}>
-              Sign in to your Ikibando account
+              Sign in to your MpahMapu account
             </p>
 
             {/* Social */}
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 22 }}>
-              <SocialBtn icon={<GoogleIcon />} label="Continue with Google" />
-              <SocialBtn icon={<FacebookIcon />} label="Continue with Facebook" />
+              <SocialBtn
+                icon={<GoogleIcon />}
+                label={loading === "google" ? "Signing in…" : "Continue with Google"}
+                disabled={loading !== null}
+                onClick={() => handleGoogle()}
+              />
+              <SocialBtn
+                icon={<FacebookIcon />}
+                label={loading === "facebook" ? "Signing in…" : "Continue with Facebook"}
+                disabled={loading !== null}
+                onClick={handleFacebook}
+              />
             </div>
 
             <Divider />
@@ -86,36 +233,93 @@ export default function SignInPage() {
               </InputRow>
             </Field>
 
-            <button type="submit" style={submitStyle}
+            <button
+              type="button"
+              disabled={loading === "email"}
+              onClick={handleSubmit}
+              style={{ ...submitStyle, opacity: loading === "email" ? 0.7 : 1 }}
               onMouseEnter={(e) => (e.currentTarget.style.background = "#ea6a0a")}
               onMouseLeave={(e) => (e.currentTarget.style.background = "#f97316")}
             >
-              Sign in
+              {loading === "email" ? "Signing in…" : "Sign in"}
             </button>
 
             <p style={{ textAlign: "center", fontSize: 13, color: "#555", marginTop: 20 }}>
               Don&apos;t have an account?{" "}
-              <a href="/signup" style={{ color: "#f97316", textDecoration: "none", fontWeight: 700 }}>Sign up</a>
+              <a
+                href="/signup"
+                style={{ color: "#f97316", textDecoration: "none", fontWeight: 700 }}
+                onClick={() => {
+                  // Re-save so sessionStorage survives the page navigation
+                  const existing = sessionStorage.getItem("auth_redirect");
+                  if (!existing) saveRedirect();
+                }}
+              >Sign up</a>
             </p>
           </div>
         </div>
       </div>
+      {showWizard && authResult && (
+        <RegistrationWizard
+          email={authResult.user.email}
+          authResult={authResult}
+          isLogin={true}
+          onComplete={() => {
+            if (authResult.user.role === "WORKER" && !authResult.user.badgeSubmitted) {
+              setShowWizard(false);
+              setShowBadgeWizard(true);
+            } else {
+              saveAndRedirect(authResult);
+            }
+          }}
+        />
+      )}
+      {showBadgeWizard && authResult && (
+        <BadgeSubmissionWizard
+          authResult={authResult}
+          onComplete={() => saveAndRedirect(authResult)}
+        />
+      )}
     </>
   );
 }
 
-/* ── shared sub-components ── */
+/* ── Helpers ─────────────────────────────────────────────────────────────── */
 
-function SocialBtn({ icon, label }: { icon: React.ReactNode; label: string }) {
+type AuthResult = Awaited<ReturnType<typeof loginWithEmail>>;
+
+function saveAndRedirect(result: AuthResult) {
+  localStorage.setItem("access_token", result.accessToken);
+  localStorage.setItem("refresh_token", result.refreshToken);
+  localStorage.setItem("user", JSON.stringify(result.user));
+  const stored = getAndClearRedirect();
+  const defaultDest = result.user.role === "EMPLOYER" ? "/owner" : "/seeker";
+  window.location.href = stored || defaultDest;
+}
+
+/* ── Sub-components ──────────────────────────────────────────────────────── */
+
+function SocialBtn({
+  icon, label, disabled, onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  disabled?: boolean;
+  onClick: () => void;
+}) {
   return (
-    <button type="button" style={{
-      display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
-      width: "100%", background: "#1a1a1a", border: "1px solid #2a2a2a",
-      borderRadius: 10, padding: "11px 16px", fontSize: 13, fontWeight: 600,
-      color: "#d0d0d0", cursor: "pointer",
-    }}
-      onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#f97316")}
-      onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#2a2a2a")}
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      style={{
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+        width: "100%", background: "#1a1a1a", border: "1px solid #2a2a2a",
+        borderRadius: 10, padding: "11px 16px", fontSize: 13, fontWeight: 600,
+        color: disabled ? "#555" : "#d0d0d0", cursor: disabled ? "not-allowed" : "pointer",
+      }}
+      onMouseEnter={(e) => { if (!disabled) e.currentTarget.style.borderColor = "#f97316"; }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#2a2a2a"; }}
     >
       {icon}{label}
     </button>
@@ -132,7 +336,13 @@ function Divider() {
   );
 }
 
-function Field({ label, extra, children }: { label: string; extra?: React.ReactNode; children: React.ReactNode }) {
+function Field({
+  label, extra, children,
+}: {
+  label: string;
+  extra?: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
     <div style={{ marginBottom: 14 }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
