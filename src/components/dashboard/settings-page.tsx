@@ -1394,6 +1394,34 @@ function AccountTab({
         </div>
       </div>
 
+      {/* Worker Badge card */}
+      {isWorker && session.badgeId && session.badgeUrl && (
+        <div style={card}>
+          <div style={cardHeader}>
+            <Shield size={14} color="#555" />
+            <p style={cardHeaderLabel}>Worker Badge</p>
+          </div>
+          <div style={{ ...cardBody, display: "flex", alignItems: "center", gap: 20 }}>
+            {session.photoUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={session.photoUrl} alt="Badge Photo" style={{ width: 64, height: 64, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(249,115,22,0.3)" }} />
+            )}
+            <div style={{ flex: 1 }}>
+              <p style={{ margin: "0 0 4px", fontSize: 13, color: "#aaa" }}>Your verified worker badge ID is <strong style={{ color: "#f97316" }}>{session.badgeId}</strong>.</p>
+              <p style={{ margin: "0 0 14px", fontSize: 12, color: "#666" }}>You can use this badge to identify yourself to employers.</p>
+              <a
+                href={session.badgeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ ...primaryBtn, fontSize: 12, padding: "8px 16px" }}
+              >
+                View / Download PDF
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Danger zone */}
       <div style={{ ...card, border: "1px solid #2a1111" }}>
         <div style={{ ...cardHeader, borderBottom: "1px solid #2a1111" }}>

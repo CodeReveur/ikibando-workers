@@ -84,23 +84,32 @@ export default function SeekerHome() {
           </p>
         </div>
         {session?.badgeId && (
-          <div style={{ 
-            background: "linear-gradient(135deg, #f97316 0%, #ea6a0a 100%)", 
-            padding: "8px 16px", 
-            borderRadius: "12px", 
-            display: "flex", 
-            alignItems: "center", 
-            gap: "12px",
-            boxShadow: "0 4px 14px rgba(249, 115, 22, 0.2)"
-          }}>
+          <a 
+            href={session.badgeUrl || "#"} 
+            target="_blank" 
+            rel="noreferrer"
+            style={{ 
+              background: "linear-gradient(135deg, #f97316 0%, #ea6a0a 100%)", 
+              padding: "8px 16px", 
+              borderRadius: "12px", 
+              display: "flex", 
+              alignItems: "center", 
+              gap: "12px",
+              boxShadow: "0 4px 14px rgba(249, 115, 22, 0.2)",
+              textDecoration: "none",
+              cursor: "pointer"
+            }}
+            title="Click to view/download badge"
+          >
             {session.photoUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
               <img src={session.photoUrl} alt="Badge Photo" style={{ width: 36, height: 36, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(255,255,255,0.3)" }} />
             )}
             <div>
               <p style={{ margin: 0, fontSize: 10, textTransform: "uppercase", fontWeight: 800, color: "rgba(255,255,255,0.8)", letterSpacing: "1px" }}>Worker Badge</p>
               <p style={{ margin: 0, fontSize: 15, fontWeight: 900, color: "#fff", letterSpacing: "1px" }}>{session.badgeId}</p>
             </div>
-          </div>
+          </a>
         )}
       </div>
 
