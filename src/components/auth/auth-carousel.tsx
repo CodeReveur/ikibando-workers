@@ -75,7 +75,8 @@ export function AuthCarousel() {
       }} />
 
       {/* Logo */}
-      <a href="/" style={{ fontWeight: 900, fontSize: 20, color: "#f97316", textDecoration: "none", letterSpacing: "-0.5px", position: "relative", zIndex: 1 }}>
+      <a href="/" style={{ display: "flex", alignItems: "center", gap: 10, fontWeight: 900, fontSize: 20, color: "#f97316", textDecoration: "none", letterSpacing: "-0.5px", position: "relative", zIndex: 1 }}>
+        <img src="/logo.png" alt="Logo" style={{ width: 36, height: 36, borderRadius: 8, objectFit: "contain", background: "#fff" }} />
         MpahMapu
       </a>
 

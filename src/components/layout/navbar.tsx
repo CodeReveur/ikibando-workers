@@ -127,7 +127,8 @@ export default function Navbar() {
           boxSizing: "border-box",
         }}>
           {/* Logo */}
-          <a href="/" style={{ fontWeight: 900, fontSize: 16, color: "#f97316", letterSpacing: "-0.4px", textDecoration: "none", flexShrink: 0 }}>
+          <a href="/" style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 900, fontSize: 16, color: "#f97316", letterSpacing: "-0.4px", textDecoration: "none", flexShrink: 0 }}>
+            <img src="/logo.png" alt="Logo" style={{ width: 28, height: 28, borderRadius: 6, objectFit: "contain", background: "#fff" }} />
             MpahMapu
           </a>
 

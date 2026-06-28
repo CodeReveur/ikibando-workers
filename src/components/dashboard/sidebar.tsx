@@ -82,11 +82,10 @@ export function Sidebar() {
           padding:"15px 15px", flexShrink:0,
         }}>
           <Link href="/" style={{ display:"flex", alignItems:"center", gap:10, textDecoration:"none" }}>
-            <div style={{
-              width:36, height:36, borderRadius:10, background:"#f97316", flexShrink:0,
-              display:"flex", alignItems:"center", justifyContent:"center",
-              fontWeight:900, fontSize:20, color:"#fff",
-            }}>I</div>
+            <img src="/logo-a.png" alt="Logo" style={{
+              width:36, height:36, borderRadius:10, flexShrink:0,
+              objectFit: "contain", background: "#fff"
+            }} />
             <div>
               <p style={{ margin:0, fontWeight:900, fontSize:15, color:"#fff", letterSpacing:"-0.4px" }}>MpahMapu</p>
               <p style={{ margin:0, fontSize:9, color:"#333", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase" }}>Workforce Platform</p>
