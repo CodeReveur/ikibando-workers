@@ -68,6 +68,16 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
     try {
       const updatedUser = await submitBadge(payload, authResult.accessToken);
       authResult.user = updatedUser;
+      
+      // Update local storage so the session picks up badgeId and badgeUrl
+      try {
+        const raw = localStorage.getItem("user");
+        const parsed = raw ? JSON.parse(raw) : {};
+        localStorage.setItem("user", JSON.stringify({ ...parsed, ...updatedUser }));
+      } catch (e) {
+        // ignore
+      }
+
       setStep("COMPLETED");
       setTimeout(onComplete, 1500);
     } catch (e: any) {

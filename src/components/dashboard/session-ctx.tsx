@@ -12,6 +12,7 @@ export interface Session {
   emailVerified: boolean;
   createdAt?: string;
   badgeId?: string;
+  badgeUrl?: string;
   photoUrl?: string;
 }
 
@@ -40,9 +41,33 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         emailVerified: s.emailVerified ?? false,
         createdAt:     s.createdAt,
         badgeId:       s.badgeId,
+        badgeUrl:      s.badgeUrl,
         photoUrl:      s.photoUrl,
       });
       setLoading(false);
+
+      // Async fetch to ensure we have the freshest data (e.g. badge updates)
+      const token = localStorage.getItem("access_token");
+      if (token) {
+        import("@/lib/api").then(({ getProfile }) => {
+          getProfile(token).then((freshUser) => {
+            const updated = {
+              ...s,
+              ...freshUser,
+            };
+            localStorage.setItem("user", JSON.stringify(updated));
+            setSession((prev) => prev ? {
+              ...prev,
+              badgeId: freshUser.badgeId,
+              badgeUrl: freshUser.badgeUrl,
+              photoUrl: freshUser.photoUrl,
+              name: freshUser.name,
+              phone: freshUser.phone || prev.phone,
+            } : prev);
+          }).catch(() => { /* ignore */ });
+        });
+      }
+
     } catch {
       // If we're already on an auth page, don't loop
       if (!pathname.startsWith("/signin") && !pathname.startsWith("/signup")) {
