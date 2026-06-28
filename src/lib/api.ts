@@ -223,6 +223,19 @@ export async function submitBadge(data: BadgeSubmissionData, token: string): Pro
   return res.data;
 }
 
+export async function uploadFile(file: File, token: string): Promise<string> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const { data } = await http.post("/api/files/upload", formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data"
+    }
+  });
+  return data.url;
+}
+
 export interface JobCategoryMeta {
   slug: string;
   displayName: string;
