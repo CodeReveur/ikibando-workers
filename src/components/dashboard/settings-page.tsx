@@ -22,6 +22,7 @@ import {
   getJobCategories,
   JobCategoryMeta,
 } from "@/lib/api";
+import { BadgeSubmissionWizard } from "@/components/auth/badge-submission-wizard";
 
 const MapPicker = dynamic(
   () => import("@/components/jobs/map-picker").then(m => m.MapPicker),
@@ -1262,6 +1263,7 @@ function AccountTab({
   roleLabel: string;
 }) {
   const [copied, setCopied] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
   const isWorker = session.role === "WORKER";
 
   const profileUrl = isWorker
@@ -1420,6 +1422,41 @@ function AccountTab({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Worker Badge card (Missing) */}
+      {isWorker && !session.badgeId && (
+        <div style={card}>
+          <div style={cardHeader}>
+            <Shield size={14} color="#555" />
+            <p style={cardHeaderLabel}>Worker Badge</p>
+          </div>
+          <div style={{ ...cardBody, display: "flex", alignItems: "center", gap: 20 }}>
+            <div style={{ width: 64, height: 64, borderRadius: "50%", background: "#222", border: "2px dashed #444", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <User size={24} color="#555" />
+            </div>
+            <div style={{ flex: 1 }}>
+              <p style={{ margin: "0 0 4px", fontSize: 13, color: "#aaa" }}>You don&apos;t have a verified worker badge yet.</p>
+              <p style={{ margin: "0 0 14px", fontSize: 12, color: "#666" }}>A badge helps you stand out and builds trust with employers.</p>
+              <button
+                onClick={() => setShowWizard(true)}
+                style={{ ...primaryBtn, fontSize: 12, padding: "8px 16px" }}
+              >
+                Generate Badge
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showWizard && (
+        <BadgeSubmissionWizard
+          authResult={{ user: session, accessToken: getToken(), refreshToken: "" }}
+          onComplete={() => {
+            setShowWizard(false);
+            window.location.reload();
+          }}
+        />
       )}
 
       {/* Danger zone */}
