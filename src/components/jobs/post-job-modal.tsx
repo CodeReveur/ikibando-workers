@@ -10,6 +10,7 @@ import { JOB_CATEGORIES, RWANDA_PROVINCES, CURRENCY } from "@/lib/constants";
 import { postJob, getWallet, apiError } from "@/lib/api";
 import { saveRedirect } from "@/lib/auth-redirect";
 import { useToast } from "@/components/ui/toast";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 
 // Leaflet must render client-side only
 const MapPicker = dynamic(
@@ -485,12 +486,10 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
 
                 {/* Notes */}
                 <FField label="Additional notes (optional)">
-                  <textarea className="pj-ta" rows={3}
+                  <RichTextEditor
                     placeholder="e.g. formal attire required, tools provided, outdoor event…"
-                    value={job.notes} onChange={e => setJob(f => ({ ...f, notes: e.target.value }))}
-                    style={{ ...inp, padding: "10px 14px", lineHeight: 1.65 }}
-                    onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-                    onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                    value={job.notes}
+                    onChange={v => setJob(f => ({ ...f, notes: v }))}
                   />
                 </FField>
 

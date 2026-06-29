@@ -41,7 +41,9 @@ export default function OwnerWorkers() {
   const [noteText,  setNoteText]  = useState("");
   const [pendingAct, setPendingAct] = useState<{ appId: string; act: "ACCEPTED" | "REJECTED" } | null>(null);
   const [releaseFor, setReleaseFor]  = useState<string | null>(null);
-  const [releaseFeedback, setReleaseFeedback] = useState("");
+  const [releaseFeedbackOption, setReleaseFeedbackOption] = useState("Excellent Work");
+  const [releaseFeedbackText, setReleaseFeedbackText] = useState("");
+  const [releaseCompletionNote, setReleaseCompletionNote] = useState("");
   const [releaseRating,   setReleaseRating]   = useState(5);
   const [releasing, setReleasing] = useState(false);
 
@@ -89,9 +91,16 @@ export default function OwnerWorkers() {
     const token = localStorage.getItem("access_token")!;
     setReleasing(true);
     try {
-      await completeJob(jobId, { completionNotes: releaseFeedback, feedback: `${releaseRating}/5 – ${releaseFeedback}` }, token);
+      const payload: any = {
+        completionNotes: releaseCompletionNote,
+        feedbackOption: releaseFeedbackOption,
+        rating: releaseRating,
+      };
+      if (releaseFeedbackOption === "Other (requires text)") payload.feedbackText = releaseFeedbackText;
+
+      await completeJob(jobId, payload, token);
       setGroups(prev => prev.map(g => g.job.id === jobId ? { ...g, job: { ...g.job, status: "COMPLETED" as any } } : g));
-      setReleaseFor(null); setReleaseFeedback(""); setReleaseRating(5);
+      setReleaseFor(null); setReleaseCompletionNote(""); setReleaseFeedbackOption("Excellent Work"); setReleaseFeedbackText(""); setReleaseRating(5);
     } catch (e: any) {
       alert(apiError(e, "Failed to complete job"));
     } finally { setReleasing(false); }
@@ -165,8 +174,8 @@ export default function OwnerWorkers() {
                 </p>
               </div>
               {tab === "hired" && (job.status as string) !== "COMPLETED" && apps.some(a => a.status === "ACCEPTED") && (
-                <button className="act-btn release" onClick={() => { setReleaseFor(job.id as unknown as string); setReleaseFeedback(""); setReleaseRating(5); }}>
-                  Release & Complete
+                <button className="act-btn release" disabled={!job.workerVerified} onClick={() => job.workerVerified ? setReleaseFor(job.id as unknown as string) : alert("Waiting for worker to verify completion")} style={{ opacity: job.workerVerified ? 1 : 0.5 }}>
+                  {job.workerVerified ? "Release & Complete" : "Waiting for Worker"}
                 </button>
               )}
             </div>
@@ -257,28 +266,29 @@ export default function OwnerWorkers() {
               This will mark the job as complete and release the escrowed payment to the worker(s). Rate the work quality before releasing.
             </p>
 
-            <p style={{ margin:"0 0 8px", fontSize:11, fontWeight:700, color:"#3a3a3a" }}>RATING</p>
-            <div style={{ display:"flex", gap:8, marginBottom:18 }}>
-              {[1,2,3,4,5].map(n => (
-                <button key={n} onClick={() => setReleaseRating(n)} style={{
-                  width:40, height:40, borderRadius:8, border:"1px solid",
-                  borderColor: releaseRating >= n ? "#f97316" : "#222",
-                  background: releaseRating >= n ? "rgba(249,115,22,0.1)" : "transparent",
-                  cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center",
-                }}>
-                  <Star size={16} color={releaseRating >= n ? "#f97316" : "#333"} fill={releaseRating >= n ? "#f97316" : "none"} />
-                </button>
+            <p style={{ margin:"0 0 6px", fontSize:11, fontWeight:700, color:"#3a3a3a" }}>RATING (REQUIRED)</p>
+            <div style={{ display:"flex", gap:8, marginBottom:16 }}>
+              {[1,2,3,4,5].map(star => (
+                <button key={star} onClick={() => setReleaseRating(star)} style={{ background:"none", border:"none", cursor:"pointer", fontSize:24, color: star <= releaseRating ? "#f97316" : "#333", padding:0 }}>★</button>
               ))}
-              <span style={{ fontSize:13, color:"#555", alignSelf:"center" }}>{releaseRating}/5</span>
             </div>
 
-            <p style={{ margin:"0 0 6px", fontSize:11, fontWeight:700, color:"#3a3a3a" }}>FEEDBACK / NOTES</p>
-            <textarea
-              value={releaseFeedback}
-              onChange={e => setReleaseFeedback(e.target.value)}
-              placeholder="How did the work go? Any comments for the worker..."
-              style={{ width:"100%", background:"#131313", border:"1px solid #222", borderRadius:9, padding:"10px 14px", fontSize:12, color:"#d0d0d0", fontFamily:"inherit", outline:"none", resize:"vertical", minHeight:80, boxSizing:"border-box", marginBottom:20 }}
-            />
+            <p style={{ margin:"0 0 6px", fontSize:11, fontWeight:700, color:"#3a3a3a" }}>FEEDBACK (REQUIRED)</p>
+            <select value={releaseFeedbackOption} onChange={e => setReleaseFeedbackOption(e.target.value)} style={{ ...inp, marginBottom: releaseFeedbackOption === "Other (requires text)" ? 10 : 18 }}>
+              <option value="Excellent Work">Excellent Work</option>
+              <option value="Good Work">Good Work</option>
+              <option value="Needs Improvement">Needs Improvement</option>
+              <option value="Poor Work">Poor Work</option>
+              <option value="Other (requires text)">Other (requires text)</option>
+            </select>
+            {releaseFeedbackOption === "Other (requires text)" && (
+              <textarea value={releaseFeedbackText} onChange={e => setReleaseFeedbackText(e.target.value)}
+                rows={2} placeholder="Please describe..." style={{ ...inp, resize: "vertical", marginBottom: 18 }} />
+            )}
+
+            <p style={{ margin:"0 0 6px", fontSize:11, fontWeight:700, color:"#3a3a3a" }}>COMPLETION NOTES (optional)</p>
+            <textarea value={releaseCompletionNote} onChange={e => setReleaseCompletionNote(e.target.value)}
+              rows={2} placeholder="How did the job go?" style={{ ...inp, resize: "vertical", marginBottom: 20 }} />
 
             <div style={{ display:"flex", gap:10 }}>
               <button onClick={() => doRelease(releaseFor)} disabled={releasing} style={{ flex:1, background:"#f97316", color:"#fff", border:"none", borderRadius:9, padding:"11px", fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>

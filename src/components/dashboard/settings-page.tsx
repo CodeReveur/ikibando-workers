@@ -1451,7 +1451,7 @@ function AccountTab({
 
       {showWizard && (
         <BadgeSubmissionWizard
-          authResult={{ user: session, accessToken: getToken(), refreshToken: "" }}
+          authResult={{ user: session as any, accessToken: getToken(), refreshToken: "", tokenType: "Bearer", requires2fa: false }}
           onComplete={() => {
             setShowWizard(false);
             window.location.reload();

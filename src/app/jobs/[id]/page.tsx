@@ -9,6 +9,7 @@ import {
   MapPin, Clock, Users, ChevronLeft,
   CheckCircle, Briefcase, AlertCircle, ArrowRight,
 } from "lucide-react";
+import { RichTextDisplay } from "@/components/ui/rich-text-editor";
 
 const fmt = (n: number) => `RWF ${n.toLocaleString()}`;
 
@@ -132,14 +133,14 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
         {/* DESCRIPTION */}
         {job.description && (
           <Section title="About this job">
-            <p style={{ margin: 0, fontSize: 13, color: "#aaa", lineHeight: 1.85 }}>{job.description}</p>
+            <RichTextDisplay content={job.description} />
           </Section>
         )}
 
         {/* NOTES */}
         {job.locationNotes && (
           <Section title="Additional notes">
-            <p style={{ margin: 0, fontSize: 13, color: "#aaa", lineHeight: 1.85 }}>{job.locationNotes}</p>
+            <RichTextDisplay content={job.locationNotes} />
           </Section>
         )}
 

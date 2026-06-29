@@ -27,13 +27,13 @@ const TITLE_MAP: Record<string, string> = {
   "/owner/help":          "Help",
 };
 
-export function Topbar() {
+export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
   const pathname  = usePathname();
   const session   = useSession();
   const [notifOpen,    setNotifOpen]    = useState(false);
   const [wallet,       setWallet]       = useState<WalletDto | null>(null);
   const [pendingCount, setPendingCount] = useState(0);
-  const [seekerNotifs, setSeekerNotifs] = useState<{ text: string; time: string }[]>([]);
+  const [seekerNotifs, setSeekerNotifs] = useState<{ id: string; jobId: string; text: string; time: string; note?: string }[]>([]);
   const ref = useRef<HTMLElement>(null);
 
   const isOwner = pathname.startsWith("/owner");
@@ -42,24 +42,33 @@ export function Topbar() {
     const token = localStorage.getItem("access_token");
     if (!token) return;
     
-    getWallet(token).then(setWallet).catch(() => {});
+    const fetchAll = () => {
+      getWallet(token).then(setWallet).catch(() => {});
 
-    if (isOwner) {
-      getPendingApplicationCount(token).then(setPendingCount).catch(() => {});
-    } else {
-      getMyApplications(token).then(apps => {
-        const notifs = apps
-          .filter(a => a.status === "ACCEPTED" || a.status === "REJECTED")
-          .slice(0, 5)
-          .map(a => ({
-            text: a.status === "ACCEPTED"
-              ? `Your application for "${a.jobTitle}" was accepted!`
-              : `Your application for "${a.jobTitle}" was not selected.`,
-            time: a.respondedAt ? new Date(a.respondedAt).toLocaleDateString() : "Recently",
-          }));
-        setSeekerNotifs(notifs);
-      }).catch(() => {});
-    }
+      if (isOwner) {
+        getPendingApplicationCount(token).then(setPendingCount).catch(() => {});
+      } else {
+        getMyApplications(token).then(apps => {
+          const notifs = apps
+            .filter(a => a.status === "ACCEPTED" || a.status === "REJECTED")
+            .slice(0, 10)
+            .map(a => ({
+              id: String(a.id),
+              jobId: String(a.jobId ?? ""),
+              text: a.status === "ACCEPTED"
+                ? `Your application for "${a.jobTitle}" was accepted!`
+                : `Your application for "${a.jobTitle}" was not selected.`,
+              note: a.responseNote,
+              time: a.respondedAt ? new Date(a.respondedAt).toLocaleDateString() : "Recently",
+            }));
+          setSeekerNotifs(notifs);
+        }).catch(() => {});
+      }
+    };
+
+    fetchAll();
+    const interval = setInterval(fetchAll, 5000);
+    return () => clearInterval(interval);
   }, [isOwner]);
 
   useEffect(() => {
@@ -76,7 +85,7 @@ export function Topbar() {
   const unreadN = isOwner ? pendingCount : seekerNotifs.length;
 
   return (
-    <header ref={ref} style={{
+    <header className="dashboard-topbar" ref={ref} style={{
       position:"fixed", left:SB_WIDTH, top:0, right:0, height:TB_HEIGHT,
       background:"rgba(9,9,9,0.97)", borderBottom:"1px solid #161616",
       backdropFilter:"blur(14px)",
@@ -85,11 +94,21 @@ export function Topbar() {
       fontFamily:"Inter, DM Sans, system-ui, sans-serif",
     }}>
 
-      <div>
-        <p style={{ margin:0, fontSize:17, fontWeight:800, color:"#fff", letterSpacing:"-0.4px" }}>{title}</p>
-        <p style={{ margin:0, fontSize:11, color:"#2e2e2e" }}>
-          {new Date().toLocaleDateString("en-GB", { weekday:"long", day:"numeric", month:"long", year:"numeric" })}
-        </p>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <button 
+          className="mobile-menu-btn" 
+          onClick={onToggleMenu}
+          style={{ background:"transparent", border:"none", color:"#fff", cursor:"pointer", padding:0 }}
+        >
+          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+        </button>
+        <div>
+          <p style={{ margin:0, fontSize:17, fontWeight:800, color:"#fff", letterSpacing:"-0.4px" }}>{title}</p>
+          <p style={{ margin:0, fontSize:11, color:"#2e2e2e", display: "none" }} className="topbar-date">
+            {new Date().toLocaleDateString("en-GB", { weekday:"long", day:"numeric", month:"long", year:"numeric" })}
+          </p>
+          <style>{`@media (min-width: 600px) { .topbar-date { display: block !important; } }`}</style>
+        </div>
       </div>
 
       <div style={{ display:"flex", alignItems:"center", gap:8 }}>
@@ -123,41 +142,47 @@ export function Topbar() {
 
           {notifOpen && (
             <DropPanel title="Notifications" onClose={() => setNotifOpen(false)}>
-              {isOwner ? (
-                pendingCount > 0 ? (
-                  <div style={{ padding:"14px 16px", borderBottom:"1px solid #141414", display:"flex", gap:10 }}>
-                    <div style={{ width:6, height:6, borderRadius:99, marginTop:5, flexShrink:0, background:"#f97316" }} />
-                    <div>
-                      <p style={{ margin:"0 0 6px", fontSize:12, color:"#c0c0c0", lineHeight:1.6 }}>
-                        You have <strong style={{ color:"#f97316" }}>{pendingCount}</strong> pending
-                        application{pendingCount !== 1 ? "s" : ""} waiting for review.
-                      </p>
-                      <a href="/owner/workers" style={{ fontSize:11, color:"#f97316", fontWeight:700, textDecoration:"none" }}>
-                        Review now →
-                      </a>
+              <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
+                {isOwner ? (
+                  pendingCount > 0 ? (
+                    <div style={{ padding:"14px 16px", borderBottom:"1px solid #141414", display:"flex", gap:10 }}>
+                      <div style={{ width:6, height:6, borderRadius:99, marginTop:5, flexShrink:0, background:"#f97316" }} />
+                      <div>
+                        <p style={{ margin:"0 0 6px", fontSize:12, color:"#c0c0c0", lineHeight:1.6 }}>
+                          You have <strong style={{ color:"#f97316" }}>{pendingCount}</strong> pending
+                          application{pendingCount !== 1 ? "s" : ""} waiting for review.
+                        </p>
+                        <a href="/owner/workers" style={{ fontSize:11, color:"#f97316", fontWeight:700, textDecoration:"none" }}>
+                          Review now →
+                        </a>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div style={{ padding:"24px 16px", textAlign:"center" }}>
+                      <p style={{ margin:0, fontSize:12, color:"#3a3a3a" }}>No pending applications</p>
+                    </div>
+                  )
                 ) : (
-                  <div style={{ padding:"24px 16px", textAlign:"center" }}>
-                    <p style={{ margin:0, fontSize:12, color:"#3a3a3a" }}>No pending applications</p>
-                  </div>
-                )
-              ) : (
-                seekerNotifs.length > 0 ? seekerNotifs.map((n, i) => (
-                  <div key={i} style={{ padding:"11px 16px", borderBottom:"1px solid #141414", display:"flex", gap:10 }}>
-                    <div style={{ width:6, height:6, borderRadius:99, marginTop:5, flexShrink:0, background:"#f97316" }} />
-                    <div>
-                      <p style={{ margin:"0 0 3px", fontSize:12, color:"#c0c0c0", lineHeight:1.5 }}>{n.text}</p>
-                      <p style={{ margin:0, fontSize:10, color:"#2e2e2e" }}>{n.time}</p>
+                  seekerNotifs.length > 0 ? seekerNotifs.map((n, i) => (
+                    <div key={i} style={{ padding:"14px 16px", borderBottom:"1px solid #141414", display:"flex", gap:10 }}>
+                      <div style={{ width:6, height:6, borderRadius:99, marginTop:5, flexShrink:0, background:"#f97316" }} />
+                      <div style={{ flex: 1 }}>
+                        <p style={{ margin:"0 0 4px", fontSize:12, color:"#c0c0c0", lineHeight:1.5 }}>{n.text}</p>
+                        {n.note && <p style={{ margin:"0 0 8px", fontSize:11, color:"#888", fontStyle:"italic", background:"#111", padding:"6px 10px", borderRadius:6, border:"1px solid #1a1a1a" }}>Note: {n.note}</p>}
+                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                          <p style={{ margin:0, fontSize:10, color:"#444" }}>{n.time}</p>
+                          <a href={n.text.includes("accepted") ? `/seeker/jobs/${n.jobId}` : `/seeker/applications`} style={{ fontSize:10, color:"#f97316", textDecoration:"none", fontWeight:600 }}>View details →</a>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                )) : (
-                  <div style={{ padding:"24px 16px", textAlign:"center" }}>
-                    <p style={{ margin:0, fontSize:12, color:"#3a3a3a" }}>No new notifications</p>
-                  </div>
-                )
-              )}
-              <div style={{ padding:"9px 16px" }}>
+                  )) : (
+                    <div style={{ padding:"24px 16px", textAlign:"center" }}>
+                      <p style={{ margin:0, fontSize:12, color:"#3a3a3a" }}>No new notifications</p>
+                    </div>
+                  )
+                )}
+              </div>
+              <div style={{ padding:"10px 16px", borderTop: "1px solid #1a1a1a" }}>
                 <a href={isOwner ? "/owner/workers" : "/seeker/applications"}
                   style={{ display:"block", textAlign:"center", fontSize:12, color:"#f97316", fontWeight:600, textDecoration:"none" }}>
                   {isOwner ? "Manage applications" : "View all applications"}

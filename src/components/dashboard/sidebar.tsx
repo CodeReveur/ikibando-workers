@@ -31,7 +31,7 @@ const OWNER_NAV = [
 ];
 
 /* ── sidebar ─────────────────────────────────────────────────────────────── */
-export function Sidebar() {
+export function Sidebar({ mobileOpen, closeMobile }: { mobileOpen?: boolean; closeMobile?: () => void }) {
   const pathname = usePathname();
   const router   = useRouter();
   const session  = useSession();
@@ -67,7 +67,7 @@ export function Sidebar() {
         .dash-card:hover { border-color: #252525 !important; background: #161616 !important; }
       `}</style>
 
-      <aside style={{
+      <aside className={`dashboard-sidebar${mobileOpen ? " mobile-open" : ""}`} style={{
         position:"fixed", left:0, top:0, bottom:0, width:SB_WIDTH,
         background:"#090909",
         display:"flex", flexDirection:"column",
@@ -81,16 +81,10 @@ export function Sidebar() {
           background:"#131313", border:"1px solid #1c1c1c", borderRadius:14,
           padding:"15px 15px", flexShrink:0,
         }}>
-          <Link href="/" style={{ display:"flex", alignItems:"center", gap:10, textDecoration:"none" }}>
-            <img src="/logo-a.png" alt="Logo" style={{
-              width:36, height:36, borderRadius:10, flexShrink:0,
-              objectFit: "contain", background: "#fff"
-            }} />
-            <div>
-              <p style={{ margin:0, fontWeight:900, fontSize:15, color:"#fff", letterSpacing:"-0.4px" }}>MpahMapu</p>
-              <p style={{ margin:0, fontSize:9, color:"#333", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase" }}>Workforce Platform</p>
-            </div>
-          </Link>
+          {/* Logo */}
+          <a href="/" onClick={closeMobile} className="nav-logo" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}>
+            <img src="/cover-a.png" alt="Logo" style={{ width: 190, height: 40, borderRadius: 6, objectFit: "cover" }} />
+          </a>
         </div>
 
         {/* ─── PROFILE CARD ───────────────────────────────────────────── */}
@@ -156,6 +150,7 @@ export function Sidebar() {
               <Link
                 key={href}
                 href={href}
+                onClick={closeMobile}
                 className={`sb-navlink${active ? " sb-active" : ""}`}
                 style={{
                   display:"flex", alignItems:"center", gap:10,

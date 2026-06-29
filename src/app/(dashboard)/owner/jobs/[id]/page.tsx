@@ -14,6 +14,7 @@ import {
 } from "@/lib/api";
 import { RWANDA_PROVINCES } from "@/lib/constants";
 import { fmt } from "@/lib/dashboard-data";
+import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
 
 const d = (iso: string | null | undefined) =>
   iso ? new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : null;
@@ -91,6 +92,9 @@ export default function OwnerJobDetail() {
   const [busy, setBusy] = useState<string | null>(null);
   const [showComplete, setShowComplete] = useState(false);
   const [completionNote, setCompletionNote] = useState("");
+  const [feedbackOption, setFeedbackOption] = useState("Excellent Work");
+  const [feedbackText, setFeedbackText] = useState("");
+  const [rating, setRating] = useState(5);
   const [showEdit, setShowEdit] = useState(false);
   const [noteFor, setNoteFor] = useState<{ appId: string; action: "ACCEPTED" | "REJECTED" } | null>(null);
   const [noteText, setNoteText] = useState("");
@@ -137,7 +141,13 @@ export default function OwnerJobDetail() {
     const token = localStorage.getItem("access_token")!;
     setBusy("complete");
     try {
-      const updated = await completeJob(id, { completionNotes: completionNote }, token);
+      const payload: any = { 
+        completionNotes: completionNote,
+        feedbackOption,
+        rating
+      };
+      if (feedbackOption === "Other (requires text)") payload.feedbackText = feedbackText;
+      const updated = await completeJob(id, payload, token);
       setJob(updated);
       setShowComplete(false);
       await load();
@@ -194,7 +204,7 @@ export default function OwnerJobDetail() {
       date: d(job.createdAt),
       content: (
         <div>
-          {job.description && <p style={{ margin: "0 0 6px", fontSize: 12, color: "#888", lineHeight: 1.6 }}>{job.description}</p>}
+          {job.description && <RichTextDisplay content={job.description} />}
           {escrowed != null && (
             <p style={{ margin: 0, fontSize: 12, color: "#22c55e" }}>
               RWF {escrowed.toLocaleString()} escrowed from wallet
@@ -391,9 +401,9 @@ export default function OwnerJobDetail() {
               </button>
             )}
             {isOpen && hasAccepted && (
-              <button disabled={busy === "complete"} onClick={() => setShowComplete(true)}
-                style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(96,165,250,0.08)", color: "#60a5fa", border: "1px solid rgba(96,165,250,0.2)", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-                <CheckCircle size={12} /> Complete Job
+              <button disabled={busy === "complete" || !job.workerVerified} onClick={() => job.workerVerified ? setShowComplete(true) : alert("Waiting for worker to verify completion via their badge.")}
+                style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(96,165,250,0.08)", color: job.workerVerified ? "#60a5fa" : "#444", border: job.workerVerified ? "1px solid rgba(96,165,250,0.2)" : "1px solid #222", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: job.workerVerified ? "pointer" : "not-allowed", fontFamily: "inherit" }}>
+                <CheckCircle size={12} /> {job.workerVerified ? "Complete Job" : "Waiting for Worker"}
               </button>
             )}
             {isOpen && (
@@ -430,13 +440,13 @@ export default function OwnerJobDetail() {
             <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: "0.08em" }}>Job Details</p>
             <InfoRow label="Category" value={job.category} />
             <InfoRow label="Location" value={`${job.district}${job.province ? `, ${job.province}` : ""}`} />
-            {job.locationNotes && <InfoRow label="Notes" value={job.locationNotes} />}
+            {job.locationNotes && <InfoRow label="Notes" value={<RichTextDisplay content={job.locationNotes} />} />}
             <InfoRow label="Rate" value={`RWF ${job.ratePerHour?.toLocaleString()} / hr`} />
             <InfoRow label="Duration" value={`${job.durationHours} hours`} />
             <InfoRow label="Headcount" value={`${job.headcount} worker${job.headcount !== 1 ? "s" : ""}`} />
             <InfoRow label="Urgency" value={job.urgency?.replace("_", " ")} />
             {job.startTime && <InfoRow label="Start Time" value={dt(job.startTime) ?? "—"} />}
-            {job.requirements && <InfoRow label="Requirements" value={job.requirements} />}
+            {job.requirements && <InfoRow label="Requirements" value={<RichTextDisplay content={job.requirements} />} />}
           </div>
 
           {/* Financial summary */}
@@ -484,9 +494,33 @@ export default function OwnerJobDetail() {
             <p style={{ margin: "0 0 18px", fontSize: 12, color: "#555" }}>
               This will release RWF {workerPayout?.toLocaleString() ?? "—"} to the worker{accepted.length !== 1 ? "s" : ""}. This action cannot be undone.
             </p>
+            
+            <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "#3a3a3a" }}>RATING (REQUIRED)</p>
+            <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+              {[1, 2, 3, 4, 5].map(star => (
+                <button key={star} onClick={() => setRating(star)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 24, color: star <= rating ? "#f97316" : "#333", padding: 0 }}>
+                  ★
+                </button>
+              ))}
+            </div>
+
+            <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "#3a3a3a" }}>FEEDBACK (REQUIRED)</p>
+            <select value={feedbackOption} onChange={e => setFeedbackOption(e.target.value)} style={{ ...inp, marginBottom: feedbackOption === "Other (requires text)" ? 10 : 18 }}>
+              <option value="Excellent Work">Excellent Work</option>
+              <option value="Good Work">Good Work</option>
+              <option value="Needs Improvement">Needs Improvement</option>
+              <option value="Poor Work">Poor Work</option>
+              <option value="Other (requires text)">Other (requires text)</option>
+            </select>
+            {feedbackOption === "Other (requires text)" && (
+              <textarea value={feedbackText} onChange={e => setFeedbackText(e.target.value)}
+                rows={2} placeholder="Please describe..." style={{ ...inp, resize: "vertical", marginBottom: 18 }} />
+            )}
+
             <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "#3a3a3a" }}>COMPLETION NOTES (optional)</p>
             <textarea value={completionNote} onChange={e => setCompletionNote(e.target.value)}
-              rows={3} placeholder="How did the job go?" style={{ ...inp, resize: "vertical", marginBottom: 18 }} />
+              rows={2} placeholder="How did the job go?" style={{ ...inp, resize: "vertical", marginBottom: 18 }} />
+            
             <div style={{ display: "flex", gap: 10 }}>
               <button disabled={busy === "complete"} onClick={doComplete}
                 style={{ flex: 1, background: "#22c55e", color: "#000", border: "none", borderRadius: 9, padding: 12, fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
@@ -626,15 +660,15 @@ function EditJobModal({ job, saving, onSave, onClose }: {
         </div>
         <div style={{ marginBottom:14 }}>
           <label style={lbl}>Location notes</label>
-          <input type="text" placeholder="e.g. Gate B, 2nd floor…" value={form.locationNotes} onChange={set("locationNotes")} style={s} />
+          <RichTextEditor value={form.locationNotes} onChange={v => setForm(f => ({...f, locationNotes: v}))} placeholder="e.g. Gate B, 2nd floor…" />
         </div>
         <div style={{ marginBottom:10 }}>
           <label style={lbl}>Description</label>
-          <textarea rows={3} value={form.description} onChange={set("description")} style={{ ...s, resize:"vertical" }} />
+          <RichTextEditor value={form.description} onChange={v => setForm(f => ({...f, description: v}))} />
         </div>
         <div style={{ marginBottom:18 }}>
           <label style={lbl}>Requirements</label>
-          <textarea rows={2} value={form.requirements} onChange={set("requirements")} style={{ ...s, resize:"vertical" }} />
+          <RichTextEditor value={form.requirements} onChange={v => setForm(f => ({...f, requirements: v}))} />
         </div>
 
         {gross > 0 && (

@@ -286,6 +286,13 @@ export interface JobDto {
   completedAt: string | null;
   cancelledAt: string | null;
   completionNotes: string | null;
+  workerVerified: boolean;
+  workerFeedbackOption: string | null;
+  workerFeedbackText: string | null;
+  workerRating: number | null;
+  employerFeedbackOption: string | null;
+  employerFeedbackText: string | null;
+  employerRating: number | null;
 }
 
 export interface WorkerProfileDto {
@@ -397,8 +404,13 @@ export async function requestWithdrawal(
   return data.data;
 }
 
-export async function completeJob(jobId: string, payload: { completionNotes?: string; feedback?: string }, token: string): Promise<JobDto> {
+export async function completeJob(jobId: string, payload: { completionNotes?: string; feedbackOption: string; feedbackText?: string; rating: number }, token: string): Promise<JobDto> {
   const { data } = await http.post(`/api/jobs/${jobId}/complete`, payload, { headers: authHeader(token) });
+  return data.data;
+}
+
+export async function verifyJobCompletion(jobId: string, payload: { badgeId: string; feedbackOption: string; feedbackText?: string; rating: number }, token: string): Promise<JobDto> {
+  const { data } = await http.post(`/api/jobs/${jobId}/verify-completion`, payload, { headers: authHeader(token) });
   return data.data;
 }
 
@@ -475,7 +487,7 @@ export async function acceptAllApplications(jobId: string, token: string): Promi
 // ── Applications ──────────────────────────────────────────────────────────────
 export async function applyForJob(
   jobId: string,
-  payload: { bestFit?: string; appliedVia?: string },
+  payload: { bestFit?: string; appliedVia?: string; workerId?: string },
   token: string
 ): Promise<ApplicationDto> {
   const { data } = await http.post(`/api/jobs/${jobId}/apply`, payload, { headers: authHeader(token) });

@@ -10,6 +10,7 @@ import {
 import { JOB_CATEGORIES, RWANDA_PROVINCES } from "@/lib/constants";
 import { getWorkers, postJob, applyForJob, updateApplicationStatus, getWallet, type WorkerProfileDto } from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
+import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
 
 // Leaflet must render client-side only
 const MapPicker = dynamic(
@@ -260,8 +261,8 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                 ["Province",  form.province || "-"],
                 ["District",  form.district],
                 ...(form.latitude != null ? [["GPS", `${form.latitude.toFixed(5)}, ${form.longitude!.toFixed(5)}`]] : []),
-                ...(form.requirements ? [["Requirements", form.requirements]] : []),
-              ] as [string, string][]).map(([k, v]) => <SRow key={k} k={k} v={v} />)}
+                ...(form.requirements ? [["Requirements", <RichTextDisplay content={form.requirements} />]] : []),
+              ] as [string, React.ReactNode][]).map(([k, v]) => <SRow key={String(k)} k={String(k)} v={v} />)}
             </div>
             <button onClick={onClose} style={{ ...btnPrimary, width: "100%" }}>Done</button>
           </div>
@@ -466,12 +467,10 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                 </FField>
 
                 <FField label="Requirements (optional)">
-                  <textarea className="hire-ta" rows={3}
+                  <RichTextEditor
                     placeholder="e.g. must have own transport, certified electrician, fluent in English…"
-                    value={form.requirements} onChange={e => setForm(f => ({ ...f, requirements: e.target.value }))}
-                    style={{ ...inp, padding: "10px 14px", lineHeight: 1.65 }}
-                    onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-                    onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                    value={form.requirements}
+                    onChange={v => setForm(f => ({ ...f, requirements: v }))}
                   />
                 </FField>
               </div>
@@ -552,8 +551,8 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                     ["Province",  form.province || "-"],
                     ["District",  form.district],
                     ...(form.latitude != null ? [["GPS", `${form.latitude.toFixed(5)}, ${form.longitude!.toFixed(5)}`]] : []),
-                    ...(form.requirements ? [["Requirements", form.requirements]] : []),
-                  ] as [string, string][]).map(([k, v]) => <SRow key={k} k={k} v={v} />)}
+                    ...(form.requirements ? [["Requirements", <RichTextDisplay content={form.requirements} />]] : []),
+                  ] as [string, React.ReactNode][]).map(([k, v]) => <SRow key={String(k)} k={String(k)} v={v} />)}
                 </SCard>
 
                 {selected.length > 0 && (
@@ -664,7 +663,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                       rateType: form.rateType === "hr" ? "PER_HOUR" : form.rateType === "day" ? "PER_DAY" : form.rateType === "week" ? "PER_WEEK" : form.rateType === "month" ? "PER_MONTH" : "PER_YEAR",
                     }, token);
                     await Promise.all(selected.map(async w => {
-                      const app = await applyForJob(job.id as unknown as string, { bestFit: "Hire Now selection", appliedVia: "HIRE_NOW" }, token);
+                      const app = await applyForJob(job.id as unknown as string, { bestFit: "Hire Now selection", appliedVia: "HIRE_NOW", workerId: w.id as unknown as string }, token);
                       await updateApplicationStatus(app.id as unknown as string, { status: "ACCEPTED" }, token);
                     }));
                     try { localStorage.removeItem(DRAFT_KEY); } catch {}
@@ -879,11 +878,21 @@ function SCard({ title, children }: { title: string; children: React.ReactNode }
   );
 }
 
-function SRow({ k, v }: { k: string; v: string }) {
+function SRow({ k, v }: { k: string; v: React.ReactNode }) {
+  if (k === "Requirements") {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", padding: "8px 0", borderBottom: "1px solid #1a1a1a", gap: 6 }}>
+        <span style={{ fontSize: 12, color: "#555" }}>{k}</span>
+        <div style={{ fontSize: 12, color: "#f0f0f0", textAlign: "left", background: "rgba(0,0,0,0.2)", padding: "10px 14px", borderRadius: 10, border: "1px solid #2a2a2a" }}>
+          {v}
+        </div>
+      </div>
+    );
+  }
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "5px 0", borderBottom: "1px solid #1a1a1a", gap: 8 }}>
       <span style={{ fontSize: 12, color: "#555", flexShrink: 0 }}>{k}</span>
-      <span style={{ fontSize: 12, fontWeight: 600, color: "#f0f0f0", textAlign: "right" }}>{v}</span>
+      <span style={{ fontSize: 12, fontWeight: 600, color: "#f0f0f0", textAlign: "right", wordBreak: "break-word" }}>{v}</span>
     </div>
   );
 }

@@ -16,6 +16,7 @@ import { RWANDA_PROVINCES } from "@/lib/constants";
 import { PostJobModal } from "@/components/jobs/post-job-modal";
 import { ST, fmt } from "@/lib/dashboard-data";
 import { StatCard, SectionHead, Dot, PageLoader } from "@/components/dashboard/ui";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 
 /* ── helpers ─────────────────────────────────────────────────────────────── */
 const CSS = `
@@ -460,11 +461,11 @@ function EditJobModal({ job, onClose }: { job: JobDto; onClose: () => void }) {
         {/* Description + Requirements */}
         <div style={{ marginBottom:10 }}>
           <label style={lbl}>Description</label>
-          <textarea rows={3} value={form.description} onChange={set("description")} style={{ ...inp, resize:"vertical" }} />
+          <RichTextEditor value={form.description} onChange={v => setForm(f => ({ ...f, description: v }))} />
         </div>
         <div style={{ marginBottom:18 }}>
           <label style={lbl}>Requirements</label>
-          <textarea rows={2} value={form.requirements} onChange={set("requirements")} style={{ ...inp, resize:"vertical" }} />
+          <RichTextEditor value={form.requirements} onChange={v => setForm(f => ({ ...f, requirements: v }))} />
         </div>
 
         {/* Escrow preview */}

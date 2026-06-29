@@ -5,6 +5,7 @@ import { X, CheckCircle, Loader2 } from "lucide-react";
 import { applyForJob, apiError, type JobDto } from "@/lib/api";
 import { saveRedirect } from "@/lib/auth-redirect";
 import { useToast } from "@/components/ui/toast";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 
 interface Props { job: JobDto; onClose: () => void; }
 
@@ -129,17 +130,13 @@ export function ApplyModal({ job, onClose }: Props) {
 
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <label style={{ fontSize: 11, fontWeight: 700, color: "#666", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+            <label style={{ fontSize: 11, fontWeight: 700, color: "#666", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>
               Why are you the best fit? (optional)
             </label>
-            <textarea
-              rows={3}
+            <RichTextEditor
               placeholder="Describe your experience, skills, or availability that make you ideal for this role…"
               value={bestFit}
-              onChange={e => setBestFit(e.target.value)}
-              style={taInp}
-              onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-              onBlur={e => (e.currentTarget.style.borderColor = "#2a2a2a")}
+              onChange={v => setBestFit(v)}
             />
           </div>
 

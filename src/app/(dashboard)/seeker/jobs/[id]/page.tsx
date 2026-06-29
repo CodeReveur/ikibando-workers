@@ -8,10 +8,11 @@ import {
 } from "lucide-react";
 import {
   getJob, getMyApplications, getWalletTransactions,
-  updateApplicationStatus, withdrawApplication,
+  updateApplicationStatus, withdrawApplication, verifyJobCompletion,
   type JobDto, type ApplicationDto, type PaymentDto,
 } from "@/lib/api";
 import { fmt } from "@/lib/dashboard-data";
+import { RichTextDisplay } from "@/components/ui/rich-text-editor";
 
 const d  = (iso: string | null | undefined) =>
   iso ? new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : null;
@@ -88,6 +89,11 @@ export default function SeekerJobDetail() {
   const [busy,    setBusy]   = useState<string | null>(null);
   const [note,    setNote]   = useState("");
   const [showNote, setShowNote] = useState<"ACCEPTED" | "REJECTED" | null>(null);
+  const [showVerify, setShowVerify] = useState(false);
+  const [badgeId, setBadgeId] = useState("");
+  const [feedbackOption, setFeedbackOption] = useState("Pays on time");
+  const [feedbackText, setFeedbackText] = useState("");
+  const [rating, setRating] = useState(5);
 
   const load = useCallback(async () => {
     const token = localStorage.getItem("access_token");
@@ -126,6 +132,22 @@ export default function SeekerJobDetail() {
     try {
       await withdrawApplication(app.id, token);
       router.push("/seeker/applications");
+    } finally { setBusy(null); }
+  };
+
+  const doVerify = async () => {
+    if (!badgeId.trim()) return alert("Badge ID is required");
+    const token = localStorage.getItem("access_token")!;
+    setBusy("verify");
+    try {
+      const payload: any = { badgeId, feedbackOption, rating };
+      if (feedbackOption === "Other (requires text)") payload.feedbackText = feedbackText;
+      const updated = await verifyJobCompletion(id, payload, token);
+      setJob(updated);
+      setShowVerify(false);
+      await load();
+    } catch (e: any) {
+      alert("Verification failed");
     } finally { setBusy(null); }
   };
 
@@ -342,6 +364,17 @@ export default function SeekerJobDetail() {
                 {busy === "withdraw" ? <Loader2 size={12} style={{ animation: "spin 0.8s linear infinite" }} /> : <X size={12} />} Withdraw Application
               </button>
             )}
+            {isAccepted && !job.workerVerified && !isCompleted && (
+              <button disabled={busy === "verify"} onClick={() => setShowVerify(true)}
+                style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(96,165,250,0.08)", color: "#60a5fa", border: "1px solid rgba(96,165,250,0.2)", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+                <CheckCircle size={12} /> Finish
+              </button>
+            )}
+            {job.workerVerified && !isCompleted && (
+              <span style={{ fontSize: 12, fontWeight: 700, color: "#22c55e", padding: "8px 14px", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 8, background: "rgba(34,197,94,0.08)" }}>
+                Finished. Waiting for employer...
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -377,13 +410,13 @@ export default function SeekerJobDetail() {
             <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: "0.08em" }}>Job Details</p>
             <InfoRow label="Category" value={job.category} />
             <InfoRow label="Location" value={`${job.district}${job.province ? `, ${job.province}` : ""}`} />
-            {job.locationNotes && <InfoRow label="Location Notes" value={job.locationNotes} />}
+            {job.locationNotes && <InfoRow label="Location Notes" value={<RichTextDisplay content={job.locationNotes} />} />}
             <InfoRow label="Rate" value={`RWF ${job.ratePerHour?.toLocaleString()} / hr`} />
             <InfoRow label="Duration" value={`${job.durationHours} hours`} />
             <InfoRow label="Headcount" value={`${job.headcount} worker${job.headcount !== 1 ? "s" : ""}`} />
             <InfoRow label="Urgency" value={job.urgency?.replace("_", " ")} />
             {job.startTime && <InfoRow label="Start Time" value={dt(job.startTime) ?? "—"} />}
-            {job.requirements && <InfoRow label="Requirements" value={job.requirements} />}
+            {job.requirements && <InfoRow label="Requirements" value={<RichTextDisplay content={job.requirements} />} />}
           </div>
 
           {/* Earnings */}
@@ -422,6 +455,56 @@ export default function SeekerJobDetail() {
           </div>
         </div>
       </div>
+
+      {/* Verify modal */}
+      {showVerify && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", zIndex: 500, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div style={{ background: "#111", border: "1px solid #222", borderRadius: 18, width: "100%", maxWidth: 420, padding: 28 }}>
+            <p style={{ margin: "0 0 6px", fontSize: 16, fontWeight: 800, color: "#fff" }}>Finish Job</p>
+            <p style={{ margin: "0 0 18px", fontSize: 12, color: "#555" }}>
+              Confirm that you have completed this job by entering your Badge MPU ID.
+            </p>
+            
+            <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "#3a3a3a" }}>YOUR BADGE MPU ID (REQUIRED)</p>
+            <input value={badgeId} onChange={e => setBadgeId(e.target.value)}
+              placeholder="e.g. MPU-12345" style={{ ...inp, width: "100%", marginBottom: 18, textTransform: "uppercase" }} />
+              
+            <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "#3a3a3a" }}>RATE THE EMPLOYER (REQUIRED)</p>
+            <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+              {[1, 2, 3, 4, 5].map(star => (
+                <button key={star} onClick={() => setRating(star)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 24, color: star <= rating ? "#f97316" : "#333", padding: 0 }}>
+                  ★
+                </button>
+              ))}
+            </div>
+
+            <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "#3a3a3a" }}>FEEDBACK (REQUIRED)</p>
+            <select value={feedbackOption} onChange={e => setFeedbackOption(e.target.value)} style={{ ...inp, width: "100%", marginBottom: feedbackOption === "Other (requires text)" ? 10 : 18 }}>
+              <option value="Pays on time">Pays on time</option>
+              <option value="Good instructor">Good instructor</option>
+              <option value="Gives tips">Gives tips</option>
+              <option value="Needs Improvement">Needs Improvement</option>
+              <option value="Other (requires text)">Other (requires text)</option>
+            </select>
+            {feedbackOption === "Other (requires text)" && (
+              <textarea value={feedbackText} onChange={e => setFeedbackText(e.target.value)}
+                rows={2} placeholder="Please describe..." style={{ ...inp, width: "100%", resize: "vertical", marginBottom: 18 }} />
+            )}
+            
+            <div style={{ display: "flex", gap: 10 }}>
+              <button disabled={busy === "verify"} onClick={doVerify}
+                style={{ flex: 1, background: "#22c55e", color: "#000", border: "none", borderRadius: 9, padding: 12, fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                {busy === "verify" ? <Loader2 size={13} style={{ animation: "spin 0.8s linear infinite" }} /> : <CheckCircle size={13} />} Finish
+              </button>
+              <button onClick={() => setShowVerify(false)}
+                style={{ flex: 1, background: "transparent", color: "#555", border: "1px solid #222", borderRadius: 9, padding: 12, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

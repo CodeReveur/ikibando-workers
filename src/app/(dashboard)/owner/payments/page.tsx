@@ -88,7 +88,21 @@ export default function OwnerPayments() {
   return (
     <div>
       {/* Stats */}
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12, marginBottom:28 }}>
+      <style>{`
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 12px;
+          margin-bottom: 28px;
+        }
+        @media (max-width: 900px) {
+          .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 500px) {
+          .stats-grid { grid-template-columns: 1fr; }
+        }
+      `}</style>
+      <div className="stats-grid">
         <StatCard label="Wallet Balance" value={fmt(wallet?.balance ?? 0)} sub="Available to spend" accent="#f97316" />
         <StatCard label="In Escrow"      value={String(heldCount) + " jobs"}    sub="Awaiting completion" accent="#f59e0b" />
         <StatCard label="Total Released" value={fmt(releasedAmt)}          sub="Workers paid"     accent="#22c55e" />
