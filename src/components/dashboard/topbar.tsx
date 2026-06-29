@@ -33,7 +33,7 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
   const [notifOpen,    setNotifOpen]    = useState(false);
   const [wallet,       setWallet]       = useState<WalletDto | null>(null);
   const [pendingCount, setPendingCount] = useState(0);
-  const [seekerNotifs, setSeekerNotifs] = useState<{ id: string; jobId: string; text: string; time: string; note?: string }[]>([]);
+  const [seekerNotifs, setSeekerNotifs] = useState<{ id: string; jobId: string; text: string; time: string; note?: string | null }[]>([]);
   const ref = useRef<HTMLElement>(null);
 
   const isOwner = pathname.startsWith("/owner");
