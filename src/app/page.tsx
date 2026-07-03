@@ -148,10 +148,10 @@ export default function Home() {
                     <p style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2 }}>{w.categoryName ?? w.experienceType ?? "Worker"}</p>
                   </div>
                 </div>
-                {w.district && (
+                {(w.locationShort ?? w.district) && (
                   <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                     <MapPin size={11} color="#555" />
-                    <span style={{ fontSize: 11, color: "#555" }}>{w.district}</span>
+                    <span style={{ fontSize: 11, color: "#555" }}>{w.locationShort ?? w.district}</span>
                   </div>
                 )}
               </div>

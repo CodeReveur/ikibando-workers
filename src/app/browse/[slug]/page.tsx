@@ -118,10 +118,10 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
             </div>
 
             <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
-              {worker.district && (
+              {(worker.locationFull ?? worker.locationShort ?? worker.district) && (
                 <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
                   <MapPin size={12} color="#555" />
-                  <span style={{ fontSize: 12, color: "#555" }}>{worker.district}</span>
+                  <span style={{ fontSize: 12, color: "#555" }}>{worker.locationFull ?? worker.locationShort ?? worker.district}</span>
                 </span>
               )}
               <span style={{ fontSize: 12, color: "#555" }}>·</span>
@@ -137,7 +137,7 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
         <div className="stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10, marginBottom: 24 }}>
           {[
             { label: "Category",       value: catLabel },
-            { label: "Location",       value: worker.district || "Rwanda" },
+            { label: "Location",       value: worker.locationFull || worker.locationShort || worker.district || "Rwanda" },
             { label: "Equipment",      value: worker.equipment.length > 0 ? `${worker.equipment.length} item${worker.equipment.length !== 1 ? "s" : ""}` : "None listed" },
             { label: "Available days", value: worker.availability.length > 0 ? `${worker.availability.length} day${worker.availability.length !== 1 ? "s" : ""}` : "Not set" },
           ].map(({ label, value }) => (
@@ -242,7 +242,7 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
                 {firstName}
               </p>
               <p style={{ margin: 0, fontSize: 11, color: "#555" }}>
-                {catLabel} · {worker.district || "Rwanda"}
+                {catLabel} · {worker.locationShort ?? worker.district ?? "Rwanda"}
               </p>
             </div>
             {isAvailable && (

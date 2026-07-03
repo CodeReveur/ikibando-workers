@@ -334,7 +334,12 @@ export interface WorkerProfileDto {
   experienceType: string | null;
   categoryName: string | null;
   educationLevel: string | null;
+  /** Plain locality (e.g. "Kicukiro") — used for filtering/proximity. */
   district: string | null;
+  /** Compact address for cards, e.g. "Kicukiro, Rwanda". */
+  locationShort: string | null;
+  /** Full address for detail pages, e.g. "Byimana, Karama, Kanombe, Kicukiro, Kigali, Rwanda". */
+  locationFull: string | null;
   availability: string[];
   equipment: string[];
   memberSince: string;
@@ -402,6 +407,25 @@ export async function getWallet(token: string): Promise<WalletDto> {
 
 export async function getWalletTransactions(token: string): Promise<PaymentDto[]> {
   const { data } = await http.get("/api/wallet/transactions", { headers: authHeader(token) });
+  return data.data;
+}
+
+export interface BonusDto {
+  id: string;
+  amountRwf: number;
+  note: string;
+  status: "PENDING" | "SUCCESS" | "FAILED";
+  createdAt: string;
+}
+
+export interface BonusSummary {
+  total: number;
+  count: number;
+  items: BonusDto[];
+}
+
+export async function getBonuses(token: string): Promise<BonusSummary> {
+  const { data } = await http.get("/api/wallet/bonuses", { headers: authHeader(token) });
   return data.data;
 }
 

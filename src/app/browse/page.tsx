@@ -342,10 +342,10 @@ export default function BrowsePage() {
                     </div>
 
                     {/* location */}
-                    {w.district && (
+                    {(w.locationShort ?? w.district) && (
                       <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                         <MapPin size={11} color="#555" />
-                        <span style={{ fontSize: 11, color: "#555" }}>{w.district}</span>
+                        <span style={{ fontSize: 11, color: "#555" }}>{w.locationShort ?? w.district}</span>
                       </div>
                     )}
 

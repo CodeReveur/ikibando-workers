@@ -565,7 +565,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                             <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
                             <p style={{ margin: "2px 0 0", fontSize: 11, color: "#555" }}>
                               {w.categoryName ?? catLabel(w.experienceType ?? "")}
-                              {w.district ? ` · ${w.district}` : ""}
+                              {(w.locationShort ?? w.district) ? ` · ${w.locationShort ?? w.district}` : ""}
                             </p>
                           </div>
                         </div>
@@ -722,13 +722,13 @@ function WorkerRow({ w, isSel, nearby, isFirst, isMulti, disabled, onClick }: {
           {w.experienceType && (
             <span style={{ fontSize: 11, color: "#666" }}>{w.categoryName ?? catLabel(w.experienceType)}</span>
           )}
-          {w.district && (
+          {(w.locationShort ?? w.district) && (
             <>
               <span style={{ fontSize: 11, color: "#333" }}>·</span>
               <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
                 <MapPin size={10} color={nearby ? "#22c55e" : "#444"} />
                 <span style={{ fontSize: 11, color: nearby ? "#22c55e" : "#555" }}>
-                  {w.district}{nearby ? " · Nearby" : ""}
+                  {w.locationShort ?? w.district}{nearby ? " · Nearby" : ""}
                 </span>
               </span>
             </>
