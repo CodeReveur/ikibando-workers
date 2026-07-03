@@ -1,15 +1,10 @@
 "use client";
 
 import { useState, useRef, KeyboardEvent, useEffect } from "react";
-import dynamic from "next/dynamic";
-import { CheckCircle2, Loader2, MapPin, X } from "lucide-react";
-import { OnboardingData, submitOnboarding, verifyEmailCode, resendOtpCode, AuthResult, getJobCategories, JobCategoryMeta } from "@/lib/api";
+import { CheckCircle2, Loader2, X } from "lucide-react";
+import { OnboardingData, submitOnboarding, verifyEmailCode, resendOtpCode, AuthResult, getJobCategories, JobCategoryMeta, Address } from "@/lib/api";
+import { AddressPicker, isAddressComplete } from "@/components/ui/address-picker";
 import { useToast } from "@/components/ui/toast";
-
-const MapPicker = dynamic(
-  () => import("@/components/jobs/map-picker").then(m => m.MapPicker),
-  { ssr: false, loading: () => <div className="h-[200px] rounded-xl bg-[#1a1a1a] border border-[#2a2a2a] flex items-center justify-center text-xs text-gray-600">Loading map…</div> }
-);
 
 type Step = "ROLE_SELECT" | "EMAIL_VERIFY" | "PERSONAL" | "LOCATION_AVAILABILITY" | "EQUIPMENT" | "COMPLETED";
 
@@ -47,28 +42,6 @@ const STEP_NUMBER: Partial<Record<Step, string>> = {
   EQUIPMENT: "Step 3",
 };
 
-async function reverseGeocode(lat: number, lng: number): Promise<string> {
-  try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=en`,
-      { headers: { "Accept": "application/json" } }
-    );
-    const data = await res.json();
-    const a = data?.address;
-    if (!a) return data?.display_name ?? `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-    const parts = [
-      a.road ?? a.pedestrian ?? a.footway,
-      a.suburb ?? a.neighbourhood ?? a.quarter ?? a.village,
-      a.city ?? a.town ?? a.county,
-      a.state,
-      a.country,
-    ].filter(Boolean);
-    return parts.length > 0 ? parts.join(", ") : (data.display_name ?? `${lat.toFixed(5)}, ${lng.toFixed(5)}`);
-  } catch {
-    return `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-  }
-}
-
 function capitalize(str: string) {
   return str
     .split(" ")
@@ -94,8 +67,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
   const [experience, setExperience] = useState("");
 
   // Location + Availability
-  const [address, setAddress] = useState("");
-  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [address, setAddress] = useState<Address | null>(null);
   const [availability, setAvailability] = useState<string[]>([]);
 
   // Equipment
@@ -115,7 +87,6 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
       if (d.education)    setEducation(d.education);
       if (d.experience)   setExperience(d.experience);
       if (d.address)      setAddress(d.address);
-      if (d.coords)       setCoords(d.coords);
       if (d.availability) setAvailability(d.availability);
       if (d.equipment)    setEquipment(d.equipment);
     } catch {}
@@ -125,10 +96,10 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
   useEffect(() => {
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify({
-        dob, education, experience, address, coords, availability, equipment,
+        dob, education, experience, address, availability, equipment,
       }));
     } catch {}
-  }, [dob, education, experience, address, coords, availability, equipment]);
+  }, [dob, education, experience, address, availability, equipment]);
 
   // Calculate initial step and state
   useEffect(() => {
@@ -140,11 +111,8 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
       if (u.educationLevel) setEducation(u.educationLevel);
       if (u.experienceType) setExperience(u.experienceType);
 
-      if (u.location) {
-        setAddress(u.location.address || "");
-        if (u.location.lat && u.location.lng) {
-          setCoords({ lat: u.location.lat, lng: u.location.lng });
-        }
+      if (u.location && typeof u.location === "object" && (u.location as Address).country) {
+        setAddress(u.location as Address);
       }
 
       if (u.availability && Array.isArray(u.availability)) {
@@ -244,29 +212,6 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     }
   };
 
-  const handleDetectLocation = () => {
-    if (!("geolocation" in navigator)) {
-      toastError("Geolocation not supported. Enter address manually.", { title: "GPS Unavailable" });
-      return;
-    }
-    setLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        setCoords({ lat, lng });
-        const readable = await reverseGeocode(lat, lng);
-        setAddress(readable);
-        setLoading(false);
-      },
-      () => {
-        toastError("Couldn't detect location. Enter it manually.", { title: "GPS Failed" });
-        setLoading(false);
-      },
-      { timeout: 10000 }
-    );
-  };
-
   const handlePersonalSubmit = () => {
     const birthDate = new Date(dob);
     const today = new Date();
@@ -289,7 +234,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
       dob,
       educationLevel: education,
       experienceType: experience,
-      location: { lat: coords?.lat ?? null, lng: coords?.lng ?? null, address },
+      location: address ?? { country: "Rwanda" },
       equipment: equipment.map((name) => ({ name, available: true })),
       availability: availability.map((d) => FULL_DAYS[d]),
     };
@@ -504,36 +449,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
                   Your Location
                 </label>
-                <MapPicker
-                  lat={coords?.lat ?? null}
-                  lng={coords?.lng ?? null}
-                  onChange={(lat, lng) => {
-                    setCoords({ lat, lng });
-                    reverseGeocode(lat, lng).then(setAddress);
-                  }}
-                />
-                <div className="flex gap-2 mt-2">
-                  <button
-                    onClick={handleDetectLocation}
-                    disabled={loading}
-                    className="flex-1 bg-[#1a1a1a] hover:bg-[#222] border border-[#2a2a2a] text-gray-300 text-xs font-medium py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors"
-                  >
-                    {loading ? <Loader2 size={13} className="animate-spin" /> : <MapPin size={13} />}
-                    {loading ? "Detecting…" : "Use GPS"}
-                  </button>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Or type your address…"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  className="w-full mt-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-[#f97316] transition-colors"
-                />
-                {coords && (
-                  <p className="text-[10px] text-gray-600 mt-1">
-                    {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}
-                  </p>
-                )}
+                <AddressPicker value={address} onChange={setAddress} />
               </div>
 
               <div>
@@ -567,7 +483,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
 
               <button
                 onClick={() => setStep("EQUIPMENT")}
-                disabled={(!address && !coords) || availability.length === 0}
+                disabled={!isAddressComplete(address) || availability.length === 0}
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors"
               >
                 Continue

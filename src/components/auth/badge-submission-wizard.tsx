@@ -1,15 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import dynamic from "next/dynamic";
 import { CheckCircle2, Loader2, MapPin } from "lucide-react";
-import { AuthResult, BadgeSubmissionData, submitBadge, uploadFile } from "@/lib/api";
+import { AuthResult, BadgeSubmissionData, submitBadge, uploadFile, Address } from "@/lib/api";
+import { formatAddress } from "@/components/ui/address-picker";
 import { useToast } from "@/components/ui/toast";
-
-const MapPicker = dynamic(
-  () => import("@/components/jobs/map-picker").then(m => m.MapPicker),
-  { ssr: false, loading: () => <div className="h-[200px] rounded-xl bg-[#1a1a1a] border border-[#2a2a2a] flex items-center justify-center text-xs text-gray-600">Loading map…</div> }
-);
 
 interface Props {
   authResult: AuthResult;
@@ -27,9 +22,11 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
   const [nationalId, setNationalId] = useState("");
   const [legalName, setLegalName] = useState(authResult.user.name || "");
 
-  // Location fields
-  const [address, setAddress] = useState("");
-  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  // Address comes from the profile captured at registration — no map/GPS here.
+  const savedAddress = (authResult.user.location as Address | null | undefined) ?? null;
+  const savedAddressLabel = savedAddress
+    ? (savedAddress.label || formatAddress(savedAddress))
+    : "";
 
   const handleIdentitySubmit = () => {
     if (!photoUrl || !nationalId || !legalName) {
@@ -39,31 +36,14 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
     setStep("LOCATION");
   };
 
-  const handleDetectLocation = () => {
-    if (!("geolocation" in navigator)) {
-      toastError("Geolocation not supported.");
-      return;
-    }
-    setLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        setLoading(false);
-      },
-      () => {
-        toastError("Couldn't detect location.");
-        setLoading(false);
-      }
-    );
-  };
-
   const handleSubmit = async () => {
     setLoading(true);
     const payload: BadgeSubmissionData = {
       photoUrl,
       nationalId,
       legalName,
-      address: { lat: coords?.lat, lng: coords?.lng, address },
+      // Server reuses the profile address; we send it too for completeness.
+      address: savedAddress ?? undefined,
     };
     try {
       const updatedUser = await submitBadge(payload, authResult.accessToken);
@@ -101,7 +81,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">
               {step === "IDENTITY" && "Please provide your photo, National ID, and legal name"}
-              {step === "LOCATION" && "Select your real address using Google Maps"}
+              {step === "LOCATION" && "Confirm the address saved on your profile"}
               {step === "COMPLETED" && "Your unique badge is ready."}
             </p>
           </div>
@@ -201,35 +181,28 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
             <div className="space-y-5">
               <div>
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
-                  Real Address
+                  Registered Address
                 </label>
-                <MapPicker
-                  lat={coords?.lat ?? null}
-                  lng={coords?.lng ?? null}
-                  onChange={(lat, lng) => setCoords({ lat, lng })}
-                />
-                <div className="flex gap-2 mt-2">
-                  <button
-                    onClick={handleDetectLocation}
-                    disabled={loading}
-                    className="flex-1 bg-[#1a1a1a] hover:bg-[#222] border border-[#2a2a2a] text-gray-300 text-xs font-medium py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors"
-                  >
-                    {loading ? <Loader2 size={13} className="animate-spin" /> : <MapPin size={13} />}
-                    {loading ? "Detecting…" : "Use GPS"}
-                  </button>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Or type your address…"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  className="w-full mt-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-[#f97316] transition-colors"
-                />
+                {savedAddressLabel ? (
+                  <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-4 flex items-start gap-3">
+                    <MapPin size={16} className="text-[#f97316] shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm text-white leading-snug">{savedAddressLabel}</p>
+                      <p className="text-[11px] text-gray-500 mt-1">
+                        This is the address saved on your profile. To change it, update your profile location in Settings.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-4 text-xs text-amber-300">
+                    No saved address found. Please complete your profile location before requesting a badge.
+                  </div>
+                )}
               </div>
 
               <button
                 onClick={handleSubmit}
-                disabled={loading || (!coords && !address)}
+                disabled={loading || !savedAddress}
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
                 {loading && <Loader2 size={15} className="animate-spin" />}

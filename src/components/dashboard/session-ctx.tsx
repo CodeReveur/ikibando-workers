@@ -14,6 +14,10 @@ export interface Session {
   badgeId?: string;
   badgeUrl?: string;
   photoUrl?: string;
+  accountStatus?: string;
+  profileCompletion?: number;
+  approvalEligible?: boolean;
+  approved?: boolean;
 }
 
 const Ctx = createContext<Session | null>(null);
@@ -43,6 +47,10 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         badgeId:       s.badgeId,
         badgeUrl:      s.badgeUrl,
         photoUrl:      s.photoUrl,
+        accountStatus:     s.accountStatus,
+        profileCompletion: s.profileCompletion,
+        approvalEligible:  s.approvalEligible,
+        approved:          s.approved,
       });
       setLoading(false);
 
@@ -63,6 +71,10 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
               photoUrl: freshUser.photoUrl,
               name: freshUser.name,
               phone: freshUser.phone || prev.phone,
+              accountStatus:     freshUser.accountStatus,
+              profileCompletion: freshUser.profileCompletion,
+              approvalEligible:  freshUser.approvalEligible,
+              approved:          freshUser.approved,
             } : prev);
           }).catch(() => { /* ignore */ });
         });

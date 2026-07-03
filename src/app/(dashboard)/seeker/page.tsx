@@ -113,6 +113,40 @@ export default function SeekerHome() {
         )}
       </div>
 
+      {/* Pending admin approval */}
+      {session?.role === "WORKER" && session?.approved === false && (
+        <div style={{
+          marginBottom: 24, padding: "16px 20px", borderRadius: 14,
+          background: "rgba(249,115,22,0.08)", border: "1px solid rgba(249,115,22,0.3)",
+          display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap",
+        }}>
+          <Clock size={22} color="#f97316" />
+          <div style={{ flex: 1, minWidth: 220 }}>
+            <p style={{ margin: "0 0 3px", fontSize: 14, fontWeight: 800, color: "#f4f4f4" }}>
+              {session.approvalEligible
+                ? "Your profile is under review"
+                : "Complete your profile to get approved"}
+            </p>
+            <p style={{ margin: 0, fontSize: 12, color: "#9a9a9a" }}>
+              {session.approvalEligible
+                ? "An admin will approve your account shortly. You'll be visible to employers once approved."
+                : "Reach 80% profile completion to become eligible for admin approval."}
+            </p>
+          </div>
+          <div style={{ minWidth: 120 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#9a9a9a", marginBottom: 4 }}>
+              <span>Profile</span><span>{session.profileCompletion ?? 0}%</span>
+            </div>
+            <div style={{ height: 6, borderRadius: 3, background: "#222", overflow: "hidden" }}>
+              <div style={{
+                height: "100%", width: `${session.profileCompletion ?? 0}%`,
+                background: (session.profileCompletion ?? 0) >= 80 ? "#22c55e" : "#f97316",
+              }} />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Stats */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12, marginBottom:28 }}>
         <StatCard label="Wallet Balance"   value={fmt(wallet?.balance ?? 0)} sub="Available balance"   accent="#f97316" />

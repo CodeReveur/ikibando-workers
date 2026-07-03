@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef, KeyboardEvent } from "react";
-import dynamic from "next/dynamic";
 import {
   User, Mail, Phone, Lock, Shield, Bell, Info,
   Eye, EyeOff, CheckCircle, XCircle, Smartphone,
@@ -21,13 +20,10 @@ import {
   submitOnboarding,
   getJobCategories,
   JobCategoryMeta,
+  Address,
 } from "@/lib/api";
+import { AddressPicker, isAddressComplete } from "@/components/ui/address-picker";
 import { BadgeSubmissionWizard } from "@/components/auth/badge-submission-wizard";
-
-const MapPicker = dynamic(
-  () => import("@/components/jobs/map-picker").then(m => m.MapPicker),
-  { ssr: false, loading: () => <div style={{ height: 180, background: "#141414", border: "1px solid #222", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, color: "#444" }}>Loading map…</div> }
-);
 
 /* ── Types ────────────────────────────────────────────────────────────────── */
 
@@ -408,19 +404,6 @@ const EQUIPMENT_SUGGESTIONS = [
   "Safety Gear", "Vehicle", "Power Tools", "Camera", "Tablet",
 ];
 
-async function reverseGeocode(lat: number, lng: number): Promise<string> {
-  try {
-    const res  = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=en`);
-    const data = await res.json();
-    const a    = data?.address;
-    if (!a) return data?.display_name ?? `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-    const parts = [a.road ?? a.pedestrian, a.suburb ?? a.village, a.city ?? a.town, a.state, a.country].filter(Boolean);
-    return parts.length > 0 ? parts.join(", ") : (data.display_name ?? `${lat.toFixed(5)}, ${lng.toFixed(5)}`);
-  } catch {
-    return `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-  }
-}
-
 function readWorkerFields() {
   try {
     const raw = localStorage.getItem("user");
@@ -447,10 +430,9 @@ function WorkerProfileSection({
   const [experience,   setExperience]   = useState(stored?.experienceType ?? "");
   const [categories,   setCategories]   = useState<JobCategoryMeta[]>([]);
   const [catSearch,    setCatSearch]    = useState("");
-  const [address,      setAddress]      = useState(stored?.location?.address ?? "");
-  const [coords,       setCoords]       = useState<{ lat: number; lng: number } | null>(
-    stored?.location?.lat && stored?.location?.lng
-      ? { lat: stored.location.lat, lng: stored.location.lng }
+  const [address,      setAddress]      = useState<Address | null>(
+    stored?.location && typeof stored.location === "object" && (stored.location as Address).country
+      ? (stored.location as Address)
       : null
   );
   const [availability, setAvailability] = useState<string[]>(() => {
@@ -461,7 +443,6 @@ function WorkerProfileSection({
     (stored?.equipment ?? []).map((e: { name: string }) => e.name)
   );
   const [equipInput,   setEquipInput]   = useState("");
-  const [gpsLoading,   setGpsLoading]   = useState(false);
   const [saving,       setSaving]       = useState(false);
   const [saved,        setSaved]        = useState(false);
   const equipRef = useRef<HTMLInputElement>(null);
@@ -485,26 +466,11 @@ function WorkerProfileSection({
       setEquipment(prev => prev.slice(0, -1));
   };
 
-  const detectGps = () => {
-    if (!("geolocation" in navigator)) { toastError("GPS not supported"); return; }
-    setGpsLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      async pos => {
-        const { latitude: lat, longitude: lng } = pos.coords;
-        setCoords({ lat, lng });
-        setAddress(await reverseGeocode(lat, lng));
-        setGpsLoading(false);
-      },
-      () => { toastError("Couldn't detect location. Enter it manually."); setGpsLoading(false); },
-      { timeout: 10000 }
-    );
-  };
-
   const handleSave = async () => {
     if (!dob)         { toastError("Date of birth is required"); return; }
     if (!education)   { toastError("Education level is required"); return; }
     if (!experience)  { toastError("Work category is required"); return; }
-    if (!address && !coords) { toastError("Location is required"); return; }
+    if (!isAddressComplete(address)) { toastError("Complete your location"); return; }
     if (availability.length === 0) { toastError("Select at least one available day"); return; }
 
     const birthDate = new Date(dob);
@@ -521,7 +487,7 @@ function WorkerProfileSection({
         dob,
         educationLevel: education,
         experienceType: experience,
-        location: { lat: coords?.lat ?? null, lng: coords?.lng ?? null, address },
+        location: address ?? { country: "Rwanda" },
         equipment: equipment.map(name => ({ name, available: true })),
         availability: availability.map(d => FULL_DAYS[d]),
       };
@@ -633,40 +599,9 @@ function WorkerProfileSection({
         </div>
         <div style={{ ...cardBody, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
 
-          {/* Left: map */}
+          {/* Left: structured address */}
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <MapPicker
-              lat={coords?.lat ?? null}
-              lng={coords?.lng ?? null}
-              onChange={(lat: number, lng: number) => {
-                setCoords({ lat, lng });
-                reverseGeocode(lat, lng).then(setAddress);
-              }}
-            />
-            <button
-              onClick={detectGps}
-              disabled={gpsLoading}
-              style={{ ...ghostBtn, opacity: gpsLoading ? 0.6 : 1 }}
-            >
-              {gpsLoading ? <><RefreshCw size={13} /> Detecting…</> : <><MapPin size={13} /> Use GPS</>}
-            </button>
-            <div>
-              <label style={fieldLabel}>Address</label>
-              <input
-                type="text"
-                value={address}
-                onChange={e => setAddress(e.target.value)}
-                placeholder="Or type your address…"
-                style={{ ...fieldInput, padding: "11px 14px" }}
-                onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-                onBlur={e => (e.currentTarget.style.borderColor = "#222")}
-              />
-              {coords && (
-                <p style={{ margin: "5px 0 0", fontSize: 10, color: "#333" }}>
-                  {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}
-                </p>
-              )}
-            </div>
+            <AddressPicker value={address} onChange={setAddress} />
           </div>
 
           {/* Right: availability */}

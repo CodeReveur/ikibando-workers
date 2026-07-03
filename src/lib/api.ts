@@ -83,10 +83,14 @@ export interface AuthResult {
     totpEnabled: boolean;
     emailVerified: boolean;
     onboardingCompleted: boolean;
+    accountStatus?: string;
+    profileCompletion?: number;
+    approvalEligible?: boolean;
+    approved?: boolean;
     dob?: string;
     educationLevel?: string;
     experienceType?: string;
-    location?: any;
+    location?: Address | null;
     equipment?: any;
     availability?: any;
     badgeSubmitted?: boolean;
@@ -141,12 +145,32 @@ export async function loginWithFacebook(
   return data.data;
 }
 
+/**
+ * Structured address. For Rwanda the cascading admin divisions are filled in;
+ * for other countries the universal fields (state/city/street) are used.
+ * `label` is a human-readable one-line summary for display.
+ */
+export interface Address {
+  country: string;
+  // Rwanda
+  province?: string;
+  district?: string;
+  sector?: string;
+  cell?: string;
+  village?: string;
+  // Universal
+  state?: string;
+  city?: string;
+  street?: string;
+  label?: string;
+}
+
 export interface OnboardingData {
   role?: string;
   dob: string;
   educationLevel: string;
   experienceType: string;
-  location: { lat: number | null; lng: number | null; address: string };
+  location: Address;
   equipment: { name: string; available: boolean }[];
   availability: string[];
 }
