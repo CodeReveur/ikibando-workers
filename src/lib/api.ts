@@ -87,6 +87,8 @@ export interface AuthResult {
     profileCompletion?: number;
     approvalEligible?: boolean;
     approved?: boolean;
+    rating?: number | null;
+    ratingCount?: number | null;
     dob?: string;
     educationLevel?: string;
     experienceType?: string;
@@ -298,6 +300,9 @@ export interface JobDto {
   id: string;
   employerId: string;
   employerName: string;
+  /** Employer's overall reputation (1–5); real reviews = employerRatingCount − 1. */
+  employerRatingAvg: number | null;
+  employerRatingCount: number | null;
   title: string;
   description: string | null;
   requirements: string | null;
@@ -342,6 +347,9 @@ export interface WorkerProfileDto {
   locationFull: string | null;
   availability: string[];
   equipment: string[];
+  /** Average rating (1–5). Seeded at 5.0; real reviews = ratingCount − 1. */
+  rating: number | null;
+  ratingCount: number | null;
   memberSince: string;
 }
 
@@ -355,6 +363,9 @@ export interface ApplicationDto {
   workerId: string;
   workerName: string;
   workerDistrict: string | null;
+  /** Applicant's average rating; real reviews = workerRatingCount − 1. */
+  workerRating: number | null;
+  workerRatingCount: number | null;
   status: "PENDING" | "ACCEPTED" | "REJECTED" | "WITHDRAWN";
   appliedVia: "SELF_APPLY" | "HIRE_NOW";
   bestFit: string | null;

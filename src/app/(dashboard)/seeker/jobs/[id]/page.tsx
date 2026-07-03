@@ -4,13 +4,14 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft, Check, Clock, MapPin, User,
-  Calendar, Loader2, DollarSign, CheckCircle, X, Wallet,
+  Calendar, Loader2, DollarSign, CheckCircle, X, Wallet, Star,
 } from "lucide-react";
 import {
   getJob, getMyApplications, getWalletTransactions,
   updateApplicationStatus, withdrawApplication, verifyJobCompletion,
   type JobDto, type ApplicationDto, type PaymentDto,
 } from "@/lib/api";
+import { ratingLabel } from "@/lib/rating";
 import { fmt } from "@/lib/dashboard-data";
 import { RichTextDisplay } from "@/components/ui/rich-text-editor";
 
@@ -400,7 +401,10 @@ export default function SeekerJobDetail() {
               </div>
               <div>
                 <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#d0d0d0" }}>{job.employerName}</p>
-                <p style={{ margin: 0, fontSize: 11, color: "#444" }}>{job.district}</p>
+                <p style={{ margin: 0, fontSize: 11, color: "#444", display: "flex", alignItems: "center", gap: 4 }}>
+                  <Star size={10} color="#f97316" fill="#f97316" />
+                  {ratingLabel(job.employerRatingAvg, job.employerRatingCount)} · {job.district}
+                </p>
               </div>
             </div>
           </div>

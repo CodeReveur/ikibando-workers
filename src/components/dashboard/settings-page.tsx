@@ -43,6 +43,14 @@ function getToken(): string {
   return localStorage.getItem("access_token") ?? "";
 }
 
+/** Full persisted user object (includes structured `location`/`address`). */
+function readStoredUser(): Record<string, unknown> {
+  try {
+    const raw = localStorage.getItem("user");
+    return raw ? JSON.parse(raw) : {};
+  } catch { return {}; }
+}
+
 function saveUserLocally(patch: Record<string, unknown>) {
   try {
     const raw = localStorage.getItem("user");
@@ -1386,7 +1394,7 @@ function AccountTab({
 
       {showWizard && (
         <BadgeSubmissionWizard
-          authResult={{ user: session as any, accessToken: getToken(), refreshToken: "", tokenType: "Bearer", requires2fa: false }}
+          authResult={{ user: { ...session, ...readStoredUser() } as any, accessToken: getToken(), refreshToken: "", tokenType: "Bearer", requires2fa: false }}
           onComplete={() => {
             setShowWizard(false);
             window.location.reload();

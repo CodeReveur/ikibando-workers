@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft, Check, X, Edit2, Trash2, Users, Clock,
   MapPin, CreditCard, CheckCircle, Circle, Loader2,
-  DollarSign, User, Calendar, Briefcase, ChevronDown, ChevronUp, AlertCircle,
+  DollarSign, User, Calendar, Briefcase, ChevronDown, ChevronUp, AlertCircle, Star,
 } from "lucide-react";
 import {
   getJob, getJobApplications, getWalletTransactions,
@@ -14,6 +14,7 @@ import {
 } from "@/lib/api";
 import { RWANDA_PROVINCES } from "@/lib/constants";
 import { fmt } from "@/lib/dashboard-data";
+import { ratingLabel } from "@/lib/rating";
 import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
 
 const d = (iso: string | null | undefined) =>
@@ -231,7 +232,12 @@ export default function OwnerJobDetail() {
               padding: "8px 0", borderBottom: "1px solid #1a1a1a",
             }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: "#d0d0d0" }}>{app.workerName}</p>
+                <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: "#d0d0d0", display: "flex", alignItems: "center", gap: 6 }}>
+                  {app.workerName}
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 2, fontSize: 10, color: "#f97316", fontWeight: 700 }}>
+                    <Star size={9} color="#f97316" fill="#f97316" />{ratingLabel(app.workerRating, app.workerRatingCount)}
+                  </span>
+                </p>
                 <p style={{ margin: 0, fontSize: 10, color: "#444" }}>
                   {app.workerDistrict ?? "—"}
                   {app.appliedVia === "HIRE_NOW" ? " · Direct Offer" : " · Self-applied"}

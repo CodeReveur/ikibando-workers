@@ -5,9 +5,10 @@ import { useState, useEffect } from "react";
 import Footer from "@/components/layout/footer";
 import { ApplyModal } from "@/components/jobs/apply-modal";
 import { getJob, daysAgo, type JobDto } from "@/lib/api";
+import { ratingLabel } from "@/lib/rating";
 import {
   MapPin, Clock, Users, ChevronLeft,
-  CheckCircle, Briefcase, AlertCircle, ArrowRight,
+  CheckCircle, Briefcase, AlertCircle, ArrowRight, Star,
 } from "lucide-react";
 import { RichTextDisplay } from "@/components/ui/rich-text-editor";
 
@@ -159,7 +160,10 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
             </div>
             <div style={{ flex: 1 }}>
               <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{job.employerName}</p>
-              <p style={{ margin: "2px 0 0", fontSize: 11, color: "#555" }}>Employer on MpahMapu</p>
+              <p style={{ margin: "2px 0 0", fontSize: 11, color: "#555", display: "flex", alignItems: "center", gap: 4 }}>
+                <Star size={11} color="#f97316" fill="#f97316" />
+                {ratingLabel(job.employerRatingAvg, job.employerRatingCount)} · Employer on MpahMapu
+              </p>
             </div>
             <CheckCircle size={14} color="#22c55e" />
           </div>

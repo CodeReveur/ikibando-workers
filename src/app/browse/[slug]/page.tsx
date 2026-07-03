@@ -4,10 +4,11 @@ import { use, useState, useEffect } from "react";
 import Footer from "@/components/layout/footer";
 import { OfferModal } from "@/components/hire/offer-modal";
 import { getWorker, type WorkerProfileDto } from "@/lib/api";
+import { ratingInfo } from "@/lib/rating";
 import { JOB_CATEGORIES } from "@/lib/constants";
 import {
   MapPin, Shield, ChevronLeft, Briefcase,
-  CheckCircle, Calendar, Wrench, Clock, Loader2,
+  CheckCircle, Calendar, Wrench, Clock, Loader2, Star,
 } from "lucide-react";
 
 const CSS = `
@@ -115,6 +116,19 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
               }}>
                 {isAvailable ? "● Available" : "● Not available"}
               </span>
+              {(() => {
+                const r = ratingInfo(worker.rating, worker.ratingCount);
+                return (
+                  <span style={{
+                    display: "inline-flex", alignItems: "center", gap: 5,
+                    background: "rgba(249,115,22,0.1)", border: "1px solid rgba(249,115,22,0.25)",
+                    borderRadius: 999, padding: "4px 10px", fontSize: 11, fontWeight: 700, color: "#f97316",
+                  }}>
+                    <Star size={11} fill={r.hasReviews ? "#f97316" : "none"} />
+                    {r.hasReviews ? `${r.value} · ${r.reviews} review${r.reviews === 1 ? "" : "s"}` : "New worker"}
+                  </span>
+                );
+              })()}
             </div>
 
             <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
@@ -137,8 +151,8 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
         <div className="stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10, marginBottom: 24 }}>
           {[
             { label: "Category",       value: catLabel },
+            { label: "Rating",         value: (() => { const r = ratingInfo(worker.rating, worker.ratingCount); return r.hasReviews ? `${r.value} ★ (${r.reviews})` : "New"; })() },
             { label: "Location",       value: worker.locationFull || worker.locationShort || worker.district || "Rwanda" },
-            { label: "Equipment",      value: worker.equipment.length > 0 ? `${worker.equipment.length} item${worker.equipment.length !== 1 ? "s" : ""}` : "None listed" },
             { label: "Available days", value: worker.availability.length > 0 ? `${worker.availability.length} day${worker.availability.length !== 1 ? "s" : ""}` : "Not set" },
           ].map(({ label, value }) => (
             <div key={label} style={{ background: "#1c1c1c", border: "1px solid #272727", borderRadius: 12, padding: "14px 16px" }}>

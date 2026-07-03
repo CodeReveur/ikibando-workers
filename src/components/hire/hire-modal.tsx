@@ -5,10 +5,11 @@ import dynamic from "next/dynamic";
 import {
   X, MapPin, Shield, ChevronDown,
   Calendar, Clock, CheckCircle, Users,
-  AlarmClock, Search, Navigation, Loader2,
+  AlarmClock, Search, Navigation, Loader2, Star,
 } from "lucide-react";
 import { JOB_CATEGORIES, RWANDA_PROVINCES } from "@/lib/constants";
 import { getWorkers, postJob, applyForJob, updateApplicationStatus, getWallet, type WorkerProfileDto } from "@/lib/api";
+import { ratingInfo } from "@/lib/rating";
 import { useToast } from "@/components/ui/toast";
 import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
 
@@ -563,9 +564,18 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                           <Avatar name={w.name} />
                           <div>
                             <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
-                            <p style={{ margin: "2px 0 0", fontSize: 11, color: "#555" }}>
-                              {w.categoryName ?? catLabel(w.experienceType ?? "")}
-                              {(w.locationShort ?? w.district) ? ` · ${w.locationShort ?? w.district}` : ""}
+                            <p style={{ margin: "2px 0 0", fontSize: 11, color: "#555", display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
+                              <span>{w.categoryName ?? catLabel(w.experienceType ?? "")}
+                                {(w.locationShort ?? w.district) ? ` · ${w.locationShort ?? w.district}` : ""}</span>
+                              {(() => {
+                                const r = ratingInfo(w.rating, w.ratingCount);
+                                return (
+                                  <span style={{ display: "inline-flex", alignItems: "center", gap: 2, color: r.hasReviews ? "#f97316" : "#666", fontWeight: 700 }}>
+                                    <Star size={10} color="#f97316" fill={r.hasReviews ? "#f97316" : "none"} />
+                                    {r.hasReviews ? r.value : "New"}
+                                  </span>
+                                );
+                              })()}
                             </p>
                           </div>
                         </div>
@@ -719,8 +729,20 @@ function WorkerRow({ w, isSel, nearby, isFirst, isMulti, disabled, onClick }: {
           )}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4, flexWrap: "wrap" }}>
+          {(() => {
+            const r = ratingInfo(w.rating, w.ratingCount);
+            return (
+              <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                <Star size={10} color="#f97316" fill={r.hasReviews ? "#f97316" : "none"} />
+                <span style={{ fontSize: 11, fontWeight: 700, color: r.hasReviews ? "#f97316" : "#666" }}>{r.hasReviews ? r.value : "New"}</span>
+              </span>
+            );
+          })()}
           {w.experienceType && (
-            <span style={{ fontSize: 11, color: "#666" }}>{w.categoryName ?? catLabel(w.experienceType)}</span>
+            <>
+              <span style={{ fontSize: 11, color: "#333" }}>·</span>
+              <span style={{ fontSize: 11, color: "#666" }}>{w.categoryName ?? catLabel(w.experienceType)}</span>
+            </>
           )}
           {(w.locationShort ?? w.district) && (
             <>

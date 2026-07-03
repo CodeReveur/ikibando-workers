@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 import Footer from "@/components/layout/footer";
 import { PostJobModal } from "@/components/jobs/post-job-modal";
 import { getWorkers, getJobs, daysAgo, type WorkerProfileDto, type JobDto } from "@/lib/api";
+import { ratingInfo } from "@/lib/rating";
 import {
   UtensilsCrossed, Sparkles, Shield, Car, Zap, Wrench, Leaf,
-  MapPin, ChevronRight, Briefcase,
+  MapPin, ChevronRight, Briefcase, Star,
 } from "lucide-react";
 
 const categories = [
@@ -143,10 +144,21 @@ export default function Home() {
                   }}>
                     {w.name[0]}
                   </div>
-                  <div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
                     <p style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2 }}>{w.categoryName ?? w.experienceType ?? "Worker"}</p>
                   </div>
+                  {(() => {
+                    const r = ratingInfo(w.rating, w.ratingCount);
+                    return (
+                      <div style={{ display: "flex", alignItems: "center", gap: 3, flexShrink: 0 }}>
+                        <Star size={12} color="#f97316" fill={r.hasReviews ? "#f97316" : "none"} />
+                        <span style={{ fontSize: 12, fontWeight: 700, color: r.hasReviews ? "#f97316" : "#666" }}>
+                          {r.hasReviews ? r.value : "New"}
+                        </span>
+                      </div>
+                    );
+                  })()}
                 </div>
                 {(w.locationShort ?? w.district) && (
                   <div style={{ display: "flex", alignItems: "center", gap: 4 }}>

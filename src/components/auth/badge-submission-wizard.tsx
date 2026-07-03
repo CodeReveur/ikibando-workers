@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CheckCircle2, Loader2, MapPin } from "lucide-react";
-import { AuthResult, BadgeSubmissionData, submitBadge, uploadFile, Address } from "@/lib/api";
+import { AuthResult, BadgeSubmissionData, submitBadge, uploadFile, getProfile, Address } from "@/lib/api";
 import { formatAddress } from "@/components/ui/address-picker";
 import { useToast } from "@/components/ui/toast";
 
@@ -23,7 +23,27 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
   const [legalName, setLegalName] = useState(authResult.user.name || "");
 
   // Address comes from the profile captured at registration — no map/GPS here.
-  const savedAddress = (authResult.user.location as Address | null | undefined) ?? null;
+  // When launched from the dashboard the caller may not carry the location, so
+  // fall back to fetching the freshest profile.
+  const initialAddress = (authResult.user.location as Address | null | undefined) ?? null;
+  const [savedAddress, setSavedAddress] = useState<Address | null>(initialAddress);
+  const [addressLoading, setAddressLoading] = useState(false);
+
+  useEffect(() => {
+    if (savedAddress && (savedAddress.label || savedAddress.country)) return;
+    const token = authResult.accessToken;
+    if (!token) return;
+    setAddressLoading(true);
+    getProfile(token)
+      .then((u) => {
+        const loc = (u?.location as Address | null | undefined) ?? null;
+        if (loc) setSavedAddress(loc);
+      })
+      .catch(() => { /* leave empty → shows the "complete your profile" hint */ })
+      .finally(() => setAddressLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const savedAddressLabel = savedAddress
     ? (savedAddress.label || formatAddress(savedAddress))
     : "";
@@ -183,7 +203,12 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
                   Registered Address
                 </label>
-                {savedAddressLabel ? (
+                {addressLoading ? (
+                  <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-4 flex items-center gap-3 text-sm text-gray-400">
+                    <Loader2 size={16} className="text-[#f97316] animate-spin" />
+                    Loading your saved address…
+                  </div>
+                ) : savedAddressLabel ? (
                   <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-4 flex items-start gap-3">
                     <MapPin size={16} className="text-[#f97316] shrink-0 mt-0.5" />
                     <div>
@@ -202,7 +227,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
 
               <button
                 onClick={handleSubmit}
-                disabled={loading || !savedAddress}
+                disabled={loading || addressLoading || !savedAddress}
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
                 {loading && <Loader2 size={15} className="animate-spin" />}

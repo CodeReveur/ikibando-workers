@@ -7,6 +7,7 @@ import {
   type JobDto, type ApplicationDto,
 } from "@/lib/api";
 import { ST, fmt } from "@/lib/dashboard-data";
+import { ratingLabel } from "@/lib/rating";
 import { StatCard, SectionHead, Dot, PageLoader } from "@/components/dashboard/ui";
 
 const CSS = `
@@ -208,9 +209,12 @@ export default function OwnerWorkers() {
                         {app.responseNote && (
                           <p style={{ margin:"4px 0 0", fontSize:11, color:"#1d4a1d" }}>Note: {app.responseNote}</p>
                         )}
-                        <p style={{ margin:"3px 0 0", fontSize:10, color:"#2a2a2a" }}>
-                          Applied {new Date(app.createdAt).toLocaleDateString()}
-                          {app.workerDistrict ? ` · ${app.workerDistrict}` : ""}
+                        <p style={{ margin:"3px 0 0", fontSize:10, color:"#2a2a2a", display:"flex", alignItems:"center", gap:4, flexWrap:"wrap" }}>
+                          <span style={{ display:"inline-flex", alignItems:"center", gap:3, color:"#f97316", fontWeight:700 }}>
+                            <Star size={9} color="#f97316" fill="#f97316" />{ratingLabel(app.workerRating, app.workerRatingCount)}
+                          </span>
+                          <span>· Applied {new Date(app.createdAt).toLocaleDateString()}
+                          {app.workerDistrict ? ` · ${app.workerDistrict}` : ""}</span>
                         </p>
                       </div>
                       {app.status === "PENDING" && !isActing && !isDone && !showNote && (

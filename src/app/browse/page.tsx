@@ -3,10 +3,11 @@
 import Footer from "@/components/layout/footer";
 import { useState, useMemo, useEffect } from "react";
 import { getWorkers, getJobs, daysAgo, type WorkerProfileDto, type JobDto } from "@/lib/api";
+import { ratingInfo } from "@/lib/rating";
 import {
   UtensilsCrossed, Sparkles, Shield, Car, Zap, Wrench, Leaf,
   Camera, Package, Home, HardHat, Search, SlidersHorizontal,
-  MapPin, Briefcase, Users, X, ChevronDown,
+  MapPin, Briefcase, Users, X, ChevronDown, Star,
 } from "lucide-react";
 
 // ── types ──────────────────────────────────────────────────────────────────
@@ -341,13 +342,26 @@ export default function BrowsePage() {
                       )}
                     </div>
 
-                    {/* location */}
-                    {(w.locationShort ?? w.district) && (
-                      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                        <MapPin size={11} color="#555" />
-                        <span style={{ fontSize: 11, color: "#555" }}>{w.locationShort ?? w.district}</span>
-                      </div>
-                    )}
+                    {/* rating + location */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                      {(() => {
+                        const r = ratingInfo(w.rating, w.ratingCount);
+                        return (
+                          <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                            <Star size={11} color="#f97316" fill={r.hasReviews ? "#f97316" : "none"} />
+                            <span style={{ fontSize: 11, fontWeight: 700, color: r.hasReviews ? "#f97316" : "#666" }}>
+                              {r.hasReviews ? `${r.value} · ${r.reviews} review${r.reviews === 1 ? "" : "s"}` : "New"}
+                            </span>
+                          </span>
+                        );
+                      })()}
+                      {(w.locationShort ?? w.district) && (
+                        <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                          <MapPin size={11} color="#555" />
+                          <span style={{ fontSize: 11, color: "#555" }}>{w.locationShort ?? w.district}</span>
+                        </span>
+                      )}
+                    </div>
 
                     {/* equipment tags */}
                     {w.equipment.length > 0 && (
