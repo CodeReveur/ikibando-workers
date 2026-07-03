@@ -564,7 +564,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                           <div>
                             <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
                             <p style={{ margin: "2px 0 0", fontSize: 11, color: "#555" }}>
-                              {catLabel(w.experienceType ?? "")}
+                              {w.categoryName ?? catLabel(w.experienceType ?? "")}
                               {w.district ? ` · ${w.district}` : ""}
                             </p>
                           </div>
@@ -720,7 +720,7 @@ function WorkerRow({ w, isSel, nearby, isFirst, isMulti, disabled, onClick }: {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4, flexWrap: "wrap" }}>
           {w.experienceType && (
-            <span style={{ fontSize: 11, color: "#666" }}>{catLabel(w.experienceType)}</span>
+            <span style={{ fontSize: 11, color: "#666" }}>{w.categoryName ?? catLabel(w.experienceType)}</span>
           )}
           {w.district && (
             <>

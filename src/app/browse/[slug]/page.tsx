@@ -53,7 +53,7 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
     );
   }
 
-  const catLabel    = JOB_CATEGORIES.find(c => c.value === worker.experienceType)?.label ?? worker.experienceType ?? "Worker";
+  const catLabel    = worker.categoryName ?? JOB_CATEGORIES.find(c => c.value === worker.experienceType)?.label ?? worker.experienceType ?? "Worker";
   const isAvailable = worker.availability.length > 0;
   const memberYear  = new Date(worker.memberSince as unknown as string).getFullYear();
   const firstName   = worker.name.split(" ")[0];

@@ -90,6 +90,9 @@ export interface AuthResult {
     dob?: string;
     educationLevel?: string;
     experienceType?: string;
+    accountType?: string;
+    tin?: string | null;
+    teamMembers?: string[] | null;
     location?: Address | null;
     equipment?: any;
     availability?: any;
@@ -165,11 +168,17 @@ export interface Address {
   label?: string;
 }
 
+export type AccountType = "INDIVIDUAL" | "TEAM" | "COMPANY" | "CREW";
+
 export interface OnboardingData {
   role?: string;
   dob: string;
   educationLevel: string;
   experienceType: string;
+  /** Account identifier. Team/Company/Crew may carry members + TIN. */
+  accountType?: AccountType;
+  tin?: string;
+  teamMembers?: string[];
   location: Address;
   equipment: { name: string; available: boolean }[];
   availability: string[];
@@ -323,6 +332,7 @@ export interface WorkerProfileDto {
   id: string;
   name: string;
   experienceType: string | null;
+  categoryName: string | null;
   educationLevel: string | null;
   district: string | null;
   availability: string[];

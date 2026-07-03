@@ -2,11 +2,20 @@
 
 import { useState, useRef, KeyboardEvent, useEffect } from "react";
 import { CheckCircle2, Loader2, X } from "lucide-react";
-import { OnboardingData, submitOnboarding, verifyEmailCode, resendOtpCode, AuthResult, getJobCategories, JobCategoryMeta, Address } from "@/lib/api";
+import { OnboardingData, submitOnboarding, verifyEmailCode, resendOtpCode, AuthResult, getJobCategories, JobCategoryMeta, Address, AccountType } from "@/lib/api";
 import { AddressPicker, isAddressComplete } from "@/components/ui/address-picker";
 import { useToast } from "@/components/ui/toast";
 
-type Step = "ROLE_SELECT" | "EMAIL_VERIFY" | "PERSONAL" | "LOCATION_AVAILABILITY" | "EQUIPMENT" | "COMPLETED";
+type Step = "ROLE_SELECT" | "EMAIL_VERIFY" | "ACCOUNT_TYPE" | "PERSONAL" | "LOCATION_AVAILABILITY" | "EQUIPMENT" | "COMPLETED";
+
+const ACCOUNT_TYPES: { value: AccountType; label: string; icon: string; desc: string }[] = [
+  { value: "INDIVIDUAL", label: "Individual", icon: "🧍", desc: "Just me, working solo" },
+  { value: "TEAM",       label: "Team",       icon: "👥", desc: "A group of workers" },
+  { value: "COMPANY",    label: "Company",    icon: "🏢", desc: "A registered company" },
+  { value: "CREW",       label: "Crew",       icon: "🛠️", desc: "A working crew" },
+];
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 interface Props {
   email: string;
@@ -61,6 +70,14 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
   const [categories, setCategories] = useState<JobCategoryMeta[]>([]);
   const [catSearch, setCatSearch] = useState("");
 
+  // Account identifier
+  const [accountType, setAccountType] = useState<AccountType>("INDIVIDUAL");
+  const [memberEmails, setMemberEmails] = useState<string[]>([]);
+  const [memberInput, setMemberInput] = useState("");
+  const [tin, setTin] = useState("");
+  const memberRef = useRef<HTMLInputElement>(null);
+  const isGroup = accountType !== "INDIVIDUAL";
+
   // Personal
   const [dob, setDob] = useState("");
   const [education, setEducation] = useState("");
@@ -89,6 +106,9 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
       if (d.address)      setAddress(d.address);
       if (d.availability) setAvailability(d.availability);
       if (d.equipment)    setEquipment(d.equipment);
+      if (d.accountType)  setAccountType(d.accountType);
+      if (d.memberEmails) setMemberEmails(d.memberEmails);
+      if (d.tin)          setTin(d.tin);
     } catch {}
   }, []);
 
@@ -97,9 +117,10 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify({
         dob, education, experience, address, availability, equipment,
+        accountType, memberEmails, tin,
       }));
     } catch {}
-  }, [dob, education, experience, address, availability, equipment]);
+  }, [dob, education, experience, address, availability, equipment, accountType, memberEmails, tin]);
 
   // Calculate initial step and state
   useEffect(() => {
@@ -126,13 +147,17 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
         setEquipment(u.equipment.map((e: any) => e.name));
       }
 
+      if (u.accountType) setAccountType(u.accountType as AccountType);
+      if (u.tin) setTin(u.tin);
+      if (u.teamMembers && Array.isArray(u.teamMembers)) setMemberEmails(u.teamMembers);
+
       // Role select overrides everything — always start there when requested
       if (showRoleSelect) {
         setStep("ROLE_SELECT");
       } else if (!u.emailVerified && !isLogin) {
         setStep("EMAIL_VERIFY");
       } else if (!u.dob || !u.educationLevel || !u.experienceType) {
-        setStep("PERSONAL");
+        setStep("ACCOUNT_TYPE");
         getJobCategories().then(setCategories).catch(console.error);
       } else if (!u.location || !u.availability || u.availability.length === 0) {
         setStep("LOCATION_AVAILABILITY");
@@ -153,7 +178,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     if (!u?.emailVerified && !isLogin) {
       setStep("EMAIL_VERIFY");
     } else {
-      setStep("PERSONAL");
+      setStep("ACCOUNT_TYPE");
       getJobCategories().then(setCategories).catch(console.error);
     }
   };
@@ -181,6 +206,31 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     }
   };
 
+  const addMemberEmail = (value: string) => {
+    const v = value.trim().replace(/,/g, "").toLowerCase();
+    if (!v) { setMemberInput(""); return; }
+    if (!EMAIL_RE.test(v)) {
+      toastError("Enter a valid email address.", { title: "Invalid Email" });
+      return;
+    }
+    if (!memberEmails.includes(v)) setMemberEmails((prev) => [...prev, v]);
+    setMemberInput("");
+  };
+
+  const handleMemberKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      addMemberEmail(memberInput);
+    } else if (e.key === "Backspace" && memberInput === "" && memberEmails.length > 0) {
+      setMemberEmails((prev) => prev.slice(0, -1));
+    }
+  };
+
+  const handleAccountTypeContinue = () => {
+    setStep("PERSONAL");
+    getJobCategories().then(setCategories).catch(console.error);
+  };
+
   const handleVerifyEmail = async () => {
     if (!verifyCode || verifyCode.length < 4) {
       toastError("Please enter a valid code.", { title: "Verification Failed" });
@@ -189,7 +239,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     setLoading(true);
     try {
       await verifyEmailCode(email, verifyCode);
-      setStep("PERSONAL");
+      setStep("ACCOUNT_TYPE");
       // Load categories
       getJobCategories().then(setCategories).catch(console.error);
     } catch (e: any) {
@@ -234,6 +284,9 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
       dob,
       educationLevel: education,
       experienceType: experience,
+      accountType,
+      tin: isGroup && tin.trim() ? tin.trim() : undefined,
+      teamMembers: isGroup ? memberEmails : [],
       location: address ?? { country: "Rwanda" },
       equipment: equipment.map((name) => ({ name, available: true })),
       availability: availability.map((d) => FULL_DAYS[d]),
@@ -263,6 +316,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
             <h2 className="text-lg font-bold text-white leading-tight">
               {step === "ROLE_SELECT" && "How will you use MpahMapu?"}
               {step === "EMAIL_VERIFY" && "Verify your email"}
+              {step === "ACCOUNT_TYPE" && "Who's registering?"}
               {step === "PERSONAL" && "About you"}
               {step === "LOCATION_AVAILABILITY" && "Where & when"}
               {step === "EQUIPMENT" && "Your equipment"}
@@ -271,6 +325,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
             <p className="text-xs text-gray-500 mt-0.5">
               {step === "ROLE_SELECT" && "Choose your account type to get started"}
               {step === "EMAIL_VERIFY" && `Enter the code we sent to ${email}`}
+              {step === "ACCOUNT_TYPE" && "Register on your own or as a team"}
               {step === "PERSONAL" && "A few quick details about your background"}
               {step === "LOCATION_AVAILABILITY" && "Tell us where you're based and when you're free"}
               {step === "EQUIPMENT" && "List tools or devices you have access to"}
@@ -352,6 +407,97 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                   Resend code
                 </button>
               </p>
+            </div>
+          )}
+
+          {/* ── Account identifier ── */}
+          {step === "ACCOUNT_TYPE" && (
+            <div className="space-y-5">
+              <div className="grid grid-cols-2 gap-3">
+                {ACCOUNT_TYPES.map((t) => {
+                  const active = accountType === t.value;
+                  return (
+                    <button
+                      key={t.value}
+                      type="button"
+                      onClick={() => setAccountType(t.value)}
+                      className={`flex items-center gap-3 rounded-xl border p-4 text-left transition-all ${
+                        active ? "bg-[#f97316]/10 border-[#f97316]" : "bg-[#1a1a1a] border-[#2a2a2a] hover:border-gray-500"
+                      }`}
+                    >
+                      <span className="text-2xl">{t.icon}</span>
+                      <div>
+                        <p className={`text-sm font-bold ${active ? "text-[#f97316]" : "text-white"}`}>{t.label}</p>
+                        <p className="text-[11px] text-gray-500 mt-0.5">{t.desc}</p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {isGroup && (
+                <div className="space-y-4 border-t border-[#2a2a2a] pt-4">
+                  {/* Member emails */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
+                      Member emails
+                      {memberEmails.length > 0 && (
+                        <span className="text-gray-500 normal-case font-normal"> · {memberEmails.length} member{memberEmails.length > 1 ? "s" : ""}</span>
+                      )}
+                    </label>
+                    <div
+                      className="min-h-[64px] bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-3 flex flex-wrap gap-2 cursor-text focus-within:border-[#f97316] transition-colors"
+                      onClick={() => memberRef.current?.focus()}
+                    >
+                      {memberEmails.map((m) => (
+                        <span key={m} className="flex items-center gap-1 bg-[#f97316]/15 border border-[#f97316]/30 text-[#f97316] text-xs font-medium px-2.5 py-1 rounded-lg">
+                          {m}
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setMemberEmails((prev) => prev.filter((i) => i !== m)); }}
+                            className="hover:text-white transition-colors ml-0.5"
+                          >
+                            <X size={11} />
+                          </button>
+                        </span>
+                      ))}
+                      <input
+                        ref={memberRef}
+                        type="email"
+                        value={memberInput}
+                        onChange={(e) => setMemberInput(e.target.value)}
+                        onKeyDown={handleMemberKeyDown}
+                        onBlur={() => memberInput.trim() && addMemberEmail(memberInput)}
+                        placeholder={memberEmails.length === 0 ? "Type an email and press Enter…" : ""}
+                        className="flex-1 min-w-[160px] bg-transparent text-sm text-white outline-none placeholder:text-gray-600"
+                      />
+                    </div>
+                    <p className="text-[10px] text-gray-600 mt-1.5">
+                      We'll email each member that they've been added. They receive notifications only — no dashboard access — and can still register their own account later.
+                    </p>
+                  </div>
+
+                  {/* Optional TIN */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
+                      TIN number <span className="text-gray-600 normal-case font-normal">(optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={tin}
+                      onChange={(e) => setTin(e.target.value)}
+                      placeholder="Tax ID — leave blank to skip"
+                      className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-[#f97316] transition-colors"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <button
+                onClick={handleAccountTypeContinue}
+                className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors"
+              >
+                Continue
+              </button>
             </div>
           )}
 

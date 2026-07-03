@@ -328,7 +328,7 @@ export default function BrowsePage() {
                         </div>
                         <div>
                           <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
-                          <p style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2 }}>{w.experienceType ?? "Worker"}</p>
+                          <p style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2 }}>{w.categoryName ?? w.experienceType ?? "Worker"}</p>
                         </div>
                       </div>
                       {w.availability.length > 0 && (
