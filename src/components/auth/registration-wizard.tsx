@@ -518,7 +518,8 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                 />
               </div>
 
-              {/* Education */}
+              {/* Education — not applicable to companies */}
+              {accountType !== "COMPANY" && (
               <div>
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
                   Education Level
@@ -539,6 +540,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                   ))}
                 </div>
               </div>
+              )}
 
               {/* Experience */}
               <div>
@@ -580,7 +582,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
 
               <button
                 onClick={handlePersonalSubmit}
-                disabled={!dob || !education || !experience}
+                disabled={!dob || (accountType !== "COMPANY" && !education) || !experience}
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors mt-2"
               >
                 Continue
