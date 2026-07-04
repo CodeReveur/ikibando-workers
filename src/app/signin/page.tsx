@@ -9,6 +9,7 @@ import { loginWithGoogle, loginWithFacebook, loginWithEmail } from "@/lib/api";
 import { getAndClearRedirect } from "@/lib/auth-redirect";
 import { RegistrationWizard } from "@/components/auth/registration-wizard";
 import { BadgeSubmissionWizard } from "@/components/auth/badge-submission-wizard";
+import { AuthGate } from "@/components/auth/auth-gate";
 import { useToast } from "@/components/ui/toast";
 
 declare global {
@@ -33,7 +34,21 @@ export default function SignInPage() {
   const [showWizard, setShowWizard] = useState(false);
   const [showBadgeWizard, setShowBadgeWizard] = useState(false);
   const [authResult, setAuthResult] = useState<any>(null);
+  const [gateResult, setGateResult] = useState<any>(null);
   const fbReady = useRef(false);
+
+  /* Post-authentication routing (shared by email + social + gate resolution). */
+  const proceed = (result: any) => {
+    if (!result.user.onboardingCompleted) {
+      setAuthResult(result);
+      setShowWizard(true);
+    } else if (result.user.role === "WORKER" && !result.user.badgeSubmitted) {
+      setAuthResult(result);
+      setShowBadgeWizard(true);
+    } else {
+      saveAndRedirect(result);
+    }
+  };
 
   /* ── Facebook SDK bootstrap ──────────────────────────────────────────── */
   useEffect(() => {
@@ -60,16 +75,7 @@ export default function SignInPage() {
     onSuccess: async ({ access_token }) => {
       setLoading("google");
       try {
-        const result = await loginWithGoogle(access_token);
-        if (!result.user.onboardingCompleted) {
-          setAuthResult(result);
-          setShowWizard(true);
-        } else if (result.user.role === "WORKER" && !result.user.badgeSubmitted) {
-          setAuthResult(result);
-          setShowBadgeWizard(true);
-        } else {
-          saveAndRedirect(result);
-        }
+        proceed(await loginWithGoogle(access_token));
       } catch {
         toastError("Google sign-in failed. Please try again.", { title: "Login Failed" });
       } finally {
@@ -94,17 +100,7 @@ export default function SignInPage() {
         if (!res.authResponse?.accessToken) return;
         setLoading("facebook");
         loginWithFacebook(res.authResponse.accessToken)
-          .then((result) => {
-            if (!result.user.onboardingCompleted) {
-              setAuthResult(result);
-              setShowWizard(true);
-            } else if (result.user.role === "WORKER" && !result.user.badgeSubmitted) {
-              setAuthResult(result);
-              setShowBadgeWizard(true);
-            } else {
-              saveAndRedirect(result);
-            }
-          })
+          .then((result) => proceed(result))
           .catch(() => {
             toastError("Facebook sign-in failed. Please try again.", { title: "Login Failed" });
           })
@@ -125,14 +121,10 @@ export default function SignInPage() {
     setLoading("email");
     try {
       const result = await loginWithEmail({ email, password });
-      if (!result.user.onboardingCompleted) {
-        setAuthResult(result);
-        setShowWizard(true);
-      } else if (result.user.role === "WORKER" && !result.user.badgeSubmitted) {
-        setAuthResult(result);
-        setShowBadgeWizard(true);
+      if (result.requiresEmailVerification || result.requires2fa || result.requires2faSetup) {
+        setGateResult(result);
       } else {
-        saveAndRedirect(result);
+        proceed(result);
       }
     } catch (e: unknown) {
       const msg =
@@ -259,6 +251,14 @@ export default function SignInPage() {
           </div>
         </div>
       </div>
+      {gateResult && (
+        <AuthGate
+          result={gateResult}
+          email={email}
+          password={password}
+          onResolved={(final) => { setGateResult(null); proceed(final); }}
+        />
+      )}
       {showWizard && authResult && (
         <RegistrationWizard
           email={authResult.user.email}

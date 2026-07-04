@@ -6,7 +6,7 @@ import { OnboardingData, submitOnboarding, verifyEmailCode, resendOtpCode, AuthR
 import { AddressPicker, isAddressComplete } from "@/components/ui/address-picker";
 import { useToast } from "@/components/ui/toast";
 
-type Step = "ROLE_SELECT" | "EMAIL_VERIFY" | "ACCOUNT_TYPE" | "PERSONAL" | "LOCATION_AVAILABILITY" | "EQUIPMENT" | "COMPLETED";
+type Step = "ROLE_SELECT" | "EMAIL_VERIFY" | "ACCOUNT_TYPE" | "EMPLOYER_DETAILS" | "PERSONAL" | "LOCATION_AVAILABILITY" | "EQUIPMENT" | "COMPLETED";
 
 const ACCOUNT_TYPES: { value: AccountType; label: string; icon: string; desc: string }[] = [
   { value: "INDIVIDUAL", label: "Individual", icon: "🧍", desc: "Just me, working solo" },
@@ -76,7 +76,19 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
   const [memberInput, setMemberInput] = useState("");
   const [tin, setTin] = useState("");
   const memberRef = useRef<HTMLInputElement>(null);
+  const isEmployer = selectedRole === "EMPLOYER";
   const isGroup = accountType !== "INDIVIDUAL";
+  // Employers register only as a Company or Individual (no teams/crews).
+  const typeOptions = isEmployer
+    ? ACCOUNT_TYPES.filter((t) => t.value === "INDIVIDUAL" || t.value === "COMPANY")
+    : ACCOUNT_TYPES;
+
+  // Keep the account identifier valid when switching to the employer role.
+  useEffect(() => {
+    if (isEmployer && accountType !== "INDIVIDUAL" && accountType !== "COMPANY") {
+      setAccountType("INDIVIDUAL");
+    }
+  }, [isEmployer]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Personal
   const [dob, setDob] = useState("");
@@ -156,6 +168,10 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
         setStep("ROLE_SELECT");
       } else if (!u.emailVerified && !isLogin) {
         setStep("EMAIL_VERIFY");
+      } else if (u.role === "EMPLOYER") {
+        // Employer flow: identifier → location + service type + TIN
+        setStep(!u.experienceType || !u.location ? "ACCOUNT_TYPE" : "EMPLOYER_DETAILS");
+        getJobCategories().then(setCategories).catch(console.error);
       } else if (!u.dob || !u.educationLevel || !u.experienceType) {
         setStep("ACCOUNT_TYPE");
         getJobCategories().then(setCategories).catch(console.error);
@@ -169,11 +185,6 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
   }, [authResult]);
 
   const handleRoleSelectContinue = async () => {
-    if (selectedRole === "EMPLOYER") {
-      // Employers don't need personal/equipment details — submit role and finish
-      await handleSubmit();
-      return;
-    }
     const u = authResult?.user;
     if (!u?.emailVerified && !isLogin) {
       setStep("EMAIL_VERIFY");
@@ -227,7 +238,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
   };
 
   const handleAccountTypeContinue = () => {
-    setStep("PERSONAL");
+    setStep(isEmployer ? "EMPLOYER_DETAILS" : "PERSONAL");
     getJobCategories().then(setCategories).catch(console.error);
   };
 
@@ -285,8 +296,8 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
       educationLevel: education,
       experienceType: experience,
       accountType,
-      tin: isGroup && tin.trim() ? tin.trim() : undefined,
-      teamMembers: isGroup ? memberEmails : [],
+      tin: tin.trim() ? tin.trim() : undefined,
+      teamMembers: !isEmployer && isGroup ? memberEmails : [],
       location: address ?? { country: "Rwanda" },
       equipment: equipment.map((name) => ({ name, available: true })),
       availability: availability.map((d) => FULL_DAYS[d]),
@@ -317,6 +328,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
               {step === "ROLE_SELECT" && "How will you use MpahMapu?"}
               {step === "EMAIL_VERIFY" && "Verify your email"}
               {step === "ACCOUNT_TYPE" && "Who's registering?"}
+              {step === "EMPLOYER_DETAILS" && "Your business details"}
               {step === "PERSONAL" && "About you"}
               {step === "LOCATION_AVAILABILITY" && "Where & when"}
               {step === "EQUIPMENT" && "Your equipment"}
@@ -325,7 +337,8 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
             <p className="text-xs text-gray-500 mt-0.5">
               {step === "ROLE_SELECT" && "Choose your account type to get started"}
               {step === "EMAIL_VERIFY" && `Enter the code we sent to ${email}`}
-              {step === "ACCOUNT_TYPE" && "Register on your own or as a team"}
+              {step === "ACCOUNT_TYPE" && (isEmployer ? "Are you a company or an individual?" : "Register on your own or as a team")}
+              {step === "EMPLOYER_DETAILS" && "Where you operate, what you hire for, and your TIN"}
               {step === "PERSONAL" && "A few quick details about your background"}
               {step === "LOCATION_AVAILABILITY" && "Tell us where you're based and when you're free"}
               {step === "EQUIPMENT" && "List tools or devices you have access to"}
@@ -414,7 +427,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
           {step === "ACCOUNT_TYPE" && (
             <div className="space-y-5">
               <div className="grid grid-cols-2 gap-3">
-                {ACCOUNT_TYPES.map((t) => {
+                {typeOptions.map((t) => {
                   const active = accountType === t.value;
                   return (
                     <button
@@ -435,7 +448,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                 })}
               </div>
 
-              {isGroup && (
+              {!isEmployer && isGroup && (
                 <div className="space-y-4 border-t border-[#2a2a2a] pt-4">
                   {/* Member emails */}
                   <div>
@@ -497,6 +510,80 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors"
               >
                 Continue
+              </button>
+            </div>
+          )}
+
+          {/* ── Employer: location + service type + TIN ── */}
+          {step === "EMPLOYER_DETAILS" && (
+            <div className="space-y-5">
+              <div>
+                <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
+                  Working Location
+                </label>
+                <AddressPicker value={address} onChange={setAddress} />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
+                  Service Type
+                </label>
+                <input
+                  type="text"
+                  placeholder="Search service types..."
+                  value={catSearch}
+                  onChange={(e) => setCatSearch(e.target.value)}
+                  className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-2 text-sm text-white outline-none focus:border-[#f97316] transition-colors mb-3"
+                />
+                <div className="flex flex-wrap gap-2 max-h-[150px] overflow-y-auto">
+                  {categories
+                    .filter((c) =>
+                      c.displayName.toLowerCase().includes(catSearch.toLowerCase()) ||
+                      (c.nameKinyarwanda && c.nameKinyarwanda.toLowerCase().includes(catSearch.toLowerCase()))
+                    )
+                    .map((opt) => (
+                    <button
+                      key={opt.slug}
+                      onClick={() => setExperience(opt.slug)}
+                      className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all text-left ${
+                        experience === opt.slug
+                          ? "bg-[#f97316]/20 border-[#f97316] text-[#f97316]"
+                          : "bg-[#1a1a1a] border-[#2a2a2a] text-gray-400 hover:border-gray-500"
+                      }`}
+                    >
+                      <div className="font-bold">{opt.displayName}</div>
+                      {opt.nameKinyarwanda && <div className="text-[10px] opacity-70 mt-0.5">{opt.nameKinyarwanda}</div>}
+                    </button>
+                  ))}
+                  {categories.length === 0 && (
+                    <span className="text-xs text-gray-500">Loading service types...</span>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
+                  TIN number{" "}
+                  <span className="text-gray-600 normal-case font-normal">
+                    {accountType === "COMPANY" ? "(recommended)" : "(optional)"}
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  value={tin}
+                  onChange={(e) => setTin(e.target.value)}
+                  placeholder="Tax ID — leave blank to skip"
+                  className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-[#f97316] transition-colors"
+                />
+              </div>
+
+              <button
+                onClick={handleSubmit}
+                disabled={loading || !isAddressComplete(address) || !experience}
+                className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
+              >
+                {loading && <Loader2 size={15} className="animate-spin" />}
+                Complete Setup
               </button>
             </div>
           )}

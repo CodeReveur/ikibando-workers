@@ -74,6 +74,11 @@ export interface AuthResult {
   refreshToken: string;
   tokenType: string;
   requires2fa: boolean;
+  requiresEmailVerification?: boolean;
+  requires2faSetup?: boolean;
+  secret?: string;
+  qrCodeUri?: string;
+  tempToken?: string;
   user: {
     id: string;
     name: string;
@@ -125,6 +130,12 @@ export async function loginWithEmail(payload: {
   password: string;
 }): Promise<AuthResult> {
   const { data } = await http.post("/api/auth/login", payload);
+  return data.data;
+}
+
+/** Completes a TOTP login using the short-lived tempToken from a requires2fa response. */
+export async function authenticate2fa(tempToken: string, code: string): Promise<AuthResult> {
+  const { data } = await http.post("/api/auth/2fa/authenticate", { tempToken, code });
   return data.data;
 }
 
