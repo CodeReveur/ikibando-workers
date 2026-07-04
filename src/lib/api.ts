@@ -589,6 +589,26 @@ export async function getWorkers(params?: {
   return data.data;
 }
 
+export interface BadgeVerification {
+  valid: boolean;
+  active: boolean;
+  badgeId: string;
+  name: string | null;
+  role: string | null;
+  accountType: string | null;
+  category: string | null;
+  photoUrl: string | null;
+  status: string | null;
+  rating: number | null;
+  ratingCount: number | null;
+  memberSince: string | null;
+}
+
+export async function verifyBadge(badgeId: string): Promise<BadgeVerification> {
+  const { data } = await http.get(`/api/workers/verify/${encodeURIComponent(badgeId)}`);
+  return data.data;
+}
+
 export async function getWorker(id: string): Promise<WorkerProfileDto> {
   const { data } = await http.get(`/api/workers/${id}`);
   return data.data;
