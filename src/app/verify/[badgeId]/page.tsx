@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
-import { BadgeCheck, ShieldAlert, XCircle, Star, Briefcase, Calendar, Loader2 } from "lucide-react";
+import { BadgeCheck, ShieldAlert, XCircle, Star, Briefcase, Calendar, MapPin, CheckCircle2, ArrowRight, Loader2 } from "lucide-react";
 import { verifyBadge, type BadgeVerification } from "@/lib/api";
 import { ratingInfo } from "@/lib/rating";
 
@@ -94,10 +94,29 @@ export default function VerifyBadgePage({ params }: { params: Promise<{ badgeId:
                 {!isCompany && data.category && (
                   <Chip icon={<Briefcase size={12} />}>{data.category}</Chip>
                 )}
-                <Chip icon={<Star size={12} color="#f97316" />}>
-                  {r.hasReviews ? `${r.value} · ${r.reviews} review${r.reviews === 1 ? "" : "s"}` : "New"}
-                </Chip>
+                {data.location && <Chip icon={<MapPin size={12} />}>{data.location}</Chip>}
                 {memberYear && <Chip icon={<Calendar size={12} />}>Since {memberYear}</Chip>}
+              </div>
+
+              {/* stats: rating + completed jobs */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 20 }}>
+                <div style={{ background: "#0d0d0d", border: "1px solid #232323", borderRadius: 12, padding: "14px 10px" }}>
+                  <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 2 }}>
+                    <Star size={15} color="#f97316" fill={r.hasReviews ? "#f97316" : "none"} style={{ alignSelf: "center", marginRight: 4 }} />
+                    <span style={{ fontSize: 22, fontWeight: 800, color: "#f0f0f0" }}>{r.hasReviews ? r.value : "—"}</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "#666" }}>/5</span>
+                  </div>
+                  <p style={{ margin: "5px 0 0", fontSize: 11, color: "#666" }}>
+                    {r.hasReviews ? `${r.reviews} review${r.reviews === 1 ? "" : "s"}` : "No reviews yet"}
+                  </p>
+                </div>
+                <div style={{ background: "#0d0d0d", border: "1px solid #232323", borderRadius: 12, padding: "14px 10px" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}>
+                    <CheckCircle2 size={15} color="#22c55e" />
+                    <span style={{ fontSize: 22, fontWeight: 800, color: "#f0f0f0" }}>{data.completedJobs ?? 0}</span>
+                  </div>
+                  <p style={{ margin: "5px 0 0", fontSize: 11, color: "#666" }}>Jobs completed</p>
+                </div>
               </div>
 
               {/* badge id */}
@@ -108,6 +127,14 @@ export default function VerifyBadgePage({ params }: { params: Promise<{ badgeId:
                 <span style={{ fontSize: 16, fontWeight: 800, color: "#f97316", letterSpacing: "0.5px",
                   fontFamily: "monospace" }}>{data.badgeId}</span>
               </div>
+
+              {data.active && data.id && data.role === "WORKER" && (
+                <Link href={`/browse/${data.id}`} style={{ display: "flex", alignItems: "center",
+                  justifyContent: "center", gap: 6, marginTop: 16, background: "#f97316", color: "#fff",
+                  textDecoration: "none", borderRadius: 12, padding: "12px 16px", fontSize: 13, fontWeight: 700 }}>
+                  View full profile <ArrowRight size={15} />
+                </Link>
+              )}
 
               {!data.active && (
                 <p style={{ margin: "16px 0 0", fontSize: 12, color: "#f59e0b", lineHeight: 1.6 }}>

@@ -592,15 +592,18 @@ export async function getWorkers(params?: {
 export interface BadgeVerification {
   valid: boolean;
   active: boolean;
+  id: string | null;
   badgeId: string;
   name: string | null;
   role: string | null;
   accountType: string | null;
   category: string | null;
   photoUrl: string | null;
+  location: string | null;
   status: string | null;
   rating: number | null;
   ratingCount: number | null;
+  completedJobs: number;
   memberSince: string | null;
 }
 
