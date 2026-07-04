@@ -1,46 +1,49 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Zap, CheckCircle, Star, Award, TrendingUp, Shield, Copy, Users, Gift } from "lucide-react";
-import { useSession } from "@/components/dashboard/session-ctx";
+import { CheckCircle, Star, Award, TrendingUp, Shield, Copy, Users, Gift } from "lucide-react";
 import { fmt } from "@/lib/dashboard-data";
 import { SectionHead } from "@/components/dashboard/ui";
-import { getBonuses, type BonusSummary } from "@/lib/api";
+import { getBonuses, getMyReferral, type BonusSummary, type ReferralSummary } from "@/lib/api";
 
 export default function SeekerBonuses() {
-  const session = useSession();
-  const [copied, setCopied]   = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [bonus, setBonus]     = useState<BonusSummary | null>(null);
-
-  const refCode = (session?.name?.split(" ")[0]?.toUpperCase() ?? "USER") + "2024";
+  const [copied, setCopied]     = useState(false);
+  const [loading, setLoading]   = useState(true);
+  const [bonus, setBonus]       = useState<BonusSummary | null>(null);
+  const [referral, setReferral] = useState<ReferralSummary | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (!token) { setLoading(false); return; }
-    getBonuses(token)
-      .then(setBonus)
-      .catch(() => setBonus({ total: 0, count: 0, items: [] }))
+    Promise.allSettled([getBonuses(token), getMyReferral(token)])
+      .then(([b, r]) => {
+        if (b.status === "fulfilled") setBonus(b.value);
+        if (r.status === "fulfilled") setReferral(r.value);
+      })
       .finally(() => setLoading(false));
   }, []);
 
+  const total   = bonus?.total ?? 0;
+  const items   = bonus?.items ?? [];
+  const code    = referral?.code ?? "";
+  const reward  = referral?.rewardPerReferral ?? 1000;
+  const origin  = typeof window !== "undefined" ? window.location.origin : "https://mpahmapu.com";
+  const link    = code ? `${origin}/signup?ref=${code}` : "";
+
   const copy = () => {
-    navigator.clipboard.writeText(refCode).catch(() => {});
+    if (!link) return;
+    navigator.clipboard.writeText(link).catch(() => {});
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const total = bonus?.total ?? 0;
-  const items = bonus?.items ?? [];
-
-  // How workers earn bonuses. These are program descriptions, not fake balances.
   const WAYS = [
-    { icon: Users,       label: "Refer a friend",   desc: "They complete their first job", reward: "RWF 1,000", color: "#60a5fa" },
-    { icon: CheckCircle, label: "First job done",    desc: "Complete your debut job",       reward: "RWF 500",   color: "#22c55e" },
-    { icon: Star,        label: "5-star streak",     desc: "Keep a 5.0 rating for 10 jobs", reward: "RWF 2,000", color: "#f59e0b" },
-    { icon: Award,       label: "10 jobs club",      desc: "Complete 10 jobs",              reward: "RWF 3,000", color: "#a78bfa" },
-    { icon: TrendingUp,  label: "Top worker",        desc: "Rank in the top 10%",           reward: "RWF 5,000", color: "#f97316" },
-    { icon: Shield,      label: "Verified pro",      desc: "Pass identity verification",    reward: "RWF 1,000", color: "#fb923c" },
+    { icon: Users,       label: "Refer a friend",   desc: "They complete their first job", reward: fmt(reward), color: "#60a5fa" },
+    { icon: CheckCircle, label: "First job done",    desc: "Complete your debut job",       reward: "Coming soon", color: "#22c55e" },
+    { icon: Star,        label: "5-star streak",     desc: "Keep a 5.0 rating for 10 jobs", reward: "Coming soon", color: "#f59e0b" },
+    { icon: Award,       label: "10 jobs club",      desc: "Complete 10 jobs",              reward: "Coming soon", color: "#a78bfa" },
+    { icon: TrendingUp,  label: "Top worker",        desc: "Rank in the top 10%",           reward: "Coming soon", color: "#f97316" },
+    { icon: Shield,      label: "Verified pro",      desc: "Pass identity verification",    reward: "Coming soon", color: "#fb923c" },
   ];
 
   const fmtDate = (s: string) =>
@@ -75,6 +78,67 @@ export default function SeekerBonuses() {
           borderRadius: 10, padding: "11px 24px", fontSize: 13, fontWeight: 700,
           fontFamily: "inherit", flexShrink: 0,
         }}>Withdraw</a>
+      </div>
+
+      {/* Referral program */}
+      <div style={{ background: "#131313", border: "1px solid #1c1c1c", borderRadius: 14, padding: "20px 22px", marginBottom: 14 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+          <Users size={15} color="#60a5fa" />
+          <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: "#e0e0e0" }}>Referral program</p>
+        </div>
+        <p style={{ margin: "0 0 16px", fontSize: 13, color: "#4a4a4a", lineHeight: 1.7 }}>
+          Earn <strong style={{ color: "#f97316" }}>{fmt(reward)}</strong> for every friend who joins with your link and completes their first job.
+        </p>
+
+        {/* stats */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, marginBottom: 16 }}>
+          {[
+            { label: "Invited",  value: referral?.invited ?? 0 },
+            { label: "Rewarded", value: referral?.rewarded ?? 0 },
+            { label: "Earned",   value: fmt(referral?.totalEarned ?? 0) },
+          ].map((s) => (
+            <div key={s.label} style={{ background: "#0d0d0d", border: "1px solid #1e1e1e", borderRadius: 10, padding: "12px 10px", textAlign: "center" }}>
+              <p style={{ margin: 0, fontSize: 18, fontWeight: 800, color: "#e0e0e0" }}>{s.value}</p>
+              <p style={{ margin: "2px 0 0", fontSize: 10, color: "#555", textTransform: "uppercase", letterSpacing: "0.05em" }}>{s.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* code + copy link */}
+        <div style={{ display: "flex", gap: 8 }}>
+          <div style={{
+            flex: 1, background: "#0d0d0d", border: "1px solid #1e1e1e", borderRadius: 9,
+            padding: "10px 14px", fontSize: 13, color: "#888", fontFamily: "monospace",
+            overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+          }}>{loading ? "Loading…" : code || "—"}</div>
+          <button onClick={copy} disabled={!link} style={{
+            background: copied ? "rgba(34,197,94,0.1)" : "#1a1a1a",
+            border: `1px solid ${copied ? "rgba(34,197,94,0.3)" : "#222"}`, borderRadius: 9,
+            padding: "10px 14px", cursor: link ? "pointer" : "default",
+            color: copied ? "#22c55e" : "#666",
+            display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, fontFamily: "inherit",
+            transition: "all 0.15s", opacity: link ? 1 : 0.5,
+          }}>
+            <Copy size={13} /> {copied ? "Link copied!" : "Copy link"}
+          </button>
+        </div>
+
+        {/* invited friends */}
+        {referral && referral.items.length > 0 && (
+          <div style={{ marginTop: 14, borderTop: "1px solid #1c1c1c", paddingTop: 12 }}>
+            {referral.items.map((it, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "7px 0" }}>
+                <div>
+                  <p style={{ margin: 0, fontSize: 13, color: "#c0c0c0", fontWeight: 600 }}>{it.name}</p>
+                  <p style={{ margin: "1px 0 0", fontSize: 10, color: "#555" }}>{fmtDate(it.createdAt)}</p>
+                </div>
+                {it.status === "REWARDED"
+                  ? <span style={{ fontSize: 11, fontWeight: 700, color: "#22c55e" }}>+{fmt(it.rewardAmountRwf)}</span>
+                  : <span style={{ fontSize: 10, fontWeight: 700, color: "#f59e0b", textTransform: "uppercase" }}>Pending</span>}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Bonus history */}
@@ -113,33 +177,6 @@ export default function SeekerBonuses() {
             </div>
           ))
         )}
-      </div>
-
-      {/* Referral */}
-      <div style={{ background: "#131313", border: "1px solid #1c1c1c", borderRadius: 14, padding: "20px 22px", marginBottom: 14 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-          <Users size={15} color="#60a5fa" />
-          <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: "#e0e0e0" }}>Referral program</p>
-        </div>
-        <p style={{ margin: "0 0 14px", fontSize: 13, color: "#4a4a4a", lineHeight: 1.7 }}>
-          Earn <strong style={{ color: "#f97316" }}>RWF 1,000</strong> for every friend who joins with your code and completes their first job.
-        </p>
-        <div style={{ display: "flex", gap: 8 }}>
-          <div style={{
-            flex: 1, background: "#0d0d0d", border: "1px solid #1e1e1e", borderRadius: 9,
-            padding: "10px 14px", fontSize: 13, color: "#888", fontFamily: "monospace",
-          }}>{refCode}</div>
-          <button onClick={copy} style={{
-            background: copied ? "rgba(34,197,94,0.1)" : "#1a1a1a",
-            border: `1px solid ${copied ? "rgba(34,197,94,0.3)" : "#222"}`, borderRadius: 9,
-            padding: "10px 14px", cursor: "pointer",
-            color: copied ? "#22c55e" : "#666",
-            display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, fontFamily: "inherit",
-            transition: "all 0.15s",
-          }}>
-            <Copy size={13} /> {copied ? "Copied!" : "Copy"}
-          </button>
-        </div>
       </div>
 
       {/* Ways to earn */}

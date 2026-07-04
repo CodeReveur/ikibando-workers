@@ -120,8 +120,32 @@ export async function registerWithEmail(payload: {
   phone: string;
   password: string;
   role: "WORKER" | "EMPLOYER";
+  referralCode?: string;
 }): Promise<AuthResult> {
   const { data } = await http.post("/api/auth/register", payload);
+  return data.data;
+}
+
+export interface ReferralItem {
+  name: string;
+  status: "PENDING" | "REWARDED";
+  rewardAmountRwf: number;
+  createdAt: string;
+  rewardedAt: string | null;
+}
+
+export interface ReferralSummary {
+  code: string;
+  rewardPerReferral: number;
+  invited: number;
+  rewarded: number;
+  pending: number;
+  totalEarned: number;
+  items: ReferralItem[];
+}
+
+export async function getMyReferral(token: string): Promise<ReferralSummary> {
+  const { data } = await http.get("/api/referrals/me", { headers: authHeader(token) });
   return data.data;
 }
 

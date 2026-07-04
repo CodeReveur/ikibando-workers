@@ -32,7 +32,14 @@ export default function SignUpPage() {
   const [showWizard, setShowWizard] = useState(false);
   const [authResult, setAuthResult] = useState<any>(null);
   const [showRoleSelect, setShowRoleSelect] = useState(false);
+  const [referralCode, setReferralCode] = useState("");
   const fbReady = useRef(false);
+
+  // Capture a referral code from the invite link (?ref=CODE).
+  useEffect(() => {
+    const ref = new URLSearchParams(window.location.search).get("ref");
+    if (ref) setReferralCode(ref.trim().toUpperCase());
+  }, []);
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -188,7 +195,7 @@ export default function SignUpPage() {
 
     setLoading("email");
     try {
-      const result = await registerWithEmail({ ...form, role: "WORKER" });
+      const result = await registerWithEmail({ ...form, role: "WORKER", referralCode: referralCode || undefined });
       if (!result.user.onboardingCompleted) {
         setAuthResult(result);
         setShowRoleSelect(true);
