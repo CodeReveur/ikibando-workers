@@ -2,6 +2,7 @@
 
 import Footer from "@/components/layout/footer";
 import { Eye, Lock, Share2, Trash2, Mail, ArrowRight } from "lucide-react";
+import { BreadcrumbSchema } from "@/components/seo/json-ld";
 
 const highlights = [
   {
@@ -94,6 +95,10 @@ export default function PrivacyPage() {
         fontFamily: "Inter, DM Sans, system-ui, sans-serif",
       }}
     >
+      <BreadcrumbSchema items={[
+        { name: "Home", url: "https://mpahmapu.com" },
+        { name: "Privacy Policy", url: "https://mpahmapu.com/privacy-policy" },
+      ]} />
       <div style={{ maxWidth: 760, margin: "0 auto", padding: "48px 20px 64px" }}>
 
         {/* HERO */}

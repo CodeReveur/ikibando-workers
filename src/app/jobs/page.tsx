@@ -10,6 +10,7 @@ import {
   UtensilsCrossed, Sparkles, Shield, Car, Zap, Wrench,
   Leaf, Camera, Package, Home, HardHat,
 } from "lucide-react";
+import { BreadcrumbSchema } from "@/components/seo/json-ld";
 
 // ── data ───────────────────────────────────────────────────────────────────
 const CATEGORIES = [
@@ -97,6 +98,10 @@ export default function JobsPage() {
 
   return (
     <main style={{ background: "#111", minHeight: "100vh", color: "#f5f5f5", fontFamily: "Inter, DM Sans, system-ui, sans-serif" }}>
+      <BreadcrumbSchema items={[
+        { name: "Home", url: "https://mpahmapu.com" },
+        { name: "Jobs", url: "https://mpahmapu.com/jobs" },
+      ]} />
       {showPostJob && <PostJobModal onClose={() => setShowPostJob(false)} />}
       <style>{CSS}</style>
 

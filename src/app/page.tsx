@@ -9,6 +9,7 @@ import {
   UtensilsCrossed, Sparkles, Shield, Car, Zap, Wrench, Leaf,
   MapPin, ChevronRight, Briefcase, Star,
 } from "lucide-react";
+import { BreadcrumbSchema, FAQSchema } from "@/components/seo/json-ld";
 
 const categories = [
   { icon: UtensilsCrossed, label: "Waiters" },
@@ -34,6 +35,16 @@ export default function Home() {
 
   return (
     <main style={{ background: "#111", minHeight: "100vh", fontFamily: "Inter, DM Sans, system-ui, sans-serif", color: "#f5f5f5" }}>
+      <BreadcrumbSchema items={[
+        { name: "Home", url: "https://mpahmapu.com" },
+      ]} />
+      <FAQSchema faqs={[
+        { question: "How do I hire a worker on MpahMapu?", answer: "Post a job request with details like category, location, and pay rate. Verified workers will apply instantly, and you can review their profiles and ratings before hiring." },
+        { question: "How does payment work on MpahMapu?", answer: "All payments are processed securely through MTN Mobile Money (MoMo). Funds are released to workers upon job completion." },
+        { question: "Are workers on MpahMapu verified?", answer: "Yes, every worker on MpahMapu undergoes ID verification before they can accept jobs, ensuring trust and safety for employers." },
+        { question: "What types of workers can I find on MpahMapu?", answer: "MpahMapu offers workers across 15+ categories including waiters, cleaners, security guards, drivers, electricians, plumbers, gardeners, event staff, and more." },
+        { question: "Is MpahMapu available outside Kigali?", answer: "MpahMapu currently operates primarily in Kigali, Rwanda, with plans to expand to other cities and provinces." },
+      ]} />
       {showPostJob && <PostJobModal onClose={() => setShowPostJob(false)} />}
 
       {/* responsive grid styles */}

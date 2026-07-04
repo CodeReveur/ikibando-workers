@@ -9,6 +9,7 @@ import {
   Camera, Package, Home, HardHat, Search, SlidersHorizontal,
   MapPin, Briefcase, Users, X, ChevronDown, Star,
 } from "lucide-react";
+import { BreadcrumbSchema, ServiceSchema } from "@/components/seo/json-ld";
 
 // ── types ──────────────────────────────────────────────────────────────────
 type Tab = "workers" | "jobs";
@@ -186,6 +187,15 @@ export default function BrowsePage() {
 
   return (
     <main style={{ ...S, background: "#111", minHeight: "100vh", color: "#f5f5f5" }}>
+      <BreadcrumbSchema items={[
+        { name: "Home", url: "https://mpahmapu.com" },
+        { name: "Browse Workers", url: "https://mpahmapu.com/browse" },
+      ]} />
+      <ServiceSchema
+        name="Browse Verified Workers"
+        description="Browse and hire verified workers in Kigali for events, cleaning, security, driving, and more."
+        url="https://mpahmapu.com/browse"
+      />
       <style>{CSS}</style>
 
       <div style={{ maxWidth: 760, margin: "0 auto", padding: "36px 20px 64px" }}>

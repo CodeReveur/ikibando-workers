@@ -2,6 +2,7 @@
 
 import Footer from "@/components/layout/footer";
 import { ArrowRight } from "lucide-react";
+import { BreadcrumbSchema } from "@/components/seo/json-ld";
 
 const sections = [
   {
@@ -66,6 +67,10 @@ export default function TermsPage() {
         fontFamily: "Inter, DM Sans, system-ui, sans-serif",
       }}
     >
+      <BreadcrumbSchema items={[
+        { name: "Home", url: "https://mpahmapu.com" },
+        { name: "Terms and Conditions", url: "https://mpahmapu.com/terms-and-conditions" },
+      ]} />
       <div style={{ maxWidth: 760, margin: "0 auto", padding: "48px 20px 64px" }}>
 
         {/* HERO */}

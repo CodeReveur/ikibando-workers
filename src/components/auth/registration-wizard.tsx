@@ -51,6 +51,10 @@ const STEP_NUMBER: Partial<Record<Step, string>> = {
   EQUIPMENT: "Step 3",
 };
 
+// Data-collection steps that are safe to resume a draft into (prerequisites —
+// role selection and email verification — already satisfied).
+const DATA_STEPS: Step[] = ["ACCOUNT_TYPE", "EMPLOYER_DETAILS", "PERSONAL", "LOCATION_AVAILABILITY", "EQUIPMENT"];
+
 function capitalize(str: string) {
   return str
     .split(" ")
@@ -106,33 +110,46 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
 
   const DRAFT_KEY = `MpahMapu_draft_reg_${email}`;
 
-  // Restore in-progress draft (runs before authResult effect so server data wins)
+  // The step captured from a restored draft, applied by the authResult effect.
+  const draftStepRef = useRef<Step | null>(null);
+  // Blocks the autosave effect from writing until the draft has been restored,
+  // so the initial (empty) render can't clobber a saved draft.
+  const restoredRef = useRef(false);
+
+  // Restore in-progress draft (runs before authResult effect so it can hand the
+  // saved step over via draftStepRef)
   useEffect(() => {
     try {
       const raw = localStorage.getItem(DRAFT_KEY);
-      if (!raw) return;
-      const d = JSON.parse(raw);
-      if (d.dob)          setDob(d.dob);
-      if (d.education)    setEducation(d.education);
-      if (d.experience)   setExperience(d.experience);
-      if (d.address)      setAddress(d.address);
-      if (d.availability) setAvailability(d.availability);
-      if (d.equipment)    setEquipment(d.equipment);
-      if (d.accountType)  setAccountType(d.accountType);
-      if (d.memberEmails) setMemberEmails(d.memberEmails);
-      if (d.tin)          setTin(d.tin);
+      if (raw) {
+        const d = JSON.parse(raw);
+        if (d.dob)          setDob(d.dob);
+        if (d.education)    setEducation(d.education);
+        if (d.experience)   setExperience(d.experience);
+        if (d.address)      setAddress(d.address);
+        if (d.availability) setAvailability(d.availability);
+        if (d.equipment)    setEquipment(d.equipment);
+        if (d.accountType)  setAccountType(d.accountType);
+        if (d.memberEmails) setMemberEmails(d.memberEmails);
+        if (d.tin)          setTin(d.tin);
+        if (d.selectedRole) setSelectedRole(d.selectedRole);
+        if (d.step && DATA_STEPS.includes(d.step)) draftStepRef.current = d.step;
+      }
     } catch {}
-  }, []);
+    restoredRef.current = true;
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Save draft on any field change
+  // Pre-save the current data whenever a field changes or the user advances a
+  // step, so nothing is lost between slides or across a reload.
   useEffect(() => {
+    if (!restoredRef.current) return;
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify({
         dob, education, experience, address, availability, equipment,
-        accountType, memberEmails, tin,
+        accountType, memberEmails, tin, selectedRole, step,
       }));
     } catch {}
-  }, [dob, education, experience, address, availability, equipment, accountType, memberEmails, tin]);
+  }, [dob, education, experience, address, availability, equipment, accountType, memberEmails, tin, selectedRole, step]);
 
   // Calculate initial step and state
   useEffect(() => {
@@ -164,23 +181,32 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
       if (u.teamMembers && Array.isArray(u.teamMembers)) setMemberEmails(u.teamMembers);
 
       // Role select overrides everything — always start there when requested
+      let next: Step | null = null;
       if (showRoleSelect) {
-        setStep("ROLE_SELECT");
+        next = "ROLE_SELECT";
       } else if (!u.emailVerified && !isLogin) {
-        setStep("EMAIL_VERIFY");
+        next = "EMAIL_VERIFY";
       } else if (u.role === "EMPLOYER") {
         // Employer flow: identifier → location + service type + TIN
-        setStep(!u.experienceType || !u.location ? "ACCOUNT_TYPE" : "EMPLOYER_DETAILS");
+        next = !u.experienceType || !u.location ? "ACCOUNT_TYPE" : "EMPLOYER_DETAILS";
         getJobCategories().then(setCategories).catch(console.error);
       } else if (!u.dob || !u.educationLevel || !u.experienceType) {
-        setStep("ACCOUNT_TYPE");
+        next = "ACCOUNT_TYPE";
         getJobCategories().then(setCategories).catch(console.error);
       } else if (!u.location || !u.availability || u.availability.length === 0) {
-        setStep("LOCATION_AVAILABILITY");
+        next = "LOCATION_AVAILABILITY";
         getJobCategories().then(setCategories).catch(console.error);
       } else if (!u.equipment || u.equipment.length === 0) {
-        setStep("EQUIPMENT");
+        next = "EQUIPMENT";
       }
+
+      // Resume at the saved draft step, but only once the prerequisites for that
+      // phase are met (the natural next step is itself a data-collection step).
+      if (next && draftStepRef.current && DATA_STEPS.includes(next)) {
+        next = draftStepRef.current;
+        getJobCategories().then(setCategories).catch(console.error);
+      }
+      if (next) setStep(next);
     }
   }, [authResult]);
 

@@ -3,6 +3,7 @@
 
 import Footer from "@/components/layout/footer";
 import { Users, Shield, Zap, Heart, MapPin, ArrowRight } from "lucide-react";
+import { BreadcrumbSchema } from "@/components/seo/json-ld";
 
 const stats = [
   { value: "2,400+", label: "Verified workers" },
@@ -47,6 +48,10 @@ export default function AboutPage() {
       background: "#111", minHeight: "100vh", color: "#f5f5f5",
       fontFamily: "Inter, DM Sans, system-ui, sans-serif",
     }}>
+      <BreadcrumbSchema items={[
+        { name: "Home", url: "https://mpahmapu.com" },
+        { name: "About", url: "https://mpahmapu.com/about" },
+      ]} />
       <div style={{ maxWidth: 760, margin: "0 auto", padding: "48px 20px 64px" }}>
 
         {/* HERO */}

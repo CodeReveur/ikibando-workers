@@ -4,6 +4,11 @@ import "./globals.css";
 import Navbar from "@/components/layout/navbar";
 import { ContentWrapper } from "@/components/layout/content-wrapper";
 import { Providers } from "@/components/providers";
+import {
+  OrganizationSchema,
+  WebSiteSchema,
+  LocalBusinessSchema,
+} from "@/components/seo/json-ld";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -11,49 +16,69 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://mpahmapu.com"),
   title: {
-    default: "MpahMapu",
+    default: "MpahMapu - Hire Verified Workers in Kigali, Rwanda",
     template: "%s | MpahMapu",
   },
   description:
-    "Find verified workers instantly or get hired for a job today. Rwanda's trusted on-demand workforce platform.",
+    "Find verified workers instantly or get hired for a job today. Rwanda's trusted on-demand workforce platform for events, cleaning, security, driving, and more.",
   keywords: [
     "MpahMapu",
     "Rwanda jobs",
     "Kigali jobs",
-    "casual work",
-    "temporary workers",
-    "hire workers",
-    "gig economy",
-    "employment",
+    "hire workers Rwanda",
+    "casual work Kigali",
+    "temporary workers Rwanda",
+    "event staff Kigali",
+    "cleaners Kigali",
+    "security guards Rwanda",
+    "gig economy Rwanda",
+    "on-demand workers",
+    "verified workers",
+    "MoMo payment jobs",
   ],
-  authors: [
-    {
-      name: "MpahMapu",
-    },
-  ],
+  authors: [{ name: "MpahMapu" }],
   creator: "MpahMapu",
   applicationName: "MpahMapu",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "MpahMapu",
+    title: "MpahMapu - Hire Verified Workers in Kigali, Rwanda",
     description:
-      "Find verified workers instantly or get hired for a job today.",
+      "Find verified workers instantly or get hired for a job today. On-demand workforce for events, cleaning, security & more.",
     url: "/",
     siteName: "MpahMapu",
     locale: "en_RW",
     type: "website",
+    images: [
+      {
+        url: "/cover-a.png",
+        width: 1200,
+        height: 630,
+        alt: "MpahMapu - Rwanda's On-Demand Workforce Platform",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "MpahMapu",
+    title: "MpahMapu - Hire Verified Workers in Kigali, Rwanda",
     description:
       "Find verified workers instantly or get hired for a job today.",
+    images: ["/cover-a.png"],
   },
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
     apple: "/apple-touch-icon.png",
   },
+  manifest: "/manifest.json",
 };
 
 export const viewport: Viewport = {
@@ -72,6 +97,9 @@ export default function RootLayout({
       <body
         className={`${inter.className} min-h-screen bg-white text-gray-900 antialiased`}
       >
+        <OrganizationSchema />
+        <WebSiteSchema />
+        <LocalBusinessSchema />
         <Providers>
           <Navbar />
           <ContentWrapper>{children}</ContentWrapper>

@@ -5,13 +5,14 @@ import Footer from "@/components/layout/footer";
 import { Mail, Phone, MapPin, Send, MessageSquare, Clock, Loader2 } from "lucide-react";
 import { submitContact } from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
+import { BreadcrumbSchema } from "@/components/seo/json-ld";
 
 const info = [
   {
     Icon: Mail,
     label: "Email us",
-    value: "MpahMapuh@gmail.com",
-    href: "mailto:MpahMapuh@gmail.com",
+    value: "info@mpahmapu.com",
+    href: "mailto:info@mpahmapu.com",
   },
   {
     Icon: Phone,
@@ -66,6 +67,10 @@ export default function ContactPage() {
       background: "#111", minHeight: "100vh", color: "#f5f5f5",
       fontFamily: "Inter, DM Sans, system-ui, sans-serif",
     }}>
+      <BreadcrumbSchema items={[
+        { name: "Home", url: "https://mpahmapu.com" },
+        { name: "Contact", url: "https://mpahmapu.com/contact" },
+      ]} />
       <style>{`input::placeholder, textarea::placeholder { color: #444; } textarea { resize: vertical; }`}</style>
 
       <div style={{ maxWidth: 760, margin: "0 auto", padding: "48px 20px 64px" }}>
