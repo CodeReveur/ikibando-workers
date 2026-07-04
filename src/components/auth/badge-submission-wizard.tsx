@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckCircle2, Loader2, MapPin } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { CheckCircle2, ExternalLink, Loader2, MapPin } from "lucide-react";
 import { AuthResult, BadgeSubmissionData, submitBadge, uploadFile, getProfile, Address } from "@/lib/api";
 import { formatAddress } from "@/components/ui/address-picker";
 import { useToast } from "@/components/ui/toast";
@@ -13,8 +14,10 @@ interface Props {
 
 export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
   const { error: toastError, success: toastSuccess } = useToast();
+  const router = useRouter();
   const [step, setStep] = useState<"IDENTITY" | "LOCATION" | "COMPLETED">("IDENTITY");
   const [loading, setLoading] = useState(false);
+  const [createdBadgeId, setCreatedBadgeId] = useState<string | null>(null);
 
   // Identity fields
   const [photoUrl, setPhotoUrl] = useState("");
@@ -78,8 +81,8 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
         // ignore
       }
 
+      setCreatedBadgeId(updatedUser?.badgeId || null);
       setStep("COMPLETED");
-      setTimeout(onComplete, 1500);
     } catch (e: any) {
       toastError(e?.response?.data?.message || "Failed to submit badge information.");
     } finally {
@@ -120,7 +123,6 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
                   <input
                     type="file"
                     accept="image/*"
-                    capture="user"
                     disabled={uploadingPhoto}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
                     onChange={async (e) => {
@@ -241,8 +243,27 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
               <div className="w-16 h-16 bg-green-500/15 text-green-400 rounded-full flex items-center justify-center mb-4">
                 <CheckCircle2 size={30} />
               </div>
-              <h3 className="text-white font-bold text-lg">Badge Submitted!</h3>
-              <p className="text-gray-500 text-xs mt-1">Your badge ID is MPUXXX.</p>
+              <h3 className="text-white font-bold text-lg">Badge Generated!</h3>
+              {createdBadgeId && (
+                <p className="text-gray-400 text-sm mt-1">Badge ID: <span className="text-white font-mono font-semibold">{createdBadgeId}</span></p>
+              )}
+              <div className="flex flex-col gap-3 w-full mt-6">
+                {createdBadgeId && (
+                  <button
+                    onClick={() => router.push(`/verify/${createdBadgeId}`)}
+                    className="w-full bg-[#f97316] hover:bg-[#ea6a0a] text-white text-sm font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
+                  >
+                    <ExternalLink size={15} />
+                    View My Badge
+                  </button>
+                )}
+                <button
+                  onClick={onComplete}
+                  className="w-full bg-[#1a1a1a] hover:bg-[#222] border border-[#2a2a2a] text-gray-300 text-sm font-medium py-3 rounded-xl transition-colors"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           )}
         </div>
