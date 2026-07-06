@@ -63,7 +63,31 @@ export default function SeekerBonuses() {
   return (
     <div>
       <style>{`
-        .bonus-hero { display: flex; alignItems: center; gap: 20px; }
+        .bonus-hero { display: flex; align-items: center; gap: 20px; }
+        .claim-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          background: #f97316;
+          color: #fff;
+          text-decoration: none;
+          border-radius: 10px;
+          padding: 11px 24px;
+          font-size: 13px;
+          font-weight: 700;
+          font-family: inherit;
+          flex-shrink: 0;
+          box-sizing: border-box;
+          transition: all 0.15s ease;
+        }
+        .claim-btn:hover {
+          background: #ea580c;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(249,115,22,0.25);
+        }
+        .claim-btn:active {
+          transform: translateY(0);
+        }
         .ref-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 16px; }
         .copy-link-box { display: flex; gap: 8px; }
         .ways-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
@@ -72,7 +96,7 @@ export default function SeekerBonuses() {
         }
         @media (max-width: 500px) {
           .bonus-hero { flex-direction: column; align-items: stretch !important; text-align: center; }
-          .bonus-hero > a { width: 100%; text-align: center; }
+          .claim-btn { width: 100%; }
           .ways-grid { grid-template-columns: 1fr !important; }
         }
         @media (max-width: 340px) {
@@ -106,11 +130,9 @@ export default function SeekerBonuses() {
                 ?.replace("{plural}", (bonus?.count ?? 0) === 1 ? "" : "es") || `Credited to your wallet · ${bonus?.count ?? 0} bonuses`}
           </p>
         </div>
-        <a href="/seeker/earnings" style={{
-          background: "#f97316", color: "#fff", textDecoration: "none",
-          borderRadius: 10, padding: "11px 24px", fontSize: 13, fontWeight: 700,
-          fontFamily: "inherit", flexShrink: 0,
-        }}>{t("seeker_bonuses.withdraw")}</a>
+        <a href="/seeker/earnings" className="claim-btn">
+          {t("seeker_bonuses.withdraw")}
+        </a>
       </div>
 
       {/* Referral program */}
