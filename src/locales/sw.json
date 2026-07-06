@@ -1396,7 +1396,15 @@
     "feedback_req": "MAONI (INAHITAJIKA)",
     "cancel": "Ghairi",
     "other_option": "Nyingine (inahitaji maandishi)",
-    "please_describe": "Tafadhali eleza..."
+    "please_describe": "Tafadhali eleza...",
+    "decision_accept_success": "Ofa imekubaliwa kwa mafanikio!",
+    "decision_reject_success": "Ofa imekataliwa kwa mafanikio.",
+    "decision_fail": "Imeshindwa kusasisha hali ya ofa.",
+    "withdraw_success": "Maombi yameondolewa kwa mafanikio.",
+    "withdraw_fail": "Imeshindwa kuondoa maombi.",
+    "verify_success": "Kukamilika kwa kazi kumethibitishwa kwa mafanikio!",
+    "verify_fail": "Uthibitishaji umeshindwa. Tafadhali angalia ID yako ya beji.",
+    "badge_required": "ID ya beji inahitajika."
   },
   "seeker_applications": {
     "total_applied": "Jumla ya Maombi",
@@ -1462,7 +1470,8 @@
     "wd_failed_err": "Utoaji umeshindwa. Tafadhali jaribu tena.",
     "processing": "Inashughulikiwa...",
     "withdraw_btn": "Toa {amount}",
-    "cancel": "Ghairi"
+    "cancel": "Ghairi",
+    "wd_success_toast": "Ombi la kutoa pesa limewasilishwa kwa mafanikio!"
   },
   "seeker_bonuses": {
     "bonus_earned": "Bonus uliyopata",

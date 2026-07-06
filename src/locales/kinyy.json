@@ -1396,7 +1396,15 @@
     "feedback_req": "IBITEKEREZO (IKENEWE)",
     "cancel": "Guhagarika",
     "other_option": "Ibindi (bisaba kwandika)",
-    "please_describe": "Tandika hano..."
+    "please_describe": "Tandika hano...",
+    "decision_accept_success": "Ubusabe bwakiriwe neza!",
+    "decision_reject_success": "Ubusabe bwahakanywe neza.",
+    "decision_fail": "Guhindura uko ubusabe buhagaze byanze.",
+    "withdraw_success": "Dosiye yawe yakuwemo neza.",
+    "withdraw_fail": "Gukuramo dosiye byanze.",
+    "verify_success": "Gusoza akazi byemejwe neza!",
+    "verify_fail": "Kwemezwa byanze. Reba neza ID ya badge yawe.",
+    "badge_required": "ID ya badge irakenewe."
   },
   "seeker_applications": {
     "total_applied": "Dosiye zose",
@@ -1462,7 +1470,8 @@
     "wd_failed_err": "Gubikura byanze. Gerageza wongere.",
     "processing": "Biri gutunganywa...",
     "withdraw_btn": "Bikuza {amount}",
-    "cancel": "Guhagarika"
+    "cancel": "Guhagarika",
+    "wd_success_toast": "Ubusabe bwo kubikuza bwoherejwe neza!"
   },
   "seeker_bonuses": {
     "bonus_earned": "Agahimbazamusyi",

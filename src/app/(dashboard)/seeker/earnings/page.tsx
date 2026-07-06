@@ -13,6 +13,7 @@ type WdMethod = "MTN_MOMO" | "AIRTEL_MONEY";
 import { StatCard, SectionHead, PageLoader } from "@/components/dashboard/ui";
 import { fmt } from "@/lib/dashboard-data";
 import { useLanguage } from "@/lib/language-context";
+import { useToast } from "@/components/ui/toast";
 
 const STATUS_STYLE: Record<string, { label: string; color: string; bg: string }> = {
   RELEASED: { label:"Released",   color:"#22c55e", bg:"rgba(34,197,94,0.08)"   },
@@ -25,6 +26,7 @@ const STATUS_STYLE: Record<string, { label: string; color: string; bg: string }>
 
 export default function SeekerEarnings() {
   const { t, language } = useLanguage();
+  const { success: toastSuccess, error: toastError } = useToast();
   const dateLocaleMap: Record<string, string> = {
     rw: "rw-RW",
     kinyy: "rw-RW",
@@ -69,8 +71,11 @@ export default function SeekerEarnings() {
       await requestWithdrawal({ amount, phoneNumber: wdPhone.trim(), paymentMethod: wdMethod }, token);
       await load(); // refresh wallet + transactions
       setWdOpen(false); setWdAmt(""); setWdPhone("");
+      toastSuccess(t("seeker_earnings.wd_success_toast") || "Withdrawal request submitted successfully!");
     } catch (e: any) {
-      setWdErr(apiError(e, t("seeker_earnings.wd_failed_err") || "Withdrawal failed. Please try again."));
+      const errMsg = apiError(e, t("seeker_earnings.wd_failed_err") || "Withdrawal failed. Please try again.");
+      setWdErr(errMsg);
+      toastError(errMsg);
     } finally { setWdBusy(false); }
   };
 

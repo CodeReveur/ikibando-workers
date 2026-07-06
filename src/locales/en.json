@@ -1397,7 +1397,15 @@
     "feedback_req": "FEEDBACK (REQUIRED)",
     "cancel": "Cancel",
     "other_option": "Other (requires text)",
-    "please_describe": "Please describe..."
+    "please_describe": "Please describe...",
+    "decision_accept_success": "Offer accepted successfully!",
+    "decision_reject_success": "Offer declined successfully.",
+    "decision_fail": "Failed to update offer status.",
+    "withdraw_success": "Application withdrawn successfully.",
+    "withdraw_fail": "Failed to withdraw application.",
+    "verify_success": "Job completion verified successfully!",
+    "verify_fail": "Verification failed. Please check your badge ID.",
+    "badge_required": "Badge ID is required."
   },
   "seeker_applications": {
     "total_applied": "Total Applied",
@@ -1463,7 +1471,8 @@
     "wd_failed_err": "Withdrawal failed. Please try again.",
     "processing": "Processing...",
     "withdraw_btn": "Withdraw {amount}",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "wd_success_toast": "Withdrawal request submitted successfully!"
   },
   "seeker_bonuses": {
     "bonus_earned": "Bonus earned",

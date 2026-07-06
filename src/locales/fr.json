@@ -1396,7 +1396,15 @@
     "feedback_req": "COMMENTAIRE (REQUIS)",
     "cancel": "Annuler",
     "other_option": "Autre (nécessite du texte)",
-    "please_describe": "Veuillez décrire..."
+    "please_describe": "Veuillez décrire...",
+    "decision_accept_success": "Offre acceptée avec succès !",
+    "decision_reject_success": "Offre déclinée avec succès.",
+    "decision_fail": "Échec de la mise à jour du statut de l'offre.",
+    "withdraw_success": "Candidature retirée avec succès.",
+    "withdraw_fail": "Échec du retrait de la candidature.",
+    "verify_success": "Fin de travail vérifiée avec succès !",
+    "verify_fail": "La vérification a échoué. Veuillez vérifier votre ID de badge.",
+    "badge_required": "L'identifiant du badge est requis."
   },
   "seeker_applications": {
     "total_applied": "Total postulé",
@@ -1462,7 +1470,8 @@
     "wd_failed_err": "Le retrait a échoué. Veuillez réessayer.",
     "processing": "Traitement...",
     "withdraw_btn": "Retirer {amount}",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "wd_success_toast": "Demande de retrait soumise avec succès !"
   },
   "seeker_bonuses": {
     "bonus_earned": "Bonus gagné",

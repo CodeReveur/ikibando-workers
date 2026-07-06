@@ -15,6 +15,7 @@ import { ratingLabel } from "@/lib/rating";
 import { fmt } from "@/lib/dashboard-data";
 import { RichTextDisplay } from "@/components/ui/rich-text-editor";
 import { useLanguage } from "@/lib/language-context";
+import { useToast } from "@/components/ui/toast";
 
 type Stage = { done: boolean; active: boolean; label: string; date?: string | null; content: React.ReactNode };
 
@@ -79,6 +80,7 @@ export default function SeekerJobDetail() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { t, language } = useLanguage();
+  const { success: toastSuccess, error: toastError } = useToast();
 
   const dateLocaleMap: Record<string, string> = {
     rw: "rw-RW",
@@ -134,6 +136,12 @@ export default function SeekerJobDetail() {
       const updated = await updateApplicationStatus(app.id, { status, responseNote: note || undefined }, token);
       setApp(updated);
       setShowNote(null); setNote("");
+      toastSuccess(status === "ACCEPTED"
+        ? (t("seeker_job_detail.decision_accept_success") || "Offer accepted successfully!")
+        : (t("seeker_job_detail.decision_reject_success") || "Offer declined successfully.")
+      );
+    } catch (e: any) {
+      toastError(t("seeker_job_detail.decision_fail") || "Failed to update offer status.");
     } finally { setBusy(null); }
   };
 
@@ -143,12 +151,18 @@ export default function SeekerJobDetail() {
     setBusy("withdraw");
     try {
       await withdrawApplication(app.id, token);
+      toastSuccess(t("seeker_job_detail.withdraw_success") || "Application withdrawn successfully.");
       router.push("/seeker/applications");
+    } catch (e: any) {
+      toastError(t("seeker_job_detail.withdraw_fail") || "Failed to withdraw application.");
     } finally { setBusy(null); }
   };
 
   const doVerify = async () => {
-    if (!badgeId.trim()) return alert("Badge ID is required");
+    if (!badgeId.trim()) {
+      toastError(t("seeker_job_detail.badge_required") || "Badge ID is required.");
+      return;
+    }
     const token = localStorage.getItem("access_token")!;
     setBusy("verify");
     try {
@@ -158,8 +172,9 @@ export default function SeekerJobDetail() {
       setJob(updated);
       setShowVerify(false);
       await load();
+      toastSuccess(t("seeker_job_detail.verify_success") || "Job completion verified successfully!");
     } catch (e: any) {
-      alert("Verification failed");
+      toastError(t("seeker_job_detail.verify_fail") || "Verification failed. Please check your badge ID.");
     } finally { setBusy(null); }
   };
 
