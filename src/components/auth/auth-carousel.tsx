@@ -2,47 +2,49 @@
 
 import { useState, useEffect } from "react";
 import { Briefcase, Shield, Zap, Star } from "lucide-react";
-
-const slides = [
-  {
-    Icon: Briefcase,
-    tag: "For workers",
-    headline: "Get hired\ntoday.",
-    body: "Browse 100+ daily jobs across Kigali - waiters, cleaners, drivers, security and more. No CV needed.",
-    quote: "I earned RWF 45,000 this week alone.",
-    author: "Jean Pierre M.",
-    role: "Waiter · Kacyiru",
-    rating: 4.9,
-  },
-  {
-    Icon: Shield,
-    tag: "For employers",
-    headline: "Hire in\nminutes.",
-    body: "ID-verified, rated workers ready to start the same day. Read reviews, compare rates, book instantly.",
-    quote: "Found a waiter for my event in under 10 minutes.",
-    author: "Amina K.",
-    role: "Event Organiser · Kimihurura",
-    rating: 5.0,
-  },
-  {
-    Icon: Zap,
-    tag: "Safe payments",
-    headline: "Pay via\nMoMo.",
-    body: "Pay and get paid securely via Mobile Money. No cash disputes, no upfront fees - funds held safely.",
-    quote: "No more cash problems. MoMo makes it simple.",
-    author: "Eric N.",
-    role: "Driver · Remera",
-    rating: 4.8,
-  },
-];
+import { useLanguage } from "@/lib/language-context";
 
 export function AuthCarousel() {
+  const { t } = useLanguage();
   const [idx, setIdx] = useState(0);
+
+  const slides = [
+    {
+      Icon: Briefcase,
+      tag: t("auth_carousel.slide0.tag"),
+      headline: t("auth_carousel.slide0.headline"),
+      body: t("auth_carousel.slide0.body"),
+      quote: t("auth_carousel.slide0.quote"),
+      author: t("auth_carousel.slide0.author"),
+      role: t("auth_carousel.slide0.role"),
+      rating: 4.9,
+    },
+    {
+      Icon: Shield,
+      tag: t("auth_carousel.slide1.tag"),
+      headline: t("auth_carousel.slide1.headline"),
+      body: t("auth_carousel.slide1.body"),
+      quote: t("auth_carousel.slide1.quote"),
+      author: t("auth_carousel.slide1.author"),
+      role: t("auth_carousel.slide1.role"),
+      rating: 5.0,
+    },
+    {
+      Icon: Zap,
+      tag: t("auth_carousel.slide2.tag"),
+      headline: t("auth_carousel.slide2.headline"),
+      body: t("auth_carousel.slide2.body"),
+      quote: t("auth_carousel.slide2.quote"),
+      author: t("auth_carousel.slide2.author"),
+      role: t("auth_carousel.slide2.role"),
+      rating: 4.8,
+    },
+  ];
 
   useEffect(() => {
     const t = setInterval(() => setIdx((i) => (i + 1) % slides.length), 4500);
     return () => clearInterval(t);
-  }, []);
+  }, [slides.length]);
 
   const slide = slides[idx];
   const { Icon } = slide;

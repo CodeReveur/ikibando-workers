@@ -1,30 +1,132 @@
 "use client";
 
+import { useState, useMemo, useEffect } from "react";
 import Footer from "@/components/layout/footer";
 import { PostJobModal } from "@/components/jobs/post-job-modal";
-import { useState, useMemo, useEffect } from "react";
 import { getJobs, daysAgo, type JobDto } from "@/lib/api";
+import { useLanguage } from "@/lib/language-context";
 import {
-  MapPin, Search, SlidersHorizontal, ChevronDown,
-  X, Clock, Briefcase, Plus, ArrowRight,
-  UtensilsCrossed, Sparkles, Shield, Car, Zap, Wrench,
-  Leaf, Camera, Package, Home, HardHat,
+  UtensilsCrossed, Sparkles, Shield, Car, Zap, Wrench, Leaf,
+  MapPin, ChevronRight, Briefcase, Star, Search, SlidersHorizontal, ChevronDown,
+  X, Clock, Plus, ArrowRight, Home, HardHat,
+  Baby,
+  BadgeDollarSign,
+  Bed,
+  Bike,
+  BookOpen,
+  Building2,
+  Calculator,
+  Camera,
+  ChefHat,
+  ClipboardList,
+  Code2,
+  Coffee,
+  Cog,
+  Dog,
+  Drill,
+  Flower,
+  Globe,
+  GraduationCap,
+  Hammer,
+  Headphones,
+  HeartHandshake,
+  KeyRound,
+  Languages,
+  Laptop,
+  Megaphone,
+  Mic,
+  MonitorSmartphone,
+  Music,
+  Package,
+  PackageCheck,
+  Paintbrush,
+  Palette,
+  PartyPopper,
+  PenSquare,
+  PenTool,
+  PhoneCall,
+  Scale,
+  Scissors,
+  Shirt,
+  ShirtIcon,
+  ShoppingBag,
+  Smartphone,
+  Stethoscope,
+  Store,
+  Trees,
+  TrendingUp,
+  Truck,
+  UserCheck,
+  Users,
+  Video,
+  Wifi,
+  House,
 } from "lucide-react";
 import { BreadcrumbSchema } from "@/components/seo/json-ld";
 
 // ── data ───────────────────────────────────────────────────────────────────
 const CATEGORIES = [
-  { icon: UtensilsCrossed, label: "Waiters" },
-  { icon: Sparkles,        label: "Cleaners" },
-  { icon: Shield,          label: "Security" },
-  { icon: Car,             label: "Drivers" },
-  { icon: Zap,             label: "Electricians" },
-  { icon: Wrench,          label: "Plumbers" },
-  { icon: Leaf,            label: "Gardeners" },
-  { icon: Camera,          label: "Photographers" },
-  { icon: Package,         label: "Movers" },
-  { icon: Home,            label: "Domestic Help" },
-  { icon: HardHat,         label: "Construction" },
+  { icon: UtensilsCrossed, label: "Waiters", key: "waiters", apiValues: ["waiter"] },
+  { icon: Coffee, label: "Baristas", key: "baristas", apiValues: ["bartender"] },
+  { icon: Sparkles, label: "Cleaners", key: "cleaners", apiValues: ["cleaner"] },
+  { icon: Shield, label: "Security Guards", key: "security_guards", apiValues: ["security"] },
+  { icon: Car, label: "Drivers", key: "drivers", apiValues: ["driver"] },
+  { icon: Truck, label: "Delivery Drivers", key: "delivery_drivers", apiValues: ["delivery_rider"] },
+  { icon: Bike, label: "Courier Riders", key: "courier_riders", apiValues: ["delivery_rider"] },
+  { icon: Zap, label: "Electricians", key: "electricians", apiValues: ["electrician"] },
+  { icon: Wrench, label: "Plumbers", key: "plumbers", apiValues: ["plumber"] },
+  { icon: Hammer, label: "Carpenters", key: "carpenters", apiValues: ["carpenter"] },
+  { icon: Paintbrush, label: "Painters", key: "painters", apiValues: ["painter"] },
+  { icon: HardHat, label: "Construction Workers", key: "construction_workers", apiValues: ["construction_worker"] },
+  { icon: Drill, label: "Technicians", key: "technicians", apiValues: ["it_support"] },
+  { icon: Cog, label: "Mechanics", key: "mechanics", apiValues: ["mechanic"] },
+  { icon: Leaf, label: "Gardeners", key: "gardeners", apiValues: ["gardener"] },
+  { icon: Trees, label: "Landscapers", key: "landscapers", apiValues: ["gardener"] },
+  { icon: House, label: "Housekeepers", key: "housekeepers", apiValues: ["housekeeper"] },
+  { icon: Bed, label: "Hotel Staff", key: "hotel_staff", apiValues: ["housekeeper", "waiter"] },
+  { icon: ShoppingBag, label: "Shop Attendants", key: "shop_attendants", apiValues: ["sales_agent"] },
+  { icon: Store, label: "Cashiers", key: "cashiers", apiValues: ["cashier"] },
+  { icon: Package, label: "Warehouse Staff", key: "warehouse_staff", apiValues: ["warehouse_worker"] },
+  { icon: PackageCheck, label: "Packers", key: "packers", apiValues: ["packer"] },
+  { icon: ClipboardList, label: "Supervisors", key: "supervisors", apiValues: ["office_assistant"] },
+  { icon: UserCheck, label: "Receptionists", key: "receptionists", apiValues: ["receptionist"] },
+  { icon: PhoneCall, label: "Call Center Agents", key: "call_center_agents", apiValues: ["customer_support"] },
+  { icon: Headphones, label: "Customer Support", key: "customer_support", apiValues: ["customer_support"] },
+  { icon: Briefcase, label: "Office Assistants", key: "office_assistants", apiValues: ["office_assistant"] },
+  { icon: GraduationCap, label: "Tutors", key: "tutors", apiValues: ["tutor"] },
+  { icon: BookOpen, label: "Teachers", key: "teachers", apiValues: ["tutor"] },
+  { icon: HeartHandshake, label: "Caregivers", key: "caregivers", apiValues: ["caregiver"] },
+  { icon: Stethoscope, label: "Nurses", key: "nurses", apiValues: ["caregiver"] },
+  { icon: Baby, label: "Babysitters", key: "babysitters", apiValues: ["nanny"] },
+  { icon: Dog, label: "Pet Care", key: "pet_care", apiValues: ["other"] },
+  { icon: Camera, label: "Photographers", key: "photographers", apiValues: ["photographer"] },
+  { icon: Video, label: "Videographers", key: "videographers", apiValues: ["videographer"] },
+  { icon: Music, label: "DJs", key: "djs", apiValues: ["dj"] },
+  { icon: Mic, label: "MCs", key: "mcs", apiValues: ["mc"] },
+  { icon: PartyPopper, label: "Event Planners", key: "event_planners", apiValues: ["promoter"] },
+  { icon: Flower, label: "Florists", key: "florists", apiValues: ["gardener"] },
+  { icon: Scissors, label: "Barbers", key: "barbers", apiValues: ["hairdresser"] },
+  { icon: Sparkles, label: "Hair Stylists", key: "hair_stylists", apiValues: ["hairdresser"] },
+  { icon: Palette, label: "Makeup Artists", key: "makeup_artists", apiValues: ["beautician"] },
+  { icon: Shirt, label: "Tailors", key: "tailors", apiValues: ["tailor"] },
+  { icon: ShirtIcon, label: "Laundry Services", key: "laundry_services", apiValues: ["housekeeper"] },
+  { icon: Smartphone, label: "Phone Repair", key: "phone_repair", apiValues: ["it_support"] },
+  { icon: Laptop, label: "Computer Repair", key: "computer_repair", apiValues: ["it_support"] },
+  { icon: Wifi, label: "Network Technicians", key: "network_technicians", apiValues: ["it_support"] },
+  { icon: MonitorSmartphone, label: "IT Support", key: "it_support", apiValues: ["it_support"] },
+  { icon: Globe, label: "Web Developers", key: "web_developers", apiValues: ["web_developer"] },
+  { icon: Code2, label: "Software Developers", key: "software_developers", apiValues: ["software_engineer"] },
+  { icon: PenTool, label: "Graphic Designers", key: "graphic_designers", apiValues: ["graphic_designer"] },
+  { icon: PenSquare, label: "Content Writers", key: "content_writers", apiValues: ["data_entry"] },
+  { icon: Languages, label: "Translators", key: "translators", apiValues: ["translator"] },
+  { icon: Calculator, label: "Accountants", key: "accountants", apiValues: ["accountant"] },
+  { icon: Scale, label: "Legal Advisors", key: "legal_advisors", apiValues: ["other"] },
+  { icon: Building2, label: "Real Estate Agents", key: "real_estate_agents", apiValues: ["sales_agent"] },
+  { icon: KeyRound, label: "Property Managers", key: "property_managers", apiValues: ["office_assistant"] },
+  { icon: Users, label: "HR Professionals", key: "hr_professionals", apiValues: ["office_assistant"] },
+  { icon: TrendingUp, label: "Marketing Specialists", key: "marketing_specialists", apiValues: ["marketing_agent"] },
+  { icon: Megaphone, label: "Sales Representatives", key: "sales_representatives", apiValues: ["sales_agent"] },
+  { icon: BadgeDollarSign, label: "Financial Advisors", key: "financial_advisors", apiValues: ["accountant"] },
 ];
 
 const LOCATIONS = ["Kacyiru", "Nyamirambo", "Kimihurura", "Remera", "Gisozi", "Kicukiro", "Gikondo", "Kanombe"];
@@ -53,6 +155,7 @@ const CSS = `
 `;
 
 export default function JobsPage() {
+  const { t } = useLanguage();
   const [jobs, setJobs]                  = useState<JobDto[]>([]);
   const [loadingJobs, setLoadingJobs]    = useState(true);
   const [search, setSearch]              = useState("");
@@ -72,10 +175,13 @@ export default function JobsPage() {
   }, []);
 
   const activeFilters = [
-    filterCategory && { label: filterCategory,                     clear: () => setFilterCat("") },
+    filterCategory && {
+      label: t("common.categories." + filterCategory) || filterCategory,
+      clear: () => setFilterCat("")
+    },
     filterLocation && { label: filterLocation,                     clear: () => setFilterLoc("") },
-    filterUrgent   && { label: "Urgent only",                      clear: () => setFilterUrgent(false) },
-    filterMinAmt   && { label: `Min ${fmt(Number(filterMinAmt))}`, clear: () => setFilterMinAmt("") },
+    filterUrgent   && { label: t("jobs_page.filters.urgent") || "Urgent only", clear: () => setFilterUrgent(false) },
+    filterMinAmt   && { label: `${t("jobs_page.filters.min") || "Min"} ${fmt(Number(filterMinAmt))}`, clear: () => setFilterMinAmt("") },
   ].filter(Boolean) as { label: string; clear: () => void }[];
 
   const clearAll = () => { setFilterCat(""); setFilterLoc(""); setFilterUrgent(false); setFilterMinAmt(""); };
@@ -84,7 +190,14 @@ export default function JobsPage() {
     let list = jobs.filter((j: JobDto) => {
       const q = search.toLowerCase();
       if (q && !j.title.toLowerCase().includes(q) && !j.category.toLowerCase().includes(q)) return false;
-      if (filterCategory && j.category.toLowerCase() !== filterCategory.toLowerCase()) return false;
+      if (filterCategory) {
+        const catObj = CATEGORIES.find(c => c.key === filterCategory);
+        if (catObj) {
+          if (!catObj.apiValues.includes(j.category.toLowerCase())) return false;
+        } else {
+          if (j.category.toLowerCase() !== filterCategory.toLowerCase()) return false;
+        }
+      }
       if (filterLocation && j.district.toLowerCase() !== filterLocation.toLowerCase()) return false;
       if (filterUrgent && j.urgency !== "IMMEDIATE") return false;
       if (filterMinAmt && j.ratePerHour < Number(filterMinAmt)) return false;
@@ -110,8 +223,12 @@ export default function JobsPage() {
         {/* HEADER */}
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 14, marginBottom: 28 }}>
           <div>
-            <h1 style={{ margin: 0, fontSize: 28, fontWeight: 900, color: "#fff", letterSpacing: "-0.8px" }}>Jobs</h1>
-            <p style={{ margin: "4px 0 0", fontSize: 13, color: "#555" }}>Open positions across Rwanda - apply or post your own.</p>
+            <h1 style={{ margin: 0, fontSize: 28, fontWeight: 900, color: "#fff", letterSpacing: "-0.8px" }}>
+              {t("common.nav.jobs")}
+            </h1>
+            <p style={{ margin: "4px 0 0", fontSize: 13, color: "#555" }}>
+              {t("jobs_page.hero.subtitle")}
+            </p>
           </div>
           <button onClick={() => setShowPostJob(true)} style={{
             display: "flex", alignItems: "center", gap: 7,
@@ -122,18 +239,18 @@ export default function JobsPage() {
             onMouseEnter={e => (e.currentTarget.style.background = "#ea6a0a")}
             onMouseLeave={e => (e.currentTarget.style.background = "#f97316")}
           >
-            <Plus size={14} /> Post a job
+            <Plus size={14} /> {t("jobs_page.buttons.post_job")}
           </button>
         </div>
 
         {/* CATEGORY CHIPS */}
         <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4, scrollbarWidth: "none", marginBottom: 20 }}>
-          {[{ label: "All" }, ...CATEGORIES].map(({ label }) => {
-            const active = filterCategory === label || (label === "All" && !filterCategory);
+          {[{ label: t("common.categories.all") || "All", key: "" }, ...CATEGORIES].map(({ label, key }) => {
+            const active = filterCategory === key || (key === "" && !filterCategory);
             return (
-              <button key={label} type="button"
+              <button key={key || "all"} type="button"
                 className="cat-chip"
-                onClick={() => setFilterCat(label === "All" ? "" : label)}
+                onClick={() => setFilterCat(key)}
                 style={{
                   flexShrink: 0, borderRadius: 999, padding: "6px 14px",
                   fontSize: 12, fontWeight: 600, border: "1px solid",
@@ -143,7 +260,7 @@ export default function JobsPage() {
                   color: active ? "#f97316" : "#666",
                 }}
               >
-                {label}
+                {key === "" ? label : t("common.categories." + key) || label}
               </button>
             );
           })}
@@ -155,7 +272,7 @@ export default function JobsPage() {
             <Search size={14} color="#555" style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
             <input
               type="text"
-              placeholder="Search jobs or categories…"
+              placeholder={t("jobs_page.placeholders.search") || "Search jobs or categories…"}
               value={search}
               onChange={e => setSearch(e.target.value)}
               style={{
@@ -178,7 +295,7 @@ export default function JobsPage() {
             }}
           >
             <SlidersHorizontal size={14} />
-            Filters {activeFilters.length > 0 && `(${activeFilters.length})`}
+            {t("jobs_page.buttons.filters") || "Filters"} {activeFilters.length > 0 && `(${activeFilters.length})`}
           </button>
         </div>
 
@@ -189,15 +306,19 @@ export default function JobsPage() {
             borderRadius: 14, padding: "20px", marginBottom: 14,
             display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 14,
           }}>
-            <SelectField label="Location" value={filterLocation} onChange={setFilterLoc} options={LOCATIONS} />
-            <SelectField label="Min pay (RWF)" value={filterMinAmt} onChange={setFilterMinAmt}
+            <SelectField label={t("jobs_page.filters.location") || "Location"} value={filterLocation} onChange={setFilterLoc} options={LOCATIONS} />
+            <SelectField label={t("jobs_page.filters.min_pay") || "Min pay (RWF)"} value={filterMinAmt} onChange={setFilterMinAmt}
               options={["5000", "8000", "10000", "15000", "20000"]} />
-            <SelectField label="Sort by" value={sort} onChange={v => setSort(v as SortKey)}
+            <SelectField label={t("jobs_page.filters.sort_by") || "Sort by"} value={sort} onChange={v => setSort(v as SortKey)}
               options={["newest", "amount_asc", "amount_desc"]}
-              labels={["Newest first", "Pay: low → high", "Pay: high → low"]} />
+              labels={[
+                t("jobs_page.sort_options.newest") || "Newest first",
+                t("jobs_page.sort_options.pay_asc") || "Pay: low → high",
+                t("jobs_page.sort_options.pay_desc") || "Pay: high → low"
+              ]} />
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               <label style={{ fontSize: 11, fontWeight: 700, color: "#666", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                Urgent only
+                {t("jobs_page.filters.urgent_only") || "Urgent only"}
               </label>
               <div
                 onClick={() => setFilterUrgent(u => !u)}
@@ -223,14 +344,14 @@ export default function JobsPage() {
               <ActiveChip key={f.label} label={f.label} onRemove={f.clear} />
             ))}
             <button onClick={clearAll} style={{ background: "none", border: "none", fontSize: 11, color: "#555", cursor: "pointer", fontWeight: 600 }}>
-              Clear all
+              {t("jobs_page.buttons.clear_all")}
             </button>
           </div>
         )}
 
         {/* COUNT */}
         <p style={{ fontSize: 12, color: "#444", marginBottom: 14, fontWeight: 600 }}>
-          {loadingJobs ? "Loading…" : `${filtered.length} job${filtered.length !== 1 ? "s" : ""} found`}
+          {loadingJobs ? (t("jobs_page.loading") || "Loading…") : t("jobs_page.found_count", { count: filtered.length })}
         </p>
 
         {/* GRID */}
@@ -242,6 +363,8 @@ export default function JobsPage() {
             <div className="jobs-grid">
               {filtered.map((j: JobDto) => {
                 const posted = daysAgo(j.createdAt);
+                const catKey = CATEGORIES.find(c => c.apiValues.includes(j.category.toLowerCase()))?.key || j.category;
+                const localizedCat = t("common.categories." + catKey) || j.category;
                 return (
                   <a key={j.id} href={`/jobs/${j.id}`} className="jcard" style={{
                     display: "flex", flexDirection: "column", gap: 12,
@@ -256,7 +379,7 @@ export default function JobsPage() {
                           flexShrink: 0, fontSize: 10, fontWeight: 700, borderRadius: 999,
                           padding: "3px 8px", background: "rgba(239,68,68,0.1)", color: "#ef4444",
                         }}>
-                          Urgent
+                          {t("jobs_page.badges.urgent") || "Urgent"}
                         </span>
                       )}
                     </div>
@@ -266,7 +389,7 @@ export default function JobsPage() {
                       alignSelf: "flex-start", fontSize: 10, fontWeight: 700, borderRadius: 999,
                       padding: "3px 10px", background: "rgba(249,115,22,0.08)", color: "#f97316",
                     }}>
-                      {j.category}
+                      {localizedCat}
                     </span>
 
                     {/* meta */}
@@ -282,7 +405,9 @@ export default function JobsPage() {
                       {j.headcount > 1 && (
                         <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                           <Briefcase size={11} color="#555" />
-                          <span style={{ fontSize: 11, color: "#555" }}>{j.headcount} slots open</span>
+                          <span style={{ fontSize: 11, color: "#555" }}>
+                            {t("jobs_page.cards.slots_open", { count: j.headcount }) || `${j.headcount} slots open`}
+                          </span>
                         </div>
                       )}
                     </div>
@@ -291,13 +416,13 @@ export default function JobsPage() {
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
                       <span style={{ fontSize: 15, fontWeight: 800, color: "#f97316" }}>
                         {fmt(j.ratePerHour)}
-                        <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}> / hr</span>
+                        <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}>{t("common.general.per_hour") || " / hr"}</span>
                       </span>
                       <span style={{
                         display: "flex", alignItems: "center", gap: 4,
                         fontSize: 12, fontWeight: 600, color: "#666",
                       }}>
-                        Apply <ArrowRight size={12} />
+                        {t("jobs_page.cards.apply") || "Apply"} <ArrowRight size={12} />
                       </span>
                     </div>
                   </a>
@@ -314,10 +439,10 @@ export default function JobsPage() {
         }}>
           <div>
             <h2 style={{ margin: "0 0 6px", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: "-0.4px" }}>
-              Need to hire someone?
+              {t("jobs_page.cta.title")}
             </h2>
             <p style={{ margin: 0, fontSize: 13, color: "#555", maxWidth: 340, lineHeight: 1.65 }}>
-              Post a job in under 2 minutes and get matched with ID-verified workers in your area.
+              {t("jobs_page.cta.desc")}
             </p>
           </div>
           <button onClick={() => setShowPostJob(true)} style={{
@@ -329,7 +454,7 @@ export default function JobsPage() {
             onMouseEnter={e => (e.currentTarget.style.background = "#ea6a0a")}
             onMouseLeave={e => (e.currentTarget.style.background = "#f97316")}
           >
-            Post a job <ArrowRight size={14} />
+            {t("jobs_page.cta.button")} <ArrowRight size={14} />
           </button>
         </div>
 
@@ -399,11 +524,16 @@ function SelectField({ label, value, onChange, options, labels }: {
 }
 
 function Empty() {
+  const { t } = useLanguage();
   return (
     <div style={{ textAlign: "center", padding: "60px 20px", color: "#444" }}>
       <p style={{ fontSize: 32, margin: "0 0 12px" }}>🔍</p>
-      <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: "#555" }}>No jobs match your filters.</p>
-      <p style={{ margin: "6px 0 0", fontSize: 12, color: "#333" }}>Try adjusting your search or clearing filters.</p>
+      <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: "#555" }}>
+        {t("jobs_page.empty.title") || "No jobs match your filters."}
+      </p>
+      <p style={{ margin: "6px 0 0", fontSize: 12, color: "#333" }}>
+        {t("jobs_page.empty.desc") || "Try adjusting your search or clearing filters."}
+      </p>
     </div>
   );
 }

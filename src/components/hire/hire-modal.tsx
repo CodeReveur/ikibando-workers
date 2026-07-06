@@ -12,6 +12,7 @@ import { getWorkers, postJob, applyForJob, updateApplicationStatus, getWallet, t
 import { ratingInfo } from "@/lib/rating";
 import { useToast } from "@/components/ui/toast";
 import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
+import { useLanguage } from "@/lib/language-context";
 
 // Leaflet must render client-side only
 const MapPicker = dynamic(
@@ -52,7 +53,6 @@ interface Form {
   requirements: string;
 }
 
-const STEPS    = ["Job details", "Best matches", "Summary"];
 const getDurations = (rt: RateType) => {
   if (rt === "hr") return [1, 2, 3, 4, 6, 8, 10, 12];
   if (rt === "day") return Array.from({length: 30}, (_, i) => i + 1);
@@ -105,6 +105,7 @@ const iconL: React.CSSProperties = {
   position: "absolute", left: 12, top: "50%",
   transform: "translateY(-50%)", pointerEvents: "none",
 };
+
 
 // ── component ────────────────────────────────────────────────────────────────
 export function HireModal({ onClose }: { onClose: () => void }) {
@@ -226,6 +227,9 @@ export function HireModal({ onClose }: { onClose: () => void }) {
     walletBal === null || walletBal >= total,   // hard block if balance is known and insufficient
   ];
 
+  const { t } = useLanguage();
+  const STEPS = [t("hire_modal.steps.details"), t("hire_modal.steps.matches"), t("hire_modal.steps.summary")];
+
   const selectedNames = selected.map(w => w.name).join(", ");
 
   // ── SUCCESS ───────────────────────────────────────────────────────────────
@@ -243,14 +247,14 @@ export function HireModal({ onClose }: { onClose: () => void }) {
               <CheckCircle size={28} color="#22c55e" />
             </div>
             <h2 style={{ margin: "0 0 8px", fontSize: 22, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px" }}>
-              Booking confirmed!
+              {t("hire_modal.summary.success_title")}
             </h2>
             <p style={{ margin: "0 0 4px", fontSize: 14, color: "#aaa" }}>
               <strong style={{ color: "#f0f0f0" }}>{selectedNames}</strong>{" "}
-              {selected.length > 1 ? "have" : "has"} been notified and will confirm shortly.
+              {t("hire_modal.summary.success_desc", { names: "", plural: selected.length > 1 ? "have" : "has" })}
             </p>
             <p style={{ margin: "0 0 20px", fontSize: 13, color: "#555", lineHeight: 1.7 }}>
-              The job has been created successfully.
+              {t("hire_modal.summary.success_sub")}
             </p>
             <div style={{ background: "#141414", border: "1px solid #1e1e1e", borderRadius: 12, padding: "14px 16px", marginBottom: 24, textAlign: "left" }}>
               {([
@@ -265,7 +269,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                 ...(form.requirements ? [["Requirements", <RichTextDisplay content={form.requirements} />]] : []),
               ] as [string, React.ReactNode][]).map(([k, v]) => <SRow key={String(k)} k={String(k)} v={v} />)}
             </div>
-            <button onClick={onClose} style={{ ...btnPrimary, width: "100%" }}>Done</button>
+            <button onClick={onClose} style={{ ...btnPrimary, width: "100%" }}>{t("common.buttons.done")}</button>
           </div>
         </div>
       </Overlay>
@@ -284,7 +288,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
             <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
               <div>
                 <p style={{ margin: 0, fontSize: 11, color: "#555", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                  Step {step + 1} of {STEPS.length}
+                  {t("hire_modal.steps.indicator", { step: step + 1, total: STEPS.length })}
                 </p>
                 <h2 style={{ margin: "3px 0 0", fontSize: 18, fontWeight: 800, color: "#fff", letterSpacing: "-0.4px" }}>
                   {STEPS[step]}
@@ -317,18 +321,18 @@ export function HireModal({ onClose }: { onClose: () => void }) {
             {step === 0 && (
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
 
-                <FField label="Job category *">
+                <FField label={t("hire_modal.details.category_label")}>
                   <SearchSelect
                     options={JOB_CATEGORIES.map(c => ({ value: c.value, label: c.label }))}
                     value={form.category}
                     onChange={v => setForm(f => ({ ...f, category: v }))}
-                    placeholder="Search category…"
+                    placeholder={t("hire_modal.details.category_placeholder")}
                     icon={<Search size={13} color="#444" style={iconL} />}
                   />
                 </FField>
 
                 <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  <FField label="No. of workers">
+                  <FField label={t("hire_modal.details.workers_label")}>
                     <div style={{ position: "relative" }}>
                       <Users size={13} color="#444" style={iconL} />
                       <input type="number" min="1" max="50"
@@ -340,7 +344,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                       />
                     </div>
                   </FField>
-                  <FField label="Rate per worker (RWF) *">
+                  <FField label={t("hire_modal.details.rate_label")}>
                     <input type="number" min="0" placeholder="e.g. 8000"
                       value={form.budget}
                       onChange={e => setForm(f => ({ ...f, budget: e.target.value }))}
@@ -352,23 +356,23 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                 </div>
 
                 <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  <FField label="Rate period">
+                  <FField label={t("hire_modal.details.period_label")}>
                     <div style={{ position: "relative" }}>
                       <select value={form.rateType} onChange={e => setForm(f => ({ ...f, rateType: e.target.value as RateType }))}
                         style={{ ...inp, appearance: "none", paddingRight: 28, color: "#f0f0f0" }}
                         onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                         onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
                       >
-                        <option value="hr">Per hour</option>
-                        <option value="day">Per day</option>
-                        <option value="week">Per week</option>
-                        <option value="month">Per month</option>
-                        <option value="year">Per year</option>
+                        <option value="hr">{t("hire_modal.details.period_options.hr")}</option>
+                        <option value="day">{t("hire_modal.details.period_options.day")}</option>
+                        <option value="week">{t("hire_modal.details.period_options.week")}</option>
+                        <option value="month">{t("hire_modal.details.period_options.month")}</option>
+                        <option value="year">{t("hire_modal.details.period_options.year")}</option>
                       </select>
                       <ChevronDown size={13} color="#555" style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
                     </div>
                   </FField>
-                  <FField label="Duration">
+                  <FField label={t("hire_modal.details.duration_label")}>
                     <div style={{ position: "relative" }}>
                       <AlarmClock size={13} color="#444" style={iconL} />
                       <select value={form.durationHours} onChange={e => setForm(f => ({ ...f, durationHours: e.target.value }))}
@@ -388,13 +392,22 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                     background: "rgba(249,115,22,0.05)", border: "1px solid rgba(249,115,22,0.15)",
                     borderRadius: 10, padding: "10px 14px", display: "flex", justifyContent: "space-between", alignItems: "center",
                   }}>
-                    <span style={{ fontSize: 12, color: "#888" }}>{fmt(budget)}{RATE_LABEL[form.rateType]} × {headcountNum} worker{headcountNum !== 1 ? "s" : ""} × {durationNum} {getUnit(form.rateType, durationNum)}</span>
+                    <span style={{ fontSize: 12, color: "#888" }}>
+                      {t("hire_modal.details.payout_breakdown", {
+                        rate: fmt(budget),
+                        period: RATE_LABEL[form.rateType],
+                        workers: headcountNum,
+                        plural: headcountNum !== 1 ? "s" : "",
+                        duration: durationNum,
+                        unit: getUnit(form.rateType, durationNum)
+                      })}
+                    </span>
                     <span style={{ fontSize: 13, fontWeight: 800, color: "#f97316" }}>{fmt(jobAmount)}</span>
                   </div>
                 )}
 
                 <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  <FField label="Start date *">
+                  <FField label={t("hire_modal.details.start_date")}>
                     <div style={{ position: "relative" }}>
                       <Calendar size={13} color="#444" style={iconL} />
                       <input type="date" min={todayStr()}
@@ -405,7 +418,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                       />
                     </div>
                   </FField>
-                  <FField label="Start time *">
+                  <FField label={t("hire_modal.details.start_time")}>
                     <div style={{ position: "relative" }}>
                       <Clock size={13} color="#444" style={iconL} />
                       <input type="time"
@@ -419,27 +432,27 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                 </div>
 
                 <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  <FField label="Province">
+                  <FField label={t("hire_modal.details.province")}>
                     <SearchSelect
                       options={RWANDA_PROVINCES.map(p => ({ value: p.label, label: p.label }))}
                       value={form.province}
                       onChange={v => setForm(f => ({ ...f, province: v, district: "" }))}
-                      placeholder="Province…"
+                      placeholder={t("hire_modal.details.province_placeholder")}
                       icon={<MapPin size={13} color="#444" style={iconL} />}
                     />
                   </FField>
-                  <FField label="District *">
+                  <FField label={t("hire_modal.details.district")}>
                     <SearchSelect
                       options={districtsFor(form.province).map(d => ({ value: d, label: d }))}
                       value={form.district}
                       onChange={v => setForm(f => ({ ...f, district: v }))}
-                      placeholder="District…"
+                      placeholder={t("hire_modal.details.district_placeholder")}
                       icon={<MapPin size={13} color="#444" style={iconL} />}
                     />
                   </FField>
                 </div>
 
-                <FField label="Precise location (click map or use GPS)">
+                <FField label={t("hire_modal.details.location_label")}>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     <MapPicker
                       lat={form.latitude} lng={form.longitude}
@@ -455,9 +468,9 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                         fontFamily: "inherit",
                       }}>
                         {gpsStatus === "loading" ? <Loader2 size={12} style={{ animation: "spin 1s linear infinite" }} /> : <Navigation size={12} />}
-                        {gpsStatus === "loading" ? "Detecting…" : gpsStatus === "ok" ? "GPS detected" : "Detect my GPS"}
+                        {gpsStatus === "loading" ? t("hire_modal.details.gps_btn_detecting") : gpsStatus === "ok" ? t("hire_modal.details.gps_btn_detected") : t("hire_modal.details.gps_btn_detect")}
                       </button>
-                      {gpsStatus === "error" && <span style={{ fontSize: 11, color: "#ef4444" }}>Could not access GPS</span>}
+                      {gpsStatus === "error" && <span style={{ fontSize: 11, color: "#ef4444" }}>{t("hire_modal.details.gps_error")}</span>}
                       {form.latitude != null && form.longitude != null && (
                         <span style={{ fontSize: 11, color: "#555", marginLeft: "auto" }}>
                           {form.latitude.toFixed(5)}, {form.longitude.toFixed(5)}
@@ -467,9 +480,9 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                   </div>
                 </FField>
 
-                <FField label="Requirements (optional)">
+                <FField label={t("hire_modal.details.requirements_label")}>
                   <RichTextEditor
-                    placeholder="e.g. must have own transport, certified electrician, fluent in English…"
+                    placeholder={t("hire_modal.details.requirements_placeholder")}
                     value={form.requirements}
                     onChange={v => setForm(f => ({ ...f, requirements: v }))}
                   />
@@ -488,10 +501,10 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                     background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10,
                   }}>
                     <span style={{ fontSize: 12, color: "#555" }}>
-                      {selected.length} of {headcountNum} workers selected
+                      {t("hire_modal.matches.selected_status", { selected: selected.length, total: headcountNum })}
                     </span>
                     <span style={{ fontSize: 12, fontWeight: 700, color: selectionValid ? "#22c55e" : "#f97316" }}>
-                      {selectionValid ? "✓ Ready" : "Select more"}
+                      {selectionValid ? t("hire_modal.matches.ready") : t("hire_modal.matches.select_more")}
                     </span>
                   </div>
                 )}
@@ -499,25 +512,25 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                 {loadingWorkers ? (
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "48px 0", gap: 12 }}>
                     <Loader2 size={24} color="#f97316" style={{ animation: "spin 1s linear infinite" }} />
-                    <p style={{ margin: 0, fontSize: 13, color: "#555" }}>Finding workers for {cat}…</p>
+                    <p style={{ margin: 0, fontSize: 13, color: "#555" }}>{t("hire_modal.matches.loading", { cat: cat })}</p>
                   </div>
                 ) : workerError ? (
                   <div style={{ textAlign: "center", padding: "40px 0" }}>
                     <p style={{ fontSize: 28, margin: "0 0 10px" }}>⚠️</p>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: "#555", margin: 0 }}>Could not load workers</p>
-                    <p style={{ fontSize: 12, color: "#333", marginTop: 6 }}>Check your connection and go back to try again.</p>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: "#555", margin: 0 }}>{t("hire_modal.matches.error_title")}</p>
+                    <p style={{ fontSize: 12, color: "#333", marginTop: 6 }}>{t("hire_modal.matches.error_desc")}</p>
                   </div>
                 ) : matches.length === 0 ? (
                   <div style={{ textAlign: "center", padding: "40px 0" }}>
                     <p style={{ fontSize: 28, margin: "0 0 10px" }}>😔</p>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: "#555", margin: 0 }}>No workers found for {cat}</p>
-                    <p style={{ fontSize: 12, color: "#333", marginTop: 6 }}>Go back and try a different category.</p>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: "#555", margin: 0 }}>{t("hire_modal.matches.empty_title", { cat: cat })}</p>
+                    <p style={{ fontSize: 12, color: "#333", marginTop: 6 }}>{t("hire_modal.matches.empty_desc")}</p>
                   </div>
                 ) : (
                   <>
                     <p style={{ margin: "0 0 14px", fontSize: 12, color: "#555" }}>
-                      {matches.length} worker{matches.length !== 1 ? "s" : ""} available for <strong style={{ color: "#aaa" }}>{cat}</strong>
-                      {form.district ? ` · sorted by proximity to ${form.district}` : ""}
+                      {t("hire_modal.matches.available_summary", { count: matches.length, plural: matches.length !== 1 ? "s" : "", cat: cat })}
+                      {form.district ? t("hire_modal.matches.sorted_proximity", { district: form.district }) : ""}
                     </p>
                     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                       {matches.map((w, i) => {
@@ -541,7 +554,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
             {/* ── STEP 2: SUMMARY & PAY ── */}
             {step === 2 && (
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <SCard title="Job summary">
+                <SCard title={t("hire_modal.summary.title")}>
                   {([
                     ["Category",  cat],
                     ["Workers",   String(headcountNum)],
@@ -557,7 +570,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                 </SCard>
 
                 {selected.length > 0 && (
-                  <SCard title={selected.length > 1 ? "Your workers" : "Your worker"}>
+                  <SCard title={selected.length > 1 ? t("hire_modal.summary.assigned_title") : t("hire_modal.summary.assigned_title_single")}>
                     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                       {selected.map(w => (
                         <div key={w.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "4px 0" }}>
@@ -572,7 +585,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                                 return (
                                   <span style={{ display: "inline-flex", alignItems: "center", gap: 2, color: r.hasReviews ? "#f97316" : "#666", fontWeight: 700 }}>
                                     <Star size={10} color="#f97316" fill={r.hasReviews ? "#f97316" : "none"} />
-                                    {r.hasReviews ? r.value : "New"}
+                                    {r.hasReviews ? r.value : t("common.general.new")}
                                   </span>
                                 );
                               })()}
@@ -586,21 +599,23 @@ export function HireModal({ onClose }: { onClose: () => void }) {
 
                 {/* ESCROW / WALLET BLOCK */}
                 <div style={{ marginTop: 24 }}>
-                  <p style={{ margin: "0 0 12px", fontSize: 13, fontWeight: 700, color: "#fff" }}>Payment</p>
+                  <p style={{ margin: "0 0 12px", fontSize: 13, fontWeight: 700, color: "#fff" }}>{t("hire_modal.summary.payment_title")}</p>
 
                   {/* escrow breakdown */}
                   {total > 0 && (
                     <div style={{ background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10, padding: "12px 14px", marginBottom: 12 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                        <span style={{ fontSize: 12, color: "#666" }}>Worker payout ({headcountNum} × {durationNum}h × {fmt(budget)})</span>
+                        <span style={{ fontSize: 12, color: "#666" }}>
+                          {t("hire_modal.summary.payout_label", { workers: headcountNum, duration: durationNum, rate: fmt(budget) })}
+                        </span>
                         <span style={{ fontSize: 12, color: "#d0d0d0", fontWeight: 600 }}>{fmt(jobAmount)}</span>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, paddingBottom: 8, borderBottom: "1px solid #1e1e1e" }}>
-                        <span style={{ fontSize: 12, color: "#666" }}>Platform fee (5%)</span>
+                        <span style={{ fontSize: 12, color: "#666" }}>{t("hire_modal.summary.fee_label")}</span>
                         <span style={{ fontSize: 12, color: "#d0d0d0", fontWeight: 600 }}>{fmt(fee)}</span>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <span style={{ fontSize: 13, color: "#aaa", fontWeight: 700 }}>Total escrow required</span>
+                        <span style={{ fontSize: 13, color: "#aaa", fontWeight: 700 }}>{t("hire_modal.summary.escrow_required")}</span>
                         <span style={{ fontSize: 14, color: "#f97316", fontWeight: 800 }}>{fmt(total)}</span>
                       </div>
                     </div>
@@ -614,22 +629,22 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                   }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: walletBal !== null && walletBal < total ? 8 : 0 }}>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={walletBal !== null && walletBal < total ? "#ef4444" : "#22c55e"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                      <span style={{ fontSize: 12, color: "#aaa" }}>Wallet balance</span>
+                      <span style={{ fontSize: 12, color: "#aaa" }}>{t("hire_modal.summary.wallet_balance")}</span>
                       <span style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginLeft: "auto" }}>
                         {walletBal !== null ? fmt(walletBal) : "—"}
                       </span>
                     </div>
                     {walletBal !== null && walletBal < total && (
                       <p style={{ margin: 0, fontSize: 12, color: "#ef4444", lineHeight: 1.5 }}>
-                        You need <strong>{fmt(total - walletBal)}</strong> more.{" "}
-                        <a href="/owner/payments" style={{ color: "#f97316", fontWeight: 700, textDecoration: "underline" }}>Top up wallet →</a>
+                        {t("hire_modal.summary.topup_warning", { amount: fmt(total - walletBal) })}{" "}
+                        <a href="/owner/payments" style={{ color: "#f97316", fontWeight: 700, textDecoration: "underline" }}>{t("hire_modal.summary.topup_link")}</a>
                       </p>
                     )}
                   </div>
                 </div>
 
                 <p style={{ margin: "24px 0 0", fontSize: 11, color: "#444", lineHeight: 1.7, textAlign: "center" }}>
-                  By confirming, you agree to our terms of service.
+                  {t("hire_modal.summary.terms_warning")}
                 </p>
               </div>
             )}
@@ -639,7 +654,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
           {/* FOOTER NAV */}
           <div style={{ padding: "16px 24px 20px", flexShrink: 0, borderTop: "1px solid #1e1e1e", display: "flex", gap: 10 }}>
             {step > 0 && (
-              <button onClick={() => setStep(s => s - 1)} style={btnBack}>← Back</button>
+              <button onClick={() => setStep(s => s - 1)} style={btnBack}>← {t("common.buttons.back")}</button>
             )}
             {step < 2 ? (
               <button
@@ -648,15 +663,15 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                 style={{ ...btnPrimary, flex: 1, opacity: canNext[step] ? 1 : 0.45, cursor: canNext[step] ? "pointer" : "not-allowed" }}
               >
                 {step === 1 && !selectionValid && matches.length > 0
-                  ? `Select ${headcountNum - selected.length} more worker${headcountNum - selected.length !== 1 ? "s" : ""}`
-                  : "Continue →"}
+                  ? t("hire_modal.matches.select_btn_need", { count: headcountNum - selected.length, plural: headcountNum - selected.length !== 1 ? "s" : "" })
+                  : `${t("common.buttons.continue")} →`}
               </button>
             ) : (
               <button
                 onClick={async () => {
                   if (!canNext[2] || submitting) return;
                   const token = localStorage.getItem("access_token");
-                  if (!token) { toastError("You must be signed in.", { title: "Not Signed In" }); return; }
+                  if (!token) { toastError(t("hire_modal.summary.signed_out_error"), { title: t("hire_modal.summary.signed_out_error_title") }); return; }
                   setSub(true);
                   try {
                     const startTime = form.date && form.time
@@ -679,22 +694,23 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                     try { localStorage.removeItem(DRAFT_KEY); } catch {}
                     setDone(true);
                   } catch (e: any) {
-                    toastError(e?.response?.data?.message ?? "Payment failed. Please try again.", { title: "Hire Failed" });
+                    toastError(e?.response?.data?.message ?? "Payment failed. Please try again.", { title: t("hire_modal.summary.post_fail_title") });
                   } finally { setSub(false); }
                 }}
                 disabled={!canNext[2] || submitting}
                 style={{ ...btnPrimary, flex: 1, opacity: (canNext[2] && !submitting) ? 1 : 0.45, cursor: (canNext[2] && !submitting) ? "pointer" : "not-allowed" }}
               >
                 {submitting
-                  ? "Processing…"
+                  ? t("hire_modal.summary.processing_btn")
                   : walletBal !== null && walletBal < total
-                  ? `Insufficient balance`
+                  ? t("hire_modal.summary.insufficient_btn")
                   : canNext[2]
-                  ? "Confirm & freeze funds"
-                  : "Complete all fields"}
+                  ? t("hire_modal.summary.confirm_btn")
+                  : t("hire_modal.summary.incomplete_btn")}
               </button>
             )}
           </div>
+
           <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
         </div>
       </Overlay>
@@ -708,6 +724,7 @@ function WorkerRow({ w, isSel, nearby, isFirst, isMulti, disabled, onClick }: {
   isFirst: boolean; isMulti: boolean; disabled: boolean;
   onClick: () => void;
 }) {
+  const { t } = useLanguage();
   const year = sinceYear(w.memberSince as any);
   const days = w.availability?.slice(0, 3) ?? [];
 
@@ -724,7 +741,7 @@ function WorkerRow({ w, isSel, nearby, isFirst, isMulti, disabled, onClick }: {
           <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
           {isFirst && (
             <span style={{ fontSize: 9, fontWeight: 800, borderRadius: 999, padding: "2px 7px", background: "rgba(249,115,22,0.12)", color: "#f97316" }}>
-              BEST MATCH
+              {t("hire_modal.matches.best_match")}
             </span>
           )}
         </div>
@@ -734,7 +751,7 @@ function WorkerRow({ w, isSel, nearby, isFirst, isMulti, disabled, onClick }: {
             return (
               <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
                 <Star size={10} color="#f97316" fill={r.hasReviews ? "#f97316" : "none"} />
-                <span style={{ fontSize: 11, fontWeight: 700, color: r.hasReviews ? "#f97316" : "#666" }}>{r.hasReviews ? r.value : "New"}</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: r.hasReviews ? "#f97316" : "#666" }}>{r.hasReviews ? r.value : t("common.general.new")}</span>
               </span>
             );
           })()}
@@ -748,15 +765,15 @@ function WorkerRow({ w, isSel, nearby, isFirst, isMulti, disabled, onClick }: {
             <>
               <span style={{ fontSize: 11, color: "#333" }}>·</span>
               <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
-                <MapPin size={10} color={nearby ? "#22c55e" : "#444"} />
+                <MapPin size={10} color={nearby ? "#22c55e" : "#444"} style={{ flexShrink: 0 }} />
                 <span style={{ fontSize: 11, color: nearby ? "#22c55e" : "#555" }}>
-                  {w.locationShort ?? w.district}{nearby ? " · Nearby" : ""}
+                  {w.locationShort ?? w.district}{nearby ? ` · ${t("hire_modal.matches.nearby")}` : ""}
                 </span>
               </span>
             </>
           )}
           <span style={{ fontSize: 11, color: "#333" }}>·</span>
-          <span style={{ fontSize: 11, color: "#444" }}>Since {year}</span>
+          <span style={{ fontSize: 11, color: "#444" }}>{t("hire_modal.matches.since_year", { year })}</span>
         </div>
         {days.length > 0 && (
           <div style={{ display: "flex", gap: 4, marginTop: 6, flexWrap: "wrap" }}>
@@ -767,7 +784,7 @@ function WorkerRow({ w, isSel, nearby, isFirst, isMulti, disabled, onClick }: {
               }}>{d}</span>
             ))}
             {w.availability.length > 3 && (
-              <span style={{ fontSize: 10, color: "#444" }}>+{w.availability.length - 3} more</span>
+              <span style={{ fontSize: 10, color: "#444" }}>{t("hire_modal.matches.more_avail", { count: w.availability.length - 3 })}</span>
             )}
           </div>
         )}
@@ -901,10 +918,23 @@ function SCard({ title, children }: { title: string; children: React.ReactNode }
 }
 
 function SRow({ k, v }: { k: string; v: React.ReactNode }) {
+  const { t } = useLanguage();
+  const label = k === "Category" ? t("hire_modal.summary.category_label") || "Category"
+              : k === "Workers" ? t("hire_modal.summary.workers_label") || "Workers"
+              : k === "Rate" ? t("hire_modal.summary.rate_label") || "Rate"
+              : k === "Duration" ? t("hire_modal.summary.duration_label") || "Duration"
+              : k === "Date" ? t("hire_modal.summary.date_label") || "Date"
+              : k === "Time" ? t("hire_modal.summary.time_label") || "Time"
+              : k === "Province" ? t("hire_modal.summary.province_label") || "Province"
+              : k === "District" ? t("hire_modal.summary.district_label") || "District"
+              : k === "GPS" ? t("hire_modal.summary.gps_label") || "GPS"
+              : k === "Requirements" ? t("hire_modal.summary.requirements_label") || "Requirements"
+              : k;
+
   if (k === "Requirements") {
     return (
       <div style={{ display: "flex", flexDirection: "column", padding: "8px 0", borderBottom: "1px solid #1a1a1a", gap: 6 }}>
-        <span style={{ fontSize: 12, color: "#555" }}>{k}</span>
+        <span style={{ fontSize: 12, color: "#555" }}>{label}</span>
         <div style={{ fontSize: 12, color: "#f0f0f0", textAlign: "left", background: "rgba(0,0,0,0.2)", padding: "10px 14px", borderRadius: 10, border: "1px solid #2a2a2a" }}>
           {v}
         </div>

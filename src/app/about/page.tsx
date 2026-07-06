@@ -1,48 +1,50 @@
 "use client";
 
-
 import Footer from "@/components/layout/footer";
 import { Users, Shield, Zap, Heart, MapPin, ArrowRight } from "lucide-react";
 import { BreadcrumbSchema } from "@/components/seo/json-ld";
-
-const stats = [
-  { value: "2,400+", label: "Verified workers" },
-  { value: "8,900+", label: "Jobs completed"   },
-  { value: "15+",    label: "Job categories"   },
-  { value: "4.8★",   label: "Average rating"   },
-];
-
-const values = [
-  {
-    Icon: Shield,
-    title: "Trust first",
-    body: "Every worker is ID-verified before they can accept jobs. Employers know exactly who is showing up.",
-  },
-  {
-    Icon: Zap,
-    title: "Speed matters",
-    body: "Post a job in under 2 minutes. Workers get notified instantly and can confirm in one tap.",
-  },
-  {
-    Icon: Heart,
-    title: "Fair pay",
-    body: "We display clear rates upfront. No hidden fees, no cash disputes - payments go through MoMo.",
-  },
-  {
-    Icon: Users,
-    title: "Community",
-    body: "Built in Kigali, for Rwandans. We believe every worker deserves dignity and every employer deserves reliability.",
-  },
-];
-
-const steps = [
-  { n: "01", title: "Create an account",    body: "Sign up as a worker or employer in under a minute." },
-  { n: "02", title: "Post or browse",        body: "Employers post jobs; workers browse and apply instantly." },
-  { n: "03", title: "Get matched fast",      body: "We surface the best-fit workers based on category and location." },
-  { n: "04", title: "Pay via MoMo",          body: "Secure mobile-money payments - no cash, no disputes." },
-];
+import { useLanguage } from "@/lib/language-context";
 
 export default function AboutPage() {
+  const { t } = useLanguage();
+
+  const stats = [
+    { value: t("about.stats.workers_val"), label: t("about.stats.workers_lbl") },
+    { value: t("about.stats.jobs_val"), label: t("about.stats.jobs_lbl")   },
+    { value: t("about.stats.categories_val"), label: t("about.stats.categories_lbl")   },
+    { value: t("about.stats.rating_val"), label: t("about.stats.rating_lbl")   },
+  ];
+
+  const values = [
+    {
+      Icon: Shield,
+      title: t("about.values.val1_title"),
+      body: t("about.values.val1_body"),
+    },
+    {
+      Icon: Zap,
+      title: t("about.values.val2_title"),
+      body: t("about.values.val2_body"),
+    },
+    {
+      Icon: Heart,
+      title: t("about.values.val3_title"),
+      body: t("about.values.val3_body"),
+    },
+    {
+      Icon: Users,
+      title: t("about.values.val4_title"),
+      body: t("about.values.val4_body"),
+    },
+  ];
+
+  const steps = [
+    { n: "01", title: t("about.how_it_works.step1_title"), body: t("about.how_it_works.step1_body") },
+    { n: "02", title: t("about.how_it_works.step2_title"), body: t("about.how_it_works.step2_body") },
+    { n: "03", title: t("about.how_it_works.step3_title"), body: t("about.how_it_works.step3_body") },
+    { n: "04", title: t("about.how_it_works.step4_title"), body: t("about.how_it_works.step4_body") },
+  ];
+
   return (
     <main style={{
       background: "#111", minHeight: "100vh", color: "#f5f5f5",
@@ -61,18 +63,17 @@ export default function AboutPage() {
             borderRadius: 999, padding: "4px 14px", fontSize: 11, fontWeight: 700,
             letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 18,
           }}>
-            About MpahMapu
+            {t("about.hero.tag")}
           </span>
           <h1 style={{
             fontSize: "clamp(32px, 6vw, 48px)", fontWeight: 900, color: "#fff",
             lineHeight: 1.05, letterSpacing: "-1.5px", margin: "0 0 18px",
           }}>
-            Rwanda&apos;s on-demand<br />
-            <span style={{ color: "#f97316" }}>workforce platform.</span>
+            {t("about.hero.title_main")}<br />
+            <span style={{ color: "#f97316" }}>{t("about.hero.title_accent")}</span>
           </h1>
           <p style={{ fontSize: 15, color: "#666", lineHeight: 1.75, maxWidth: 500, margin: 0 }}>
-            MpahMapu connects employers with ID-verified, rated workers across Rwanda -
-            for events, cleaning, security, driving and more. Hired in minutes, paid via MoMo.
+            {t("about.hero.desc")}
           </p>
         </div>
 
@@ -96,18 +97,16 @@ export default function AboutPage() {
         {/* OUR STORY */}
         <div style={{ marginBottom: 56 }}>
           <h2 style={{ fontSize: 22, fontWeight: 800, color: "#fff", letterSpacing: "-0.5px", margin: "0 0 16px" }}>
-            Our story
+            {t("about.story.title")}
           </h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <p style={{ fontSize: 14, color: "#666", lineHeight: 1.8, margin: 0 }}>
-              MpahMapu was founded in Rwanda in 2025 after watching skilled workers struggle to find consistent work
-              and employers scramble to find reliable help on short notice. The solution was simple: a platform that
-              makes both sides fast, transparent, and safe.
+              {t("about.story.p1")}
             </p>
             <p style={{ fontSize: 14, color: "#666", lineHeight: 1.8, margin: 0 }}>
-              The name <em style={{ color: "#aaa" }}>MpahMapu</em> means &ldquo;a group that comes together to work&rdquo; in Kinyarwanda -
-              which is exactly what we&apos;re building. A community where every job is done with pride and every worker
-              is treated with respect.
+              {t("about.story.p2").split("MpahMapu")[0]}
+              <em style={{ color: "#aaa" }}>MpahMapu</em>
+              {t("about.story.p2").split("MpahMapu")[1]}
             </p>
           </div>
         </div>
@@ -115,7 +114,7 @@ export default function AboutPage() {
         {/* HOW IT WORKS */}
         <div style={{ marginBottom: 56 }}>
           <h2 style={{ fontSize: 22, fontWeight: 800, color: "#fff", letterSpacing: "-0.5px", margin: "0 0 20px" }}>
-            How it works
+            {t("about.how_it_works.title")}
           </h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {steps.map(({ n, title, body }, i) => (
@@ -147,7 +146,7 @@ export default function AboutPage() {
         {/* VALUES */}
         <div style={{ marginBottom: 56 }}>
           <h2 style={{ fontSize: 22, fontWeight: 800, color: "#fff", letterSpacing: "-0.5px", margin: "0 0 20px" }}>
-            What we stand for
+            {t("about.values.title")}
           </h2>
           <div style={{
             display: "grid",
@@ -187,8 +186,8 @@ export default function AboutPage() {
             <MapPin size={20} color="#f97316" />
           </div>
           <div>
-            <p style={{ margin: "0 0 2px", fontSize: 14, fontWeight: 700, color: "#f0f0f0" }}>Based in Rwanda, Rwanda</p>
-            <p style={{ margin: 0, fontSize: 12, color: "#555" }}>Currently serving Rwanda districts - expanding across East Africa soon.</p>
+            <p style={{ margin: "0 0 2px", fontSize: 14, fontWeight: 700, color: "#f0f0f0" }}>{t("about.location.title")}</p>
+            <p style={{ margin: 0, fontSize: 12, color: "#555" }}>{t("about.location.desc")}</p>
           </div>
         </div>
 
@@ -198,10 +197,10 @@ export default function AboutPage() {
           borderRadius: 18, padding: "32px 28px", textAlign: "center",
         }}>
           <h2 style={{ margin: "0 0 10px", fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: "-0.4px" }}>
-            Ready to get started?
+            {t("about.cta.title")}
           </h2>
           <p style={{ margin: "0 0 22px", fontSize: 13, color: "#666" }}>
-            Join thousands of workers and employers already on MpahMapu.
+            {t("about.cta.desc")}
           </p>
           <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
             <a href="/signup" style={{
@@ -209,7 +208,7 @@ export default function AboutPage() {
               background: "#f97316", color: "#fff", borderRadius: 999,
               padding: "11px 22px", fontSize: 13, fontWeight: 700, textDecoration: "none",
             }}>
-              Create account <ArrowRight size={13} />
+              {t("about.cta.btn_create")} <ArrowRight size={13} />
             </a>
             <a href="/contact" style={{
               display: "inline-flex", alignItems: "center", gap: 6,
@@ -217,7 +216,7 @@ export default function AboutPage() {
               padding: "11px 22px", fontSize: 13, fontWeight: 600, textDecoration: "none",
               border: "1px solid #2a2a2a",
             }}>
-              Contact us
+              {t("about.cta.btn_contact")}
             </a>
           </div>
         </div>

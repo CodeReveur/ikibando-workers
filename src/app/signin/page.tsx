@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, ArrowLeft } from "lucide-react";
 import { AuthCarousel } from "@/components/auth/auth-carousel";
 import { saveRedirect } from "@/lib/auth-redirect";
 import { useGoogleLogin } from "@react-oauth/google";
@@ -11,6 +11,7 @@ import { RegistrationWizard } from "@/components/auth/registration-wizard";
 import { BadgeSubmissionWizard } from "@/components/auth/badge-submission-wizard";
 import { AuthGate } from "@/components/auth/auth-gate";
 import { useToast } from "@/components/ui/toast";
+import { useLanguage } from "@/lib/language-context";
 
 declare global {
   interface Window {
@@ -26,6 +27,7 @@ declare global {
 }
 
 export default function SignInPage() {
+  const { t } = useLanguage();
   const { error: toastError } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -77,22 +79,22 @@ export default function SignInPage() {
       try {
         proceed(await loginWithGoogle(access_token));
       } catch {
-        toastError("Google sign-in failed. Please try again.", { title: "Login Failed" });
+        toastError(t("signin.toasts.google_fail_desc"), { title: t("signin.toasts.login_failed_title") });
       } finally {
         setLoading(null);
       }
     },
-    onError: () => toastError("Google sign-in was cancelled or failed.", { title: "Login Failed" }),
+    onError: () => toastError(t("signin.toasts.google_cancelled_desc"), { title: t("signin.toasts.login_failed_title") }),
   });
 
   /* ── Facebook handler ───────────────────────────────────────────────── */
   const handleFacebook = () => {
     if (window.location.protocol !== "https:") {
-      toastError("Facebook sign-in requires HTTPS. Use email or Google during local development.", { title: "Login Failed" });
+      toastError(t("signin.toasts.fb_https_desc"), { title: t("signin.toasts.login_failed_title") });
       return;
     }
     if (!window.FB) {
-      toastError("Facebook sign-in is not available (App ID not configured).", { title: "Login Failed" });
+      toastError(t("signin.toasts.fb_not_avail_desc"), { title: t("signin.toasts.login_failed_title") });
       return;
     }
     window.FB.login(
@@ -102,7 +104,7 @@ export default function SignInPage() {
         loginWithFacebook(res.authResponse.accessToken)
           .then((result) => proceed(result))
           .catch(() => {
-            toastError("Facebook sign-in failed. Please try again.", { title: "Login Failed" });
+            toastError(t("signin.toasts.fb_fail_desc"), { title: t("signin.toasts.login_failed_title") });
           })
           .finally(() => {
             setLoading(null);
@@ -115,7 +117,7 @@ export default function SignInPage() {
   /* ── Email / password handler ───────────────────────────────────────── */
   const handleSubmit = async () => {
     if (!email || !password) {
-      toastError("Please enter your email and password.", { title: "Login Failed" });
+      toastError(t("signin.toasts.email_pass_req_desc"), { title: t("signin.toasts.login_failed_title") });
       return;
     }
     setLoading("email");
@@ -129,11 +131,11 @@ export default function SignInPage() {
     } catch (e: unknown) {
       const msg =
         (e as { response?: { data?: { message?: string } } })?.response?.data?.message ??
-        "Invalid email or password.";
+        t("signin.toasts.invalid_creds_desc");
       const isSocial = msg.includes("Google or Facebook");
       toastError(msg, {
-        title: "Login Failed",
-        action: isSocial ? { label: "Set a password via Forgot Password", href: "/forgot-password" } : undefined,
+        title: t("signin.toasts.login_failed_title"),
+        action: isSocial ? { label: t("signin.toasts.set_password_label"), href: "/forgot-password" } : undefined,
       });
     } finally {
       setLoading(null);
@@ -143,46 +145,344 @@ export default function SignInPage() {
   return (
     <>
       <style>{`
-        .auth-left { display: none; }
-        @media (min-width: 860px) { .auth-left { display: block; } }
-        input::placeholder { color: #444; }
+        :root {
+          --auth-orange: #f97316;
+          --auth-orange-hover: #ea6a0a;
+          --auth-bg: #111;
+          --auth-panel-border: #1e1e1e;
+          --auth-field-bg: #141414;
+          --auth-field-border: #2a2a2a;
+          --auth-text: #f0f0f0;
+          --auth-muted: #555;
+          --auth-faint: #444;
+          --auth-label: #aaa;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body { margin: 0; padding: 0; }
+
+        input::placeholder { color: var(--auth-faint); }
+
+        .auth-shell {
+          display: flex;
+          height: 100vh;
+          height: 100dvh;
+          width: 100%;
+          background: var(--auth-bg);
+          font-family: Inter, "DM Sans", system-ui, sans-serif;
+          overflow: hidden;
+          position: relative;
+        }
+
+        .auth-home-btn {
+          position: fixed;
+          top: clamp(8px, 3vw, 20px);
+          left: clamp(8px, 3vw, 20px);
+          top: calc(clamp(8px, 3vw, 20px) + env(safe-area-inset-top, 0px));
+          left: calc(clamp(8px, 3vw, 20px) + env(safe-area-inset-left, 0px));
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          background: #1a1a1a;
+          border: 1px solid var(--auth-field-border);
+          border-radius: 999px;
+          padding: clamp(6px, 2vw, 9px) clamp(8px, 2.6vw, 14px);
+          font-size: clamp(9px, 2.4vw, 12px);
+          font-weight: 600;
+          color: #d0d0d0;
+          text-decoration: none;
+          cursor: pointer;
+        }
+
+        .auth-home-btn:hover {
+          border-color: var(--auth-orange);
+          color: #fff;
+        }
+
+        .auth-home-btn svg {
+          width: clamp(11px, 3vw, 14px);
+          height: clamp(11px, 3vw, 14px);
+          flex: none;
+        }
+
+        .auth-home-btn span {
+          white-space: nowrap;
+        }
+
+        /* ── Ultra-small viewports: icon only, no label ─────────────────── */
+        @media (max-width: 240px) {
+          .auth-home-btn span { display: none; }
+          .auth-home-btn { padding: 6px; }
+        }
+
+        /* ── Home button is mobile-only; hide once the carousel appears ── */
+        @media (min-width: 860px) {
+          .auth-home-btn { display: none; }
+        }
+
+        .auth-left {
+          display: none;
+          flex: 0 0 46%;
+          border-right: 1px solid var(--auth-panel-border);
+          min-width: 0;
+          height: 100%;
+          overflow: hidden;
+        }
+
+        .auth-right {
+          flex: 1;
+          min-width: 0;
+          overflow-y: auto;
+          display: flex;
+          align-items: flex-start;
+          justify-content: center;
+          padding: clamp(52px, 16vw, 76px) clamp(10px, 5vw, 24px) clamp(16px, 6vw, 40px);
+          padding: calc(clamp(52px, 16vw, 76px) + env(safe-area-inset-top, 0px))
+                   calc(clamp(10px, 5vw, 24px) + env(safe-area-inset-right, 0px))
+                   calc(clamp(16px, 6vw, 40px) + env(safe-area-inset-bottom, 0px))
+                   calc(clamp(10px, 5vw, 24px) + env(safe-area-inset-left, 0px));
+        }
+
+        @media (min-width: 860px) {
+          .auth-right {
+            align-items: center;
+            padding: clamp(16px, 6vw, 40px) clamp(10px, 5vw, 24px);
+          }
+        }
+
+        .auth-card {
+          width: 100%;
+          max-width: 380px;
+        }
+
+        .auth-title {
+          font-size: clamp(15px, 4.5vw, 24px);
+          font-weight: 800;
+          color: #fff;
+          margin: 0 0 4px;
+          letter-spacing: -0.4px;
+          line-height: 1.25;
+        }
+
+        .auth-subtitle {
+          font-size: clamp(10px, 2.8vw, 13px);
+          color: var(--auth-muted);
+          margin: 0 0 clamp(14px, 5vw, 28px);
+          line-height: 1.4;
+        }
+
+        .auth-social-group {
+          display: flex;
+          flex-direction: column;
+          gap: clamp(6px, 2vw, 10px);
+          margin-bottom: clamp(12px, 4vw, 22px);
+        }
+
+        .auth-social-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          width: 100%;
+          background: #1a1a1a;
+          border: 1px solid var(--auth-field-border);
+          border-radius: 10px;
+          padding: clamp(8px, 2.6vw, 11px) clamp(8px, 3vw, 16px);
+          font-size: clamp(10px, 2.8vw, 13px);
+          font-weight: 600;
+          color: #d0d0d0;
+          cursor: pointer;
+          min-height: 40px;
+        }
+
+        .auth-social-btn:disabled {
+          color: var(--auth-muted);
+          cursor: not-allowed;
+        }
+
+        .auth-social-btn:not(:disabled):hover {
+          border-color: var(--auth-orange);
+        }
+
+        .auth-social-btn svg {
+          width: clamp(13px, 3.5vw, 16px);
+          height: clamp(13px, 3.5vw, 16px);
+          flex: none;
+        }
+
+        .auth-divider {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin: clamp(10px, 4vw, 20px) 0;
+        }
+
+        .auth-divider-line {
+          flex: 1;
+          height: 1px;
+          background: var(--auth-panel-border);
+        }
+
+        .auth-divider-text {
+          font-size: clamp(9px, 2.4vw, 11px);
+          color: var(--auth-faint);
+          font-weight: 600;
+        }
+
+        .auth-field {
+          margin-bottom: clamp(8px, 3vw, 14px);
+        }
+
+        .auth-field-head {
+          display: flex;
+          justify-content: space-between;
+          align-items: baseline;
+          gap: 8px;
+          margin-bottom: 6px;
+        }
+
+        .auth-label {
+          font-size: clamp(10px, 2.6vw, 12px);
+          font-weight: 600;
+          color: var(--auth-label);
+        }
+
+        .auth-forgot {
+          font-size: clamp(9px, 2.4vw, 11px);
+          color: var(--auth-orange);
+          text-decoration: none;
+          font-weight: 600;
+          white-space: nowrap;
+        }
+
+        .auth-input-row {
+          position: relative;
+          display: flex;
+          align-items: center;
+        }
+
+        .auth-input-icon {
+          position: absolute;
+          left: clamp(9px, 2.6vw, 13px);
+          pointer-events: none;
+          display: flex;
+        }
+
+        .auth-input-icon svg {
+          width: clamp(12px, 3vw, 14px);
+          height: clamp(12px, 3vw, 14px);
+        }
+
+        .auth-input-suffix {
+          position: absolute;
+          right: clamp(9px, 2.6vw, 13px);
+          display: flex;
+        }
+
+        .auth-input-suffix button svg {
+          width: clamp(12px, 3vw, 14px);
+          height: clamp(12px, 3vw, 14px);
+        }
+
+        .auth-input {
+          width: 100%;
+          background: var(--auth-field-bg);
+          border: 1px solid var(--auth-field-border);
+          border-radius: 10px;
+          padding: clamp(8px, 2.8vw, 11px) clamp(28px, 8vw, 36px);
+          font-size: clamp(11px, 3vw, 13px);
+          color: var(--auth-text);
+          outline: none;
+          min-height: 38px;
+        }
+
+        .auth-input:focus {
+          border-color: var(--auth-orange);
+        }
+
+        .auth-submit {
+          width: 100%;
+          background: var(--auth-orange);
+          color: #fff;
+          border: none;
+          border-radius: 10px;
+          padding: clamp(10px, 3.4vw, 13px);
+          font-size: clamp(11px, 3.2vw, 14px);
+          font-weight: 700;
+          cursor: pointer;
+          margin-top: 8px;
+          min-height: 40px;
+        }
+
+        .auth-submit:hover {
+          background: var(--auth-orange-hover);
+        }
+
+        .auth-signup {
+          text-align: center;
+          font-size: clamp(10px, 2.8vw, 13px);
+          color: var(--auth-muted);
+          margin-top: clamp(12px, 4vw, 20px);
+        }
+
+        .auth-signup a {
+          color: var(--auth-orange);
+          text-decoration: none;
+          font-weight: 700;
+        }
+
+        /* ── Ultra-small viewports (smartwatches, ~130-240px) ───────────── */
+        @media (max-width: 240px) {
+          .auth-right { padding: 8px 6px; }
+          .auth-subtitle { display: none; }
+          .auth-label { margin-bottom: 3px; }
+          .auth-field { margin-bottom: 6px; }
+          .auth-social-group { margin-bottom: 8px; }
+          .auth-divider { margin: 6px 0; }
+          .auth-field-head { flex-direction: column; gap: 2px; }
+        }
+
+        /* ── Two-column layout once there's room for the carousel ──────── */
+        @media (min-width: 860px) {
+          .auth-left { display: block; }
+        }
+
+        @media (min-width: 1400px) {
+          .auth-card { max-width: 420px; }
+        }
       `}</style>
 
-      <div style={{
-        display: "flex", height: "100vh", overflow: "hidden",
-        background: "#111", fontFamily: "Inter, DM Sans, system-ui, sans-serif",
-      }}>
+      <div className="auth-shell">
+        <a href="/" className="auth-home-btn" aria-label={t("signin.buttons.back_to_home")}>
+          <ArrowLeft />
+          <span>{t("signin.buttons.home")}</span>
+        </a>
+
         {/* LEFT - Carousel */}
-        <div className="auth-left" style={{ flex: "0 0 48%", borderRight: "1px solid #1e1e1e" }}>
+        <div className="auth-left">
           <AuthCarousel />
         </div>
 
         {/* RIGHT - Form */}
-        <div style={{
-          flex: 1, overflowY: "auto",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          padding: "40px 24px",
-        }}>
-          <div style={{ width: "100%", maxWidth: 380 }}>
+        <div className="auth-right">
+          <div className="auth-card">
 
-            <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 6px", letterSpacing: "-0.5px" }}>
-              Welcome back
-            </h1>
-            <p style={{ fontSize: 13, color: "#555", margin: "0 0 28px" }}>
-              Sign in to your MpahMapu account
-            </p>
+            <h1 className="auth-title">{t("signin.hero.welcome_back")}</h1>
+            <p className="auth-subtitle">{t("signin.hero.subtitle")}</p>
 
             {/* Social */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 22 }}>
+            <div className="auth-social-group">
               <SocialBtn
                 icon={<GoogleIcon />}
-                label={loading === "google" ? "Signing in…" : "Continue with Google"}
+                label={loading === "google" ? t("signin.buttons.signing_in") : t("signin.buttons.continue_google")}
                 disabled={loading !== null}
                 onClick={() => handleGoogle()}
               />
               <SocialBtn
                 icon={<FacebookIcon />}
-                label={loading === "facebook" ? "Signing in…" : "Continue with Facebook"}
+                label={loading === "facebook" ? t("signin.buttons.signing_in") : t("signin.buttons.continue_facebook")}
                 disabled={loading !== null}
                 onClick={handleFacebook}
               />
@@ -191,36 +491,31 @@ export default function SignInPage() {
             <Divider />
 
             {/* Email */}
-            <Field label="Email">
-              <InputRow icon={<Mail size={14} color="#444" />}>
+            <Field label={t("signin.fields.email_label")}>
+              <InputRow icon={<Mail />}>
                 <input
                   type="email" placeholder="you@example.com" value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  style={inputStyle}
-                  onFocus={(e) => (e.currentTarget.style.borderColor = "#f97316")}
-                  onBlur={(e) => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                  className="auth-input"
                 />
               </InputRow>
             </Field>
 
             {/* Password */}
-            <Field label="Password" extra={
-              <a href="/forgot-password" style={{ fontSize: 11, color: "#f97316", textDecoration: "none", fontWeight: 600 }}>
-                Forgot?
-              </a>
+            <Field label={t("signin.fields.password_label")} extra={
+              <a href="/forgot-password" className="auth-forgot">{t("signin.fields.forgot_password_link")}</a>
             }>
-              <InputRow icon={<Lock size={14} color="#444" />} suffix={
+              <InputRow icon={<Lock />} suffix={
                 <button type="button" onClick={() => setShowPassword(!showPassword)}
-                  style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: "#444", display: "flex" }}>
-                  {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                  style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: "#444", display: "flex" }}
+                  aria-label={showPassword ? t("signin.fields.hide_password_aria") || "Hide password" : t("signin.fields.show_password_aria") || "Show password"}>
+                  {showPassword ? <EyeOff /> : <Eye />}
                 </button>
               }>
                 <input
                   type={showPassword ? "text" : "password"} placeholder="••••••••" value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  style={inputStyle}
-                  onFocus={(e) => (e.currentTarget.style.borderColor = "#f97316")}
-                  onBlur={(e) => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                  className="auth-input"
                 />
               </InputRow>
             </Field>
@@ -229,24 +524,22 @@ export default function SignInPage() {
               type="button"
               disabled={loading === "email"}
               onClick={handleSubmit}
-              style={{ ...submitStyle, opacity: loading === "email" ? 0.7 : 1 }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "#ea6a0a")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "#f97316")}
+              className="auth-submit"
+              style={{ opacity: loading === "email" ? 0.7 : 1 }}
             >
-              {loading === "email" ? "Signing in…" : "Sign in"}
+              {loading === "email" ? t("signin.buttons.signing_in") : t("signin.buttons.submit")}
             </button>
 
-            <p style={{ textAlign: "center", fontSize: 13, color: "#555", marginTop: 20 }}>
-              Don&apos;t have an account?{" "}
+            <p className="auth-signup">
+              {t("signin.footer.no_account")}{" "}
               <a
                 href="/signup"
-                style={{ color: "#f97316", textDecoration: "none", fontWeight: 700 }}
                 onClick={() => {
                   // Re-save so sessionStorage survives the page navigation
                   const existing = sessionStorage.getItem("auth_redirect");
                   if (!existing) saveRedirect();
                 }}
-              >Sign up</a>
+              >{t("signin.footer.signup_link")}</a>
             </p>
           </div>
         </div>
@@ -312,14 +605,7 @@ function SocialBtn({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      style={{
-        display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
-        width: "100%", background: "#1a1a1a", border: "1px solid #2a2a2a",
-        borderRadius: 10, padding: "11px 16px", fontSize: 13, fontWeight: 600,
-        color: disabled ? "#555" : "#d0d0d0", cursor: disabled ? "not-allowed" : "pointer",
-      }}
-      onMouseEnter={(e) => { if (!disabled) e.currentTarget.style.borderColor = "#f97316"; }}
-      onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#2a2a2a"; }}
+      className="auth-social-btn"
     >
       {icon}{label}
     </button>
@@ -327,11 +613,12 @@ function SocialBtn({
 }
 
 function Divider() {
+  const { t } = useLanguage();
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "20px 0" }}>
-      <div style={{ flex: 1, height: 1, background: "#1e1e1e" }} />
-      <span style={{ fontSize: 11, color: "#444", fontWeight: 600 }}>OR</span>
-      <div style={{ flex: 1, height: 1, background: "#1e1e1e" }} />
+    <div className="auth-divider">
+      <div className="auth-divider-line" />
+      <span className="auth-divider-text">{t("signin.general.or")}</span>
+      <div className="auth-divider-line" />
     </div>
   );
 }
@@ -344,9 +631,9 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <div style={{ marginBottom: 14 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-        <label style={{ fontSize: 12, fontWeight: 600, color: "#aaa" }}>{label}</label>
+    <div className="auth-field">
+      <div className="auth-field-head">
+        <label className="auth-label">{label}</label>
         {extra}
       </div>
       {children}
@@ -356,29 +643,17 @@ function Field({
 
 function InputRow({ icon, suffix, children }: { icon: React.ReactNode; suffix?: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-      <span style={{ position: "absolute", left: 13, pointerEvents: "none", display: "flex" }}>{icon}</span>
+    <div className="auth-input-row">
+      <span className="auth-input-icon">{icon}</span>
       {children}
-      {suffix && <span style={{ position: "absolute", right: 13, display: "flex" }}>{suffix}</span>}
+      {suffix && <span className="auth-input-suffix">{suffix}</span>}
     </div>
   );
 }
 
-const inputStyle: React.CSSProperties = {
-  width: "100%", background: "#141414", border: "1px solid #2a2a2a",
-  borderRadius: 10, padding: "11px 36px 11px 36px",
-  fontSize: 13, color: "#f0f0f0", outline: "none", boxSizing: "border-box",
-};
-
-const submitStyle: React.CSSProperties = {
-  width: "100%", background: "#f97316", color: "#fff", border: "none",
-  borderRadius: 10, padding: "13px", fontSize: 14, fontWeight: 700,
-  cursor: "pointer", marginTop: 8,
-};
-
 function GoogleIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" style={{ marginRight: 2 }}>
+    <svg viewBox="0 0 24 24">
       <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
       <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
       <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
@@ -389,7 +664,7 @@ function GoogleIcon() {
 
 function FacebookIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877F2" style={{ marginRight: 2 }}>
+    <svg viewBox="0 0 24 24" fill="#1877F2">
       <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.268h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" />
     </svg>
   );

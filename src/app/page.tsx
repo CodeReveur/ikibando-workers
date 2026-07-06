@@ -5,28 +5,137 @@ import Footer from "@/components/layout/footer";
 import { PostJobModal } from "@/components/jobs/post-job-modal";
 import { getWorkers, getJobs, daysAgo, type WorkerProfileDto, type JobDto } from "@/lib/api";
 import { ratingInfo } from "@/lib/rating";
+import { useLanguage } from "@/lib/language-context";
 import {
   UtensilsCrossed, Sparkles, Shield, Car, Zap, Wrench, Leaf,
   MapPin, ChevronRight, Briefcase, Star,
+  Baby,
+  BadgeDollarSign,
+  Bed,
+  Bike,
+  BookOpen,
+  Building2,
+  Calculator,
+  Camera,
+  ChefHat,
+  ClipboardList,
+  Code2,
+  Coffee,
+  Cog,
+  Dog,
+  Drill,
+  Flower,
+  Globe,
+  GraduationCap,
+  Hammer,
+  HardHat,
+  Headphones,
+  HeartHandshake,
+  KeyRound,
+  Languages,
+  Laptop,
+  Megaphone,
+  Mic,
+  MonitorSmartphone,
+  Music,
+  Package,
+  PackageCheck,
+  Paintbrush,
+  Palette,
+  PartyPopper,
+  PenSquare,
+  PenTool,
+  PhoneCall,
+  Scale,
+  Scissors,
+  Shirt,
+  ShirtIcon,
+  ShoppingBag,
+  Smartphone,
+  Stethoscope,
+  Store,
+  Trees,
+  TrendingUp,
+  Truck,
+  UserCheck,
+  Users,
+  Video,
+  Wifi,
+  House,
 } from "lucide-react";
 import { BreadcrumbSchema, FAQSchema } from "@/components/seo/json-ld";
 
 const categories = [
-  { icon: UtensilsCrossed, label: "Waiters" },
-  { icon: Sparkles,        label: "Cleaners" },
-  { icon: Shield,          label: "Security" },
-  { icon: Car,             label: "Drivers" },
-  { icon: Zap,             label: "Electricians" },
-  { icon: Wrench,          label: "Plumbers" },
-  { icon: Leaf,            label: "Gardeners" },
+  { icon: UtensilsCrossed, label: "Waiters", key: "waiters" },
+  { icon: Coffee, label: "Baristas", key: "baristas" },
+  { icon: Sparkles, label: "Cleaners", key: "cleaners" },
+  { icon: Shield, label: "Security Guards", key: "security_guards" },
+  { icon: Car, label: "Drivers", key: "drivers" },
+  { icon: Truck, label: "Delivery Drivers", key: "delivery_drivers" },
+  { icon: Bike, label: "Courier Riders", key: "courier_riders" },
+  { icon: Zap, label: "Electricians", key: "electricians" },
+  { icon: Wrench, label: "Plumbers", key: "plumbers" },
+  { icon: Hammer, label: "Carpenters", key: "carpenters" },
+  { icon: Paintbrush, label: "Painters", key: "painters" },
+  { icon: HardHat, label: "Construction Workers", key: "construction_workers" },
+  { icon: Drill, label: "Technicians", key: "technicians" },
+  { icon: Cog, label: "Mechanics", key: "mechanics" },
+  { icon: Leaf, label: "Gardeners", key: "gardeners" },
+  { icon: Trees, label: "Landscapers", key: "landscapers" },
+  { icon: House, label: "Housekeepers", key: "housekeepers" },
+  { icon: Bed, label: "Hotel Staff", key: "hotel_staff" },
+  { icon: ShoppingBag, label: "Shop Attendants", key: "shop_attendants" },
+  { icon: Store, label: "Cashiers", key: "cashiers" },
+  { icon: Package, label: "Warehouse Staff", key: "warehouse_staff" },
+  { icon: PackageCheck, label: "Packers", key: "packers" },
+  { icon: ClipboardList, label: "Supervisors", key: "supervisors" },
+  { icon: UserCheck, label: "Receptionists", key: "receptionists" },
+  { icon: PhoneCall, label: "Call Center Agents", key: "call_center_agents" },
+  { icon: Headphones, label: "Customer Support", key: "customer_support" },
+  { icon: Briefcase, label: "Office Assistants", key: "office_assistants" },
+  { icon: GraduationCap, label: "Tutors", key: "tutors" },
+  { icon: BookOpen, label: "Teachers", key: "teachers" },
+  { icon: HeartHandshake, label: "Caregivers", key: "caregivers" },
+  { icon: Stethoscope, label: "Nurses", key: "nurses" },
+  { icon: Baby, label: "Babysitters", key: "babysitters" },
+  { icon: Dog, label: "Pet Care", key: "pet_care" },
+  { icon: Camera, label: "Photographers", key: "photographers" },
+  { icon: Video, label: "Videographers", key: "videographers" },
+  { icon: Music, label: "DJs", key: "djs" },
+  { icon: Mic, label: "MCs", key: "mcs" },
+  { icon: PartyPopper, label: "Event Planners", key: "event_planners" },
+  { icon: Flower, label: "Florists", key: "florists" },
+  { icon: Scissors, label: "Barbers", key: "barbers" },
+  { icon: Sparkles, label: "Hair Stylists", key: "hair_stylists" },
+  { icon: Palette, label: "Makeup Artists", key: "makeup_artists" },
+  { icon: Shirt, label: "Tailors", key: "tailors" },
+  { icon: ShirtIcon, label: "Laundry Services", key: "laundry_services" },
+  { icon: Smartphone, label: "Phone Repair", key: "phone_repair" },
+  { icon: Laptop, label: "Computer Repair", key: "computer_repair" },
+  { icon: Wifi, label: "Network Technicians", key: "network_technicians" },
+  { icon: MonitorSmartphone, label: "IT Support", key: "it_support" },
+  { icon: Globe, label: "Web Developers", key: "web_developers" },
+  { icon: Code2, label: "Software Developers", key: "software_developers" },
+  { icon: PenTool, label: "Graphic Designers", key: "graphic_designers" },
+  { icon: PenSquare, label: "Content Writers", key: "content_writers" },
+  { icon: Languages, label: "Translators", key: "translators" },
+  { icon: Calculator, label: "Accountants", key: "accountants" },
+  { icon: Scale, label: "Legal Advisors", key: "legal_advisors" },
+  { icon: Building2, label: "Real Estate Agents", key: "real_estate_agents" },
+  { icon: KeyRound, label: "Property Managers", key: "property_managers" },
+  { icon: Users, label: "HR Professionals", key: "hr_professionals" },
+  { icon: TrendingUp, label: "Marketing Specialists", key: "marketing_specialists" },
+  { icon: Megaphone, label: "Sales Representatives", key: "sales_representatives" },
+  { icon: BadgeDollarSign, label: "Financial Advisors", key: "financial_advisors" },
 ];
 
-const fmt = (n: number) => `RWF ${n.toLocaleString()}`;
-
 export default function Home() {
+  const { t } = useLanguage();
   const [showPostJob, setShowPostJob] = useState(false);
   const [workers, setWorkers] = useState<WorkerProfileDto[]>([]);
   const [jobs, setJobs] = useState<JobDto[]>([]);
+
+  const fmt = (n: number) => t("common.general.currency_pattern", { amount: n.toLocaleString() });
 
   useEffect(() => {
     getWorkers({ size: 7 }).then(p => setWorkers(p.content)).catch(() => {});
@@ -39,29 +148,35 @@ export default function Home() {
         { name: "Home", url: "https://mpahmapu.com" },
       ]} />
       <FAQSchema faqs={[
-        { question: "How do I hire a worker on MpahMapu?", answer: "Post a job request with details like category, location, and pay rate. Verified workers will apply instantly, and you can review their profiles and ratings before hiring." },
-        { question: "How does payment work on MpahMapu?", answer: "All payments are processed securely through MTN Mobile Money (MoMo). Funds are released to workers upon job completion." },
-        { question: "Are workers on MpahMapu verified?", answer: "Yes, every worker on MpahMapu undergoes ID verification before they can accept jobs, ensuring trust and safety for employers." },
-        { question: "What types of workers can I find on MpahMapu?", answer: "MpahMapu offers workers across 15+ categories including waiters, cleaners, security guards, drivers, electricians, plumbers, gardeners, event staff, and more." },
-        { question: "Is MpahMapu available outside Kigali?", answer: "MpahMapu currently operates primarily in Kigali, Rwanda, with plans to expand to other cities and provinces." },
+        { question: t("home.faqs.q1"), answer: t("home.faqs.a1") },
+        { question: t("home.faqs.q2"), answer: t("home.faqs.a2") },
+        { question: t("home.faqs.q3"), answer: t("home.faqs.a3") },
+        { question: t("home.faqs.q4"), answer: t("home.faqs.a4") },
+        { question: t("home.faqs.q5"), answer: t("home.faqs.a5") },
       ]} />
+
       {showPostJob && <PostJobModal onClose={() => setShowPostJob(false)} />}
 
       {/* responsive grid styles */}
       <style>{`
         .card-grid {
           display: grid;
-          grid-template-columns: 1fr;
-          gap: 10px;
-        }
-        @media (min-width: 560px) {
-          .card-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
+          /* 2-up by default so small phones still show a pair of cards
+             per row instead of a single stacked column. */
+          grid-template-columns: repeat(2, 1fr);
+          gap: 8px;
         }
         @media (min-width: 800px) {
           .card-grid {
             grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+          }
+        }
+        /* Only drop to a single column on truly tiny widths (watch-class
+           screens), where two cards side by side would be unreadable. */
+        @media (max-width: 260px) {
+          .card-grid {
+            grid-template-columns: 1fr;
           }
         }
         .card-hover {
@@ -79,14 +194,14 @@ export default function Home() {
           borderRadius: 999, padding: "4px 14px", fontSize: 11, fontWeight: 700,
           letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 22,
         }}>
-          Kigali · Rwanda
+          {t("home.hero.location")}
         </span>
         <h1 style={{ fontSize: "clamp(36px,9vw,54px)", fontWeight: 900, lineHeight: 1.05, letterSpacing: "-1.5px", margin: "0 0 16px", color: "#fff" }}>
-          Find work.<br />
-          <span style={{ color: "#f97316" }}>Hire verified.</span>
+          {t("home.hero.title_find")}<br />
+          <span style={{ color: "#f97316" }}>{t("home.hero.title_hire")}</span>
         </h1>
         <p style={{ fontSize: 15, color: "#666", lineHeight: 1.7, margin: "0 auto", maxWidth: 420 }}>
-          On-demand workers for events, cleaning, security and more - ID-verified, rated, and paid via MoMo.
+          {t("home.hero.subtitle")}
         </p>
         <div style={{ marginTop: 28, display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
           <button onClick={() => setShowPostJob(true)} style={{
@@ -94,23 +209,23 @@ export default function Home() {
             padding: "12px 26px", fontWeight: 700, fontSize: 14,
             border: "none", cursor: "pointer", fontFamily: "inherit",
           }}>
-            Post a request
+            {t("common.buttons.post_request")}
           </button>
           <a href="/signup" style={{
             background: "transparent", color: "#aaa", borderRadius: 999,
             padding: "12px 26px", fontWeight: 600, fontSize: 14, textDecoration: "none",
             border: "1px solid #2a2a2a",
           }}>
-            Become a worker
+            {t("common.buttons.become_worker")}
           </a>
         </div>
       </div>
 
       {/* CATEGORIES */}
       <section id="categories" style={{ maxWidth: 760, margin: "0 auto", padding: "0 20px 20px" }}>
-        <SectionHeader title="Categories" href="/browse" />
+        <SectionHeader title={t("home.sections.categories")} href="/browse" />
         <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 4, scrollbarWidth: "none" }}>
-          {categories.map(({ icon: Icon, label }) => (
+          {categories.map(({ icon: Icon, label, key }) => (
             <a
               key={label}
               href={`/browse?category=${label.toLowerCase()}`}
@@ -123,7 +238,7 @@ export default function Home() {
               onMouseLeave={e => (e.currentTarget.style.borderColor = "#272727")}
             >
               <Icon size={22} color="#f97316" strokeWidth={1.75} />
-              <span style={{ fontSize: 11, fontWeight: 600, color: "#aaa", whiteSpace: "nowrap" }}>{label}</span>
+              <span style={{ fontSize: 11, fontWeight: 600, color: "#aaa", whiteSpace: "nowrap" }}>{t("common.categories." + key)}</span>
             </a>
           ))}
         </div>
@@ -131,22 +246,24 @@ export default function Home() {
 
       {/* AVAILABLE WORKERS */}
       <section style={{ maxWidth: 760, margin: "0 auto", padding: "32px 20px 20px" }}>
-        <SectionHeader title="Available workers" href="/browse" Icon={Briefcase} />
+        <SectionHeader title={t("home.sections.available_workers")} href="/browse" Icon={Briefcase} />
         <div className="card-grid">
           {workers.length === 0
             ? Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} style={{ background:"#1c1c1c", border:"1px solid #272727", borderRadius:14, padding:16, height:90, animation:"pulse 1.5s ease-in-out infinite" }} />
               ))
             : workers.map((w: WorkerProfileDto) => (
-              <div
+              <a
+                href={`/browse/${w.id}`}
                 key={w.id}
                 className="card-hover"
                 style={{
                   background: "#1c1c1c", border: "1px solid #272727", borderRadius: 14,
                   padding: "16px", display: "flex", flexDirection: "column", gap: 14,
+                  textDecoration: "none", color: "inherit", minWidth: 0,
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, minWidth: 0 }}>
                   <div style={{
                     width: 40, height: 40, borderRadius: 999, flexShrink: 0,
                     background: "rgba(249,115,22,0.12)",
@@ -155,29 +272,34 @@ export default function Home() {
                   }}>
                     {w.name[0]}
                   </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
-                    <p style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2 }}>{w.categoryName ?? w.experienceType ?? "Worker"}</p>
+                  <div style={{ flex: "1 1 100px", minWidth: 100 }}>
+                    <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0", wordBreak: "break-word", lineHeight: 1.3 }}>{w.name}</p>
+                    <p style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {(() => {
+                        const expType = (w.experienceType ?? "").toLowerCase();
+                        return t("common.categories." + expType) || w.categoryName || w.experienceType || t("common.general.worker");
+                      })()}
+                    </p>
                   </div>
                   {(() => {
                     const r = ratingInfo(w.rating, w.ratingCount);
                     return (
-                      <div style={{ display: "flex", alignItems: "center", gap: 3, flexShrink: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 3, flexShrink: 0, marginLeft: "auto" }}>
                         <Star size={12} color="#f97316" fill={r.hasReviews ? "#f97316" : "none"} />
                         <span style={{ fontSize: 12, fontWeight: 700, color: r.hasReviews ? "#f97316" : "#666" }}>
-                          {r.hasReviews ? r.value : "New"}
+                          {r.hasReviews ? r.value : t("common.general.new")}
                         </span>
                       </div>
                     );
                   })()}
                 </div>
                 {(w.locationShort ?? w.district) && (
-                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                    <MapPin size={11} color="#555" />
-                    <span style={{ fontSize: 11, color: "#555" }}>{w.locationShort ?? w.district}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4, minWidth: 0 }}>
+                    <MapPin size={11} color="#555" style={{ flexShrink: 0 }} />
+                    <span style={{ fontSize: 11, color: "#555", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{w.locationShort ?? w.district}</span>
                   </div>
                 )}
-              </div>
+              </a>
             ))
           }
         </div>
@@ -186,7 +308,7 @@ export default function Home() {
 
       {/* AVAILABLE JOBS */}
       <section id="jobs" style={{ maxWidth: 760, margin: "0 auto", padding: "32px 20px 64px" }}>
-        <SectionHeader title="Available jobs" href="/jobs" Icon={Briefcase} />
+        <SectionHeader title={t("home.sections.available_jobs")} href="/jobs" Icon={Briefcase} />
         <div className="card-grid">
           {jobs.length === 0
             ? Array.from({ length: 3 }).map((_, i) => (
@@ -200,20 +322,20 @@ export default function Home() {
                 style={{
                   display: "flex", flexDirection: "column", gap: 10,
                   background: "#1c1c1c", border: "1px solid #272727", borderRadius: 14,
-                  padding: "16px", textDecoration: "none",
+                  padding: "16px", textDecoration: "none", minWidth: 0,
                 }}
               >
-                <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: "#f0f0f0" }}>{j.title}</p>
-                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                  <MapPin size={11} color="#555" />
-                  <span style={{ fontSize: 11, color: "#555" }}>{j.district}</span>
+                <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: "#f0f0f0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{j.title}</p>
+                <div style={{ display: "flex", alignItems: "center", gap: 4, minWidth: 0 }}>
+                  <MapPin size={11} color="#555" style={{ flexShrink: 0 }} />
+                  <span style={{ fontSize: 11, color: "#555", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{j.district}</span>
                 </div>
                 <span style={{
                   alignSelf: "flex-start", marginTop: "auto",
                   background: "rgba(249,115,22,0.1)", borderRadius: 999,
                   padding: "4px 12px", fontSize: 11, fontWeight: 700, color: "#f97316",
                 }}>
-                  {fmt(j.ratePerHour)} / hr
+                  {fmt(j.ratePerHour)} {t("common.general.per_hour")}
                 </span>
               </a>
             ))
@@ -228,6 +350,7 @@ export default function Home() {
 }
 
 function SectionHeader({ title, href, Icon }: { title: string; href: string; Icon?: React.ElementType }) {
+  const { t } = useLanguage();
   return (
     <div style={{ marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -237,7 +360,7 @@ function SectionHeader({ title, href, Icon }: { title: string; href: string; Ico
         </h2>
       </div>
       <a href={href} style={{ display: "flex", alignItems: "center", gap: 2, fontSize: 12, color: "#f97316", textDecoration: "none", fontWeight: 600 }}>
-        More <ChevronRight size={13} color="#f97316" />
+        {t("common.buttons.more")} <ChevronRight size={13} color="#f97316" />
       </a>
     </div>
   );

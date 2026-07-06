@@ -5,6 +5,7 @@ import { CheckCircle2, Loader2, X } from "lucide-react";
 import { OnboardingData, submitOnboarding, verifyEmailCode, resendOtpCode, AuthResult, getJobCategories, JobCategoryMeta, Address, AccountType } from "@/lib/api";
 import { AddressPicker, isAddressComplete } from "@/components/ui/address-picker";
 import { useToast } from "@/components/ui/toast";
+import { useLanguage } from "@/lib/language-context";
 
 type Step = "ROLE_SELECT" | "EMAIL_VERIFY" | "ACCOUNT_TYPE" | "EMPLOYER_DETAILS" | "PERSONAL" | "LOCATION_AVAILABILITY" | "EQUIPMENT" | "COMPLETED";
 
@@ -63,12 +64,56 @@ function capitalize(str: string) {
 }
 
 export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect, onComplete }: Props) {
+  const { t } = useLanguage();
   const { error: toastError, success: toastSuccess } = useToast();
   const [step, setStep] = useState<Step>(showRoleSelect ? "ROLE_SELECT" : "EMAIL_VERIFY");
   const [loading, setLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState<"WORKER" | "EMPLOYER">(
     (authResult?.user?.role as "WORKER" | "EMPLOYER") || "WORKER"
   );
+
+  const ACCOUNT_TYPES_LOCALIZED = [
+    { value: "INDIVIDUAL" as AccountType, label: t("onboarding.account_types.individual.label") || "Individual", icon: "🧍", desc: t("onboarding.account_types.individual.desc") || "Just me, working solo" },
+    { value: "TEAM" as AccountType,       label: t("onboarding.account_types.team.label") || "Team",       icon: "👥", desc: t("onboarding.account_types.team.desc") || "A group of workers" },
+    { value: "COMPANY" as AccountType,    label: t("onboarding.account_types.company.label") || "Company",    icon: "🏢", desc: t("onboarding.account_types.company.desc") || "A registered company" },
+    { value: "CREW" as AccountType,       label: t("onboarding.account_types.crew.label") || "Crew",       icon: "🛠️", desc: t("onboarding.account_types.crew.desc") || "A working crew" },
+  ];
+
+  const DAYS_LOCALIZED = [
+    { value: "Mon", label: t("common.days.mon") || "Mon" },
+    { value: "Tue", label: t("common.days.tue") || "Tue" },
+    { value: "Wed", label: t("common.days.wed") || "Wed" },
+    { value: "Thu", label: t("common.days.thu") || "Thu" },
+    { value: "Fri", label: t("common.days.fri") || "Fri" },
+    { value: "Sat", label: t("common.days.sat") || "Sat" },
+    { value: "Sun", label: t("common.days.sun") || "Sun" },
+  ];
+
+  const EDUCATION_OPTIONS_LOCALIZED = [
+    t("onboarding.education.none") || "None",
+    t("onboarding.education.primary") || "Primary School",
+    t("onboarding.education.high_school") || "High School",
+    t("onboarding.education.diploma") || "Diploma / Certificate",
+    t("onboarding.education.bachelors") || "Bachelor's Degree",
+    t("onboarding.education.masters") || "Master's Degree or Higher",
+  ];
+
+  const EQUIPMENT_SUGGESTIONS_LOCALIZED = [
+    t("onboarding.equipment_suggestions.smartphone") || "Smartphone",
+    t("onboarding.equipment_suggestions.laptop") || "Laptop",
+    t("onboarding.equipment_suggestions.internet") || "Internet Connection",
+    t("onboarding.equipment_suggestions.safety_gear") || "Safety Gear",
+    t("onboarding.equipment_suggestions.vehicle") || "Vehicle",
+    t("onboarding.equipment_suggestions.power_tools") || "Power Tools",
+    t("onboarding.equipment_suggestions.camera") || "Camera",
+    t("onboarding.equipment_suggestions.tablet") || "Tablet",
+  ];
+
+  const STEP_NUMBER_LOCALIZED: Record<string, string> = {
+    PERSONAL: t("onboarding.steps.step1") || "Step 1",
+    LOCATION_AVAILABILITY: t("onboarding.steps.step2") || "Step 2",
+    EQUIPMENT: t("onboarding.steps.step3") || "Step 3",
+  };
 
   const [verifyCode, setVerifyCode] = useState("");
   const [categories, setCategories] = useState<JobCategoryMeta[]>([]);
@@ -84,8 +129,8 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
   const isGroup = accountType !== "INDIVIDUAL";
   // Employers register only as a Company or Individual (no teams/crews).
   const typeOptions = isEmployer
-    ? ACCOUNT_TYPES.filter((t) => t.value === "INDIVIDUAL" || t.value === "COMPANY")
-    : ACCOUNT_TYPES;
+    ? ACCOUNT_TYPES_LOCALIZED.filter((t) => t.value === "INDIVIDUAL" || t.value === "COMPANY")
+    : ACCOUNT_TYPES_LOCALIZED;
 
   // Keep the account identifier valid when switching to the employer role.
   useEffect(() => {
@@ -247,7 +292,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     const v = value.trim().replace(/,/g, "").toLowerCase();
     if (!v) { setMemberInput(""); return; }
     if (!EMAIL_RE.test(v)) {
-      toastError("Enter a valid email address.", { title: "Invalid Email" });
+      toastError(t("onboarding.group_fields.email_error"), { title: t("onboarding.group_fields.email_error_title") });
       return;
     }
     if (!memberEmails.includes(v)) setMemberEmails((prev) => [...prev, v]);
@@ -270,7 +315,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
 
   const handleVerifyEmail = async () => {
     if (!verifyCode || verifyCode.length < 4) {
-      toastError("Please enter a valid code.", { title: "Verification Failed" });
+      toastError(t("onboarding.otp.invalid_code_error"), { title: t("onboarding.otp.error_title") });
       return;
     }
     setLoading(true);
@@ -280,7 +325,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
       // Load categories
       getJobCategories().then(setCategories).catch(console.error);
     } catch (e: any) {
-      toastError(e?.response?.data?.message || "Invalid OTP code. Please try again.", { title: "Verification Failed" });
+      toastError(e?.response?.data?.message || t("onboarding.otp.invalid_code_error"), { title: t("onboarding.otp.error_title") });
     } finally {
       setLoading(false);
     }
@@ -291,9 +336,9 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     setVerifyCode("");
     try {
       await resendOtpCode(email);
-      toastSuccess("A new code has been sent to your email.", { title: "Code Sent" });
+      toastSuccess(t("onboarding.otp.success_resend"), { title: t("onboarding.otp.success_resend_title") });
     } catch (e: any) {
-      toastError(e?.response?.data?.message || "Failed to resend OTP. Please try again.", { title: "Resend Failed" });
+      toastError(e?.response?.data?.message || t("onboarding.otp.resend_fail_generic"), { title: t("onboarding.otp.resend_fail_title") });
     } finally {
       setLoading(false);
     }
@@ -308,7 +353,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
       age--;
     }
     if (age < 18) {
-      toastError("You must be at least 18 years old to register.", { title: "Age Restriction" });
+      toastError(t("onboarding.personal.age_restriction_error"), { title: t("onboarding.personal.age_restriction_title") });
       return;
     }
     setStep("LOCATION_AVAILABILITY");
@@ -337,7 +382,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
       setStep("COMPLETED");
       setTimeout(onComplete, 1500);
     } catch (e: any) {
-      toastError(e?.response?.data?.message || "Failed to submit onboarding data.", { title: "Setup Failed" });
+      toastError(e?.response?.data?.message || t("onboarding.equipment.onboarding_fail_generic"), { title: t("onboarding.equipment.onboarding_fail_title") });
     } finally {
       setLoading(false);
     }
@@ -350,25 +395,28 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-[#2a2a2a] flex items-start justify-between">
           <div>
+            <span className="text-[10px] font-bold text-[#f97316] uppercase tracking-wider block mb-0.5">
+              {STEP_NUMBER_LOCALIZED[step]}
+            </span>
             <h2 className="text-lg font-bold text-white leading-tight">
-              {step === "ROLE_SELECT" && "How will you use MpahMapu?"}
-              {step === "EMAIL_VERIFY" && "Verify your email"}
-              {step === "ACCOUNT_TYPE" && "Who's registering?"}
-              {step === "EMPLOYER_DETAILS" && "Your business details"}
-              {step === "PERSONAL" && "About you"}
-              {step === "LOCATION_AVAILABILITY" && "Where & when"}
-              {step === "EQUIPMENT" && "Your equipment"}
-              {step === "COMPLETED" && "All set!"}
+              {step === "ROLE_SELECT" && t("onboarding.headers.role_select_title")}
+              {step === "EMAIL_VERIFY" && t("onboarding.headers.email_verify_title")}
+              {step === "ACCOUNT_TYPE" && t("onboarding.headers.account_type_title")}
+              {step === "EMPLOYER_DETAILS" && t("onboarding.headers.employer_details_title")}
+              {step === "PERSONAL" && t("onboarding.headers.personal_title")}
+              {step === "LOCATION_AVAILABILITY" && t("onboarding.headers.location_title")}
+              {step === "EQUIPMENT" && t("onboarding.headers.equipment_title")}
+              {step === "COMPLETED" && t("onboarding.headers.completed_title")}
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">
-              {step === "ROLE_SELECT" && "Choose your account type to get started"}
-              {step === "EMAIL_VERIFY" && `Enter the code we sent to ${email}`}
-              {step === "ACCOUNT_TYPE" && (isEmployer ? "Are you a company or an individual?" : "Register on your own or as a team")}
-              {step === "EMPLOYER_DETAILS" && "Where you operate, what you hire for, and your TIN"}
-              {step === "PERSONAL" && "A few quick details about your background"}
-              {step === "LOCATION_AVAILABILITY" && "Tell us where you're based and when you're free"}
-              {step === "EQUIPMENT" && "List tools or devices you have access to"}
-              {step === "COMPLETED" && "Taking you to your dashboard…"}
+              {step === "ROLE_SELECT" && t("onboarding.headers.role_select_subtitle")}
+              {step === "EMAIL_VERIFY" && t("onboarding.headers.email_verify_subtitle", { email })}
+              {step === "ACCOUNT_TYPE" && (isEmployer ? t("onboarding.headers.account_type_subtitle_employer") : t("onboarding.headers.account_type_subtitle_worker"))}
+              {step === "EMPLOYER_DETAILS" && t("onboarding.headers.employer_details_subtitle")}
+              {step === "PERSONAL" && t("onboarding.headers.personal_subtitle")}
+              {step === "LOCATION_AVAILABILITY" && t("onboarding.headers.location_subtitle")}
+              {step === "EQUIPMENT" && t("onboarding.headers.equipment_subtitle")}
+              {step === "COMPLETED" && t("onboarding.headers.completed_subtitle")}
             </p>
           </div>
         </div>
@@ -395,10 +443,10 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                       <span className="text-3xl">{r === "WORKER" ? "👷" : "🏢"}</span>
                       <div className="text-center">
                         <p className={`text-sm font-bold ${active ? "text-[#f97316]" : "text-white"}`}>
-                          {r === "WORKER" ? "Find Work" : "Hire Workers"}
+                          {r === "WORKER" ? t("onboarding.roles.worker_label") : t("onboarding.roles.employer_label")}
                         </p>
                         <p className="text-[11px] text-gray-500 mt-0.5">
-                          {r === "WORKER" ? "Browse & apply for jobs" : "Post jobs & hire talent"}
+                          {r === "WORKER" ? t("onboarding.roles.worker_desc") : t("onboarding.roles.employer_desc")}
                         </p>
                       </div>
                     </button>
@@ -411,7 +459,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-50 text-white text-sm font-bold py-3 rounded-xl transition-colors mt-2 flex items-center justify-center gap-2"
               >
                 {loading && <Loader2 size={15} className="animate-spin" />}
-                Continue as {selectedRole === "WORKER" ? "Job Seeker" : "Employer"}
+                {t("onboarding.roles.continue_btn", { role: selectedRole === "WORKER" ? t("common.nav.job_seeker") || "Job Seeker" : t("common.nav.employer") || "Employer" })}
               </button>
             </div>
           )}
@@ -422,7 +470,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
               <input
                 type="text"
                 inputMode="numeric"
-                placeholder="6-digit code"
+                placeholder={t("onboarding.otp.placeholder")}
                 value={verifyCode}
                 onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                 className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-[#f97316] transition-colors text-center tracking-[0.4em] font-mono"
@@ -434,16 +482,16 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
                 {loading && <Loader2 size={15} className="animate-spin" />}
-                Verify & Continue
+                {t("onboarding.otp.submit_btn")}
               </button>
               <p className="text-center text-xs text-gray-600">
-                Didn't receive it?{" "}
+                {t("onboarding.otp.resend_prompt")}{" "}
                 <button
                   onClick={handleResendOtp}
                   disabled={loading}
                   className="text-[#f97316] hover:underline disabled:opacity-50"
                 >
-                  Resend code
+                  {t("onboarding.otp.resend_link")}
                 </button>
               </p>
             </div>
@@ -479,9 +527,9 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                   {/* Member emails */}
                   <div>
                     <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
-                      Member emails
+                      {t("onboarding.group_fields.member_emails_label")}
                       {memberEmails.length > 0 && (
-                        <span className="text-gray-500 normal-case font-normal"> · {memberEmails.length} member{memberEmails.length > 1 ? "s" : ""}</span>
+                        <span className="text-gray-500 normal-case font-normal"> {t("onboarding.group_fields.members_count", { count: memberEmails.length, plural: memberEmails.length > 1 ? "s" : "" })}</span>
                       )}
                     </label>
                     <div
@@ -506,25 +554,25 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                         onChange={(e) => setMemberInput(e.target.value)}
                         onKeyDown={handleMemberKeyDown}
                         onBlur={() => memberInput.trim() && addMemberEmail(memberInput)}
-                        placeholder={memberEmails.length === 0 ? "Type an email and press Enter…" : ""}
+                        placeholder={memberEmails.length === 0 ? t("onboarding.group_fields.member_email_placeholder") : ""}
                         className="flex-1 min-w-[160px] bg-transparent text-sm text-white outline-none placeholder:text-gray-600"
                       />
                     </div>
                     <p className="text-[10px] text-gray-600 mt-1.5">
-                      We'll email each member that they've been added. They receive notifications only — no dashboard access — and can still register their own account later.
+                      {t("onboarding.group_fields.member_email_hint")}
                     </p>
                   </div>
 
                   {/* Optional TIN */}
                   <div>
                     <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
-                      TIN number <span className="text-gray-600 normal-case font-normal">(optional)</span>
+                      {t("onboarding.group_fields.tin_label")} <span className="text-gray-600 normal-case font-normal">{t("onboarding.group_fields.tin_optional")}</span>
                     </label>
                     <input
                       type="text"
                       value={tin}
                       onChange={(e) => setTin(e.target.value)}
-                      placeholder="Tax ID — leave blank to skip"
+                      placeholder={t("onboarding.group_fields.tin_placeholder")}
                       className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-[#f97316] transition-colors"
                     />
                   </div>
@@ -535,7 +583,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                 onClick={handleAccountTypeContinue}
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors"
               >
-                Continue
+                {t("common.buttons.continue")}
               </button>
             </div>
           )}
@@ -545,18 +593,18 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
             <div className="space-y-5">
               <div>
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
-                  Working Location
+                  {t("onboarding.employer_details.location_label")}
                 </label>
                 <AddressPicker value={address} onChange={setAddress} />
               </div>
 
               <div>
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
-                  Service Type
+                  {t("onboarding.employer_details.service_type_label")}
                 </label>
                 <input
                   type="text"
-                  placeholder="Search service types..."
+                  placeholder={t("onboarding.employer_details.service_search_placeholder")}
                   value={catSearch}
                   onChange={(e) => setCatSearch(e.target.value)}
                   className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-2 text-sm text-white outline-none focus:border-[#f97316] transition-colors mb-3"
@@ -582,23 +630,23 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                     </button>
                   ))}
                   {categories.length === 0 && (
-                    <span className="text-xs text-gray-500">Loading service types...</span>
+                    <span className="text-xs text-gray-500">{t("onboarding.employer_details.loading_services")}</span>
                   )}
                 </div>
               </div>
 
               <div>
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
-                  TIN number{" "}
+                  {t("onboarding.group_fields.tin_label")}{" "}
                   <span className="text-gray-600 normal-case font-normal">
-                    {accountType === "COMPANY" ? "(recommended)" : "(optional)"}
+                    {accountType === "COMPANY" ? t("onboarding.group_fields.tin_recommended") : t("onboarding.group_fields.tin_optional")}
                   </span>
                 </label>
                 <input
                   type="text"
                   value={tin}
                   onChange={(e) => setTin(e.target.value)}
-                  placeholder="Tax ID — leave blank to skip"
+                  placeholder={t("onboarding.group_fields.tin_placeholder")}
                   className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-[#f97316] transition-colors"
                 />
               </div>
@@ -609,7 +657,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
                 {loading && <Loader2 size={15} className="animate-spin" />}
-                Complete Setup
+                {t("onboarding.employer_details.submit_btn")}
               </button>
             </div>
           )}
@@ -620,7 +668,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
               {/* DOB */}
               <div>
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
-                  Date of Birth
+                  {t("onboarding.personal.dob_label")}
                 </label>
                 <input
                   type="date"
@@ -635,10 +683,10 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
               {accountType !== "COMPANY" && (
               <div>
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
-                  Education Level
+                  {t("onboarding.personal.education_label")}
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {EDUCATION_OPTIONS.map((opt) => (
+                  {EDUCATION_OPTIONS_LOCALIZED.map((opt) => (
                     <button
                       key={opt}
                       onClick={() => setEducation(opt)}
@@ -658,11 +706,11 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
               {/* Experience */}
               <div>
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
-                  Work Category
+                  {t("onboarding.personal.category_label")}
                 </label>
                 <input
                   type="text"
-                  placeholder="Search categories..."
+                  placeholder={t("onboarding.personal.category_search_placeholder")}
                   value={catSearch}
                   onChange={(e) => setCatSearch(e.target.value)}
                   className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-2 text-sm text-white outline-none focus:border-[#f97316] transition-colors mb-3"
@@ -688,7 +736,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                     </button>
                   ))}
                   {categories.length === 0 && (
-                    <span className="text-xs text-gray-500">Loading categories...</span>
+                    <span className="text-xs text-gray-500">{t("onboarding.personal.loading_categories")}</span>
                   )}
                 </div>
               </div>
@@ -698,7 +746,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                 disabled={!dob || (accountType !== "COMPANY" && !education) || !experience}
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors mt-2"
               >
-                Continue
+                {t("common.buttons.continue") || "Continue"}
               </button>
             </div>
           )}
@@ -708,36 +756,36 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
             <div className="space-y-5">
               <div>
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
-                  Your Location
+                  {t("onboarding.location_avail.location_label")}
                 </label>
                 <AddressPicker value={address} onChange={setAddress} />
               </div>
 
               <div>
                 <label className="block text-[11px] font-semibold text-gray-400 mb-2 uppercase tracking-wide">
-                  Weekly Availability
+                  {t("onboarding.location_avail.avail_label")}
                 </label>
                 <div className="grid grid-cols-7 gap-1.5">
-                  {DAYS.map((day) => {
-                    const active = availability.includes(day);
+                  {DAYS_LOCALIZED.map((day) => {
+                    const active = availability.includes(day.value);
                     return (
                       <button
-                        key={day}
-                        onClick={() => toggleDay(day)}
+                        key={day.value}
+                        onClick={() => toggleDay(day.value)}
                         className={`py-2 text-[11px] font-bold rounded-lg border transition-all ${
                           active
                             ? "bg-[#f97316]/20 border-[#f97316] text-[#f97316]"
                             : "bg-[#1a1a1a] border-[#2a2a2a] text-gray-500 hover:border-gray-500"
                         }`}
                       >
-                        {day}
+                        {day.label}
                       </button>
                     );
                   })}
                 </div>
                 {availability.length > 0 && (
                   <p className="text-[10px] text-gray-500 mt-2">
-                    {availability.length} day{availability.length > 1 ? "s" : ""} selected
+                    {t("onboarding.location_avail.days_selected", { count: availability.length, plural: availability.length > 1 ? "s" : "" })}
                   </p>
                 )}
               </div>
@@ -747,7 +795,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                 disabled={!isAddressComplete(address) || availability.length === 0}
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors"
               >
-                Continue
+                {t("common.buttons.continue") || "Continue"}
               </button>
             </div>
           )}
@@ -758,7 +806,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
               {/* Tag input */}
               <div>
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
-                  Equipment & Tools
+                  {t("onboarding.equipment.label")}
                 </label>
                 <div
                   className="min-h-[80px] bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-3 flex flex-wrap gap-2 cursor-text focus-within:border-[#f97316] transition-colors"
@@ -787,23 +835,22 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                     onChange={(e) => setEquipInput(e.target.value)}
                     onKeyDown={handleEquipKeyDown}
                     onBlur={() => equipInput.trim() && addEquipment(equipInput)}
-                    placeholder={equipment.length === 0 ? "Type and press Enter to add…" : ""}
+                    placeholder={equipment.length === 0 ? t("onboarding.equipment.placeholder") : ""}
                     className="flex-1 min-w-[120px] bg-transparent text-sm text-white outline-none placeholder:text-gray-600"
                   />
                 </div>
                 <p className="text-[10px] text-gray-600 mt-1.5">
-                  Press <kbd className="bg-[#2a2a2a] px-1 rounded text-gray-400">Enter</kbd> or{" "}
-                  <kbd className="bg-[#2a2a2a] px-1 rounded text-gray-400">,</kbd> to add each item
+                  {t("onboarding.equipment.hint")}
                 </p>
               </div>
 
               {/* Quick suggestions */}
               <div>
                 <p className="text-[11px] text-gray-500 mb-2 uppercase tracking-wide font-semibold">
-                  Common suggestions
+                  {t("onboarding.equipment.suggestions_title")}
                 </p>
                 <div className="flex flex-wrap gap-1.5">
-                  {EQUIPMENT_SUGGESTIONS.filter((s) => !equipment.includes(s)).map((s) => (
+                  {EQUIPMENT_SUGGESTIONS_LOCALIZED.filter((s) => !equipment.includes(s)).map((s) => (
                     <button
                       key={s}
                       onClick={() => setEquipment((prev) => [...prev, s])}
@@ -821,14 +868,14 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 mt-2"
               >
                 {loading && <Loader2 size={15} className="animate-spin" />}
-                Complete Setup
+                {t("onboarding.employer_details.submit_btn")}
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={loading}
                 className="w-full text-xs text-gray-600 hover:text-gray-400 transition-colors py-1"
               >
-                Skip for now
+                {t("onboarding.equipment.skip_btn")}
               </button>
             </div>
           )}
@@ -839,8 +886,8 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
               <div className="w-16 h-16 bg-green-500/15 text-green-400 rounded-full flex items-center justify-center mb-4">
                 <CheckCircle2 size={30} />
               </div>
-              <h3 className="text-white font-bold text-lg">You're all set!</h3>
-              <p className="text-gray-500 text-xs mt-1">Setting up your dashboard…</p>
+              <h3 className="text-white font-bold text-lg">{t("onboarding.completed.title")}</h3>
+              <p className="text-gray-500 text-xs mt-1">{t("onboarding.completed.subtitle")}</p>
             </div>
           )}
         </div>

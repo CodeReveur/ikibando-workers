@@ -6,6 +6,7 @@ import { CheckCircle2, ExternalLink, Loader2, MapPin } from "lucide-react";
 import { AuthResult, BadgeSubmissionData, submitBadge, uploadFile, getProfile, Address } from "@/lib/api";
 import { formatAddress } from "@/components/ui/address-picker";
 import { useToast } from "@/components/ui/toast";
+import { useLanguage } from "@/lib/language-context";
 
 interface Props {
   authResult: AuthResult;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
+  const { t } = useLanguage();
   const { error: toastError, success: toastSuccess } = useToast();
   const router = useRouter();
   const [step, setStep] = useState<"IDENTITY" | "LOCATION" | "COMPLETED">("IDENTITY");
@@ -53,7 +55,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
 
   const handleIdentitySubmit = () => {
     if (!photoUrl || !nationalId || !legalName) {
-      toastError("All identity fields are required.");
+      toastError(t("badge_wizard.toasts.validation_error"));
       return;
     }
     setStep("LOCATION");
@@ -84,7 +86,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
       setCreatedBadgeId(updatedUser?.badgeId || null);
       setStep("COMPLETED");
     } catch (e: any) {
-      toastError(e?.response?.data?.message || "Failed to submit badge information.");
+      toastError(e?.response?.data?.message || t("badge_wizard.toasts.submit_failed"));
     } finally {
       setLoading(false);
     }
@@ -98,14 +100,14 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
         <div className="px-6 pt-6 pb-4 border-b border-[#2a2a2a] flex items-start justify-between">
           <div>
             <h2 className="text-lg font-bold text-white leading-tight">
-              {step === "IDENTITY" && "Worker Identity Verification"}
-              {step === "LOCATION" && "Real Address Verification"}
-              {step === "COMPLETED" && "Badge Generated!"}
+              {step === "IDENTITY" && t("badge_wizard.identity_title")}
+              {step === "LOCATION" && t("badge_wizard.location_title")}
+              {step === "COMPLETED" && t("badge_wizard.completed_title")}
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">
-              {step === "IDENTITY" && "Please provide your photo, National ID, and legal name"}
-              {step === "LOCATION" && "Confirm the address saved on your profile"}
-              {step === "COMPLETED" && "Your unique badge is ready."}
+              {step === "IDENTITY" && t("badge_wizard.identity_subtitle")}
+              {step === "LOCATION" && t("badge_wizard.location_subtitle")}
+              {step === "COMPLETED" && t("badge_wizard.completed_subtitle")}
             </p>
           </div>
         </div>
@@ -117,7 +119,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
             <div className="space-y-4">
               <div>
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
-                  Passport Photo / Selfie
+                  {t("badge_wizard.fields.photo_label")}
                 </label>
                 <div className="relative group">
                   <input
@@ -132,9 +134,9 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
                       try {
                         const url = await uploadFile(file, authResult.accessToken);
                         setPhotoUrl(url);
-                        toastSuccess("Photo uploaded successfully");
+                        toastSuccess(t("badge_wizard.toasts.photo_success"));
                       } catch (err) {
-                        toastError("Failed to upload photo");
+                        toastError(t("badge_wizard.toasts.photo_failed"));
                       } finally {
                         setUploadingPhoto(false);
                       }
@@ -155,10 +157,10 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
                       </div>
                     )}
                     <span className="text-sm font-medium text-white">
-                      {uploadingPhoto ? "Uploading..." : photoUrl ? "Photo ready! Tap to change" : "Tap to take selfie or upload"}
+                      {uploadingPhoto ? t("badge_wizard.status.uploading") : photoUrl ? t("badge_wizard.status.photo_ready") : t("badge_wizard.status.photo_placeholder")}
                     </span>
                     {!photoUrl && !uploadingPhoto && (
-                      <span className="text-xs text-gray-500 mt-1">Clear front-facing photo</span>
+                      <span className="text-xs text-gray-500 mt-1">{t("badge_wizard.status.photo_hint")}</span>
                     )}
                   </div>
                 </div>
@@ -166,7 +168,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
 
               <div>
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
-                  National ID Number
+                  {t("badge_wizard.fields.national_id_label")}
                 </label>
                 <input
                   type="text"
@@ -179,7 +181,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
 
               <div>
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
-                  Legal Name (Registered Name)
+                  {t("badge_wizard.fields.legal_name_label")}
                 </label>
                 <input
                   type="text"
@@ -194,7 +196,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
                 disabled={!photoUrl || !nationalId || !legalName}
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors mt-2"
               >
-                Continue
+                {t("badge_wizard.continue_btn")}
               </button>
             </div>
           )}
@@ -203,12 +205,12 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
             <div className="space-y-5">
               <div>
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
-                  Registered Address
+                  {t("badge_wizard.fields.address_label")}
                 </label>
                 {addressLoading ? (
                   <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-4 flex items-center gap-3 text-sm text-gray-400">
                     <Loader2 size={16} className="text-[#f97316] animate-spin" />
-                    Loading your saved address…
+                    {t("badge_wizard.status.address_loading")}
                   </div>
                 ) : savedAddressLabel ? (
                   <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-4 flex items-start gap-3">
@@ -216,13 +218,13 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
                     <div>
                       <p className="text-sm text-white leading-snug">{savedAddressLabel}</p>
                       <p className="text-[11px] text-gray-500 mt-1">
-                        This is the address saved on your profile. To change it, update your profile location in Settings.
+                        {t("badge_wizard.status.address_hint")}
                       </p>
                     </div>
                   </div>
                 ) : (
                   <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-4 text-xs text-amber-300">
-                    No saved address found. Please complete your profile location before requesting a badge.
+                    {t("badge_wizard.status.address_missing")}
                   </div>
                 )}
               </div>
@@ -233,7 +235,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
                 {loading && <Loader2 size={15} className="animate-spin" />}
-                Submit & Generate Badge
+                {t("badge_wizard.submit_btn")}
               </button>
             </div>
           )}
@@ -243,9 +245,9 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
               <div className="w-16 h-16 bg-green-500/15 text-green-400 rounded-full flex items-center justify-center mb-4">
                 <CheckCircle2 size={30} />
               </div>
-              <h3 className="text-white font-bold text-lg">Badge Generated!</h3>
+              <h3 className="text-white font-bold text-lg">{t("badge_wizard.completed_title")}</h3>
               {createdBadgeId && (
-                <p className="text-gray-400 text-sm mt-1">Badge ID: <span className="text-white font-mono font-semibold">{createdBadgeId}</span></p>
+                <p className="text-gray-400 text-sm mt-1">{t("badge_wizard.badge_id_label")} <span className="text-white font-mono font-semibold">{createdBadgeId}</span></p>
               )}
               <div className="flex flex-col gap-3 w-full mt-6">
                 {createdBadgeId && (
@@ -254,14 +256,14 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
                     className="w-full bg-[#f97316] hover:bg-[#ea6a0a] text-white text-sm font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
                   >
                     <ExternalLink size={15} />
-                    View My Badge
+                    {t("badge_wizard.view_badge_btn")}
                   </button>
                 )}
                 <button
                   onClick={onComplete}
                   className="w-full bg-[#1a1a1a] hover:bg-[#222] border border-[#2a2a2a] text-gray-300 text-sm font-medium py-3 rounded-xl transition-colors"
                 >
-                  Close
+                  {t("badge_wizard.close_btn")}
                 </button>
               </div>
             </div>

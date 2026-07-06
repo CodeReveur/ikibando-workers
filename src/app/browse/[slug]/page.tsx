@@ -5,7 +5,7 @@ import Footer from "@/components/layout/footer";
 import { OfferModal } from "@/components/hire/offer-modal";
 import { getWorker, type WorkerProfileDto } from "@/lib/api";
 import { ratingInfo } from "@/lib/rating";
-import { JOB_CATEGORIES } from "@/lib/constants";
+import { useLanguage } from "@/lib/language-context";
 import {
   MapPin, Shield, ChevronLeft, Briefcase,
   CheckCircle, Calendar, Wrench, Clock, Loader2, Star,
@@ -22,6 +22,7 @@ const CSS = `
 `;
 
 export default function WorkerDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { t } = useLanguage();
   const { slug } = use(params);
   const [worker,   setWorker]   = useState<WorkerProfileDto | null>(null);
   const [loading,  setLoading]  = useState(true);
@@ -47,14 +48,15 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
     return (
       <main style={{ background: "#111", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "Inter, DM Sans, system-ui, sans-serif" }}>
         <p style={{ fontSize: 40, margin: "0 0 16px" }}>🔍</p>
-        <h1 style={{ color: "#fff", margin: "0 0 8px", fontSize: 22, fontWeight: 800 }}>Worker not found</h1>
-        <p style={{ color: "#555", fontSize: 14, margin: "0 0 24px" }}>This profile doesn't exist or has been removed.</p>
-        <a href="/browse" style={{ color: "#f97316", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>← Back to Browse</a>
+        <h1 style={{ color: "#fff", margin: "0 0 8px", fontSize: 22, fontWeight: 800 }}>{t("worker_detail.not_found") || "Worker not found"}</h1>
+        <p style={{ color: "#555", fontSize: 14, margin: "0 0 24px" }}>{t("worker_detail.not_found_desc") || "This profile doesn't exist or has been removed."}</p>
+        <a href="/browse" style={{ color: "#f97316", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>{t("worker_detail.back") || "← Back to Browse"}</a>
       </main>
     );
   }
 
-  const catLabel    = worker.categoryName ?? JOB_CATEGORIES.find(c => c.value === worker.experienceType)?.label ?? worker.experienceType ?? "Worker";
+  const expType     = (worker.experienceType ?? "").toLowerCase();
+  const catLabel    = t("common.categories." + expType) || worker.categoryName || worker.experienceType || t("common.general.worker");
   const isAvailable = worker.availability.length > 0;
   const memberYear  = new Date(worker.memberSince as unknown as string).getFullYear();
   const firstName   = worker.name.split(" ")[0];
@@ -73,7 +75,7 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
           border: "1px solid #272727", borderRadius: 999, padding: "6px 14px",
           marginBottom: 24, transition: "border-color 0.15s, color 0.15s",
         }}>
-          <ChevronLeft size={14} /> Browse
+          <ChevronLeft size={14} /> {t("common.nav.browse") || "Browse"}
         </a>
 
         {/* HERO */}
@@ -96,7 +98,9 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
               </h1>
               <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
                 <CheckCircle size={16} color="#22c55e" fill="rgba(34,197,94,0.15)" />
-                <span style={{ fontSize: 11, fontWeight: 700, color: "#22c55e" }}>Verified</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#22c55e" }}>
+                  {t("worker_detail.badges.verified") || "Verified"}
+                </span>
               </div>
             </div>
 
@@ -114,7 +118,7 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
                 background: isAvailable ? "rgba(34,197,94,0.1)" : "rgba(255,255,255,0.05)",
                 color: isAvailable ? "#22c55e" : "#555",
               }}>
-                {isAvailable ? "● Available" : "● Not available"}
+                {isAvailable ? `● ${t("browse_page.badges.available") || "Available"}` : `● ${t("worker_detail.badges.unavailable") || "Not available"}`}
               </span>
               {(() => {
                 const r = ratingInfo(worker.rating, worker.ratingCount);
@@ -125,7 +129,7 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
                     borderRadius: 999, padding: "4px 10px", fontSize: 11, fontWeight: 700, color: "#f97316",
                   }}>
                     <Star size={11} fill={r.hasReviews ? "#f97316" : "none"} />
-                    {r.hasReviews ? `${r.value} · ${r.reviews} review${r.reviews === 1 ? "" : "s"}` : "New worker"}
+                    {r.hasReviews ? `${r.value} · ${r.reviews} review${r.reviews === 1 ? "" : "s"}` : (t("worker_detail.badges.new") || "New worker")}
                   </span>
                 );
               })()}
@@ -141,7 +145,9 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
               <span style={{ fontSize: 12, color: "#555" }}>·</span>
               <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
                 <Calendar size={12} color="#555" />
-                <span style={{ fontSize: 12, color: "#555" }}>Member since {memberYear}</span>
+                <span style={{ fontSize: 12, color: "#555" }}>
+                  {t("worker_detail.member_since", { year: memberYear })}
+                </span>
               </span>
             </div>
           </div>
@@ -150,10 +156,10 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
         {/* STATS GRID */}
         <div className="stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10, marginBottom: 24 }}>
           {[
-            { label: "Category",       value: catLabel },
-            { label: "Rating",         value: (() => { const r = ratingInfo(worker.rating, worker.ratingCount); return r.hasReviews ? `${r.value} ★ (${r.reviews})` : "New"; })() },
-            { label: "Location",       value: worker.locationFull || worker.locationShort || worker.district || "Rwanda" },
-            { label: "Available days", value: worker.availability.length > 0 ? `${worker.availability.length} day${worker.availability.length !== 1 ? "s" : ""}` : "Not set" },
+            { label: t("common.general.category") || "Category",       value: catLabel },
+            { label: t("jobs_page.filters.sort_by") || "Rating",         value: (() => { const r = ratingInfo(worker.rating, worker.ratingCount); return r.hasReviews ? `${r.value} ★ (${r.reviews})` : t("common.general.new"); })() },
+            { label: t("jobs_page.filters.location") || "Location",       value: worker.locationFull || worker.locationShort || worker.district || "Rwanda" },
+            { label: t("worker_detail.sections.available_days") || "Available days", value: worker.availability.length > 0 ? (t("worker_detail.trust.availability", { count: worker.availability.length }) || `${worker.availability.length} days`) : "Not set" },
           ].map(({ label, value }) => (
             <div key={label} style={{ background: "#1c1c1c", border: "1px solid #272727", borderRadius: 12, padding: "14px 16px" }}>
               <p style={{ margin: 0, fontSize: 11, color: "#555", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</p>
@@ -164,7 +170,7 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
 
         {/* EDUCATION */}
         {worker.educationLevel && (
-          <Section title="Education">
+          <Section title={t("worker_detail.sections.education") || "Education"}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <CheckCircle size={14} color="#22c55e" />
               <span style={{ fontSize: 13, color: "#aaa" }}>{worker.educationLevel}</span>
@@ -174,7 +180,7 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
 
         {/* AVAILABILITY */}
         {worker.availability.length > 0 && (
-          <Section title="Available days">
+          <Section title={t("worker_detail.sections.available_days") || "Available days"}>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
               {worker.availability.map(day => (
                 <span key={day} style={{
@@ -188,7 +194,7 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
 
         {/* EQUIPMENT */}
         {worker.equipment.length > 0 && (
-          <Section title="Equipment & tools">
+          <Section title={t("worker_detail.sections.equipment") || "Equipment & tools"}>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
               {worker.equipment.map(eq => (
                 <span key={eq} style={{
@@ -204,13 +210,13 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
         )}
 
         {/* TRUST */}
-        <Section title="Trust & verification">
+        <Section title={t("worker_detail.sections.trust") || "Trust & verification"}>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {[
-              { icon: Shield,    label: "Identity registered on MpahMapu",       ok: true },
-              { icon: Calendar,  label: `Active member since ${memberYear}`,      ok: true },
-              { icon: Briefcase, label: `Specialises in ${catLabel}`,             ok: !!worker.experienceType },
-              { icon: Clock,     label: `${worker.availability.length} day${worker.availability.length !== 1 ? "s" : ""} available per week`, ok: isAvailable },
+              { icon: Shield,    label: t("worker_detail.trust.identity") || "Identity registered on MpahMapu",       ok: true },
+              { icon: Calendar,  label: t("worker_detail.trust.member_since", { year: memberYear }),      ok: true },
+              { icon: Briefcase, label: t("worker_detail.trust.specialty", { category: catLabel }),             ok: !!worker.experienceType },
+              { icon: Clock,     label: t("worker_detail.trust.availability", { count: worker.availability.length }), ok: isAvailable },
             ].map(({ icon: Icon, label, ok }) => (
               <div key={label} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <Icon size={15} color={ok ? "#22c55e" : "#333"} />
@@ -265,7 +271,7 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
                 background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.18)",
                 borderRadius: 999, padding: "3px 9px",
               }}>
-                ● Available
+                ● {t("browse_page.badges.available") || "Available"}
               </span>
             )}
           </div>
@@ -290,7 +296,7 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
               flexShrink: 0,
             }}
           >
-            {isAvailable ? `Hire ${firstName}` : "Unavailable"}
+            {isAvailable ? (t("worker_detail.cta.hire", { name: firstName }) || `Hire ${firstName}`) : (t("worker_detail.cta.unavailable") || "Unavailable")}
           </button>
         </div>
       </div>

@@ -1,0 +1,1299 @@
+{
+  "common": {
+    "days": {
+      "mon": "Lundi",
+      "tue": "Mardi",
+      "wed": "Mercredi",
+      "thu": "Jeudi",
+      "fri": "Vendredi",
+      "sat": "Samedi",
+      "sun": "Dimanche"
+    },
+    "nav": {
+      "browse": "Parcourir",
+      "jobs": "Emplois",
+      "contact": "Contact",
+      "about": "À propos",
+      "signin": "Se connecter",
+      "signup": "S'inscrire",
+      "hire_now": "Recruter",
+      "become_worker": "Devenir travailleur",
+      "sign_out": "Déconnexion",
+      "dashboard": "Tableau de bord",
+      "offers": "Offres",
+      "requests": "Demandes",
+      "applications": "Candidatures",
+      "settings": "Paramètres",
+      "profile": "Profil",
+      "employer": "Employeur",
+      "job_seeker": "Chercheur d'emploi",
+      "privacy": "Confidentialité",
+      "terms": "Conditions",
+      "earnings": "Mes gains",
+      "bonuses": "Bonus",
+      "analytics": "Analyses",
+      "payments": "Paiements",
+      "workers": "Travailleurs",
+      "help": "Aide",
+      "menu": "Menu",
+      "wallet": "Portefeuille"
+    },
+    "footer": {
+      "desc": "Connecter des travailleurs indépendants vérifiés à Kigali avec des entreprises locales et des ménages.",
+      "copyright": "© 2026 MpahMapu. Tous droits réservés."
+    },
+    "categories": {
+      "": "Travailleur",
+      "all": "Tout",
+      "protocol": "Protocole",
+      "none": "Aucun",
+      "waiters": "Serveurs",
+      "baristas": "Baristas",
+      "cleaners": "Nettoyeurs",
+      "security_guards": "Gardiens de sécurité",
+      "drivers": "Chauffeurs",
+      "delivery_drivers": "Livreurs",
+      "courier_riders": "Coursiers à moto",
+      "electricians": "Électriciens",
+      "plumbers": "Plombiers",
+      "carpenters": "Charpentiers",
+      "painters": "Peintres",
+      "construction_workers": "Ouvriers du bâtiment",
+      "technicians": "Techniciens",
+      "mechanics": "Mécaniciens",
+      "gardeners": "Jardiniers",
+      "landscapers": "Paysagistes",
+      "housekeepers": "Gouvernantes",
+      "hotel_staff": "Personnel d'hôtel",
+      "shop_attendants": "Vendeurs en magasin",
+      "cashiers": "Caissiers",
+      "warehouse_staff": "Personnel d'entrepôt",
+      "packers": "Emballeurs",
+      "supervisors": "Superviseurs",
+      "receptionists": "Réceptionnistes",
+      "call_center_agents": "Agents de centre d'appels",
+      "customer_support": "Service client",
+      "office_assistants": "Adjoints administratifs",
+      "tutors": "Tuteurs",
+      "teachers": "Enseignants",
+      "caregivers": "Aidants familiaux",
+      "nurses": "Infirmiers",
+      "babysitters": "Babysitters",
+      "pet_care": "Garde d'animaux",
+      "photographers": "Photographes",
+      "videographers": "Vidéastes",
+      "djs": "DJs",
+      "mcs": "Animateurs",
+      "event_planners": "Organisateurs d'événements",
+      "florists": "Fleuristes",
+      "barbers": "Barbiers",
+      "hair_stylists": "Coiffeurs",
+      "makeup_artists": "Maquilleurs",
+      "tailors": "Tailleurs",
+      "laundry_services": "Blanchisserie",
+      "phone_repair": "Réparation de téléphones",
+      "computer_repair": "Réparation d'ordinateurs",
+      "network_technicians": "Techniciens réseau",
+      "it_support": "Support informatique",
+      "web_developers": "Développeurs Web",
+      "software_developers": "Développeurs logiciels",
+      "graphic_designers": "Graphistes",
+      "content_writers": "Rédacteurs de contenu",
+      "translators": "Traducteurs",
+      "accountants": "Comptables",
+      "legal_advisors": "Conseillers juridiques",
+      "real_estate_agents": "Agents immobiliers",
+      "property_managers": "Gestionnaires immobiliers",
+      "hr_professionals": "Professionnels RH",
+      "marketing_specialists": "Spécialistes marketing",
+      "financial_advisors": "Conseillers financiers",
+      "waiter": "Serveur / Serveuse",
+      "cook": "Cuisinier",
+      "chef": "Chef de cuisine",
+      "bartender": "Barman",
+      "cashier": "Caissier",
+      "receptionist": "Réceptionniste",
+      "cleaner": "Nettoyeur",
+      "housekeeper": "Gouvernante",
+      "nanny": "Nounou",
+      "caregiver": "Soignant",
+      "security": "Agent de sécurité",
+      "event_staff": "Personnel d'événement",
+      "mc": "MC",
+      "musician": "Musicien",
+      "dj": "DJ",
+      "driver": "Chauffeur",
+      "delivery_rider": "Livreur à moto",
+      "gardener": "Jardinier",
+      "farm_worker": "Ouvrier agricole",
+      "loader": "Chargeur",
+      "unloader": "Déchargeur",
+      "warehouse_worker": "Agent d'entrepôt",
+      "packer": "Emballeur",
+      "electrician": "Électricien",
+      "plumber": "Plombier",
+      "painter": "Peintre",
+      "carpenter": "Charpentier",
+      "construction_worker": "Ouvrier du bâtiment",
+      "mechanic": "Mécanicien",
+      "tailor": "Tailor / Couturier",
+      "hairdresser": "Coiffeur / Coiffeuse",
+      "beautician": "Esthéticienne",
+      "tutor": "Tuteur",
+      "translator": "Traducteur / Traductrice",
+      "photographer": "Photographe",
+      "videographer": "Vidéaste",
+      "graphic_designer": "Graphiste",
+      "social_media_manager": "Gestionnaire de médias sociaux",
+      "sales_agent": "Agent commercial",
+      "promoter": "Promoteur",
+      "marketing_agent": "Agent de marketing",
+      "office_assistant": "Assistant de bureau",
+      "data_entry": "Opérateur de saisie",
+      "customer_support": "Support client",
+      "it_support": "Support informatique",
+      "web_developer": "Développeur web",
+      "mobile_developer": "Développeur mobile",
+      "software_engineer": "Ingénieur logiciel",
+      "accountant": "Comptable",
+      "other": "Autre",
+      "barista": "Barista",
+      "delivery_driver": "Livreur",
+      "courier_rider": "Coursier",
+      "technician": "Technicien",
+      "landscaper": "Paysagiste",
+      "hotel_staff": "Personnel de l'hôtel",
+      "shop_attendant": "Vendeur en magasin",
+      "supervisor": "Superviseur",
+      "call_center_agent": "Téléconseiller",
+      "teacher": "Enseignant",
+      "nurse": "Infirmier / Infirmière",
+      "babysitter": "Babysitter",
+      "pet_care": "Garde d'animaux",
+      "event_planner": "Organisateur d'événements",
+      "florist": "Fleuriste",
+      "barber": "Barbier",
+      "hair_stylist": "Coiffeur / Coiffeuse",
+      "makeup_artist": "Maquilleur / Maquilleuse",
+      "laundry_service": "Service de blanchisserie",
+      "phone_repair": "Réparation de téléphones",
+      "computer_repair": "Réparation d'ordinateurs",
+      "network_technician": "Technicien réseau",
+      "content_writer": "Rédacteur de contenu",
+      "legal_advisor": "Conseiller juridique",
+      "real_estate_agent": "Agent immobilier",
+      "property_manager": "Gestionnaire de propriété",
+      "hr_professional": "Professionnel des RH",
+      "marketing_specialist": "Spécialiste en marketing",
+      "sales_representative": "Représentant commercial",
+      "financial_advisor": "Conseiller financier"
+    },
+    "buttons": {
+      "more": "Plus",
+      "post_request": "Poster une demande",
+      "become_worker": "Devenir travailleur",
+      "back": "Retour",
+      "continue": "Continuer",
+      "confirm": "Confirmer et bloquer les fonds",
+      "processing": "Traitement...",
+      "done": "Terminé",
+      "cancel": "Annuler",
+      "submit": "Envoyer"
+    },
+    "general": {
+      "new": "Nouveau",
+      "worker": "Travailleur",
+      "category": "Catégorie",
+      "currency_pattern": "{amount} RWF",
+      "per_hour": "/ h"
+    }
+  },
+  "home": {
+    "hero": {
+      "location": "Kigali · Rwanda",
+      "title_find": "Trouvez du travail.",
+      "title_hire": "Recrutez vérifié.",
+      "subtitle": "Travailleurs indépendants sur demande pour événements, nettoyage, sécurité et plus - vérifiés par carte d'identité, notés et payés via MoMo."
+    },
+    "sections": {
+      "categories": "Catégories",
+      "available_workers": "Travailleurs disponibles",
+      "available_jobs": "Emplois disponibles"
+    },
+    "faqs": {
+      "q1": "Comment recruter un travailleur sur MpahMapu ?",
+      "a1": "Postez une demande d'emploi avec des détails tels que la catégorie, le lieu et le taux de rémunération. Les travailleurs vérifiés postuleront instantanément, et vous pourrez consulter leurs profils et leurs évaluations avant de recruter.",
+      "q2": "Comment fonctionne le paiement sur MpahMapu ?",
+      "a2": "Tous les paiements sont traités en toute sécurité via MTN Mobile Money (MoMo). Les fonds sont versés aux travailleurs dès la fin des travaux.",
+      "q3": "Les travailleurs sur MpahMapu sont-ils vérifiés ?",
+      "a3": "Oui, chaque travailleur sur MpahMapu fait l'objet d'une vérification d'identité avant de pouvoir accepter des missions, garantissant ainsi confiance et sécurité aux employeurs.",
+      "q4": "Quels types de travailleurs puis-je trouver sur MpahMapu ?",
+      "a4": "MpahMapu propose des travailleurs dans plus de 15 catégories, notamment des serveurs, des nettoyeurs, des gardiens de sécurité, des chauffeurs, des électriciens, des plombiers, des jardiniers, du personnel événementiel et plus encore.",
+      "q5": "MpahMapu est-il disponible en dehors de Kigali ?",
+      "a5": "MpahMapu opère actuellement principalement à Kigali, au Rwanda, avec des projets d'expansion dans d'autres villes et provinces."
+    }
+  },
+  "about": {
+    "hero": {
+      "tag": "À propos de MpahMapu",
+      "title_main": "La plateforme de travail",
+      "title_accent": "sur demande au Rwanda.",
+      "desc": "MpahMapu connecte les employeurs avec des travailleurs notés et vérifiés par carte d'identité dans tout le Rwanda - pour l'événementiel, le nettoyage, la sécurité, la conduite et plus encore. Recruté en quelques minutes, payé via MoMo."
+    },
+    "stats": {
+      "workers_val": "2 400+",
+      "workers_lbl": "Travailleurs vérifiés",
+      "jobs_val": "8 900+",
+      "jobs_lbl": "Missions terminées",
+      "categories_val": "15+",
+      "categories_lbl": "Catégories de métiers",
+      "rating_val": "4.8★",
+      "rating_lbl": "Note moyenne"
+    },
+    "story": {
+      "title": "Notre histoire",
+      "p1": "MpahMapu a été fondée au Rwanda en 2025 après avoir constaté que des travailleurs qualifiés luttaient pour trouver du travail régulier et que des employeurs avaient du mal à trouver une aide fiable à court préavis. La solution était simple : une plateforme qui rend les choses rapides, transparentes et sûres pour les deux parties.",
+      "p2": "Le nom MpahMapu signifie « un groupe qui s'unit pour travailler » en Kinyarwanda - c'est exactement ce que nous construisons. Une communauté où chaque tâche est accomplie avec fierté et chaque travailleur traité avec respect."
+    },
+    "how_it_works": {
+      "title": "Comment ça marche",
+      "step1_title": "Créer un compte",
+      "step1_body": "Inscrivez-vous en tant que travailleur ou employeur en moins d'une minute.",
+      "step2_title": "Poster ou parcourir",
+      "step2_body": "Les employeurs publient des offres ; les travailleurs parcourent et postulent instantanément.",
+      "step3_title": "Mise en relation rapide",
+      "step3_body": "Nous présentons les travailleurs les plus adaptés en fonction de la catégorie et du lieu.",
+      "step4_title": "Payer via MoMo",
+      "step4_body": "Paiements sécurisés par argent mobile - pas d'argent liquide, pas de litiges."
+    },
+    "values": {
+      "title": "Nos valeurs",
+      "val1_title": "La confiance d'abord",
+      "val1_body": "Chaque travailleur est vérifié par pièce d'identité avant de pouvoir accepter des missions. Les employeurs savent exactement qui se présente.",
+      "val2_title": "La rapidité compte",
+      "val2_body": "Postez une offre d'emploi en moins de 2 minutes. Les travailleurs sont notifiés instantanément et peuvent confirmer d'un simple geste.",
+      "val3_title": "Un salaire équitable",
+      "val3_body": "Nous affichons des tarifs clairs dès le départ. Pas de frais cachés, pas de litiges sur le liquide - les paiements se font via MoMo.",
+      "val4_title": "Communauté",
+      "val4_body": "Construit à Kigali, pour les Rwandais. Nous croyons que chaque travailleur mérite la dignité et chaque employeur mérite la fiabilité."
+    },
+    "location": {
+      "title": "Basé au Rwanda, Rwanda",
+      "desc": "Desservant actuellement les districts du Rwanda - expansion prochaine dans toute l'Afrique de l'Est."
+    },
+    "cta": {
+      "title": "Prêt à commencer ?",
+      "desc": "Rejoignez des milliers de travailleurs et d'employeurs déjà sur MpahMapu.",
+      "btn_create": "Créer un compte",
+      "btn_contact": "Contactez-nous"
+    }
+  },
+  "contact": {
+    "hero": {
+      "tag": "Entrer en contact",
+      "title_main": "Nous serions ravis de",
+      "title_accent": "vous entendre.",
+      "desc": "Que vous ayez une question, une idée de partenariat ou que vous vouliez simplement nous dire bonjour - nous sommes là."
+    },
+    "form": {
+      "title": "Envoyer un message",
+      "name_label": "Votre nom",
+      "email_label": "E-mail",
+      "subject_label": "Sujet",
+      "subject_placeholder": "Sélectionnez un sujet…",
+      "message_label": "Message",
+      "message_placeholder": "Dites-nous ce qui vous préoccupe…",
+      "btn_send": "Envoyer le message",
+      "btn_sending": "Envoi en cours…",
+      "sent_success_title": "Message envoyé !",
+      "sent_success_desc": "Nous vous répondrons dans les 24 heures.",
+      "btn_another": "En envoyer un autre",
+      "validation_error": "Veuillez remplir tous les champs obligatoires.",
+      "validation_error_title": "Formulaire incomplet",
+      "send_success_toast": "Votre message a été envoyé. Nous vous répondrons sous 24 heures.",
+      "send_success_toast_title": "Message envoyé",
+      "send_fail_toast": "Échec de l'envoi du message. Veuillez réessayer ou nous envoyer un e-mail directement.",
+      "send_fail_toast_title": "Échec de l'envoi"
+    },
+    "topics": {
+      "general": "Question générale",
+      "partnership": "Partenariat",
+      "worker_support": "Assistance aux travailleurs",
+      "employer_support": "Assistance aux employeurs",
+      "report_issue": "Signaler un problème",
+      "other": "Autre"
+    },
+    "info": {
+      "email": "Écrivez-nous",
+      "phone": "Appel ou WhatsApp",
+      "location": "Localisation",
+      "response_time": "Temps de réponse",
+      "response_value": "Sous 24 heures"
+    }
+  },
+  "hire_modal": {
+    "steps": {
+      "details": "Détails du travail",
+      "matches": "Meilleures correspondances",
+      "summary": "Résumé",
+      "indicator": "Étape {step} sur {total}"
+    },
+    "details": {
+      "category_label": "Catégorie de travail *",
+      "category_placeholder": "Rechercher une catégorie…",
+      "workers_label": "Nombre de travailleurs",
+      "rate_label": "Tarif par travailleur (RWF) *",
+      "period_label": "Période tarifaire",
+      "period_options": {
+        "hr": "Par heure",
+        "day": "Par jour",
+        "week": "Par semaine",
+        "month": "Par mois",
+        "year": "Par an"
+      },
+      "duration_label": "Durée",
+      "payout_breakdown": "{rate}{period} × {workers} travailleur{plural} × {duration} {unit}",
+      "start_date": "Date de début *",
+      "start_time": "Heure de début *",
+      "province": "Province",
+      "province_placeholder": "Province…",
+      "district": "District *",
+      "district_placeholder": "District…",
+      "location_label": "Emplacement précis (cliquez sur la carte ou utilisez le GPS)",
+      "gps_btn_detect": "Détecter mon GPS",
+      "gps_btn_detecting": "Détection…",
+      "gps_btn_detected": "GPS détecté",
+      "gps_error": "Impossible d'accéder au GPS",
+      "requirements_label": "Exigences (optionnel)",
+      "requirements_placeholder": "ex : doit disposer de son propre moyen de transport, électricien agréé, parle couramment l'anglais…"
+    },
+    "matches": {
+      "selected_status": "{selected} sur {total} travailleurs sélectionnés",
+      "ready": "✓ Prêt",
+      "select_more": "Sélectionner plus",
+      "loading": "Recherche de travailleurs pour {cat}…",
+      "error_title": "Impossible de charger les travailleurs",
+      "error_desc": "Vérifiez votre connexion et revenez en arrière pour réessayer.",
+      "empty_title": "Aucun travailleur trouvé pour {cat}",
+      "empty_desc": "Revenez en arrière et essayez une autre catégorie.",
+      "available_summary": "{count} travailleur{plural} disponible{plural} pour {cat}",
+      "sorted_proximity": " · trié par proximité de {district}",
+      "best_match": "MEILLEUR PROFIL",
+      "nearby": "À proximité",
+      "since_year": "Depuis {year}",
+      "more_avail": "+{count} de plus",
+      "select_btn_need": "Sélectionner {count} travailleur{plural} de plus"
+    },
+    "summary": {
+      "title": "Résumé du travail",
+      "workers_label": "Travailleurs",
+      "rate_label": "Tarif",
+      "duration_label": "Durée",
+      "date_label": "Date",
+      "time_label": "Heure",
+      "province_label": "Province",
+      "district_label": "District",
+      "gps_label": "GPS",
+      "requirements_label": "Exigences",
+      "assigned_title": "Vos travailleurs",
+      "assigned_title_single": "Votre travailleur",
+      "payment_title": "Paiement",
+      "payout_label": "Rémunération des travailleurs ({workers} × {duration}h × {rate})",
+      "fee_label": "Frais de plateforme (5%)",
+      "escrow_required": "Fonds de garantie requis",
+      "wallet_balance": "Solde du portefeuille",
+      "topup_warning": "Il vous manque {amount}.",
+      "topup_link": "Recharger le portefeuille →",
+      "terms_warning": "En confirmant, vous acceptez nos conditions d'utilisation.",
+      "confirm_btn": "Confirmer et bloquer les fonds",
+      "processing_btn": "Traitement…",
+      "insufficient_btn": "Solde insuffisant",
+      "incomplete_btn": "Remplir tous les champs",
+      "signed_out_error": "Vous devez être connecté.",
+      "signed_out_error_title": "Non connecté",
+      "post_fail_title": "Échec du recrutement",
+      "success_title": "Réservation confirmée !",
+      "success_desc": "{names} {plural} été notifié{plural} et confirmera{plural} sous peu.",
+      "success_sub": "Le travail a été créé avec succès."
+    }
+  },
+  "signin": {
+    "hero": {
+      "welcome_back": "Bon retour",
+      "subtitle": "Connectez-vous à votre compte MpahMapu"
+    },
+    "buttons": {
+      "home": "Accueil",
+      "back_to_home": "Retour à l'accueil",
+      "signing_in": "Connexion en cours…",
+      "continue_google": "Continuer avec Google",
+      "continue_facebook": "Continuer avec Facebook",
+      "submit": "Se connecter"
+    },
+    "general": {
+      "or": "OU"
+    },
+    "fields": {
+      "email_label": "E-mail",
+      "password_label": "Mot de passe",
+      "forgot_password_link": "Oublié ?"
+    },
+    "footer": {
+      "no_account": "Vous n'avez pas de compte ?",
+      "signup_link": "S'inscrire"
+    },
+    "toasts": {
+      "google_fail_desc": "Échec de la connexion Google. Veuillez réessayer.",
+      "login_failed_title": "Échec de la connexion",
+      "google_cancelled_desc": "La connexion Google a été annulée ou a échoué.",
+      "fb_https_desc": "La connexion Facebook nécessite HTTPS. Utilisez l'e-mail ou Google en développement local.",
+      "fb_not_avail_desc": "La connexion Facebook n'est pas disponible (ID d'application non configuré).",
+      "fb_fail_desc": "Échec de la connexion Facebook. Veuillez réessayer.",
+      "email_pass_req_desc": "Veuillez entrer votre e-mail et votre mot de passe.",
+      "invalid_creds_desc": "E-mail ou mot de passe invalide.",
+      "set_password_label": "Définir un mot de passe via Mot de passe oublié"
+    }
+  },
+  "signup": {
+    "hero": {
+      "title": "Créer un compte",
+      "subtitle": "Rejoignez MpahMapu pour embaucher ou trouver du travail"
+    },
+    "buttons": {
+      "home": "Accueil",
+      "back_to_home": "Retour à l'accueil",
+      "signing_in": "Poursuite en cours…",
+      "continue_google": "Continuer avec Google",
+      "continue_facebook": "Continuer avec Facebook",
+      "registering": "Création du compte…",
+      "submit": "Créer un compte"
+    },
+    "general": {
+      "or": "OU"
+    },
+    "fields": {
+      "name_label": "Nom complet",
+      "email_label": "E-mail",
+      "phone_label": "Numéro de téléphone",
+      "password_label": "Mot de passe",
+      "password_placeholder": "Min. 8 caractères",
+      "referral_label": "Code de parrainage (optionnel)"
+    },
+    "footer": {
+      "has_account": "Vous avez déjà un compte ?",
+      "signin_link": "Se connecter",
+      "terms_p1": "En vous inscrivant, vous acceptez nos",
+      "terms_link": "Conditions d'utilisation",
+      "privacy_link": "Politique de confidentialité"
+    },
+    "errors": {
+      "name_req": "Le nom est obligatoire.",
+      "email_req": "L'e-mail est obligatoire.",
+      "email_invalid": "Veuillez entrer une adresse e-mail valide.",
+      "phone_req": "Le numéro de téléphone est obligatoire.",
+      "phone_invalid": "Format de numéro de téléphone invalide.",
+      "password_req": "Le mot de passe est obligatoire.",
+      "password_min": "Le mot de passe doit comporter au moins 8 caractères."
+    },
+    "toasts": {
+      "google_fail_desc": "Échec de l'inscription Google. Veuillez réessayer.",
+      "signup_failed_title": "Échec de l'inscription",
+      "google_cancelled_desc": "L'inscription Google a été annulée ou a échoué.",
+      "fb_https_desc": "L'inscription Facebook nécessite HTTPS. Utilisez l'e-mail ou Google en développement local.",
+      "fb_not_avail_desc": "La connexion Facebook n'est pas disponible (ID d'application non configuré).",
+      "fb_fail_desc": "Échec de l'inscription Facebook. Veuillez réessayer.",
+      "validation_error_desc": "Veuillez remplir correctement tous les champs obligatoires.",
+      "fail_generic_desc": "L'inscription a échoué. Veuillez réessayer."
+    }
+  },
+  "auth_carousel": {
+    "slide0": {
+      "tag": "Pour les travailleurs",
+      "headline": "Faites-vous embaucher\naujourd'hui.",
+      "body": "Parcourez plus de 100 emplois quotidiens à Kigali - serveurs, nettoyeurs, chauffeurs, sécurité et plus. Pas besoin de CV.",
+      "quote": "J'ai gagné 45 000 RWF cette semaine seulement.",
+      "author": "Jean Pierre M.",
+      "role": "Serveur · Kacyiru"
+    },
+    "slide1": {
+      "tag": "Pour les employeurs",
+      "headline": "Embauchez en\nquelques minutes.",
+      "body": "Des travailleurs vérifiés par carte d'identité, prêts à commencer le jour même. Lisez les avis, comparez les tarifs, réservez instantanément.",
+      "quote": "J'ai trouvé un serveur pour mon événement en moins de 10 minutes.",
+      "author": "Amina K.",
+      "role": "Organisateur d'événements · Kimihurura"
+    },
+    "slide2": {
+      "tag": "Paiements sécurisés",
+      "headline": "Payez via\nMoMo.",
+      "body": "Payez et soyez payé en toute sécurité via Mobile Money. Pas de litiges de trésorerie, pas de frais initiaux - fonds conservés en toute sécurité.",
+      "quote": "Plus de problèmes de cash. MoMo rend les choses simples.",
+      "author": "Eric N.",
+      "role": "Chauffeur · Remera"
+    }
+  },
+  "onboarding": {
+    "steps": {
+      "step1": "Étape 1",
+      "step2": "Étape 2",
+      "step3": "Étape 3",
+      "indicator_lbl": "{step} sur 3"
+    },
+    "headers": {
+      "role_select_title": "Comment allez-vous utiliser MpahMapu ?",
+      "role_select_subtitle": "Choisissez votre type de compte pour commencer",
+      "email_verify_title": "Vérifiez votre e-mail",
+      "email_verify_subtitle": "Entrez le code que nous avons envoyé à {email}",
+      "account_type_title": "Qui s'inscrit ?",
+      "account_type_subtitle_employer": "Êtes-vous une entreprise ou un particulier ?",
+      "account_type_subtitle_worker": "Inscrivez-vous seul ou en équipe",
+      "employer_details_title": "Vos coordonnées commerciales",
+      "employer_details_subtitle": "Où vous opérez, ce pour quoi vous recrutez et votre TIN",
+      "personal_title": "À propos de vous",
+      "personal_subtitle": "Quelques détails rapides sur votre parcours",
+      "location_title": "Où & quand",
+      "location_subtitle": "Dites-nous où vous êtes basé et quand vous êtes libre",
+      "equipment_title": "Votre équipement",
+      "equipment_subtitle": "Listez les outils ou appareils auxquels vous avez accès",
+      "completed_title": "Tout est prêt !",
+      "completed_subtitle": "Nous vous redirigeons vers votre tableau de bord…"
+    },
+    "roles": {
+      "worker_label": "Trouver du travail",
+      "worker_desc": "Parcourir & postuler à des emplois",
+      "employer_label": "Embaucher des travailleurs",
+      "employer_desc": "Publier des offres & recruter des talents",
+      "continue_btn": "Continuer en tant que {role}"
+    },
+    "otp": {
+      "placeholder": "Code à 6 chiffres",
+      "submit_btn": "Vérifier & Continuer",
+      "resend_prompt": "Vous ne l'avez pas reçu ?",
+      "resend_link": "Renvoyer le code",
+      "invalid_code_error": "Veuillez entrer un code valide.",
+      "error_title": "Échec de la vérification",
+      "success_resend": "Un nouveau code a été envoyé à votre e-mail.",
+      "success_resend_title": "Code envoyé",
+      "resend_fail_generic": "Impossible de renvoyer l'OTP. Veuillez réessayer.",
+      "resend_fail_title": "Échec de l'envoi"
+    },
+    "account_types": {
+      "individual": { "label": "Particulier", "desc": "Juste moi, travaillant seul" },
+      "team": { "label": "Équipe", "desc": "Un groupe de travailleurs" },
+      "company": { "label": "Entreprise", "desc": "Une entreprise enregistrée" },
+      "crew": { "label": "Équipe technique", "desc": "Une équipe de travail" }
+    },
+    "group_fields": {
+      "member_emails_label": "E-mails des membres",
+      "members_count": "· {count} membre{plural}",
+      "member_email_placeholder": "Tapez un e-mail et appuyez sur Entrée…",
+      "member_email_hint": "Nous enverrons un e-mail à chaque membre pour l'informer qu'il a été ajouté. Ils recevront uniquement des notifications — aucun accès au tableau de bord — et pourront toujours créer leur propre compte plus tard.",
+      "tin_label": "Numéro TIN",
+      "tin_placeholder": "Numéro d'identification fiscale — laisser vide pour passer",
+      "tin_recommended": "(recommandé)",
+      "tin_optional": "(optionnel)",
+      "email_error": "Entrez une adresse e-mail valide.",
+      "email_error_title": "E-mail invalide"
+    },
+    "employer_details": {
+      "location_label": "Lieu de travail",
+      "service_type_label": "Type de service",
+      "service_search_placeholder": "Rechercher des types de service...",
+      "loading_services": "Chargement des types de service...",
+      "submit_btn": "Terminer la configuration"
+    },
+    "personal": {
+      "dob_label": "Date de naissance",
+      "education_label": "Niveau d'études",
+      "category_label": "Catégorie de travail",
+      "category_search_placeholder": "Rechercher des catégories...",
+      "loading_categories": "Chargement des catégories...",
+      "age_restriction_error": "Vous devez avoir au moins 18 ans pour vous inscrire.",
+      "age_restriction_title": "Limite d'âge"
+    },
+    "location_avail": {
+      "location_label": "Votre emplacement",
+      "avail_label": "Disponibilité hebdomadaire",
+      "days_selected": "{count} jour{plural} sélectionné{plural}"
+    },
+    "equipment": {
+      "label": "Équipement & Outils",
+      "placeholder": "Tapez et appuyez sur Entrée pour ajouter…",
+      "hint": "Appuyez sur Entrée ou , pour ajouter chaque élément",
+      "suggestions_title": "Suggestions fréquentes",
+      "skip_btn": "Passer pour l'instant",
+      "onboarding_fail_generic": "Échec de la soumission des données d'intégration.",
+      "onboarding_fail_title": "Échec de la configuration"
+    },
+    "completed": {
+      "title": "Tout est prêt !",
+      "subtitle": "Configuration de votre tableau de bord…"
+    },
+    "education": {
+      "none": "Aucun",
+      "primary": "École primaire",
+      "high_school": "Lycée",
+      "diploma": "Diplôme / Certificat",
+      "bachelors": "Licence",
+      "masters": "Master ou supérieur"
+    },
+    "equipment_suggestions": {
+      "smartphone": "Smartphone",
+      "laptop": "Ordinateur portable",
+      "internet": "Connexion Internet",
+      "safety_gear": "Équipement de sécurité",
+      "vehicle": "Véhicule",
+      "power_tools": "Outils électriques",
+      "camera": "Appareil photo",
+      "tablet": "Tablette"
+    }
+  },
+  "privacy": {
+    "hero": {
+      "tag": "Juridique",
+      "title_main": "Politique de",
+      "title_accent": "Confidentialité",
+      "desc": "Nous collectons uniquement ce dont nous avons besoin, le protégeons soigneusement et ne le vendons jamais. Voici exactement comment vos données sont traitées sur MpahMapu.",
+      "last_updated_prefix": "Dernière mise à jour :",
+      "last_updated_date": "1er juin 2025"
+    },
+    "highlights": {
+      "hl1": {
+        "title": "Ce que nous collectons",
+        "body": "Nom, numéro de téléphone, pièce d'identité, emplacement et historique des emplois - uniquement ce qui est nécessaire au fonctionnement de la plateforme."
+      },
+      "hl2": {
+        "title": "Comment nous protégeons",
+        "body": "Les données sont chiffrées en transit et au repos. Les pièces d'identité sont stockées sur des serveurs isolés et à accès contrôlé."
+      },
+      "hl3": {
+        "title": "Avec qui nous partageons",
+        "body": "Uniquement l'autre partie lors d'une réservation confirmée, et MoMo pour le traitement des paiements. Jamais vendu aux annonceurs."
+      },
+      "hl4": {
+        "title": "Votre droit de suppression",
+        "body": "Demandez la suppression de votre compte à tout moment. Nous supprimons vos données personnelles sous 30 jours, sauf obligation légale."
+      }
+    },
+    "intro": {
+      "summary_prefix": "Résumé en langage clair : ",
+      "summary_body": "Nous utilisons votre nom, téléphone et pièce d'identité pour vous vérifier et faire fonctionner la plateforme. Les paiements passent par MoMo - nous ne touchons jamais à vos espèces. Nous partageons vos informations uniquement avec la personne avec qui vous travaillez, et uniquement ce dont elle a besoin. Vous pouvez supprimer votre compte à tout moment."
+    },
+    "sections": {
+      "sec1": {
+        "title": "Informations que nous collectons",
+        "body": "Lors de votre inscription, nous collectons votre nom complet, votre numéro de téléphone et votre numéro de carte nationale d'identité. Les travailleurs soumettent également une photo de leur pièce d'identité pour vérification. Lorsque vous utilisez la plateforme, nous collectons l'historique des emplois, les évaluations et les données de localisation générale (au niveau du district) pour vous mettre en relation avec des opportunités ou des travailleurs à proximité. Nous ne collectons pas de coordonnées GPS précises sans votre consentement explicite."
+      },
+      "sec2": {
+        "title": "Comment nous utilisons vos informations",
+        "body": "Nous utilisons vos données pour faire fonctionner la plateforme : vérifier les identités, mettre en relation les travailleurs et les emplois, traiter les paiements MoMo et afficher votre note aux employeurs ou travailleurs potentiels. Nous pouvons également utiliser des données agrégées et anonymisées pour améliorer nos algorithmes de mise en relation et comprendre comment la plateforme est utilisée - ces données ne permettent pas de vous identifier individuellement."
+      },
+      "sec3": {
+        "title": "Avec qui nous partageons vos données",
+        "body": "Lorsqu'un travail est confirmé, l'employeur peut voir le nom du travailleur, sa photo, sa note et son expérience de catégorie d'emploi - et vice versa. Au-delà, nous partageons les données uniquement avec MTN MoMo pour le traitement des paiements et, si la loi l'exige, avec les forces de l'ordre ou les autorités réglementaires rwandaises. Nous ne vendons, ne louons ni n'échangeons vos données personnelles avec des tiers à des fins de marketing."
+      },
+      "sec4": {
+        "title": "Vérification d'identité",
+        "body": "Les travailleurs soumettent une pièce d'identité nationale lors de l'intégration. Ce document est examiné par notre équipe de vérification puis stocké dans un environnement chiffré et à accès restreint. Seul le personnel MpahMapu autorisé peut accéder aux pièces d'identité brutes, et uniquement dans le but de résoudre des litiges ou de respecter des obligations légales. Le statut vérifié est affiché sous forme de badge ; le document sous-jacent n'est jamais partagé avec les employeurs."
+      },
+      "sec5": {
+        "title": "MoMo et données de paiement",
+        "body": "Nous stockons uniquement le numéro de téléphone MoMo associé à votre compte. Les enregistrements de transaction complets sont détenus par MTN MoMo selon leur propre politique de confidentialité. MpahMapu conserve les enregistrements de paiement (montant, date, référence de l'emploi) jusqu'à 7 ans comme l'exige la législation fiscale rwandaise."
+      },
+      "sec6": {
+        "title": "Cookies et analyses d'application",
+        "body": "Nos plateformes web et mobiles utilisent des cookies essentiels pour vous maintenir connecté et mémoriser vos préférences. Nous utilisons également des outils d'analyse respectueux de la vie privée pour comprendre quelles fonctionnalités sont utilisées et où la plateforme peut être améliorée. Les données d'analyse sont agrégées et n'identifient pas les utilisateurs individuels. Vous pouvez désactiver les cookies non essentiels dans les paramètres de votre appareil ou de votre navigateur."
+      },
+      "sec7": {
+        "title": "Conservation des données",
+        "body": "Comptes actifs : les données sont conservées tant que votre compte est ouvert. Comptes supprimés : les données personnelles sont supprimées dans les 30 jours suivant la suppression, à l'exception des enregistrements de transaction (7 ans, obligation légale) et des données relatives aux litiges non résolus. Les données anonymisées et agrégées peuvent être conservées indéfiniment."
+      },
+      "sec8": {
+        "title": "Vos droits",
+        "body": "Conformément à la législation rwandaise et dans un esprit de pratiques équitables en matière de données, vous avez le droit d'accéder à une copie de vos données personnelles, de corriger les informations inexactes, de demander la suppression de votre compte et de vos données, et de vous opposer à certains traitements. Pour exercer l'un de ces droits, contactez privacy@MpahMapu.rw ou utilisez le formulaire de contact sur notre site. Nous vous répondrons sous 10 jours ouvrables."
+      },
+      "sec9": {
+        "title": "Sécurité",
+        "body": "Nous utilisons le chiffrement TLS pour toutes les données en transit, le chiffrement AES-256 pour les données sensibles au repos, et des contrôles d'accès stricts afin que seul le personnel qui a besoin des données pour effectuer son travail puisse y accéder. Nous effectuons régulièrement des examens de sécurité internes. Si une faille affectant vos données se produit, nous vous en informerons sous 72 heures et la signalerons à l'autorité rwandaise de la société de l'information (RISA) comme requis."
+      },
+      "sec10": {
+        "title": "Modifications de cette politique",
+        "body": "Nous pouvons mettre à jour cette politique de confidentialité pour refléter les changements de la loi ou de la plateforme. Si les modifications sont importantes, nous vous en informerons par SMS ou notification dans l'application au moins 7 jours avant leur entrée en vigueur. L'utilisation continue de MpahMapu après cette date constitue une acceptation."
+      },
+      "sec11": {
+        "title": "Nous contacter",
+        "body": "Pour les questions de confidentialité, les demandes de données ou pour signaler une préoccupation, contactez notre équipe chargée des données à l'adresse privacy@MpahMapu.rw. Pour les questions générales, utilisez legal@MpahMapu.rw ou le formulaire de contact sur notre site web."
+      }
+    },
+    "contact_banner": {
+      "title": "Questions sur les données et la confidentialité",
+      "email_prefix": "E-mail",
+      "email_suffix": "- nous répondons sous 10 jours ouvrables."
+    },
+    "cta": {
+      "title": "Prêt à commencer ?",
+      "desc": "Rejoignez des milliers de travailleurs et d'employeurs déjà sur MpahMapu.",
+      "btn_signup": "Créer un compte",
+      "btn_terms": "Conditions générales"
+    }
+  },
+  "terms": {
+    "hero": {
+      "tag": "Juridique",
+      "title_main": "Conditions",
+      "title_accent": "Générales",
+      "desc": "Ces conditions régissent votre utilisation de MpahMapu en tant que travailleur ou employeur. Veuillez les lire attentivement avant de créer un compte.",
+      "last_updated_prefix": "Dernière mise à jour :",
+      "last_updated_date": "1er juin 2025"
+    },
+    "intro": {
+      "summary_prefix": "Résumé rapide : ",
+      "summary_body": "MpahMapu met en relation les travailleurs et les employeurs au Rwanda. Vous êtes propriétaire de votre travail et de vos gains. Nous gérons la confiance, la vérification et les paiements MoMo. Soyez honnête, soyez respectueux, soyez à l'heure."
+    },
+    "sections": {
+      "sec1": {
+        "title": "Acceptation des conditions",
+        "body": "En créant un compte ou en utilisant MpahMapu - que ce soit en tant que travailleur ou employeur - vous acceptez d'être lié par ces Conditions Générales d'Utilisation. Si vous n'êtes pas d'accord, veuillez ne pas utiliser la plateforme. Nous pouvons mettre à jour ces conditions de temps à autre ; l'utilisation continue après toute modification signifie que vous acceptez les conditions révisées."
+      },
+      "sec2": {
+        "title": "Qui peut utiliser MpahMapu",
+        "body": "Vous devez avoir au moins 18 ans et être légalement autorisé à travailler ou à embaucher au Rwanda pour créer un compte. Les travailleurs doivent effectuer la vérification d'identité avant d'accepter des emplois. Les employeurs doivent fournir des informations commerciales ou personnelles précises lors de la publication d'offres. Les comptes sont non cessibles."
+      },
+      "sec3": {
+        "title": "Publication et acceptation d'emplois",
+        "body": "Les employeurs sont responsables de l'exactitude de chaque offre d'emploi - y compris le lieu, le tarif, la catégorie et la durée. Les travailleurs acceptent les emplois sur la base de ces informations ; toute fausse déclaration importante peut entraîner la suspension du compte. Les travailleurs doivent effectuer les travaux acceptés ou les annuler avec un préavis suffisant. Les absences répétées peuvent entraîner l'exclusion de la plateforme."
+      },
+      "sec4": {
+        "title": "Paiements via MoMo",
+        "body": "Tous les paiements sont traités via MTN Mobile Money (MoMo). Les employeurs sont facturés au tarif convenu plus les frais de service de MpahMapu au moment de la confirmation de l'emploi. Les fonds sont libérés pour les travailleurs dès la fin du travail. MpahMapu ne conserve pas les fonds plus longtemps que nécessaire et n'est pas responsable des retards causés par les délais de traitement propres à MoMo."
+      },
+      "sec5": {
+        "title": "Évaluations et conduite",
+        "body": "Les travailleurs et les employeurs peuvent être évalués après chaque travail effectué. Les évaluations doivent refléter une expérience réelle. Les avis frauduleux, de représailles ou forcés violent ces conditions et peuvent être supprimés. Tous les utilisateurs sont tenus de communiquer avec respect ; le harcèlement, la discrimination ou les abus de toute nature entraîneront la suppression définitive du compte."
+      },
+      "sec6": {
+        "title": "Litiges et remboursements",
+        "body": "En cas de litige - par exemple, si un travail n'a pas été effectué comme convenu - l'une ou l'autre des parties peut formuler une réclamation dans les 48 heures suivant l'heure de fin du travail. MpahMapu examinera les preuves disponibles et prendra une décision contraignante. Les remboursements, le cas échéant, sont traités via MoMo sous 3 à 5 jours ouvrables."
+      },
+      "sec7": {
+        "title": "Utilisations interdites",
+        "body": "Vous ne pouvez pas utiliser MpahMapu pour solliciter des travailleurs hors plateforme afin d'éviter les frais, publier des travaux illégaux ou dangereux, collecter les données personnelles d'autres utilisateurs sans consentement, ou tenter de rétro-concevoir, scraper ou interférer avec la plateforme. Les violations peuvent entraîner la résiliation immédiate du compte et, le cas échéant, des poursuites judiciaires."
+      },
+      "sec8": {
+        "title": "Limitation de responsabilité",
+        "body": "MpahMapu est une place de marché et n'est l'employeur ni l'employé d'aucune partie. Nous ne garantissons pas la qualité du travail effectué, la conduite des utilisateurs, ni la disponibilité des emplois. Dans la mesure maximale autorisée par la loi rwandaise, la responsabilité de MpahMapu pour toute réclamation est limitée aux frais que vous nous avez payés dans les 30 jours précédant l'événement donnant lieu à la réclamation."
+      },
+      "sec9": {
+        "title": "Loi applicable",
+        "body": "Ces conditions sont régies par les lois de la République du Rwanda. Tout litige qui ne pourra être résolu par le processus interne de MpahMapu sera soumis à la juridiction exclusive des tribunaux du Rwanda."
+      },
+      "sec10": {
+        "title": "Contact",
+        "body": "Des questions sur ces conditions ? Contactez-nous à legal@MpahMapu.rw ou via le formulaire de contact sur notre site web. Nous nous efforçons de répondre sous 2 jours ouvrables."
+      }
+    },
+    "cta": {
+      "title": "Prêt à commencer ?",
+      "desc": "En créant un compte, vous acceptez ces conditions.",
+      "btn_signup": "Créer un compte",
+      "btn_privacy": "Politique de confidentialité"
+    }
+  },
+  "post_job": {
+    "loading_map": "Chargement de la carte…",
+    "units": {
+      "hour": "heure",
+      "hours": "heures",
+      "day": "jour",
+      "days": "jours",
+      "week": "semaine",
+      "weeks": "semaines",
+      "month": "mois",
+      "months": "mois",
+      "year": "an",
+      "years": "ans"
+    },
+    "steps": {
+      "details": "Détails de l'emploi",
+      "review": "Vérifier & publier"
+    },
+    "errors": {
+      "required": "Obligatoire",
+      "invalid_rate": "Entrez un tarif valide",
+      "incomplete_form": "Veuillez remplir tous les champs obligatoires.",
+      "incomplete_form_title": "Formulaire incomplet",
+      "not_signed_in": "Vous devez être connecté pour publier un emploi.",
+      "not_signed_in_title": "Non connecté",
+      "post_failed": "Échec de la publication. Veuillez réessayer.",
+      "post_failed_title": "Échec de la publication"
+    },
+    "success": {
+      "title": "Offre publiée !",
+      "desc": "Votre offre est en ligne. Les travailleurs vérifiés de {location} commenceront à postuler sous peu."
+    },
+    "fields": {
+      "category": "Catégorie",
+      "date": "Date",
+      "time": "Heure",
+      "duration": "Durée",
+      "workers": "Travailleurs",
+      "location": "Lieu",
+      "rate": "Tarif",
+      "escrowed": "Bloqué en tiers de confiance"
+    },
+    "step_indicator": "Étape {current} sur {total}",
+    "labels": {
+      "category": "Catégorie d'emploi *",
+      "start_date": "Date de début *",
+      "start_time": "Heure de début *",
+      "rate_period": "Période tarifaire",
+      "duration": "Durée",
+      "workers_count": "Nombre de travailleurs",
+      "province": "Province",
+      "district": "District *",
+      "precise_location": "Emplacement précis (cliquez sur la carte ou utilisez le GPS)",
+      "rate_label": "Tarif par travailleur {period} (RWF) *",
+      "notes": "Notes supplémentaires (optionnel)"
+    },
+    "placeholders": {
+      "search_category": "Rechercher une catégorie…",
+      "province": "Province…",
+      "district": "District…",
+      "rate": "ex. 3000",
+      "notes": "ex. tenue correcte exigée, outils fournis, événement en plein air…"
+    },
+    "gps": {
+      "detecting": "Détection…",
+      "detected": "GPS détecté",
+      "detect": "Détecter mon GPS",
+      "error": "Impossible d'accéder au GPS"
+    },
+    "options": {
+      "per_hour": "Par heure",
+      "per_day": "Par jour",
+      "per_week": "Par semaine",
+      "per_month": "Par mois",
+      "per_year": "Par an"
+    },
+    "review": {
+      "must_be_signed_in": "Vous devez être connecté en tant qu'employeur pour publier un emploi.",
+      "summary_title": "Résumé de l'offre",
+      "payment_title": "Paiement",
+      "gross": "Brut ({details})",
+      "platform_fee": "Frais de plateforme (25% du travailleur)",
+      "workers_receive": "Les travailleurs reçoivent",
+      "escrow_charge": "Votre charge bloquée",
+      "wallet_balance": "Solde du portefeuille",
+      "insufficient_funds_msg": "Il vous manque {amount}.",
+      "top_up_link": "Recharger le portefeuille →",
+      "agreement_hint": "En publiant, vous acceptez nos conditions. Vos coordonnées ne sont partagées qu'avec les travailleurs qui postulent.",
+      "posting_btn": "Publication…",
+      "insufficient_balance_btn": "Solde insuffisant",
+      "submit_btn": "Publier & geler les fonds"
+    }
+  },
+  "offer": {
+    "loading_map": "Chargement de la carte…",
+    "success": {
+      "title": "Offre envoyée !",
+      "desc": "{name} sera notifié(e) avec vos détails et un lien pour accepter ou négocier.",
+      "notification": "Notification du travailleur"
+    },
+    "fields": {
+      "job": "Emploi",
+      "date": "Date",
+      "duration": "Durée",
+      "province": "Province",
+      "district": "District",
+      "offer": "Offre",
+      "done": "Terminé"
+    },
+    "header": {
+      "title": "Faire une offre",
+      "subtitle": "Embaucher {name}"
+    },
+    "labels": {
+      "title": "Titre de l'emploi *",
+      "start_date": "Date de début *",
+      "start_time": "Heure de début *",
+      "rate_period": "Période tarifaire",
+      "duration": "Durée *",
+      "province": "Province",
+      "district": "District *",
+      "precise_location": "Emplacement précis (cliquez sur la carte ou utilisez le GPS)",
+      "offer_price": "Votre tarif proposé {period} (RWF) *"
+    },
+    "placeholders": {
+      "title": "ex. Serveur pour un mariage",
+      "rate": "ex. 8000",
+      "province": "Province…",
+      "district": "District…"
+    },
+    "gps": {
+      "detecting": "Détection…",
+      "detected": "GPS détecté",
+      "detect": "Détecter mon GPS",
+      "error": "Impossible d'accéder au GPS"
+    },
+    "buttons": {
+      "send": "Envoyer l'offre"
+    }
+  },
+  "apply": {
+    "success": {
+      "title": "Candidature envoyée !",
+      "desc": "Votre candidature pour {title} a été soumise. {name} en sera notifié(e)."
+    },
+    "header": {
+      "title": "Postuler à l'emploi"
+    },
+    "errors": {
+      "must_be_signed_in": "Vous devez être connecté pour postuler à des emplois.",
+      "failed": "Échec de la soumission de la candidature. Veuillez réessayer.",
+      "failed_title": "Échec de la candidature"
+    },
+    "labels": {
+      "best_fit": "Pourquoi êtes-vous le/la candidat(e) idéal(e) ? (optionnel)"
+    },
+    "placeholders": {
+      "best_fit": "Décrivez votre expérience, vos compétences ou vos disponibilités qui font de vous le candidat idéal pour ce rôle…"
+    },
+    "buttons": {
+      "submit": "Soumettre la candidature",
+      "submitting": "Envoi en cours…",
+      "close": "Fermer"
+    }
+  },
+  "jobs_page": {
+    "hero": {
+      "subtitle": "Postes vacants dans tout le Rwanda - postulez ou publiez le vôtre."
+    },
+    "buttons": {
+      "post_job": "Publier un emploi",
+      "filters": "Filtres",
+      "clear_all": "Effacer tout"
+    },
+    "placeholders": {
+      "search": "Rechercher des emplois ou catégories…"
+    },
+    "filters": {
+      "location": "Emplacement",
+      "min_pay": "Salaire min (RWF)",
+      "sort_by": "Trier par",
+      "urgent_only": "Urgent uniquement",
+      "urgent": "Urgent uniquement",
+      "min": "Min",
+      "max_pay": "Salaire max (RWF)"
+    },
+    "sort_options": {
+      "newest": "Le plus récent",
+      "pay_asc": "Salaire : croissant",
+      "pay_desc": "Salaire : décroissant"
+    },
+    "loading": "Chargement…",
+    "found_count": "{count} emplois trouvés",
+    "badges": {
+      "urgent": "Urgent"
+    },
+    "cards": {
+      "slots_open": "{count} postes ouverts",
+      "apply": "Postuler"
+    },
+    "empty": {
+      "title": "Aucun emploi ne correspond à vos filtres.",
+      "desc": "Essayez d'ajuster votre recherche ou d'effacer les filtres."
+    },
+    "cta": {
+      "title": "Besoin d'embaucher quelqu'un ?",
+      "desc": "Publiez un emploi en moins de 2 minutes et trouvez des travailleurs vérifiés dans votre région.",
+      "button": "Publier un emploi"
+    }
+  },
+  "browse_page": {
+    "hero": {
+      "subtitle": "Trouvez des travailleurs vérifiés ou des emplois disponibles dans tout le Rwanda."
+    },
+    "tabs": {
+      "workers": "Travailleurs",
+      "jobs": "Emplois"
+    },
+    "placeholders": {
+      "search_workers": "Rechercher des travailleurs ou catégories…"
+    },
+    "workers_found": "{count} travailleurs trouvés",
+    "badges": {
+      "available": "Disponible"
+    },
+    "empty": {
+      "workers": "Aucun travailleur ne correspond à vos filtres."
+    }
+  },
+  "worker_detail": {
+    "not_found": "Travailleur non trouvé",
+    "not_found_desc": "Ce profil n'existe pas ou a été supprimé.",
+    "back": "← Retour à la recherche",
+    "badges": {
+      "verified": "Vérifié",
+      "unavailable": "Non disponible",
+      "new": "Nouveau travailleur"
+    },
+    "member_since": "Membre depuis {year}",
+    "sections": {
+      "available_days": "Jours disponibles",
+      "education": "Éducation",
+      "equipment": "Équipement & outils",
+      "trust": "Confiance & vérification"
+    },
+    "trust": {
+      "identity": "Identité enregistrée sur MpahMapu",
+      "member_since": "Membre actif depuis {year}",
+      "specialty": "Spécialisé en {category}",
+      "availability": "{count} jours disponibles par semaine"
+    },
+    "cta": {
+      "button_hire": "Recruter {name}",
+      "hire": "Embaucher {name}",
+      "unavailable": "Indisponible"
+    }
+  },
+  "not_found_page": {
+    "title": "Page non trouvée",
+    "heading": "Page non trouvée",
+    "description": "Désolé, nous n'avons pas pu trouver la page que vous recherchez. Elle a peut-être été déplacée ou n'existe plus.",
+    "go_home": "Retour à l'accueil",
+    "browse_workers": "Parcourir les travailleurs",
+    "find_jobs": "Trouver des emplois"
+  },
+  "forgot_password_page": {
+    "back_to_sign_in": "Retour à la connexion",
+    "title": "Mot de passe oublié ?",
+    "subtitle": "Saisissez l'adresse e-mail associée à votre compte MpahMapu et nous vous enverrons un lien de réinitialisation.",
+    "email_label": "E-mail",
+    "email_placeholder": "vous@exemple.com",
+    "sending": "Envoi en cours...",
+    "submit_btn": "Envoyer le lien",
+    "success_title": "Vérifiez votre boîte de réception",
+    "success_subtitle": "Nous avons envoyé un lien de réinitialisation à {email}. Il expire dans 15 minutes.",
+    "didnt_receive": "Vous ne l'avez pas reçu ? Vérifiez votre dossier de spam, ou",
+    "try_different_email": "essayez une autre adresse e-mail"
+  },
+  "reset_password_page": {
+    "back_to_sign_in": "Retour à la connexion",
+    "title": "Définir un nouveau mot de passe",
+    "subtitle": "Choisissez un mot de passe fort. Vous ne pourrez pas réutiliser votre dernier mot de passe.",
+    "new_password_label": "Nouveau mot de passe",
+    "confirm_password_label": "Confirmer le mot de passe",
+    "resetting": "Réinitialisation...",
+    "submit_btn": "Réinitialiser le mot de passe",
+    "success_title": "Mot de passe mis à jour",
+    "success_subtitle": "Votre mot de passe a été réinitialisé. Toutes les autres sessions ont été déconnectées par mesure de sécurité.",
+    "signin_btn": "Se connecter",
+    "strength": {
+      "weak": "Faible",
+      "fair": "Moyen",
+      "good": "Bon",
+      "strong": "Fort"
+    },
+    "toasts": {
+      "missing_token": "Jeton de réinitialisation manquant ou invalide.",
+      "reset_failed": "Échec de la réinitialisation",
+      "password_short": "Le mot de passe doit contenir au moins 8 caractères.",
+      "passwords_mismatch": "Les mots de passe ne correspondent pas.",
+      "reset_success": "Votre mot de passe a été réinitialisé. Vous pouvez maintenant vous connecter.",
+      "password_updated": "Mot de passe mis à jour"
+    }
+  },
+  "verify_badge_page": {
+    "loading": "Vérification du badge...",
+    "not_found": {
+      "title": "Badge non trouvé",
+      "desc": "Aucun badge avec l'ID {badgeId} n'est enregistré sur Mpah Mapu. Ce badge est peut-être invalide ou contrefait."
+    },
+    "verified": "Vérifié par Mpah Mapu",
+    "inactive": "Badge {status}",
+    "role_company": "Entreprise vérifiée",
+    "role_worker": "Travailleur vérifié",
+    "since": "Depuis {year}",
+    "reviews_count": {
+      "one": "1 avis",
+      "other": "{count} avis"
+    },
+    "no_reviews": "Aucun avis pour l'instant",
+    "jobs_completed": "Missions complétées",
+    "id_label": "ID",
+    "view_profile": "Voir le profil complet",
+    "inactive_warning": "Le compte de ce titulaire de badge est actuellement {status}. Veuillez traiter ce badge avec prudence.",
+    "footer_note": "Scannez n'importe quel badge Mpah Mapu pour confirmer l'identité du titulaire."
+  },
+  "badge_wizard": {
+    "identity_title": "Vérification d'identité du travailleur",
+    "location_title": "Vérification de l'adresse réelle",
+    "completed_title": "Badge généré !",
+    "identity_subtitle": "Veuillez fournir votre photo, votre carte d'identité nationale et votre nom légal",
+    "location_subtitle": "Confirmez l'adresse enregistrée sur votre profil",
+    "completed_subtitle": "Votre badge unique est prêt.",
+    "fields": {
+      "photo_label": "Photo d'identité / Selfie",
+      "national_id_label": "Numéro d'identité nationale",
+      "legal_name_label": "Nom légal (nom enregistré)",
+      "address_label": "Adresse enregistrée"
+    },
+    "toasts": {
+      "photo_success": "Photo téléchargée avec succès",
+      "photo_failed": "Échec du téléchargement de la photo",
+      "validation_error": "Tous les champs d'identité sont obligatoires.",
+      "submit_failed": "Échec de la soumission des informations du badge."
+    },
+    "status": {
+      "uploading": "Téléchargement...",
+      "photo_ready": "Photo prête ! Appuyez pour changer",
+      "photo_placeholder": "Appuyez pour prendre un selfie ou télécharger",
+      "photo_hint": "Photo de face claire",
+      "address_loading": "Chargement de votre adresse enregistrée...",
+      "address_hint": "C'est l'adresse enregistrée sur votre profil. Pour la modifier, mettez à jour l'emplacement de votre profil dans les Paramètres.",
+      "address_missing": "Aucune adresse enregistrée trouvée. Veuillez compléter l'emplacement de votre profil avant de demander un badge."
+    },
+    "continue_btn": "Continuer",
+    "submit_btn": "Soumettre et générer le badge",
+    "badge_id_label": "ID du badge :",
+    "view_badge_btn": "Voir mon badge",
+    "close_btn": "Fermer"
+  },
+  "titles": {
+    "home": "MpahMapu - Recrutez des travailleurs vérifiés à Kigali, Rwanda",
+    "browse": "Parcourir les travailleurs | MpahMapu",
+    "jobs": "Trouver des emplois | MpahMapu",
+    "about": "À propos de nous | MpahMapu",
+    "contact": "Contactez-nous | MpahMapu",
+    "privacy_policy": "Politique de confidentialité | MpahMapu",
+    "terms_and_conditions": "Conditions d'utilisation | MpahMapu",
+    "signin": "Se connecter | MpahMapu",
+    "signup": "S'inscrire | MpahMapu",
+    "forgot_password": "Mot de passe oublié | MpahMapu",
+    "reset_password": "Réinitialiser le mot de passe | MpahMapu",
+    "verify_badge": "Vérifier le badge | MpahMapu",
+    "not_found": "Page non trouvée | MpahMapu"
+  },
+  "settings_page": {
+    "title": "Paramètres",
+    "subtitle": "Gérez votre compte, votre sécurité et vos préférences",
+    "tabs": {
+      "profile": "Profil",
+      "security": "Sécurité",
+      "notifications": "Notifications",
+      "account": "Compte"
+    },
+    "profile": {
+      "title": "Informations du profil",
+      "full_name": "Nom complet",
+      "phone_number": "Numéro de téléphone (MoMo)",
+      "email": "Adresse e-mail",
+      "email_hint": "L'adresse e-mail ne peut pas être modifiée. Contactez le support pour la mettre à jour.",
+      "save_btn": "Enregistrer les modifications",
+      "saving": "Enregistrement...",
+      "saved": "Enregistré"
+    },
+    "language": {
+      "title": "Préférences de langue",
+      "subtitle": "Choisissez votre langue préférée pour le tableau de bord. Cela mettra à jour le texte et la langue de l'interface."
+    },
+    "worker_details": {
+      "title": "Détails du travailleur",
+      "dob": "Date de naissance",
+      "education": "Niveau d'études",
+      "category": "Catégorie de travail",
+      "category_search_placeholder": "Rechercher des catégories...",
+      "location_availability": "Localisation & Disponibilité",
+      "availability": "Disponibilité hebdomadaire",
+      "equipment": "Équipements & Outils",
+      "equipment_placeholder": "Saisissez un outil et appuyez sur Entrée...",
+      "bio": "Biographie professionnelle",
+      "bio_placeholder": "Parlez-nous de votre expérience...",
+      "save_worker_btn": "Enregistrer le profil de travailleur"
+    },
+    "security": {
+      "password_title": "Modifier le mot de passe",
+      "cur_password": "Mot de passe actuel",
+      "new_password": "Nouveau mot de passe",
+      "new_password_placeholder": "Au moins 8 caractères",
+      "confirm_password": "Confirmer le nouveau mot de passe",
+      "confirm_password_placeholder": "Répéter le nouveau mot de passe",
+      "strength": "Force du mot de passe",
+      "totp_title": "Authentification à deux facteurs (2FA)",
+      "totp_desc_enabled": "L'authentification à deux facteurs est actuellement active sur votre compte.",
+      "totp_desc_disabled": "Ajoutez une couche de sécurité supplémentaire en exigeant un code de vérification lors de la connexion.",
+      "totp_enable_btn": "Activer la 2FA",
+      "totp_disable_btn": "Désactiver la 2FA",
+      "totp_setup_title": "Configurer la 2FA",
+      "totp_setup_desc": "Scannez ce code QR avec votre application d'authentification (comme Google Authenticator) et saisissez le code à 6 chiffres ci-dessous.",
+      "totp_code_placeholder": "000000",
+      "totp_verify_btn": "Vérifier & Activer",
+      "active_sessions_title": "Sessions actives",
+      "logout_devices_btn": "Déconnecter les autres appareils",
+      "current_session": "Session actuelle"
+    },
+    "notifications": {
+      "title": "Préférences de notification",
+      "desc": "Choisissez comment et quand vous souhaitez recevoir des alertes et des notifications.",
+      "email": "Notifications par e-mail",
+      "email_desc": "Recevez les mises à jour d'emploi, les factures et les alertes de compte.",
+      "push": "Notifications push",
+      "push_desc": "Recevez des mises à jour instantanées directement sur votre navigateur ou appareil.",
+      "sms": "Alertes SMS",
+      "sms_desc": "Recevez des SMS pour les demandes et correspondances d'emploi urgentes.",
+      "save_btn": "Enregistrer les préférences"
+    },
+    "account": {
+      "title": "Informations du compte",
+      "member_since": "Membre depuis",
+      "role": "Rôle du compte",
+      "status": "Statut du compte",
+      "badge_id": "ID du badge",
+      "badge_url": "Lien du badge",
+      "verified": "Vérifié",
+      "not_verified": "Non vérifié",
+      "request_badge_btn": "Demander le badge de travailleur",
+      "verification_badge_title": "Badge de vérification",
+      "verification_badge_desc": "Montrez aux clients que vous êtes vérifié et digne de confiance. La demande de badge génère une carte de badge de profil unique."
+    }
+  },
+  "dashboard_home": {
+    "morning": "Bonjour",
+    "afternoon": "Bon après-midi",
+    "evening": "Bonsoir",
+    "greeting_sub": "Voici ce qui se passe avec votre travail aujourd'hui.",
+    "worker_badge": "Badge de travailleur",
+    "profile_under_review": "Votre profil est en cours de révision",
+    "complete_profile": "Complétez votre profil pour être approuvé",
+    "admin_approval_desc": "Un administrateur approuvera votre compte sous peu. Vous serez visible par les employeurs une fois approuvé.",
+    "profile_completion_desc": "Atteignez 80% de complétion de profil pour être éligible à l'approbation administrative.",
+    "profile": "Profil",
+    "wallet_balance": "Solde du portefeuille",
+    "available_balance": "Solde disponible",
+    "active_jobs": "Emplois actifs",
+    "currently_hired": "Actuellement embauché",
+    "direct_offers": "Offres directes",
+    "awaiting_reply": "En attente de votre réponse",
+    "total_earned": "Total gagné",
+    "released_payments": "Paiements libérés",
+    "direct_offers_title": "Offres directes",
+    "view_all": "Voir tout",
+    "direct_offer_label": "Offre directe",
+    "accept": "Accepter",
+    "reject": "Refuser",
+    "my_wallet": "Mon portefeuille",
+    "in_escrow": "en dépôt",
+    "released": "libéré",
+    "manage_wallet": "Gérer le portefeuille",
+    "quick_stats": "Statistiques rapides",
+    "total_applications": "Total des candidatures",
+    "pending_replies": "Réponses en attente",
+    "payments_released": "Paiements libérés",
+    "recent_applications": "Candidatures récentes",
+    "see_all": "Voir tout",
+    "no_applications": "Aucune candidature pour le moment",
+    "no_applications_desc": "Parcourez les emplois ouverts et postulez pour commencer à gagner",
+    "browse_jobs": "Parcourir les emplois",
+    "loading": "Chargement..."
+  }
+}

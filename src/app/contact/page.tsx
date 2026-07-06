@@ -6,39 +6,41 @@ import { Mail, Phone, MapPin, Send, MessageSquare, Clock, Loader2 } from "lucide
 import { submitContact } from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
 import { BreadcrumbSchema } from "@/components/seo/json-ld";
-
-const info = [
-  {
-    Icon: Mail,
-    label: "Email us",
-    value: "info@mpahmapu.com",
-    href: "mailto:info@mpahmapu.com",
-  },
-  {
-    Icon: Phone,
-    label: "Call or WhatsApp",
-    value: "+250 781 121 117",
-    href: "tel:+250781121117",
-  },
-  {
-    Icon: MapPin,
-    label: "Location",
-    value: "Kigali, Rwanda",
-    href: "#",
-  },
-  {
-    Icon: Clock,
-    label: "Response time",
-    value: "Within 24 hours",
-    href: null,
-  },
-];
+import { useLanguage } from "@/lib/language-context";
 
 export default function ContactPage() {
+  const { t } = useLanguage();
   const { error: toastError, success: toastSuccess } = useToast();
   const [form, setForm]       = useState({ name: "", email: "", subject: "", message: "" });
   const [sent, setSent]       = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const info = [
+    {
+      Icon: Mail,
+      label: t("contact.info.email"),
+      value: "info@mpahmapu.com",
+      href: "mailto:info@mpahmapu.com",
+    },
+    {
+      Icon: Phone,
+      label: t("contact.info.phone"),
+      value: "+250 781 121 117",
+      href: "tel:+250781121117",
+    },
+    {
+      Icon: MapPin,
+      label: t("contact.info.location"),
+      value: "Kigali, Rwanda",
+      href: "#",
+    },
+    {
+      Icon: Clock,
+      label: t("contact.info.response_time"),
+      value: t("contact.info.response_value"),
+      href: null,
+    },
+  ];
 
   const set = (k: keyof typeof form) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -47,20 +49,21 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.message) {
-      toastError("Please fill in all required fields.", { title: "Incomplete Form" });
+      toastError(t("contact.form.validation_error"), { title: t("contact.form.validation_error_title") });
       return;
     }
     setSubmitting(true);
     try {
       await submitContact(form);
-      toastSuccess("Your message has been sent. We'll get back to you within 24 hours.", { title: "Message Sent" });
+      toastSuccess(t("contact.form.send_success_toast"), { title: t("contact.form.send_success_toast_title") });
       setSent(true);
     } catch {
-      toastError("Failed to send message. Please try again or email us directly.", { title: "Send Failed" });
+      toastError(t("contact.form.send_fail_toast"), { title: t("contact.form.send_fail_toast_title") });
     } finally {
       setSubmitting(false);
     }
   };
+
 
   return (
     <main style={{
@@ -82,17 +85,17 @@ export default function ContactPage() {
             borderRadius: 999, padding: "4px 14px", fontSize: 11, fontWeight: 700,
             letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 18,
           }}>
-            Get in touch
+            {t("contact.hero.tag")}
           </span>
           <h1 style={{
             fontSize: "clamp(28px, 5vw, 42px)", fontWeight: 900, color: "#fff",
             lineHeight: 1.1, letterSpacing: "-1px", margin: "0 0 14px",
           }}>
-            We&apos;d love to<br />
-            <span style={{ color: "#f97316" }}>hear from you.</span>
+            {t("contact.hero.title_main")}<br />
+            <span style={{ color: "#f97316" }}>{t("contact.hero.title_accent")}</span>
           </h1>
           <p style={{ fontSize: 14, color: "#666", lineHeight: 1.75, maxWidth: 420, margin: 0 }}>
-            Whether you have a question, a partnership idea, or just want to say hi - we&apos;re here.
+            {t("contact.hero.desc")}
           </p>
         </div>
 
@@ -126,34 +129,34 @@ export default function ContactPage() {
                       }}>
                         <MessageSquare size={24} color="#f97316" />
                       </div>
-                      <h2 style={{ margin: "0 0 8px", fontSize: 18, fontWeight: 800, color: "#fff" }}>Message sent!</h2>
+                      <h2 style={{ margin: "0 0 8px", fontSize: 18, fontWeight: 800, color: "#fff" }}>{t("contact.form.sent_success_title")}</h2>
                       <p style={{ margin: "0 0 22px", fontSize: 13, color: "#555" }}>
-                        We&apos;ll get back to you within 24 hours.
+                        {t("contact.form.sent_success_desc")}
                       </p>
                       <button onClick={() => { setSent(false); setForm({ name: "", email: "", subject: "", message: "" }); }}
                         style={{
                           background: "none", border: "1px solid #2a2a2a", borderRadius: 999,
                           padding: "9px 20px", fontSize: 13, color: "#aaa", cursor: "pointer", fontWeight: 600,
                         }}>
-                        Send another
+                        {t("contact.form.btn_another")}
                       </button>
                     </div>
                   ) : (
                     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                      <h2 style={{ margin: "0 0 4px", fontSize: 16, fontWeight: 800, color: "#fff" }}>Send a message</h2>
+                      <h2 style={{ margin: "0 0 4px", fontSize: 16, fontWeight: 800, color: "#fff" }}>{t("contact.form.title")}</h2>
 
                       {/* Name + Email */}
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                         <style>{`@media (max-width: 480px) { .name-email { grid-template-columns: 1fr !important; } }`}</style>
                         <div className="name-email" style={{ display: "contents" }}>
-                          <Field label="Your name">
+                          <Field label={t("contact.form.name_label")}>
                             <input required type="text" placeholder="Jean Pierre" value={form.name}
                               onChange={set("name")} style={inputStyle}
                               onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                               onBlur={e => (e.currentTarget.style.borderColor = "#2a2a2a")}
                             />
                           </Field>
-                          <Field label="Email">
+                          <Field label={t("contact.form.email_label")}>
                             <input required type="email" placeholder="you@example.com" value={form.email}
                               onChange={set("email")} style={inputStyle}
                               onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
@@ -164,20 +167,20 @@ export default function ContactPage() {
                       </div>
 
                       {/* Subject */}
-                      <Field label="Subject">
+                      <Field label={t("contact.form.subject_label")}>
                         <div style={{ position: "relative" }}>
                           <select required value={form.subject} onChange={set("subject")}
                             style={{ ...inputStyle, color: form.subject ? "#f0f0f0" : "#444", appearance: "none" }}
                             onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                             onBlur={e => (e.currentTarget.style.borderColor = "#2a2a2a")}
                           >
-                            <option value="">Select a topic…</option>
-                            <option>General question</option>
-                            <option>Partnership</option>
-                            <option>Worker support</option>
-                            <option>Employer support</option>
-                            <option>Report an issue</option>
-                            <option>Other</option>
+                            <option value="">{t("contact.form.subject_placeholder")}</option>
+                            <option value="General question">{t("contact.topics.general")}</option>
+                            <option value="Partnership">{t("contact.topics.partnership")}</option>
+                            <option value="Worker support">{t("contact.topics.worker_support")}</option>
+                            <option value="Employer support">{t("contact.topics.employer_support")}</option>
+                            <option value="Report an issue">{t("contact.topics.report_issue")}</option>
+                            <option value="Other">{t("contact.topics.other")}</option>
                           </select>
                           <svg style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}
                             width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2.5">
@@ -187,8 +190,8 @@ export default function ContactPage() {
                       </Field>
 
                       {/* Message */}
-                      <Field label="Message">
-                        <textarea required placeholder="Tell us what's on your mind…" value={form.message}
+                      <Field label={t("contact.form.message_label")}>
+                        <textarea required placeholder={t("contact.form.message_placeholder")} value={form.message}
                           onChange={set("message")} rows={5}
                           style={{ ...inputStyle, padding: "11px 14px", lineHeight: 1.7 }}
                           onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
@@ -206,7 +209,7 @@ export default function ContactPage() {
                         onMouseLeave={e => { if (!submitting) e.currentTarget.style.background = "#f97316"; }}
                       >
                         {submitting ? <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} /> : <Send size={14} />}
-                        {submitting ? "Sending…" : "Send message"}
+                        {submitting ? t("contact.form.btn_sending") : t("contact.form.btn_send")}
                       </button>
                       <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
                     </form>

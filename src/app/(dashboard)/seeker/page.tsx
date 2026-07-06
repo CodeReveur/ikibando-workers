@@ -13,6 +13,7 @@ import {
 import { StatCard, SectionHead, Dot, PageLoader } from "@/components/dashboard/ui";
 import { fmt } from "@/lib/dashboard-data";
 import { useSession } from "@/components/dashboard/session-ctx";
+import { useLanguage } from "@/lib/language-context";
 
 const CSS = `
   .sk-card { transition:border-color 0.12s, background 0.12s; }
@@ -23,10 +24,22 @@ const CSS = `
   .act-btn.accept:hover  { background:rgba(34,197,94,0.14); border-color:#22c55e; }
   .act-btn.reject  { background:rgba(239,68,68,0.07); color:#ef4444; border-color:rgba(239,68,68,0.2); }
   .act-btn.reject:hover  { background:rgba(239,68,68,0.14); border-color:#ef4444; }
+  .stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:28px; }
+  .wallet-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:28px; }
+  @media (max-width: 900px) { .stat-grid { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 500px) { .stat-grid { grid-template-columns: 1fr; } .wallet-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 340px) {
+    .stat-grid { gap: 6px; margin-bottom: 14px; }
+    .wallet-grid { gap: 6px; margin-bottom: 14px; }
+    .greeting-row { margin-bottom: 14px; }
+    .act-btn { padding: 4px 8px; font-size: 10px; }
+  }
+  .greeting-row { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:28px; gap:16px; flex-wrap:wrap; }
 `;
 
 export default function SeekerHome() {
   const session  = useSession();
+  const { t, language } = useLanguage();
   const [wallet,  setWallet]  = useState<WalletDto | null>(null);
   const [apps,    setApps]    = useState<ApplicationDto[]>([]);
   const [txns,    setTxns]    = useState<PaymentDto[]>([]);
@@ -67,20 +80,30 @@ export default function SeekerHome() {
   const recent     = [...apps].sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 4);
 
   const hour = new Date().getHours();
-  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const greetingKey = hour < 12 ? "morning" : hour < 17 ? "afternoon" : "evening";
+  const greeting = t(`dashboard_home.${greetingKey}`);
+
+  const dateLocaleMap: Record<string, string> = {
+    rw: "rw-RW",
+    kinyy: "rw-RW",
+    sw: "sw-TZ",
+    fr: "fr-FR",
+    en: "en-US",
+  };
+  const currentLocale = dateLocaleMap[language] || "en-RW";
 
   return (
     <div>
       <style>{CSS}</style>
 
       {/* Greeting */}
-      <div style={{ marginBottom:28, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+      <div className="greeting-row">
         <div>
           <p style={{ margin:"0 0 4px", fontSize:22, fontWeight:900, color:"#e8e8e8", letterSpacing:"-0.5px" }}>
-            {greeting}, {session?.name?.split(" ")[0] ?? "there"} 👋
+            {greeting}, {(session?.name?.split(" ")[0] ?? t("dashboard_home.there")) || "there"} 👋
           </p>
           <p style={{ margin:0, fontSize:13, color:"#444" }}>
-            Here's what's happening with your work today.
+            {t("dashboard_home.greeting_sub")}
           </p>
         </div>
         {session?.badgeId && (
@@ -106,7 +129,7 @@ export default function SeekerHome() {
               <img src={session.photoUrl} alt="Badge Photo" style={{ width: 36, height: 36, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(255,255,255,0.3)" }} />
             )}
             <div>
-              <p style={{ margin: 0, fontSize: 10, textTransform: "uppercase", fontWeight: 800, color: "rgba(255,255,255,0.8)", letterSpacing: "1px" }}>Worker Badge</p>
+              <p style={{ margin: 0, fontSize: 10, textTransform: "uppercase", fontWeight: 800, color: "rgba(255,255,255,0.8)", letterSpacing: "1px" }}>{t("dashboard_home.worker_badge")}</p>
               <p style={{ margin: 0, fontSize: 15, fontWeight: 900, color: "#fff", letterSpacing: "1px" }}>{session.badgeId}</p>
             </div>
           </a>
@@ -124,18 +147,18 @@ export default function SeekerHome() {
           <div style={{ flex: 1, minWidth: 220 }}>
             <p style={{ margin: "0 0 3px", fontSize: 14, fontWeight: 800, color: "#f4f4f4" }}>
               {session.approvalEligible
-                ? "Your profile is under review"
-                : "Complete your profile to get approved"}
+                ? t("dashboard_home.profile_under_review")
+                : t("dashboard_home.complete_profile")}
             </p>
             <p style={{ margin: 0, fontSize: 12, color: "#9a9a9a" }}>
               {session.approvalEligible
-                ? "An admin will approve your account shortly. You'll be visible to employers once approved."
-                : "Reach 80% profile completion to become eligible for admin approval."}
+                ? t("dashboard_home.admin_approval_desc")
+                : t("dashboard_home.profile_completion_desc")}
             </p>
           </div>
           <div style={{ minWidth: 120 }}>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#9a9a9a", marginBottom: 4 }}>
-              <span>Profile</span><span>{session.profileCompletion ?? 0}%</span>
+              <span>{t("dashboard_home.profile")}</span><span>{session.profileCompletion ?? 0}%</span>
             </div>
             <div style={{ height: 6, borderRadius: 3, background: "#222", overflow: "hidden" }}>
               <div style={{
@@ -148,19 +171,19 @@ export default function SeekerHome() {
       )}
 
       {/* Stats */}
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12, marginBottom:28 }}>
-        <StatCard label="Wallet Balance"   value={fmt(wallet?.balance ?? 0)} sub="Available balance"   accent="#f97316" />
-        <StatCard label="Active Jobs"      value={String(active.length)}     sub="Currently hired"     accent="#22c55e" />
-        <StatCard label="Direct Offers"    value={String(hireNow.length)}    sub="Awaiting your reply" accent="#60a5fa" />
-        <StatCard label="Total Earned"     value={fmt(earned)}               sub="Released payments"   accent="#a78bfa" />
+      <div className="stat-grid">
+        <StatCard label={t("dashboard_home.wallet_balance")}   value={fmt(wallet?.balance ?? 0)} sub={t("dashboard_home.available_balance")}   accent="#f97316" />
+        <StatCard label={t("dashboard_home.active_jobs")}      value={String(active.length)}     sub={t("dashboard_home.currently_hired")}     accent="#22c55e" />
+        <StatCard label={t("dashboard_home.direct_offers")}    value={String(hireNow.length)}    sub={t("dashboard_home.awaiting_reply")} accent="#60a5fa" />
+        <StatCard label={t("dashboard_home.total_earned")}     value={fmt(earned)}               sub={t("dashboard_home.released_payments")}   accent="#a78bfa" />
       </div>
 
       {/* Direct Hire-Now Offers */}
       {hireNow.length > 0 && (
         <>
-          <SectionHead title="Direct Offers" action={
+          <SectionHead title={t("dashboard_home.direct_offers_title")} action={
             <a href="/seeker/applications" style={{ display:"flex", alignItems:"center", gap:4, fontSize:12, fontWeight:700, color:"#60a5fa", textDecoration:"none" }}>
-              View all <ArrowRight size={12} />
+              {t("dashboard_home.view_all")} <ArrowRight size={12} />
             </a>
           } />
           <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:28 }}>
@@ -176,7 +199,7 @@ export default function SeekerHome() {
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:7, flexWrap:"wrap" }}>
                     <p style={{ margin:0, fontWeight:700, fontSize:14, color:"#e8e8e8" }}>{app.jobTitle}</p>
-                    <span style={{ fontSize:9, fontWeight:700, borderRadius:99, padding:"2px 7px", color:"#60a5fa", background:"rgba(96,165,250,0.1)" }}>Direct Offer</span>
+                    <span style={{ fontSize:9, fontWeight:700, borderRadius:99, padding:"2px 7px", color:"#60a5fa", background:"rgba(96,165,250,0.1)" }}>{t("dashboard_home.direct_offer_label")}</span>
                   </div>
                   <div style={{ display:"flex", alignItems:"center", gap:6, marginTop:4, flexWrap:"wrap" }}>
                     <MapPin size={10} color="#2a4a6a" />
@@ -189,9 +212,9 @@ export default function SeekerHome() {
                   <p style={{ margin:"0 0 8px", fontWeight:800, fontSize:14, color:"#f97316" }}>{fmt(app.jobRatePerHour)}/hr</p>
                   <div style={{ display:"flex", gap:6 }}>
                     <button className="act-btn accept" disabled={respondingId === app.id}
-                      onClick={() => handleOffer(app.id, "ACCEPTED")}>Accept</button>
+                      onClick={() => handleOffer(app.id, "ACCEPTED")}>{t("dashboard_home.accept")}</button>
                     <button className="act-btn reject" disabled={respondingId === app.id}
-                      onClick={() => handleOffer(app.id, "REJECTED")}>Reject</button>
+                      onClick={() => handleOffer(app.id, "REJECTED")}>{t("dashboard_home.reject")}</button>
                   </div>
                 </div>
               </div>
@@ -201,31 +224,31 @@ export default function SeekerHome() {
       )}
 
       {/* Wallet snapshot */}
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:28 }}>
+      <div className="wallet-grid">
         <div style={{ background:"linear-gradient(135deg,#141414,#111)", border:"1px solid #1c1c1c", borderRadius:14, padding:"20px 22px", position:"relative", overflow:"hidden" }}>
           <div style={{ position:"absolute", top:-30, right:-30, width:100, height:100, borderRadius:999, background:"rgba(249,115,22,0.04)" }} />
           <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:12 }}>
             <Wallet size={15} color="#f97316" />
-            <p style={{ margin:0, fontSize:11, fontWeight:700, color:"#3a3a3a", textTransform:"uppercase", letterSpacing:"0.07em" }}>My Wallet</p>
+            <p style={{ margin:0, fontSize:11, fontWeight:700, color:"#3a3a3a", textTransform:"uppercase", letterSpacing:"0.07em" }}>{t("dashboard_home.my_wallet")}</p>
           </div>
           <p style={{ margin:"0 0 4px", fontSize:28, fontWeight:900, color:"#fff", letterSpacing:"-1px" }}>{fmt(wallet?.balance ?? 0)}</p>
           <p style={{ margin:"0 0 16px", fontSize:11, color:"#333" }}>
-            {fmt(wallet?.totalHeld ?? 0)} in escrow · {fmt(wallet?.totalReleased ?? 0)} released
+            {fmt(wallet?.totalHeld ?? 0)} {t("dashboard_home.in_escrow")} · {fmt(wallet?.totalReleased ?? 0)} {t("dashboard_home.released")}
           </p>
           <a href="/seeker/earnings" style={{ display:"inline-flex", alignItems:"center", gap:6, fontSize:12, fontWeight:700, color:"#f97316", textDecoration:"none", background:"rgba(249,115,22,0.08)", border:"1px solid rgba(249,115,22,0.15)", borderRadius:8, padding:"7px 14px" }}>
-            Manage wallet <ArrowRight size={11} />
+            {t("dashboard_home.manage_wallet")} <ArrowRight size={11} />
           </a>
         </div>
         <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:14, padding:"20px 22px" }}>
           <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:12 }}>
             <TrendingUp size={15} color="#22c55e" />
-            <p style={{ margin:0, fontSize:11, fontWeight:700, color:"#3a3a3a", textTransform:"uppercase", letterSpacing:"0.07em" }}>Quick Stats</p>
+            <p style={{ margin:0, fontSize:11, fontWeight:700, color:"#3a3a3a", textTransform:"uppercase", letterSpacing:"0.07em" }}>{t("dashboard_home.quick_stats")}</p>
           </div>
           {[
-            { label:"Total applications", value: apps.length },
-            { label:"Accepted",           value: active.length },
-            { label:"Pending replies",    value: pending.length },
-            { label:"Payments released",  value: txns.filter(t => t.status === "RELEASED").length },
+            { label: t("dashboard_home.total_applications"), value: apps.length },
+            { label: t("settings_page.account.verified") || "Accepted",           value: active.length },
+            { label: t("dashboard_home.pending_replies"),    value: pending.length },
+            { label: t("dashboard_home.payments_released"),  value: txns.filter(t => t.status === "RELEASED").length },
           ].map(({ label, value }) => (
             <div key={label} style={{ display:"flex", justifyContent:"space-between", padding:"6px 0", borderBottom:"1px solid #191919" }}>
               <span style={{ fontSize:12, color:"#444" }}>{label}</span>
@@ -236,24 +259,29 @@ export default function SeekerHome() {
       </div>
 
       {/* Recent activity */}
-      <SectionHead title="Recent Applications" action={
+      <SectionHead title={t("dashboard_home.recent_applications")} action={
         <a href="/seeker/applications" style={{ display:"flex", alignItems:"center", gap:4, fontSize:12, fontWeight:700, color:"#f97316", textDecoration:"none" }}>
-          See all <ArrowRight size={12} />
+          {t("dashboard_home.see_all")} <ArrowRight size={12} />
         </a>
       } />
 
       {apps.length === 0 ? (
         <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:14, padding:"36px 24px", textAlign:"center" }}>
           <Briefcase size={28} color="#2a2a2a" style={{ marginBottom:12 }} />
-          <p style={{ margin:"0 0 6px", color:"#555", fontSize:14, fontWeight:600 }}>No applications yet</p>
-          <p style={{ margin:"0 0 16px", color:"#333", fontSize:12 }}>Browse open jobs and apply to start earning</p>
-          <a href="/jobs" style={{ display:"inline-block", background:"#f97316", color:"#fff", textDecoration:"none", borderRadius:8, padding:"10px 20px", fontSize:13, fontWeight:700 }}>Browse jobs</a>
+          <p style={{ margin:"0 0 6px", color:"#555", fontSize:14, fontWeight:600 }}>{t("dashboard_home.no_applications")}</p>
+          <p style={{ margin:"0 0 16px", color:"#333", fontSize:12 }}>{t("dashboard_home.no_applications_desc")}</p>
+          <a href="/jobs" style={{ display:"inline-block", background:"#f97316", color:"#fff", textDecoration:"none", borderRadius:8, padding:"10px 20px", fontSize:13, fontWeight:700 }}>{t("dashboard_home.browse_jobs")}</a>
         </div>
       ) : (
         <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:14, overflow:"hidden" }}>
           {recent.map((app, i) => {
             const STATUS_COLOR: Record<string,string> = { ACCEPTED:"#22c55e", REJECTED:"#ef4444", PENDING:"#f59e0b", WITHDRAWN:"#555" };
-            const STATUS_LABEL: Record<string,string> = { ACCEPTED:"Accepted", REJECTED:"Rejected", PENDING:"Pending", WITHDRAWN:"Withdrawn" };
+            const STATUS_LABEL: Record<string,string> = {
+              ACCEPTED: t("settings_page.account.verified") || "Accepted",
+              REJECTED: t("common.general.rejected") || "Rejected",
+              PENDING: t("common.general.pending") || "Pending",
+              WITHDRAWN: t("common.general.withdrawn") || "Withdrawn"
+            };
             const color = STATUS_COLOR[app.status] ?? "#555";
             return (
               <div key={app.id} style={{
@@ -270,9 +298,9 @@ export default function SeekerHome() {
                   <div style={{ display:"flex", alignItems:"center", gap:6, marginTop:3 }}>
                     <span style={{ fontSize:11, color:"#3a3a3a" }}>{app.jobCategory}</span>
                     <Dot />
-                    <span style={{ fontSize:11, color:"#3a3a3a" }}>{new Date(app.createdAt).toLocaleDateString()}</span>
+                    <span style={{ fontSize:11, color:"#3a3a3a" }}>{new Date(app.createdAt).toLocaleDateString(currentLocale)}</span>
                     {app.appliedVia === "HIRE_NOW" && (
-                      <><Dot /><span style={{ fontSize:11, color:"#a78bfa", fontWeight:600 }}>Direct Offer</span></>
+                      <><Dot /><span style={{ fontSize:11, color:"#a78bfa", fontWeight:600 }}>{t("dashboard_home.direct_offer_label")}</span></>
                     )}
                   </div>
                 </div>

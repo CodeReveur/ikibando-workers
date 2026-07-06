@@ -83,17 +83,51 @@ function ToastPortal({ toasts, onDismiss }: { toasts: ToastItem[]; onDismiss: (i
         @keyframes t-in    { from{transform:translateX(calc(100% + 24px));opacity:0} to{transform:translateX(0);opacity:1} }
         @keyframes t-out   { from{transform:translateX(0);opacity:1} to{transform:translateX(calc(100% + 24px));opacity:0} }
         @keyframes t-shake { 0%,100%{transform:translateX(0)} 15%{transform:translateX(-7px)} 30%{transform:translateX(6px)} 45%{transform:translateX(-5px)} 60%{transform:translateX(4px)} 75%{transform:translateX(-2px)} }
+
+        .toast-viewport {
+          position: fixed;
+          /* Fallback first: if env() isn't supported, this plain value stays
+             in effect. The env() line below only overrides it on browsers
+             that understand it — it never leaves the toast unpositioned. */
+          bottom: 24px;
+          right: 12px;
+          left: 12px;
+          bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+          right: calc(12px + env(safe-area-inset-right, 0px));
+          left: calc(12px + env(safe-area-inset-left, 0px));
+          z-index: 99999;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 10px;
+          pointer-events: none;
+          font-family: Inter, "DM Sans", system-ui, sans-serif;
+        }
+
+        /* Mobile browsers reserve unpredictable, browser-specific space at
+           the bottom for their own toolbar/gesture bar, which sits on top
+           of the page instead of shrinking it — no fixed offset reliably
+           clears it. Anchoring to the top on mobile avoids that fight
+           entirely; only the status bar/notch is a factor there, which
+           safe-area-inset-top accounts for precisely. */
+        @media (max-width: 859px) {
+          .toast-viewport {
+            top: 16px;
+            top: calc(16px + env(safe-area-inset-top, 0px));
+            bottom: auto;
+          }
+        }
+
+        .toast-card-outer {
+          width: 100%;
+          max-width: min(360px, 100%);
+        }
+
+        @media (max-width: 240px) {
+          .toast-viewport { gap: 6px; }
+        }
       `}</style>
-      <div
-        aria-live="polite"
-        style={{
-          position: "fixed", bottom: 24, right: 24, zIndex: 99999,
-          display: "flex", flexDirection: "column", gap: 10,
-          maxWidth: 360, width: "calc(100vw - 48px)",
-          pointerEvents: "none",
-          fontFamily: "Inter, DM Sans, system-ui, sans-serif",
-        }}
-      >
+      <div className="toast-viewport" aria-live="polite">
         {toasts.map(t => <ToastCard key={t.id} toast={t} onDismiss={onDismiss} />)}
       </div>
     </>
@@ -117,7 +151,10 @@ function ToastCard({ toast: t, onDismiss }: { toast: ToastItem; onDismiss: (id: 
   const Icon  = t.type === "error" ? XCircle : t.type === "success" ? CheckCircle : Info;
 
   return (
-    <div style={{ animation: t.leaving ? "t-out 0.3s ease forwards" : "t-in 0.35s ease forwards" }}>
+    <div
+      className="toast-card-outer"
+      style={{ animation: t.leaving ? "t-out 0.3s ease forwards" : "t-in 0.35s ease forwards" }}
+    >
       <div
         role="alert"
         style={{
@@ -127,7 +164,7 @@ function ToastCard({ toast: t, onDismiss }: { toast: ToastItem; onDismiss: (id: 
           border:      `1px solid ${color}55`,
           borderLeft:  `4px solid ${color}`,
           borderRadius: 12,
-          padding:     "14px 16px",
+          padding:     "clamp(10px, 3vw, 14px) clamp(12px, 3.5vw, 16px)",
           display:     "flex",
           alignItems:  "flex-start",
           gap:         12,
@@ -138,17 +175,17 @@ function ToastCard({ toast: t, onDismiss }: { toast: ToastItem; onDismiss: (id: 
 
         <div style={{ flex: 1, minWidth: 0 }}>
           {t.title && (
-            <p style={{ margin: "0 0 3px", fontSize: 13, fontWeight: 700, color: "#fff" }}>
+            <p style={{ margin: "0 0 3px", fontSize: "clamp(11px, 3vw, 13px)", fontWeight: 700, color: "#fff" }}>
               {t.title}
             </p>
           )}
-          <p style={{ margin: 0, fontSize: 12, color: "#999", lineHeight: 1.55, wordBreak: "break-word" }}>
+          <p style={{ margin: 0, fontSize: "clamp(10px, 2.8vw, 12px)", color: "#999", lineHeight: 1.55, wordBreak: "break-word" }}>
             {t.message}
           </p>
           {t.action && (
             <a
               href={t.action.href}
-              style={{ display: "inline-block", marginTop: 6, fontSize: 11, color: "#f97316", fontWeight: 600, textDecoration: "underline" }}
+              style={{ display: "inline-block", marginTop: 6, fontSize: "clamp(9px, 2.4vw, 11px)", color: "#f97316", fontWeight: 600, textDecoration: "underline" }}
             >
               {t.action.label} →
             </a>
@@ -162,6 +199,7 @@ function ToastCard({ toast: t, onDismiss }: { toast: ToastItem; onDismiss: (id: 
             cursor: "pointer", color: "#555", padding: 2,
             display: "flex", alignItems: "center",
           }}
+          aria-label="Dismiss notification"
         >
           <X size={14} />
         </button>

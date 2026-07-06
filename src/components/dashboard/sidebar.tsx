@@ -7,6 +7,7 @@ import {
   Send, CreditCard, Users, HelpCircle, LogOut, Home
 } from "lucide-react";
 import { useSession } from "./session-ctx";
+import { useLanguage } from "@/lib/language-context";
 
 /* ── constants ──────────────────────────────────────────────────────────── */
 export const SB_WIDTH = 260;
@@ -35,10 +36,11 @@ export function Sidebar({ mobileOpen, closeMobile }: { mobileOpen?: boolean; clo
   const pathname = usePathname();
   const router   = useRouter();
   const session  = useSession();
+  const { t }    = useLanguage();
 
   if (!session) return (
     <aside style={{
-      position:"fixed", left:0, top:0, bottom:0, width:SB_WIDTH,
+      position:"fixed", left:0, top:0, bottom:0, width:"var(--sb-active-width)",
       background:"#090909", zIndex:100,
     }} />
   );
@@ -54,6 +56,23 @@ export function Sidebar({ mobileOpen, closeMobile }: { mobileOpen?: boolean; clo
     router.push("/signin");
   };
 
+  const getNavLabel = (href: string, defaultLabel: string) => {
+    let key = "";
+    if (href === "/seeker" || href === "/owner") key = "dashboard";
+    else if (href === "/seeker/applications") key = "applications";
+    else if (href === "/seeker/jobs") key = "jobs";
+    else if (href === "/seeker/earnings") key = "earnings";
+    else if (href === "/seeker/bonuses") key = "bonuses";
+    else if (href === "/seeker/settings" || href === "/owner/settings") key = "settings";
+    else if (href === "/owner/offers") key = "offers";
+    else if (href === "/owner/payments") key = "payments";
+    else if (href === "/owner/workers") key = "workers";
+    else if (href === "/owner/analytics" || href === "/seeker/analytics") key = "analytics";
+    else if (href === "/owner/help") key = "help";
+    
+    return key ? t("common.nav." + key) : defaultLabel;
+  };
+
   return (
     <>
       <style>{`
@@ -65,10 +84,16 @@ export function Sidebar({ mobileOpen, closeMobile }: { mobileOpen?: boolean; clo
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #222; border-radius: 99px; }
         .dash-card:hover { border-color: #252525 !important; background: #161616 !important; }
+        @media (max-width: 340px) {
+          .sidebar-logo-img {
+            width: 130px !important;
+            height: 28px !important;
+          }
+        }
       `}</style>
 
       <aside className={`dashboard-sidebar${mobileOpen ? " mobile-open" : ""}`} style={{
-        position:"fixed", left:0, top:0, bottom:0, width:SB_WIDTH,
+        position:"fixed", left:0, top:0, bottom:0, width:"var(--sb-active-width)",
         background:"#090909",
         display:"flex", flexDirection:"column",
         padding:10, gap:8, zIndex:100,
@@ -83,7 +108,7 @@ export function Sidebar({ mobileOpen, closeMobile }: { mobileOpen?: boolean; clo
         }}>
           {/* Logo */}
           <a href="/" onClick={closeMobile} className="nav-logo" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}>
-            <img src="/cover-a.png" alt="Logo" style={{ width: 190, height: 40, borderRadius: 6, objectFit: "cover" }} />
+            <img src="/cover-a.png" className="sidebar-logo-img" alt="Logo" style={{ width: 190, height: 40, borderRadius: 6, objectFit: "cover" }} />
           </a>
         </div>
 
@@ -113,7 +138,7 @@ export function Sidebar({ mobileOpen, closeMobile }: { mobileOpen?: boolean; clo
                 color:  isOwner ? "#f97316" : "#60a5fa",
                 background: isOwner ? "rgba(249,115,22,0.1)" : "rgba(96,165,250,0.1)",
               }}>
-                {isOwner ? "Employer" : "Worker"}
+                {isOwner ? t("common.nav.employer") : t("common.nav.job_seeker")}
               </span>
             </div>
           </div>
@@ -129,7 +154,7 @@ export function Sidebar({ mobileOpen, closeMobile }: { mobileOpen?: boolean; clo
               cursor:"pointer", fontFamily:"inherit", transition:"all 0.12s",
             }}
           >
-            <LogOut size={11} /> Sign out
+            <LogOut size={11} /> {t("common.nav.sign_out")}
           </button>
         </div>
 
@@ -141,11 +166,13 @@ export function Sidebar({ mobileOpen, closeMobile }: { mobileOpen?: boolean; clo
           display:"flex", flexDirection:"column",
         }}>
           <p style={{ margin:"4px 0 8px 10px", fontSize:9, fontWeight:700, color:"#2a2a2a", textTransform:"uppercase", letterSpacing:"0.12em" }}>
-            Menu
+            {t("common.nav.menu")}
           </p>
 
           {nav.map(({ href, label, icon: Icon }) => {
-            const active = pathname === href || pathname.startsWith(href + "/");
+            const active = href === "/seeker" || href === "/owner"
+              ? pathname === href
+              : pathname === href || pathname.startsWith(href + "/");
             return (
               <Link
                 key={href}
@@ -161,7 +188,7 @@ export function Sidebar({ mobileOpen, closeMobile }: { mobileOpen?: boolean; clo
               >
                 <Icon size={15} style={{ color: active ? "#f97316" : "#3e3e3e", flexShrink:0 }} />
                 <span style={{ fontSize:13, fontWeight: active ? 700 : 500, flex:1, letterSpacing: active ? "-0.1px" : "normal" }}>
-                  {label}
+                  {getNavLabel(href, label)}
                 </span>
                 {active && <div style={{ width:5, height:5, borderRadius:99, background:"#f97316", flexShrink:0 }} />}
               </Link>

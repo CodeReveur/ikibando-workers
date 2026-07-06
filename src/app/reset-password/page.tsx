@@ -6,8 +6,10 @@ import { AuthCarousel } from "@/components/auth/auth-carousel";
 import { useSearchParams } from "next/navigation";
 import { resetPassword } from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
+import { useLanguage } from "@/lib/language-context";
 
 function StrengthBar({ password }: { password: string }) {
+  const { t } = useLanguage();
   const score = (() => {
     if (!password) return 0;
     let s = 0;
@@ -18,7 +20,13 @@ function StrengthBar({ password }: { password: string }) {
     return s;
   })();
 
-  const labels = ["", "Weak", "Fair", "Good", "Strong"];
+  const labels = [
+    "", 
+    t("reset_password_page.strength.weak"), 
+    t("reset_password_page.strength.fair"), 
+    t("reset_password_page.strength.good"), 
+    t("reset_password_page.strength.strong")
+  ];
   const colors = ["#2a2a2a", "#ef4444", "#f97316", "#eab308", "#22c55e"];
 
   if (!password) return null;
@@ -42,6 +50,7 @@ function StrengthBar({ password }: { password: string }) {
 }
 
 function ResetPasswordForm() {
+  const { t } = useLanguage();
   const { error: toastError, success: toastSuccess } = useToast();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -56,25 +65,25 @@ function ResetPasswordForm() {
   const handleSubmit = async () => {
     setMismatch(false);
     if (!token) {
-      toastError("Missing or invalid reset token.", { title: "Reset Failed" });
+      toastError(t("reset_password_page.toasts.missing_token"), { title: t("reset_password_page.toasts.reset_failed") });
       return;
     }
     if (password.length < 8) {
-      toastError("Password must be at least 8 characters.", { title: "Reset Failed" });
+      toastError(t("reset_password_page.toasts.password_short"), { title: t("reset_password_page.toasts.reset_failed") });
       return;
     }
     if (password !== confirm) {
       setMismatch(true);
-      toastError("Passwords don't match.", { title: "Reset Failed" });
+      toastError(t("reset_password_page.toasts.passwords_mismatch"), { title: t("reset_password_page.toasts.reset_failed") });
       return;
     }
     setLoading(true);
     try {
       await resetPassword(token, password);
-      toastSuccess("Your password has been reset. You can now sign in.", { title: "Password Updated" });
+      toastSuccess(t("reset_password_page.toasts.reset_success"), { title: t("reset_password_page.toasts.password_updated") });
       setDone(true);
     } catch (e: any) {
-      toastError(e?.response?.data?.message ?? "Password reset failed. Token may be expired.", { title: "Reset Failed" });
+      toastError(e?.response?.data?.message ?? "Password reset failed. Token may be expired.", { title: t("reset_password_page.toasts.reset_failed") });
     } finally {
       setLoading(false);
     }
@@ -111,7 +120,7 @@ function ResetPasswordForm() {
               fontSize: 12, fontWeight: 600, color: "#555",
               textDecoration: "none", marginBottom: 32,
             }}>
-              <ArrowLeft size={14} /> Back to sign in
+              <ArrowLeft size={14} /> {t("reset_password_page.back_to_sign_in")}
             </a>
 
             {!done ? (
@@ -126,16 +135,16 @@ function ResetPasswordForm() {
                 </div>
 
                 <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 6px", letterSpacing: "-0.5px" }}>
-                  Set a new password
+                  {t("reset_password_page.title")}
                 </h1>
                 <p style={{ fontSize: 13, color: "#555", margin: "0 0 28px", lineHeight: 1.6 }}>
-                  Choose something strong. You won't be able to reuse your last password.
+                  {t("reset_password_page.subtitle")}
                 </p>
 
                 {/* New password */}
                 <div style={{ marginBottom: 14 }}>
                   <label style={{ fontSize: 12, fontWeight: 600, color: "#aaa", display: "block", marginBottom: 6 }}>
-                    New password
+                    {t("reset_password_page.new_password_label")}
                   </label>
                   <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
                     <span style={{ position: "absolute", left: 13, pointerEvents: "none", display: "flex" }}>
@@ -168,7 +177,7 @@ function ResetPasswordForm() {
                 {/* Confirm password */}
                 <div style={{ marginBottom: 18 }}>
                   <label style={{ fontSize: 12, fontWeight: 600, color: "#aaa", display: "block", marginBottom: 6 }}>
-                    Confirm password
+                    {t("reset_password_page.confirm_password_label")}
                   </label>
                   <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
                     <span style={{ position: "absolute", left: 13, pointerEvents: "none", display: "flex" }}>
@@ -211,7 +220,7 @@ function ResetPasswordForm() {
                   onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = "#ea6a0a"; }}
                   onMouseLeave={(e) => { if (!loading) e.currentTarget.style.background = "#f97316"; }}
                 >
-                  {loading ? "Resetting..." : "Reset password"}
+                  {loading ? t("reset_password_page.resetting") : t("reset_password_page.submit_btn")}
                 </button>
               </>
             ) : (
@@ -228,10 +237,10 @@ function ResetPasswordForm() {
                 </div>
 
                 <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 6px", letterSpacing: "-0.5px" }}>
-                  Password updated
+                  {t("reset_password_page.success_title")}
                 </h1>
                 <p style={{ fontSize: 13, color: "#555", margin: "0 0 28px", lineHeight: 1.6 }}>
-                  Your password has been reset. All other sessions have been signed out for security.
+                  {t("reset_password_page.success_subtitle")}
                 </p>
 
                 <a href="/signin" style={{
@@ -243,7 +252,7 @@ function ResetPasswordForm() {
                   onMouseEnter={(e) => (e.currentTarget.style.background = "#ea6a0a")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "#f97316")}
                 >
-                  Sign in
+                  {t("reset_password_page.signin_btn")}
                 </a>
               </>
             )}

@@ -1,0 +1,1299 @@
+{
+  "common": {
+    "days": {
+      "mon": "Jumatatu",
+      "tue": "Jumanne",
+      "wed": "Jumatano",
+      "thu": "Alhamisi",
+      "fri": "Ijumaa",
+      "sat": "Jumamosi",
+      "sun": "Jumapili"
+    },
+    "nav": {
+      "browse": "Tafuta",
+      "jobs": "Kazi",
+      "contact": "Wasiliana nasi",
+      "about": "Kuhusu sisi",
+      "signin": "Ingia",
+      "signup": "Jiunge",
+      "hire_now": "Kodi sasa",
+      "become_worker": "Kuwa mfanyakazi",
+      "sign_out": "Ondoka",
+      "dashboard": "Dashibodi",
+      "offers": "Zabuni",
+      "requests": "Maombi",
+      "applications": "Kazi ulizoomba",
+      "settings": "Mipangilio",
+      "profile": "Wasifu",
+      "employer": "Mwajiri",
+      "job_seeker": "Mtafuta Kazi",
+      "privacy": "Faragha",
+      "terms": "Masharti",
+      "earnings": "Mapato Yangu",
+      "bonuses": "Bonasi",
+      "analytics": "Uchambuzi",
+      "payments": "Malipo",
+      "workers": "Wafanyakazi",
+      "help": "Msaada",
+      "menu": "Menyu",
+      "wallet": "Mkoba"
+    },
+    "footer": {
+      "desc": "Kuunganisha wafanyakazi wa vibarua waliohakikiwa huko Kigali na biashara na kaya za mitaani.",
+      "copyright": "© 2026 MpahMapu. Haki zote zimehifadhiwa."
+    },
+    "categories": {
+      "": "Mfanyakazi",
+      "all": "Zote",
+      "protocol": "Itifaki",
+      "none": "Hakuna",
+      "waiters": "Watumishi wa chakula",
+      "baristas": "Wataalamu wa kahawa",
+      "cleaners": "Wasafishaji",
+      "security_guards": "Walinzi",
+      "drivers": "Madereva",
+      "delivery_drivers": "Wafanyakazi wa uwasilishaji",
+      "courier_riders": "Waendesha pikipiki za usafirishaji",
+      "electricians": "Mafundi umeme",
+      "plumbers": "Mafundi bomba",
+      "carpenters": "Useremala",
+      "painters": "Mafundi rangi",
+      "construction_workers": "Wafanyakazi wa ujenzi",
+      "technicians": "Mafundi mitambo",
+      "mechanics": "Makanika",
+      "gardeners": "Watunza bustani",
+      "landscapers": "Wapambaji bustani",
+      "housekeepers": "Wasimamizi wa nyumba",
+      "hotel_staff": "Wafanyakazi wa hoteli",
+      "shop_attendants": "Wafanyakazi wa duka",
+      "cashiers": "Mhasibu wa fedha",
+      "warehouse_staff": "Wafanyakazi wa ghala",
+      "packers": "Wafungaji wa bidhaa",
+      "supervisors": "Wasimamizi",
+      "receptionists": "Wapokezi",
+      "call_center_agents": "Wahudumu wa simu",
+      "customer_support": "Huduma kwa wateja",
+      "office_assistants": "Wasaidizi wa ofisi",
+      "tutors": "Walimu wa ziada",
+      "teachers": "Walimu",
+      "caregivers": "Walezi",
+      "nurses": "Wauguzi",
+      "babysitters": "Walezi wa watoto",
+      "pet_care": "Watunza wanyama wa nyumbani",
+      "photographers": "Wapiga picha",
+      "videographers": "Wapiga picha za video",
+      "djs": "Madijei",
+      "mcs": "Wavurugaji/Waongozaji shughuli",
+      "event_planners": "Waandaaji wa hafla",
+      "florists": "Wauzaji maua",
+      "barbers": "Kinyozi",
+      "hair_stylists": "Wasusi wa nywele",
+      "makeup_artists": "Wataalamu wa vipodozi",
+      "tailors": "Washonaji",
+      "laundry_services": "Wahudumu wa dobi",
+      "phone_repair": "Matengenezo ya simu",
+      "computer_repair": "Matengenezo ya kompyuta",
+      "network_technicians": "Mafundi wa mtandao",
+      "it_support": "Msaada wa IT",
+      "web_developers": "Waendelezaji wa tovuti",
+      "software_developers": "Waendelezaji programu",
+      "graphic_designers": "Wabunifu wa picha",
+      "content_writers": "Waandishi wa maudhui",
+      "translators": "Wafasiri",
+      "accountants": "Wahasibu",
+      "legal_advisors": "Washauri wa kisheria",
+      "real_estate_agents": "Dali wa majumba",
+      "property_managers": "Wasimamizi wa mali",
+      "hr_professionals": "Wataalamu wa rasilimali watu",
+      "marketing_specialists": "Wataalamu wa masoko",
+      "financial_advisors": "Washauri wa kifedha",
+      "waiter": "Mhudumu wa chakula",
+      "cook": "Mpishi",
+      "chef": "Shefe wa jikoni",
+      "bartender": "Umutuzi wa vinywaji",
+      "cashier": "Mweka hazina",
+      "receptionist": "Mpokeaji wageni",
+      "cleaner": "Wasafishaji",
+      "housekeeper": "Usukura inzu",
+      "nanny": "Mlezi",
+      "caregiver": "Mlezi wa wagonjwa",
+      "security": "Mlinzi",
+      "event_staff": "Wafanyakazi wa sherehe",
+      "mc": "MC / Animateri",
+      "musician": "Mwanamuziki",
+      "dj": "DJ",
+      "driver": "Dereva",
+      "delivery_rider": "Mjumbe wa pikipiki",
+      "gardener": "Mkulima wa bustani",
+      "farm_worker": "Mkulima",
+      "loader": "Mpakiaji",
+      "unloader": "Mpakuzi",
+      "warehouse_worker": "Mfanyakazi wa bohari",
+      "packer": "Mfungashaji",
+      "electrician": "Umuhungu w'amashanyarazi",
+      "plumber": "Fundi bomba",
+      "painter": "Mpaka rangi",
+      "carpenter": "Seremala",
+      "construction_worker": "Mfanyakazi wa ujenzi",
+      "mechanic": "Mekanika",
+      "tailor": "Mshonaji",
+      "hairdresser": "Kinyozi",
+      "beautician": "Mrembo",
+      "tutor": "Mwalimu wa ziada",
+      "translator": "Mfasiri",
+      "photographer": "Mpiga picha",
+      "videographer": "Mpiga picha za video",
+      "graphic_designer": "Mbuni wa picha",
+      "social_media_manager": "Meneja wa mitandao ya kijamii",
+      "sales_agent": "Wakala wa mauzo",
+      "promoter": "Mweneza",
+      "marketing_agent": "Wakala wa masoko",
+      "office_assistant": "Msaidizi wa ofisi",
+      "data_entry": "Mwingiza data",
+      "customer_support": "Huduma kwa wateja",
+      "it_support": "Msaada wa IT",
+      "web_developer": "Msanidi programu wa wavuti",
+      "mobile_developer": "Msanidi programu wa simu",
+      "software_engineer": "Mhandisi wa programu",
+      "accountant": "Mhasibu",
+      "other": "Nyingine",
+      "barista": "Barista",
+      "delivery_driver": "Dereva wa uwasilishaji",
+      "courier_rider": "Mjumbe wa pikipiki",
+      "technician": "Fundi",
+      "landscaper": "Msanifu majengo wa ardhi",
+      "hotel_staff": "Wafanyakazi wa hoteli",
+      "shop_attendant": "Mhudumu wa duka",
+      "supervisor": "Msimamizi",
+      "call_center_agent": "Mhudumu wa kituo cha simu",
+      "teacher": "Mwalimu",
+      "nurse": "Muuguzi",
+      "babysitter": "Mlezi wa watoto",
+      "pet_care": "Mlezi wa wanyama",
+      "event_planner": "Mratibu wa hafla",
+      "florist": "Muuzaji maua",
+      "barber": "Kinyozi",
+      "hair_stylist": "Kinyozi wa kike",
+      "makeup_artist": "Mtaalamu wa vipodozi",
+      "laundry_service": "Huduma ya kuosha nguo",
+      "phone_repair": "Ukarabati wa simu",
+      "computer_repair": "Ukarabati wa kompyuta",
+      "network_technician": "Fundi wa mtandao",
+      "content_writer": "Mwandishi wa maudhui",
+      "legal_advisor": "Mshauri wa sheria",
+      "real_estate_agent": "Wakala wa mali isiyohamishika",
+      "property_manager": "Msimamizi wa mali",
+      "hr_professional": "Mtaalamu wa rasilimali watu",
+      "marketing_specialist": "Mtaalamu wa masoko",
+      "sales_representative": "Mwakilishi wa mauzo",
+      "financial_advisor": "Mshauri wa fedha"
+    },
+    "buttons": {
+      "more": "Zaidi",
+      "post_request": "Weka ombi la kazi",
+      "become_worker": "Kuwa mfanyakazi",
+      "back": "Rudi",
+      "continue": "Endelea",
+      "confirm": "Thibitisha na weka dhamana ya fedha",
+      "processing": "Inashughulikiwa...",
+      "done": "Imekamilika",
+      "cancel": "Ghairi",
+      "submit": "Wasilisha"
+    },
+    "general": {
+      "new": "Mpya",
+      "worker": "Mfanyakazi",
+      "category": "Kategoria",
+      "currency_pattern": "RWF {amount}",
+      "per_hour": "/ saa"
+    }
+  },
+  "home": {
+    "hero": {
+      "location": "Kigali · Rwanda",
+      "title_find": "Tafuta kazi.",
+      "title_hire": "Kodi aliyethibitishwa.",
+      "subtitle": "Wafanyakazi wa vibarua kwa ajili ya hafla, usafi, ulinzi na zaidi - wamethibitishwa kwa vitambulisho, wamepimwa na wanalipwa kupitia MoMo."
+    },
+    "sections": {
+      "categories": "Vitengo",
+      "available_workers": "Wafanyakazi wanaopatikana",
+      "available_jobs": "Kazi zinazopatikana"
+    },
+    "faqs": {
+      "q1": "Ninawezaje kumkodi mfanyakazi kwenye MpahMapu?",
+      "a1": "Tuma ombi la kazi lenye maelezo kama vile kitengo cha kazi, eneo, na kiasi cha malipo. Wafanyakazi waliothibitishwa wataomba mara moja, na unaweza kupitia wasifu wao na alama zao kabla ya kuwakodi.",
+      "q2": "Je, malipo yanafanywaje kwenye MpahMapu?",
+      "a2": "Malipo yote yanachakatwa kwa usalama kupitia MTN Mobile Money (MoMo). Fedha hutolewa kwa wafanyakazi baada ya kazi kukamilika.",
+      "q3": "Je, wafanyakazi kwenye MpahMapu wamehakikiwa?",
+      "a3": "Ndiyo, kila mfanyakazi kwenye MpahMapu hupitia uhakiki wa kitambulisho kabla ya kukubaliwa kufanya kazi, ili kuhakikisha uaminifu na usalama wa waajiri.",
+      "q4": "Ni aina gani za wafanyakazi ninaweza kuwapata kwenye MpahMapu?",
+      "a4": "MpahMapu inatoa wafanyakazi katika vitengo zaidi ya 15 ikijumuisha wahudumu, wasafishaji, walinzi, madereva, mafundi umeme, mafundi bomba, watunza bustani, wafanyakazi wa hafla na wengineo.",
+      "q5": "Je, MpahMapu inapatikana nje ya Kigali?",
+      "a5": "MpahMapu kwa sasa inafanya kazi hasa Kigali, Rwanda, tukiwa na mipango ya kupanua huduma hadi miji na mikoa mingine."
+    }
+  },
+  "about": {
+    "hero": {
+      "tag": "Kuhusu MpahMapu",
+      "title_main": "Jukwaa la kazi za vibarua",
+      "title_accent": "nchini Rwanda.",
+      "desc": "MpahMapu inaunganisha waajiri na wafanyakazi waliohakikiwa kwa vitambulisho na kupimwa kote Rwanda - kwa ajili ya shughuli, usafi, ulinzi, kuendesha gari na zaidi. Kodishwa ndani ya dakika chache, lipwa kupitia MoMo."
+    },
+    "stats": {
+      "workers_val": "2,400+",
+      "workers_lbl": "Wafanyakazi waliohakikiwa",
+      "jobs_val": "8,900+",
+      "jobs_lbl": "Kazi zilizokamilika",
+      "categories_val": "15+",
+      "categories_lbl": "Vitengo vya kazi",
+      "rating_val": "4.8★",
+      "rating_lbl": "Wastani wa alama"
+    },
+    "story": {
+      "title": "Historia yetu",
+      "p1": "MpahMapu ilianzishwa nchini Rwanda mwaka wa 2025 baada ya kuona wafanyakazi wenye ujuzi wakipambana kupata kazi ya kudumu na waajiri wakihangaika kupata usaidizi wa kuaminika kwa muda mfupi. Suluhisho lilikuwa rahisi: jukwaa linalofanya pande zote mbili kuwa haraka, wazi na salama.",
+      "p2": "Jina MpahMapu linamaanisha \"kikundi kinachokuja pamoja kufanya kazi\" katika Kinyarwanda - ambalo ndilo hasa tunalolenga. Jamii ambapo kila kazi inafanywa kwa fahari na kila mfanyakazi anapewa heshima."
+    },
+    "how_it_works": {
+      "title": "Jinsi inavyofanya kazi",
+      "step1_title": "Fungua akaunti",
+      "step1_body": "Jisajili kama mfanyakazi au mwajiri kwa chini ya dakika moja.",
+      "step2_title": "Tuma au tafuta kazi",
+      "step2_body": "Waajiri hutuma kazi; wafanyakazi hutafuta na kutuma maombi mara moja.",
+      "step3_title": "Unganishwa haraka",
+      "step3_body": "Tunaonyesha wafanyakazi wanaofaa zaidi kulingana na kitengo cha kazi na eneo.",
+      "step4_title": "Lipa kupitia MoMo",
+      "step4_body": "Malipo salama ya pesa kwenye simu ya mkononi - hakuna pesa taslimu, hakuna migogoro."
+    },
+    "values": {
+      "title": "Misingi yetu",
+      "val1_title": "Uaminifu Kwanza",
+      "val1_body": "Kila mfanyakazi anahakikiwa kitambulisho chake kabla ya kukubaliwa kupokea kazi. Waajiri wanajua hasa nani anakuja.",
+      "val2_title": "Kasi ni Muhimu",
+      "val2_body": "Tuma ombi la kazi kwa chini ya dakika 2. Wafanyakazi wanajulishwa papo hapo na wanaweza kuthibitisha kwa kugusa mara moja.",
+      "val3_title": "Malipo ya Haki",
+      "val3_body": "Tunaonyesha viwango vya malipo mapema kwa uwazi. Hakuna ada zilizofichwa, hakuna migogoro ya fedha taslimu - malipo yanafanyika kupitia MoMo.",
+      "val4_title": "Jamii",
+      "val4_body": "Imejengwa Kigali, kwa ajili ya Wanyarwanda. Tunaamini kila mfanyakazi anastahili heshima na kila mwajiri anastahili mfanyakazi mwaminifu."
+    },
+    "location": {
+      "title": "Makao yetu ni Rwanda, Rwanda",
+      "desc": "Kwa sasa tunahudumia wilaya za Rwanda - na kupanua kote Afrika Mashariki hivi karibuni."
+    },
+    "cta": {
+      "title": "Uko tayari kuanza?",
+      "desc": "Jiunge na maelfu ya wafanyakazi na waajiri ambao tayari wapo kwenye MpahMapu.",
+      "btn_create": "Fungua akaunti",
+      "btn_contact": "Wasiliana nasi"
+    }
+  },
+  "contact": {
+    "hero": {
+      "tag": "Wasiliana nasi",
+      "title_main": "Tungependa",
+      "title_accent": "kusikia kutoka kwako.",
+      "desc": "Iwe una swali, wazo la ushirikiano, au unataka tu kusema jambo - tuko hapa."
+    },
+    "form": {
+      "title": "Tuma ujumbe",
+      "name_label": "Jina lako",
+      "email_label": "Barua pepe",
+      "subject_label": "Mada",
+      "subject_placeholder": "Chagua mada…",
+      "message_label": "Ujumbe",
+      "message_placeholder": "Tueleze nini kiko akilini mwako…",
+      "btn_send": "Tuma ujumbe",
+      "btn_sending": "Inatuma…",
+      "sent_success_title": "Ujumbe umetumwa!",
+      "sent_success_desc": "Tutakujibu ndani ya saa 24.",
+      "btn_another": "Tuma mwingine",
+      "validation_error": "Tafadhali jaza sehemu zote zinazohitajika.",
+      "validation_error_title": "Fomu haijakamilika",
+      "send_success_toast": "Ujumbe wako umetumwa. Tutakujibu ndani ya saa 24.",
+      "send_success_toast_title": "Ujumbe Umetumwa",
+      "send_fail_toast": "Imeshindwa kutuma ujumbe. Tafadhali jaribu tena au ututumie barua pepe moja kwa moja.",
+      "send_fail_toast_title": "Ujumbe Haukutuma"
+    },
+    "topics": {
+      "general": "Swali la kawaida",
+      "partnership": "Ushirikiano",
+      "worker_support": "Msaada kwa wafanyakazi",
+      "employer_support": "Msaada kwa waajiri",
+      "report_issue": "Ripoti tatizo",
+      "other": "Mengineyo"
+    },
+    "info": {
+      "email": "Tutumie barua pepe",
+      "phone": "Piga au WhatsApp",
+      "location": "Mahali tulipo",
+      "response_time": "Muda wa kujibiwa",
+      "response_value": "Ndani ya saa 24"
+    }
+  },
+  "hire_modal": {
+    "steps": {
+      "details": "Maelezo ya kazi",
+      "matches": "Wanaofaa zaidi",
+      "summary": "Muhtasari",
+      "indicator": "Hatua ya {step} kati ya {total}"
+    },
+    "details": {
+      "category_label": "Kitengo cha kazi *",
+      "category_placeholder": "Tafuta kitengo cha kazi…",
+      "workers_label": "Idadi ya wafanyakazi",
+      "rate_label": "Kiasi cha malipo kwa kila mfanyakazi (RWF) *",
+      "period_label": "Muda wa malipo",
+      "period_options": {
+        "hr": "Kwa saa",
+        "day": "Kwa siku",
+        "week": "Kwa wiki",
+        "month": "Kwa mwezi",
+        "year": "Kwa mwaka"
+      },
+      "duration_label": "Muda",
+      "payout_breakdown": "{rate}{period} × {workers} mfanyakazi{plural} × {duration} {unit}",
+      "start_date": "Tarehe ya kuanza *",
+      "start_time": "Muda wa kuanza *",
+      "province": "Mkoa",
+      "province_placeholder": "Mkoa…",
+      "district": "Wilaya *",
+      "district_placeholder": "Wilaya…",
+      "location_label": "Eneo kamili (bonyeza ramani au tumia GPS)",
+      "gps_btn_detect": "Tafuta eneo langu kupitia GPS",
+      "gps_btn_detecting": "Inatafuta…",
+      "gps_btn_detected": "GPS imepatikana",
+      "gps_error": "Imeshindwa kupata eneo lako kupitia GPS",
+      "requirements_label": "Mahitaji (sio lazima)",
+      "requirements_placeholder": "mfano: lazima awe na usafiri wake, fundi umeme mwenye cheti, anajua kuongea Kiingereza vizuri…"
+    },
+    "matches": {
+      "selected_status": "Wafanyakazi {selected} kati ya {total} wamechaguliwa",
+      "ready": "✓ Tayari",
+      "select_more": "Chagua zaidi",
+      "loading": "Inatafuta wafanyakazi wa kitengo cha {cat}…",
+      "error_title": "Imeshindwa kupata wafanyakazi",
+      "error_desc": "Angalia mtandao wako kisha rudi nyuma ili ujaribu tena.",
+      "empty_title": "Hakuna wafanyakazi waliopatikana wa {cat}",
+      "empty_desc": "Rudi nyuma na ujaribu kitengo kingine.",
+      "available_summary": "Mfanyakazi {count} {plural} wanapatikana kwa ajili ya {cat}",
+      "sorted_proximity": " · wamepangwa kulingana na ukaribu wa {district}",
+      "best_match": "ANAYEFAA ZAIDI",
+      "nearby": "Karibu nawe",
+      "since_year": "Tangu {year}",
+      "more_avail": "na wengine +{count}",
+      "select_btn_need": "Chagua mfanyakazi {count} {plural} zaidi"
+    },
+    "summary": {
+      "title": "Muhtasari wa kazi",
+      "workers_label": "Wafanyakazi",
+      "rate_label": "Kiasi cha Malipo",
+      "duration_label": "Muda",
+      "date_label": "Tarehe",
+      "time_label": "Muda",
+      "province_label": "Mkoa",
+      "district_label": "Wilaya",
+      "gps_label": "GPS",
+      "requirements_label": "Mahitaji",
+      "assigned_title": "Wafanyakazi wako",
+      "assigned_title_single": "Mfanyakazi wako",
+      "payment_title": "Malipo",
+      "payout_label": "Malipo ya mfanyakazi ({workers} × {duration}h × {rate})",
+      "fee_label": "Ada ya jukwaa (5%)",
+      "escrow_required": "Jumla ya dhamana inayohitajika",
+      "wallet_balance": "Kiasi kilichopo kwenye salio",
+      "topup_warning": "Unahitaji kuongeza {amount} zaidi.",
+      "topup_link": "Ongeza salio kwenye pochi →",
+      "terms_warning": "Kwa kuthibitisha, unakubaliana na vigezo na masharti yetu.",
+      "confirm_btn": "Thibitisha na weka dhamana ya fedha",
+      "processing_btn": "Inashughulikiwa…",
+      "insufficient_btn": "Salio halitoshi",
+      "incomplete_btn": "Kamilisha sehemu zote",
+      "signed_out_error": "Lazima uwe umeingia kwenye akaunti.",
+      "signed_out_error_title": "Hujaingia kwenye akaunti",
+      "post_fail_title": "Kodi Imeshindikana",
+      "success_title": "Uhifadhi umethibitishwa!",
+      "success_desc": "{names} {plural} wametumwa taarifa na watathibitisha hivi karibuni.",
+      "success_sub": "Kazi imeundwa kwa mafanikio."
+    }
+  },
+  "signin": {
+    "hero": {
+      "welcome_back": "Karibu tena",
+      "subtitle": "Ingia kwenye akaunti yako ya MpahMapu"
+    },
+    "buttons": {
+      "home": "Nyumbani",
+      "back_to_home": "Rudi nyumbani",
+      "signing_in": "Kuingia…",
+      "continue_google": "Endelea na Google",
+      "continue_facebook": "Endelea na Facebook",
+      "submit": "Ingia"
+    },
+    "general": {
+      "or": "AMA"
+    },
+    "fields": {
+      "email_label": "Barua Pepe",
+      "password_label": "Nenosiri",
+      "forgot_password_link": "Umesahau?"
+    },
+    "footer": {
+      "no_account": "Huna akaunti?",
+      "signup_link": "Jisajili"
+    },
+    "toasts": {
+      "google_fail_desc": "Kuingia na Google kumeshindwa. Tafadhali jaribu tena.",
+      "login_failed_title": "Kuingia Kumeshindwa",
+      "google_cancelled_desc": "Kuingia na Google kulighairiwa au kumeshindwa.",
+      "fb_https_desc": "Kuingia na Facebook kunahitaji HTTPS. Tumia barua pepe au Google wakati wa uundaji wa ndani.",
+      "fb_not_avail_desc": "Kuingia na Facebook hakupatikani (Kitambulisho cha Programu hakijasanidiwa).",
+      "fb_fail_desc": "Kuingia na Facebook kumeshindwa. Tafadhali jaribu tena.",
+      "email_pass_req_desc": "Tafadhali ingiza barua pepe na nenosiri lako.",
+      "invalid_creds_desc": "Barua pepe au nenosiri si sahihi.",
+      "set_password_label": "Weka nenosiri kupitia Umesahau Nenosiri"
+    }
+  },
+  "signup": {
+    "hero": {
+      "title": "Fungua akaunti",
+      "subtitle": "Jiunge na MpahMapu kuajiri au kupata kazi"
+    },
+    "buttons": {
+      "home": "Nyumbani",
+      "back_to_home": "Rudi nyumbani",
+      "signing_in": "Kuendelea…",
+      "continue_google": "Endelea na Google",
+      "continue_facebook": "Endelea na Facebook",
+      "registering": "Kufungua akaunti…",
+      "submit": "Fungua akaunti"
+    },
+    "general": {
+      "or": "AMA"
+    },
+    "fields": {
+      "name_label": "Jina Kamili",
+      "email_label": "Barua Pepe",
+      "phone_label": "Nambari ya Simu",
+      "password_label": "Nenosiri",
+      "password_placeholder": "Herufi zisizopungua 8",
+      "referral_label": "Nambari ya Marejeleo (hiari)"
+    },
+    "footer": {
+      "has_account": "Tayari una akaunti?",
+      "signin_link": "Ingia",
+      "terms_p1": "Kwa kujisajili unakubaliana na",
+      "terms_link": "Meneja na Masharti",
+      "privacy_link": "Sera ya Faragha"
+    },
+    "errors": {
+      "name_req": "Jina linahitajika.",
+      "email_req": "Barua pepe inahitajika.",
+      "email_invalid": "Tafadhali ingiza barua pepe halisi.",
+      "phone_req": "Nambari ya simu inahitajika.",
+      "phone_invalid": "Umbizo la nambari ya simu si sahihi.",
+      "password_req": "Nenosiri linahitajika.",
+      "password_min": "Nenosiri lazima liwe na angalau herufi 8."
+    },
+    "toasts": {
+      "google_fail_desc": "Kujisajili na Google kumeshindwa. Tafadhali jaribu tena.",
+      "signup_failed_title": "Kujisajili Kumeshindwa",
+      "google_cancelled_desc": "Kujisajili na Google kulighairiwa au kumeshindwa.",
+      "fb_https_desc": "Kujisajili na Facebook kunahitaji HTTPS. Tumia barua pepe au Google wakati wa uundaji wa ndani.",
+      "fb_not_avail_desc": "Kuingia na Facebook hakupatikani (Kitambulisho cha Programu hakijasanidiwa).",
+      "fb_fail_desc": "Kujisajili na Facebook kumeshindwa. Tafadhali jaribu tena.",
+      "validation_error_desc": "Tafadhali jaza sehemu zote zinazohitajika kwa usahihi.",
+      "fail_generic_desc": "Usajili umeshindwa. Tafadhali jaribu tena."
+    }
+  },
+  "auth_carousel": {
+    "slide0": {
+      "tag": "Kwa wafanyakazi",
+      "headline": "Ajiriwa\nleo.",
+      "body": "Vinjari kazi 100+ kila siku mjini Kigali - wahudumu, wasafishaji, madereva, ulinzi na zaidi. Hakuna CV inayohitajika.",
+      "quote": "Nalipwa RWF 45,000 wiki hii pekee.",
+      "author": "Jean Pierre M.",
+      "role": "Muhudumu · Kacyiru"
+    },
+    "slide1": {
+      "tag": "Kwa waajiri",
+      "headline": "Ajiri ndani ya\ndakika chache.",
+      "body": "Wafanyakazi waliothibitishwa kwa vitambulisho na waliokadiriwa wapo tayari kuanza siku hiyo hiyo. Soma maoni, linganisha viwango vya malipo, na uweke nafasi mara moja.",
+      "quote": "Nilipata muhudumu wa hafla yangu kwa chini ya dakika 10.",
+      "author": "Amina K.",
+      "role": "Mratibu wa Hafla · Kimihurura"
+    },
+    "slide2": {
+      "tag": "Malipo salama",
+      "headline": "Lipa kupitia\nMoMo.",
+      "body": "Lipa na ulipwe salama kupitia Mobile Money. Hakuna migogoro ya pesa taslimu, ada ya mapema - fedha zilizowekwa salama.",
+      "quote": "Hakuna tena matatizo ya pesa taslimu. MoMo inarahisisha kila kitu.",
+      "author": "Eric N.",
+      "role": "Dereva · Remera"
+    }
+  },
+  "onboarding": {
+    "steps": {
+      "step1": "Hatua ya 1",
+      "step2": "Hatua ya 2",
+      "step3": "Hatua ya 3",
+      "indicator_lbl": "{step} kati ya 3"
+    },
+    "headers": {
+      "role_select_title": "Je, utatumia vipi MpahMapu?",
+      "role_select_subtitle": "Chagua aina ya akaunti yako ili kuanza",
+      "email_verify_title": "Thibitisha barua pepe yako",
+      "email_verify_subtitle": "Weka nambari ya siri tuliyotuma kwa {email}",
+      "account_type_title": "Nani anayejisajili?",
+      "account_type_subtitle_employer": "Je, wewe ni kampuni au mtu binafsi?",
+      "account_type_subtitle_worker": "Jisajili peke yako au kama timu",
+      "employer_details_title": "Maelezo ya biashara yako",
+      "employer_details_subtitle": "Ambapo unafanya kazi, kile unachoajiri, na TIN yako",
+      "personal_title": "Kuhusu wewe",
+      "personal_subtitle": "Maelezo machache ya haraka kuhusu historia yako",
+      "location_title": "Wapi & lini",
+      "location_subtitle": "Tuambie unapopatikana na lini uko huru",
+      "equipment_title": "Vifaa vyako",
+      "equipment_subtitle": "Orodhesha zana au vifaa unavyoweza kutumia",
+      "completed_title": "Kila kitu tayari!",
+      "completed_subtitle": "Tunakupeleka kwenye dashibodi yako…"
+    },
+    "roles": {
+      "worker_label": "Tafuta Kazi",
+      "worker_desc": "Vinjari & omba kazi",
+      "employer_label": "Ajiri Wafanyakazi",
+      "employer_desc": "Chapisha kazi & ajiri vipaji",
+      "continue_btn": "Endelea kama {role}"
+    },
+    "otp": {
+      "placeholder": "Nambari ya siri yenye tarakimu 6",
+      "submit_btn": "Thibitisha & Endelea",
+      "resend_prompt": "Hukuipokea?",
+      "resend_link": "Tuma tena msimbo",
+      "invalid_code_error": "Tafadhali ingiza msimbo halisi.",
+      "error_title": "Uthibitishaji Umeshindwa",
+      "success_resend": "Nambari mpya imetumwa kwa barua pepe yako.",
+      "success_resend_title": "Msimbo Umetumwa",
+      "resend_fail_generic": "Imeshindwa kutuma tena OTP. Tafadhali jaribu tena.",
+      "resend_fail_title": "Kutuma Upya Kumeshindwa"
+    },
+    "account_types": {
+      "individual": { "label": "Mtu Binafsi", "desc": "Mimi mwenyewe, nikifanya kazi peke yangu" },
+      "team": { "label": "Timu", "desc": "Kikundi cha wafanyakazi" },
+      "company": { "label": "Kampuni", "desc": "Kampuni iliyosajiliwa" },
+      "crew": { "label": "Wafanyakazi", "desc": "Wafanyakazi wanaofanya kazi" }
+    },
+    "group_fields": {
+      "member_emails_label": "Barua pepe za wanachama",
+      "members_count": "· Mwanachama {count} {plural}",
+      "member_email_placeholder": "Andika barua pepe na ubonyeze Enter…",
+      "member_email_hint": "Tutamtumia kila mwanachama barua pepe kuwa ameongezwa. Wanapokea arifa pekee — hawana ufikiaji wa dashibodi — na bado wanaweza kusajili akaunti yao wenyewe baadaye.",
+      "tin_label": "Nambari ya TIN",
+      "tin_placeholder": "Kitambulisho cha Ushuru — acha wazi ili kuruka",
+      "tin_recommended": "(inapendekezwa)",
+      "tin_optional": "(hiari)",
+      "email_error": "Weka barua pepe halisi.",
+      "email_error_title": "Barua Pepe Si Sahihi"
+    },
+    "employer_details": {
+      "location_label": "Eneo la Kazi",
+      "service_type_label": "Aina ya Huduma",
+      "service_search_placeholder": "Tafuta aina za huduma...",
+      "loading_services": "Inapakia aina za huduma...",
+      "submit_btn": "Kamilisha Usanidi"
+    },
+    "personal": {
+      "dob_label": "Tarehe ya Kuzaliwa",
+      "education_label": "Kiwango cha Elimu",
+      "category_label": "Jamii ya Kazi",
+      "category_search_placeholder": "Tafuta kategoria...",
+      "loading_categories": "Inapakia kategoria...",
+      "age_restriction_error": "Lazima uwe na angalau umri wa miaka 18 ili ujisajili.",
+      "age_restriction_title": "Kizuizi cha Umri"
+    },
+    "location_avail": {
+      "location_label": "Mahali Pako",
+      "avail_label": "Upatikanaji wa Wiki",
+      "days_selected": "Siku {count} {plural} zimechaguliwa"
+    },
+    "equipment": {
+      "label": "Vifaa & Zana",
+      "placeholder": "Andika na ubonyeze Enter ili kuongeza…",
+      "hint": "Bonyeza Enter au , ili kuongeza kila kitu",
+      "suggestions_title": "Mapendekezo ya kawaida",
+      "skip_btn": "Kuruka kwa sasa",
+      "onboarding_fail_generic": "Imeshindwa kuwasilisha data ya usajili.",
+      "onboarding_fail_title": "Usanidi Umeshindwa"
+    },
+    "completed": {
+      "title": "Kila kitu tayari!",
+      "subtitle": "Tunasanidi dashibodi yako…"
+    },
+    "education": {
+      "none": "Hakuna",
+      "primary": "Shule ya Msingi",
+      "high_school": "Shule ya Upili",
+      "diploma": "Stashahada / Cheti",
+      "bachelors": "Shahada ya Kwanza",
+      "masters": "Shahada ya Uzamili au Zaidi"
+    },
+    "equipment_suggestions": {
+      "smartphone": "Simu janja",
+      "laptop": "Kompyuta mpakato",
+      "internet": "Uunganisho wa Mtandao",
+      "safety_gear": "Vifaa vya Usalama",
+      "vehicle": "Chombo cha usafiri",
+      "power_tools": "Zana za umeme",
+      "camera": "Kamera",
+      "tablet": "Tabuleti"
+    }
+  },
+  "privacy": {
+    "hero": {
+      "tag": "Kisheria",
+      "title_main": "Sera ya",
+      "title_accent": "Faragha",
+      "desc": "Tunakusanya kile tu tunachohitaji, tunakilinda kwa uangalifu, na kamwe hatukiuzi. Hivi ndivyo hasa data yako inavyoshughulikiwa kwenye MpahMapu.",
+      "last_updated_prefix": "Ilisasishwa mwisho:",
+      "last_updated_date": "1 Juni 2025"
+    },
+    "highlights": {
+      "hl1": {
+        "title": "Kile tunachokusanya",
+        "body": "Jina, nambari ya simu, kitambulisho, mahali, na historia ya kazi - kile tu kinachohitajika ili kuendesha jukwaa."
+      },
+      "hl2": {
+        "title": "Jinsi tunavyoilinda",
+        "body": "Data imesimbwa kwa njia fiche inapopitishwa na inapohifadhiwa. Hati za vitambulisho huhifadhiwa kwenye seva zilizotengwa na zenye ufikiaji thabiti."
+      },
+      "hl3": {
+        "title": "Nani tunayeshiriki naye",
+        "body": "Ni upande mwingine tu katika uhifadhi wa kazi uliothibitishwa, na MoMo kwa usindikaji wa malipo. Haiuzwi kwa watangazaji kamwe."
+      },
+      "hl4": {
+        "title": "Haki yako ya kufuta",
+        "body": "Omba kufutwa kwa akaunti wakati wowote. Tunaondoa data yako ya kibinafsi ndani ya siku 30, isipokuwa sheria inavyohitaji vinginevyo."
+      }
+    },
+    "intro": {
+      "summary_prefix": "Muhtasari wa lugha rahisi: ",
+      "summary_body": "Tunatumia jina lako, simu, na kitambulisho ili kukuthibitisha na kuendesha jukwaa. Malipo yanapitia MoMo - hatugusi pesa zako taslimu kamwe. Tunashiriki maelezo yako na mtu unayefanya naye kazi pekee, na yale tu anayohitaji. Unaweza kufuta akaunti yako wakati wowote."
+    },
+    "sections": {
+      "sec1": {
+        "title": "Taarifa tunazokusanya",
+        "body": "Unapojisajili, tunakusanya jina lako kamili, nambari ya simu, na nambari ya kitambulisho cha taifa. Wafanyakazi pia huwasilisha picha ya kitambulisho chao kwa ajili ya uthibitishaji. Unapotumia jukwaa letu tunakusanya historia ya kazi, ukadiriaji na data ya eneo la jumla (kiwango cha wilaya) ili kukulinganisha na fursa au wafanyakazi wa karibu. Hatukusanyi viwianishi sahihi vya GPS bila idhini yako ya wazi."
+      },
+      "sec2": {
+        "title": "Jinsi tunavyotumia taarifa zako",
+        "body": "Tunatumia data yako kuendesha jukwaa letu: kuthibitisha utambulisho, kulinganisha wafanyakazi na kazi, kushughulikia malipo ya MoMo, na kuonyesha ukadiriaji wako kwa waajiri au wafanyakazi watarajiwa. Tunaweza pia kutumia data iliyokusanywa pamoja na isiyotambulika ili kuboresha kanuni zetu za kulinganisha na kuelewa jinsi jukwaa linavyotumiwa - data hii haiwezi kukutambua wewe binafsi."
+      },
+      "sec3": {
+        "title": "Nani tunayeshiriki naye data yako",
+        "body": "Kazi inapothibitishwa, mwajiri anaweza kuona jina la mfanyakazi, picha, ukadiriaji na uzoefu wa kategoria ya kazi - na kinyume chake. Zaidi ya hayo, tunashiriki data na MTN MoMo pekee kwa ajili ya usindikaji wa malipo na, ikiwa inahitajika kisheria, na mamlaka za sheria za Rwanda au mamlaka za udhibiti. Hatuuzi, kukodisha, au kufanya biashara ya data yako ya kibinafsi na mtu yeyote wa tatu kwa madhumuni ya uuzaji."
+      },
+      "sec4": {
+        "title": "Uthibitishaji wa Kitambulisho",
+        "body": "Wafanyakazi huwasilisha kitambulisho cha taifa wakati wa usajili. Hati hii inapitiwa na timu yetu ya uthibitishaji na kisha kuhifadhiwa katika eneo lililosimbwa kwa njia fiche na lenye ufikiaji mdogo. Wafanyakazi walioidhinishwa wa MpahMapu pekee ndio wanaoweza kufikia vitambulisho hivi, na kwa madhumuni ya kutatua migogoro au kutimiza wajibu wa kisheria pekee. Hali ya uthibitishaji inaonyeshwa kama beji; hati yenyewe haishirikishwi kamwe na waajiri."
+      },
+      "sec5": {
+        "title": "MoMo na data ya malipo",
+        "body": "Tunahifadhi tu nambari ya simu ya MoMo inayohusishwa na akaunti yako. Rekodi kamili za miamala zinashikiliwa na MTN MoMo chini ya sera yao wenyewe ya faragha. MpahMapu huhifadhi rekodi za malipo (kiasi, tarehe, kumbukumbu ya kazi) kwa hadi miaka 7 kama inavyotakiwa na sheria ya ushuru ya Rwanda."
+      },
+      "sec6": {
+        "title": "Vidakuzi na uchanganuzi wa programu",
+        "body": "Mifumo yetu ya wavuti na ya rununu hutumia vidakuzi muhimu ili kukuweka umeingia na kukumbuka mapendeleo yako. Pia tunatumia uchanganuzi unaoheshimu faragha ili kuelewa vipengele vipi vinavyotumiwa na wapi jukwaa linaweza kuboreshwa. Data ya uchanganuzi inakusanywa kwa pamoja na haitambui watumiaji binafsi. Unaweza kuzima vidakuzi visivyo muhimu katika mipangilio ya kifaa chako au kivinjari."
+      },
+      "sec7": {
+        "title": "Uhifadhi wa data",
+        "body": "Akaunti amilifu: data huhifadhiwa mradi tu akaunti yako iko wazi. Akaunti zilizofutwa: data ya kibinafsi huondolewa ndani ya siku 30 baada ya kufutwa, isipokuwa kwa rekodi za miamala (miaka 7, mahitaji ya kisheria) na data inayohusiana na migogoro ambayo haijatatuliwa. Data isiyotambulika na iliyokusanywa inaweza kuhifadhiwa kwa muda usiojulikana."
+      },
+      "sec8": {
+        "title": "Haki zako",
+        "body": "Chini ya sheria ya Rwanda na kwa mujibu wa mazoea ya haki ya data, una haki ya kupata nakala ya data yako ya kibinafsi, kusahihisha taarifa zisizo sahihi, kuomba kufutwa kwa akaunti na data yako, na kupinga usindikaji fulani. Ili kutumia haki yoyote kati ya hizi, wasiliana na privacy@MpahMapu.rw au utumie fomu ya usaidizi iliyo kwenye programu. Tutajibu ndani ya siku 10 za kazi."
+      },
+      "sec9": {
+        "title": "Usalama",
+        "body": "Tunatumia usimbuaji wa TLS kwa data zote zinazopitishwa, usimbuaji wa AES-256 kwa data nyeti zinazohifadhiwa, na udhibiti mkali wa ufikiaji ili wafanyakazi wanaohitaji data kufanya kazi zao tu ndio waweze kuifikia. Tunafanya ukaguzi wa mara kwa mara wa usalama wa ndani. Ikiwa ukiukaji utatokea ambao unaathiri data yako, tutakujulisha ndani ya saa 72 na kuripoti kwa Mamlaka ya Jumuiya ya Habari ya Rwanda (RISA) kama inavyotakiwa."
+      },
+      "sec10": {
+        "title": "Mabadiliko ya sera hii",
+        "body": "Tunaweza kusasisha Sera hii ya Faragha ili kuakisi mabadiliko ya sheria au jukwaa. Mabadiliko yakiwa muhimu, tutakujulisha kupitia SMS au arifa ya ndani ya programu angalau siku 7 kabla ya kuanza kutumika. Kuendelea kutumia MpahMapu baada ya tarehe hiyo kunamaanisha unakubali mabadiliko."
+      },
+      "sec11": {
+        "title": "Wasiliana nasi",
+        "body": "Kwa maswali ya faragha, maombi ya data, au kuripoti wasiwasi wowote, wasiliana na timu yetu ya data kwa privacy@MpahMapu.rw. Kwa maswali ya jumla tumia legal@MpahMapu.rw au fomu ya mawasiliano kwenye wavuti yetu."
+      }
+    },
+    "contact_banner": {
+      "title": "Maswali ya data na faragha",
+      "email_prefix": "Barua pepe",
+      "email_suffix": "- tunajibu ndani ya siku 10 za kazi."
+    },
+    "cta": {
+      "title": "Uko tayari kuanza?",
+      "desc": "Jiunge na maelfu ya wafanyakazi na waajiri ambao tayari wako kwenye MpahMapu.",
+      "btn_signup": "Fungua akaunti",
+      "btn_terms": "Masharti & vigezo"
+    }
+  },
+  "terms": {
+    "hero": {
+      "tag": "Kisheria",
+      "title_main": "Masharti &",
+      "title_accent": "Vigezo",
+      "desc": "Masharti haya yanasimamia matumizi yako ya MpahMapu kama mfanyakazi au mwajiri. Tafadhali yasome kwa makini kabla ya kufungua akaunti.",
+      "last_updated_prefix": "Ilisasishwa mwisho:",
+      "last_updated_date": "1 Juni 2025"
+    },
+    "intro": {
+      "summary_prefix": "Muhtasari wa haraka: ",
+      "summary_body": "MpahMapu inaunganisha wafanyakazi na waajiri nchini Rwanda. Unamiliki kazi yako na mapato yako. Tunashughulikia uaminifu, uthibitishaji na malipo ya MoMo. Kuwa mwaminifu, uwe na heshima, fika kwa wakati."
+    },
+    "sections": {
+      "sec1": {
+        "title": "Kukubali masharti",
+        "body": "Kwa kufungua akaunti au kutumia MpahMapu - iwe kama mfanyakazi au mwajiri - unakubali kubanwa na Masharti na Vigezo hivi. Ikiwa hukubaliani navyo, tafadhali usitumie jukwaa hili. Tunaweza kusasisha masharti haya mara kwa mara; kuendelea kutumia baada ya mabadiliko yoyote inamaanisha unakubali masharti yaliyofanyiwa marekebisho."
+      },
+      "sec2": {
+        "title": "Nani anaweza kutumia MpahMapu",
+        "body": "Lazima uwe na angalau umri wa miaka 18 na uruhusiwe kisheria kufanya kazi au kuajiri nchini Rwanda ili kufungua akaunti. Wafanyakazi lazima wakamilishe uthibitishaji wa kitambulisho kabla ya kukubali kazi. Waajiri lazima watoe maelezo sahihi ya biashara au ya kibinafsi wanapochapisha kazi. Akaunti haziwezi kuhamishwa."
+      },
+      "sec3": {
+        "title": "Kupachika na kukubali kazi",
+        "body": "Waajiri wanawajibika kwa usahihi wa kila chapisho la kazi - ikiwa ni pamoja na eneo, kiwango cha malipo, kategoria, na muda. Wafanyakazi wanakubali kazi kulingana na taarifa hiyo; upotoshaji wa nyenzo unaweza kusababisha kusimamishwa kwa akaunti. Wafanyakazi lazima wakamilishe kazi walizokubali au kughairi kwa taarifa ya kutosha. Kutokea mara kwa mara kutokuonyesha kunaweza kusababisha kuondolewa kwenye jukwaa."
+      },
+      "sec4": {
+        "title": "Malipo kupitia MoMo",
+        "body": "Malipo yote yanachakatwa kupitia MTN Mobile Money (MoMo). Waajiri wanatozwa kiwango kilichokubaliwa pamoja na ada ya huduma ya MpahMapu wakati wa kuthibitisha kazi. Fedha hutolewa kwa wafanyakazi baada ya kukamilika kwa kazi. MpahMapu haishikilii fedha kwa muda mrefu kuliko lazima na haiwajibiki kwa ucheleweshaji unaosababishwa na nyakati za usindikaji za MoMo zenyewe."
+      },
+      "sec5": {
+        "title": "Ukadiriaji na tabia",
+        "body": "Wafanyakazi na waajiri wote wanaweza kukadiriwa baada ya kila kazi iliyokamilika. Ukadiriaji lazima uonyeshe uzoefu halisi. Maoni ya ulaghai, kulipiza kisasi au kulazimishwa yanakiuka masharti haya na yanaweza kuondolewa. Watumiaji wote wanatarajiwa kuwasiliana kwa heshima; unyanyasaji, ubaguzi, au unyanyasaji wa aina yoyote utasababisha kuondolewa kabisa kwa akaunti."
+      },
+      "sec6": {
+        "title": "Migogoro na urejeshaji fedha",
+        "body": "Iwapo mgogoro utatokea - kwa mfano, kazi haikukamilika kama ilivyokubaliwa - upande wowote unaweza kuwasilisha dai ndani ya saa 48 baada ya muda wa kumaliza kazi. MpahMapu itakagua ushahidi unaopatikana na kufanya uamuzi unaofunga. Urejeshaji wa fedha, inapofaa, unachakatwa kupitia MoMo ndani ya siku 3-5 za kazi."
+      },
+      "sec7": {
+        "title": "Matumizi yaliyopigwa marufuku",
+        "body": "Huwezi kutumia MpahMapu kuomba wafanyakazi wafanye kazi nje ya jukwaa ili kuepuka ada, kuchapisha kazi haramu au hatari, kukusanya data ya kibinafsi ya watumiaji wengine bila idhini, au kujaribu kufanya uhandisi wa kubadili, kukwangua, au kuingilia jukwaa. Ukiukaji unaweza kusababisha kufungwa kwa akaunti mara moja na, inapofaa, kuchukuliwa hatua za kisheria."
+      },
+      "sec8": {
+        "title": "Ukomo wa dhima",
+        "body": "MpahMapu ni soko na si mwajiri au mwajiriwa wa upande wowote. Hatuhakikishii ubora wa kazi iliyofanywa, mwenendo wa mtumiaji yeyote, au upatikanaji wa kazi. Kwa kiwango cha juu kinachoruhusiwa na sheria ya Rwanda, dhima ya MpahMapu kwa dai lolote ni ya ada ulizotulipa katika siku 30 zilizotangulia tukio lililosababisha dai."
+      },
+      "sec9": {
+        "title": "Sheria inayoongoza",
+        "body": "Masharti haya yanaongozwa na sheria za Jamhuri ya Rwanda. Migogoro yoyote ambayo haiwezi kutatuliwa kupitia mchakato wa ndani wa MpahMapu itakuwa chini ya mamlaka ya kipekee ya mahakama za Rwanda."
+      },
+      "sec10": {
+        "title": "Wasiliana",
+        "body": "Maswali kuhusu masharti haya? Wasiliana nasi kwa legal@MpahMapu.rw au kupitia fomu ya mawasiliano kwenye wavuti yetu. Lengo letu ni kujibu ndani ya siku 2 za kazi."
+      }
+    },
+    "cta": {
+      "title": "Uko tayari kuanza?",
+      "desc": "Kwa kufungua akaunti unakubaliana na masharti haya.",
+      "btn_signup": "Fungua akaunti",
+      "btn_privacy": "Sera ya faragha"
+    }
+  },
+  "post_job": {
+    "loading_map": "Inapakia ramani…",
+    "units": {
+      "hour": "saa",
+      "hours": "masaa",
+      "day": "siku",
+      "days": "siku",
+      "week": "wiki",
+      "weeks": "wiki",
+      "month": "mwezi",
+      "months": "miezi",
+      "year": "mwaka",
+      "years": "miaka"
+    },
+    "steps": {
+      "details": "Maelezo ya kazi",
+      "review": "Kagua & chapisha"
+    },
+    "errors": {
+      "required": "Inahitajika",
+      "invalid_rate": "Weka kiwango sahihi",
+      "incomplete_form": "Tafadhali jaza sehemu zote zinazohitajika.",
+      "incomplete_form_title": "Fomu Haijakamilika",
+      "not_signed_in": "Lazima uingie ili kupachika kazi.",
+      "not_signed_in_title": "Hujaingia",
+      "post_failed": "Imeshindwa kupachika kazi. Tafadhali jaribu tena.",
+      "post_failed_title": "Uchapishaji Umeshindwa"
+    },
+    "success": {
+      "title": "Kazi imepachikwa!",
+      "desc": "Kazi yako ipo tayari. Wafanyakazi waliothibitishwa katika {location} wataanza kutuma maombi hivi karibuni."
+    },
+    "fields": {
+      "category": "Kategoria",
+      "date": "Tarehe",
+      "time": "Muda",
+      "duration": "Muda wa kazi",
+      "workers": "Wafanyakazi",
+      "location": "Mahali",
+      "rate": "Kiwango cha malipo",
+      "escrowed": "Zilizowekwa dhamana"
+    },
+    "step_indicator": "Hatua ya {current} kati ya {total}",
+    "labels": {
+      "category": "Kategoria ya kazi *",
+      "start_date": "Tarehe ya kuanza *",
+      "start_time": "Muda wa kuanza *",
+      "rate_period": "Kipindi cha malipo",
+      "duration": "Muda wa kazi",
+      "workers_count": "Idadi ya wafanyakazi",
+      "province": "Mkoa",
+      "district": "Wilaya *",
+      "precise_location": "Eneo sahihi (bofya ramani au tumia GPS)",
+      "rate_label": "Kiwango kwa kila mfanyakazi {period} (RWF) *",
+      "notes": "Maelezo ya ziada (hiari)"
+    },
+    "placeholders": {
+      "search_category": "Tafuta kategoria…",
+      "province": "Mkoa…",
+      "district": "Wilaya…",
+      "rate": "mfano 3000",
+      "notes": "mfano nguo rasmi zinahitajika, zana zinatolewa, hafla ya nje…"
+    },
+    "gps": {
+      "detecting": "Inatafuta…",
+      "detected": "GPS imepatikana",
+      "detect": "Tafuta GPS yangu",
+      "error": "Imeshindwa kufikia GPS"
+    },
+    "options": {
+      "per_hour": "Kwa saa",
+      "per_day": "Kwa siku",
+      "per_week": "Kwa wiki",
+      "per_month": "Kwa mwezi",
+      "per_year": "Kwa mwaka"
+    },
+    "review": {
+      "must_be_signed_in": "Lazima uingie kama mwajiri ili kupachika kazi.",
+      "summary_title": "Muhtasari wa kazi",
+      "payment_title": "Malipo",
+      "gross": "Jumla ({details})",
+      "platform_fee": "Ada ya jukwaa (25% kutoka kwa mfanyakazi)",
+      "workers_receive": "Wafanyakazi wanapokea",
+      "escrow_charge": "Malipo yako ya dhamana",
+      "wallet_balance": "Salio la pochi",
+      "insufficient_funds_msg": "Unahitaji {amount} zaidi.",
+      "top_up_link": "Weka salio kwenye pochi →",
+      "agreement_hint": "Kwa kupachika unakubaliana na masharti yetu. Maelezo yako ya mawasiliano yanashirikiwa tu na wafanyakazi wanaotuma maombi.",
+      "posting_btn": "Inachapisha…",
+      "insufficient_balance_btn": "Salio halitoshi",
+      "submit_btn": "Chapisha & zuia fedha"
+    }
+  },
+  "offer": {
+    "loading_map": "Inapakia ramani…",
+    "success": {
+      "title": "Ofa imetumwa!",
+      "desc": "{name} ataarifiwa kwa maelezo yako na kiungo cha kukubali au kujadili.",
+      "notification": "Taarifa ya mfanyakazi"
+    },
+    "fields": {
+      "job": "Kazi",
+      "date": "Tarehe",
+      "duration": "Muda",
+      "province": "Mkoa",
+      "district": "Wilaya",
+      "offer": "Ofa",
+      "done": "Imefanyika"
+    },
+    "header": {
+      "title": "Tengeneza ofa",
+      "subtitle": "Mwajiri {name}"
+    },
+    "labels": {
+      "title": "Kichwa cha kazi *",
+      "start_date": "Tarehe ya kuanza *",
+      "start_time": "Muda wa kuanza *",
+      "rate_period": "Kipindi cha malipo",
+      "duration": "Muda wa kazi *",
+      "province": "Mkoa",
+      "district": "Wilaya *",
+      "precise_location": "Eneo sahihi (bofya ramani au tumia GPS)",
+      "offer_price": "Kiwango cha ofa yako {period} (RWF) *"
+    },
+    "placeholders": {
+      "title": "mfano Mhudumu wa harusi",
+      "rate": "mfano 8000",
+      "province": "Mkoa…",
+      "district": "Wilaya…"
+    },
+    "gps": {
+      "detecting": "Inatafuta…",
+      "detected": "GPS imepatikana",
+      "detect": "Tafuta GPS yangu",
+      "error": "Imeshindwa kufikia GPS"
+    },
+    "buttons": {
+      "send": "Tuma ofa"
+    }
+  },
+  "apply": {
+    "success": {
+      "title": "Ombi limetumwa!",
+      "desc": "Ombi lako la kazi ya {title} limewasilishwa. {name} ataarifiwa."
+    },
+    "header": {
+      "title": "Omba kazi"
+    },
+    "errors": {
+      "must_be_signed_in": "Lazima uingie ili kuomba kazi.",
+      "failed": "Imeshindwa kuwasilisha ombi. Tafadhali jaribu tena.",
+      "failed_title": "Mchakato Umeshindwa"
+    },
+    "labels": {
+      "best_fit": "Kwa nini wewe ni mtu anayefaa zaidi? (hiari)"
+    },
+    "placeholders": {
+      "best_fit": "Eleza uzoefu wako, ujuzi wako, au kupatikana kwako kunakufanya uwe bora kwa jukumu hili…"
+    },
+    "buttons": {
+      "submit": "Tuma ombi",
+      "submitting": "Inatuma…",
+      "close": "Funga"
+    }
+  },
+  "jobs_page": {
+    "hero": {
+      "subtitle": "Nafasi za kazi wazi kote Rwanda - tuma ombi au weka yako."
+    },
+    "buttons": {
+      "post_job": "Weka kazi",
+      "filters": "Vichujio",
+      "clear_all": "Futa zote"
+    },
+    "placeholders": {
+      "search": "Tafuta kazi au kategoria…"
+    },
+    "filters": {
+      "location": "Eneo",
+      "min_pay": "Malipo ya chini (RWF)",
+      "sort_by": "Panga kwa",
+      "urgent_only": "Haraka pekee",
+      "urgent": "Haraka pekee",
+      "min": "Kiwango cha chini",
+      "max_pay": "Malipo ya juu (RWF)"
+    },
+    "sort_options": {
+      "newest": "Mpya zaidi kwanza",
+      "pay_asc": "Malipo: chini → juu",
+      "pay_desc": "Malipo: juu → chini"
+    },
+    "loading": "Inapakia…",
+    "found_count": "Kazi {count} zimepatikana",
+    "badges": {
+      "urgent": "Haraka"
+    },
+    "cards": {
+      "slots_open": "Nafasi {count} wazi",
+      "apply": "Omba"
+    },
+    "empty": {
+      "title": "Hakuna kazi zinazolingana na vichujio vyako.",
+      "desc": "Jaribu kurekebisha utafutaji wako au kufuta vichujio."
+    },
+    "cta": {
+      "title": "Je, unahitaji kuajiri mtu?",
+      "desc": "Weka kazi kwa chini ya dakika 2 na ulinganishwe na wafanyakazi walioidhinishwa katika eneo lako.",
+      "button": "Weka kazi"
+    }
+  },
+  "browse_page": {
+    "hero": {
+      "subtitle": "Tafuta wafanyakazi walioidhinishwa au kazi zinazopatikana kote Rwanda."
+    },
+    "tabs": {
+      "workers": "Wafanyakazi",
+      "jobs": "Kazi"
+    },
+    "placeholders": {
+      "search_workers": "Tafuta wafanyakazi au kategoria…"
+    },
+    "workers_found": "Wafanyakazi {count} wamepatikana",
+    "badges": {
+      "available": "Anapatikana"
+    },
+    "empty": {
+      "workers": "Hakuna wafanyakazi wanaolingana na vichujio vyako."
+    }
+  },
+  "worker_detail": {
+    "not_found": "Mfanyakazi hajapatikana",
+    "not_found_desc": "Profaili hii haipo au imeondolewa.",
+    "back": "← Rudi kwenye Utafutaji",
+    "badges": {
+      "verified": "Kithibitishwa",
+      "unavailable": "Haipatikani",
+      "new": "Mfanyakazi mpya"
+    },
+    "member_since": "Mwanachama tangu {year}",
+    "sections": {
+      "available_days": "Siku zinazopatikana",
+      "education": "Elimu",
+      "equipment": "Vifaa na zana",
+      "trust": "Uaminifu na uthibitisho"
+    },
+    "trust": {
+      "identity": "Kitambulisho kimesajiliwa MpahMapu",
+      "member_since": "Mwanachama hai tangu {year}",
+      "specialty": "Mtaalamu wa {category}",
+      "availability": "Siku {count} zinazopatikana kwa wiki"
+    },
+    "cta": {
+      "button_hire": "Kodisha {name}",
+      "hire": "Aajiri {name}",
+      "unavailable": "Haipatikani"
+    }
+  },
+  "not_found_page": {
+    "title": "Ukurasa Haupatikani",
+    "heading": "Ukurasa Haupatikani",
+    "description": "Samahani, hatukuweza kupata ukurasa unaotafuta. Huenda umehamishwa au haupo tena.",
+    "go_home": "Rudi Nyumbani",
+    "browse_workers": "Vinjari Wafanyakazi",
+    "find_jobs": "Tafuta Kazi"
+  },
+  "forgot_password_page": {
+    "back_to_sign_in": "Rudi kwenye kuingia",
+    "title": "Je, umesahau nywila yako?",
+    "subtitle": "Ingiza barua pepe iliyounganishwa na akaunti yako ya MpahMapu na tutakutumia kiungo cha kuweka upya.",
+    "email_label": "Barua pepe",
+    "email_placeholder": "wewe@mfano.com",
+    "sending": "Inatuma...",
+    "submit_btn": "Tuma kiungo cha kuweka upya",
+    "success_title": "Angalia kikasha chako",
+    "success_subtitle": "Tulituma kiungo cha kuweka upya kwa {email}. Itaisha baada ya dakika 15.",
+    "didnt_receive": "Hukuipata? Angalia folda ya barua taka (spam), au",
+    "try_different_email": "jaribu barua pepe nyingine"
+  },
+  "reset_password_page": {
+    "back_to_sign_in": "Rudi kwenye kuingia",
+    "title": "Weka nywila mpya",
+    "subtitle": "Chagua kitu chenye nguvu. Hutaweza kutumia tena nywila yako ya mwisho.",
+    "new_password_label": "Nywila mpya",
+    "confirm_password_label": "Thibitisha nywila",
+    "resetting": "Inaweka upya...",
+    "submit_btn": "Weka upya nywila",
+    "success_title": "Nywila imesasishwa",
+    "success_subtitle": "Nywila yako imewekwa upya. Vikao vingine vyote vimeondolewa kwa usalama.",
+    "signin_btn": "Ingia",
+    "strength": {
+      "weak": "Dhaifu",
+      "fair": "Kawaida",
+      "good": "Nzuri",
+      "strong": "Imara"
+    },
+    "toasts": {
+      "missing_token": "Tokeni ya kuweka upya haipo au si sahihi.",
+      "reset_failed": "Uwekaji Upya Umefeli",
+      "password_short": "Nywila lazima iwe na angalau herufi 8.",
+      "passwords_mismatch": "Nywila hazilingani.",
+      "reset_success": "Nywila yako imewekwa upya. Sasa unaweza kuingia.",
+      "password_updated": "Nywila Imesasishwa"
+    }
+  },
+  "verify_badge_page": {
+    "loading": "Inathibitisha beji...",
+    "not_found": {
+      "title": "Beji haipatikani",
+      "desc": "Hakuna beji yenye ID {badgeId} iliyosajiliwa kwenye Mpah Mapu. Beji hii inaweza kuwa batili au ya kughushi."
+    },
+    "verified": "Imethibitishwa na Mpah Mapu",
+    "inactive": "Beji {status}",
+    "role_company": "Kampuni Iliyothibitishwa",
+    "role_worker": "Mfanyakazi Aliyehikiwa",
+    "since": "Tangu {year}",
+    "reviews_count": {
+      "one": "Ukadiriaji 1",
+      "other": "Ukadiriaji {count}"
+    },
+    "no_reviews": "Bado hakuna ukadiriaji",
+    "jobs_completed": "Kazi zilizokamilika",
+    "id_label": "ID",
+    "view_profile": "Angalia wasifu kamili",
+    "inactive_warning": "Akaunti ya mwenye beji hii kwa sasa ni {status}. Tafadhali chukua tahadhari na beji hii.",
+    "footer_note": "Changanua beji yoyote ya Mpah Mapu kuona utambulisho wa mwenye nayo."
+  },
+  "badge_wizard": {
+    "identity_title": "Uhakiki wa Utambulisho wa Mfanyakazi",
+    "location_title": "Uhakiki wa Anwani Halisi",
+    "completed_title": "Beji Imetengenezwa!",
+    "identity_subtitle": "Tafadhali toa picha yako, Kitambulisho cha Taifa, na jina la kisheria",
+    "location_subtitle": "Thibitisha anwani iliyohifadhiwa kwenye wasifu wako",
+    "completed_subtitle": "Beji yako ya kipekee iko tayari.",
+    "fields": {
+      "photo_label": "Picha ya Pasipoti / Selfie",
+      "national_id_label": "Nambari ya Kitambulisho cha Taifa",
+      "legal_name_label": "Jina la Kisheria (Jina lililosajiliwa)",
+      "address_label": "Anwani Iliyosajiliwa"
+    },
+    "toasts": {
+      "photo_success": "Picha imepakiwa kwa mafanikio",
+      "photo_failed": "Imeshindwa kupakia picha",
+      "validation_error": "Mengine yote ya utambulisho yanahitajika.",
+      "submit_failed": "Imeshindwa kutuma taarifa za beji."
+    },
+    "status": {
+      "uploading": "Inapakia...",
+      "photo_ready": "Picha iko tayari! Gusa ili kubadilisha",
+      "photo_placeholder": "Gusa ili kupiga selfie au kupakia",
+      "photo_hint": "Picha wazi ya mbele ya uso",
+      "address_loading": "Inapakia anwani yako iliyohifadhiwa...",
+      "address_hint": "Hii ndiyo anwani iliyohifadhiwa kwenye wasifu wako. Ili kuibadilisha, sasisha eneo la wasifu wako kwenye Mipangilio.",
+      "address_missing": "Hakuna anwani iliyohifadhiwa. Tafadhali kamilisha eneo la wasifu wako kabla ya kuomba beji."
+    },
+    "continue_btn": "Endelea",
+    "submit_btn": "Tuma na Utengeneze Beji",
+    "badge_id_label": "Beji ID:",
+    "view_badge_btn": "Angalia Beji Yangu",
+    "close_btn": "Funga"
+  },
+  "titles": {
+    "home": "MpahMapu - Ajiri Wafanyakazi Waliothibitishwa Kigali, Rwanda",
+    "browse": "Vinjari Wafanyakazi | MpahMapu",
+    "jobs": "Tafuta Kazi | MpahMapu",
+    "about": "Kutuhusu | MpahMapu",
+    "contact": "Wasiliana Nasi | MpahMapu",
+    "privacy_policy": "Sera ya Faragha | MpahMapu",
+    "terms_and_conditions": "Masharti na Vigezo | MpahMapu",
+    "signin": "Ingia | MpahMapu",
+    "signup": "Jisajili | MpahMapu",
+    "forgot_password": "Umesahau Nywila | MpahMapu",
+    "reset_password": "Weka upya Nywila | MpahMapu",
+    "verify_badge": "Thibitisha Beji | MpahMapu",
+    "not_found": "Ukurasa Haupatikani | MpahMapu"
+  },
+  "settings_page": {
+    "title": "Mipangilio",
+    "subtitle": "Simamia akaunti yako, usalama na mapendeleo yako",
+    "tabs": {
+      "profile": "Wasifu",
+      "security": "Usalama",
+      "notifications": "Arifa",
+      "account": "Akaunti"
+    },
+    "profile": {
+      "title": "Taarifa za Wasifu",
+      "full_name": "Majina Kamili",
+      "phone_number": "Nambari ya Simu (MoMo)",
+      "email": "Barua Pepe",
+      "email_hint": "Barua pepe haiwezi kubadilishwa. Wasiliana na huduma kwa wateja ili kuisasisha.",
+      "save_btn": "Hifadhi mabadiliko",
+      "saving": "Inahifadhi...",
+      "saved": "Imehifadhiwa"
+    },
+    "language": {
+      "title": "Mapendeleo ya Lugha",
+      "subtitle": "Chagua lugha unayopendelea kwa dashibodi. Hii itasasisha maandishi na lugha ya kiolesura."
+    },
+    "worker_details": {
+      "title": "Maelezo ya Mfanyakazi",
+      "dob": "Tarehe ya Kuzaliwa",
+      "education": "Kiwango cha Elimu",
+      "category": "Kundi la Kazi",
+      "category_search_placeholder": "Tafuta makundi...",
+      "location_availability": "Mahali & Upatikanaji",
+      "availability": "Upatikanaji wa Wiki",
+      "equipment": "Vifaa & Zana",
+      "equipment_placeholder": "Andika zana na ubonyeze Enter...",
+      "bio": "Wasifu wa Kitaalamu",
+      "bio_placeholder": "Tuambie kuhusu uzoefu wako...",
+      "save_worker_btn": "Hifadhi Wasifu wa Mfanyakazi"
+    },
+    "security": {
+      "password_title": "Badilisha Nywila",
+      "cur_password": "Nywila ya Sasa",
+      "new_password": "Nywila Mpya",
+      "new_password_placeholder": "Angalau herufi 8",
+      "confirm_password": "Thibitisha Nywila Mpya",
+      "confirm_password_placeholder": "Rudia nywila mpya",
+      "strength": "Nguvu ya nywila",
+      "totp_title": "Uthibitishaji wa Hatua Mbili (2FA)",
+      "totp_desc_enabled": "Uthibitishaji wa hatua mbili kwa sasa unafanya kazi kwenye akaunti yako.",
+      "totp_desc_disabled": "Ongeza ulinzi wa ziada kwa kuhitaji nambari ya uthibitishaji wakati wa kuingia.",
+      "totp_enable_btn": "Wezesha 2FA",
+      "totp_disable_btn": "Zima 2FA",
+      "totp_setup_title": "Weka 2FA",
+      "totp_setup_desc": "Scan msimbo huu wa QR kwa kutumia programu ya uthibitishaji (kama Google Authenticator) na uingize msimbo wa tarakimu 6 hapa chini.",
+      "totp_code_placeholder": "000000",
+      "totp_verify_btn": "Thibitisha & Wezesha",
+      "active_sessions_title": "Vikao Vinavyotumika",
+      "logout_devices_btn": "Ondoka kwenye vifaa vingine vyote",
+      "current_session": "Kikao cha Sasa"
+    },
+    "notifications": {
+      "title": "Mapendeleo ya Arifa",
+      "desc": "Chagua jinsi na lini unataka kupokea arifa.",
+      "email": "Arifa za Barua Pepe",
+      "email_desc": "Pokea masasisho ya kazi, ankara za malipo, na arifa za akaunti.",
+      "push": "Arifa za Push",
+      "push_desc": "Pata masasisho ya haraka moja kwa moja kwenye kivinjari au kifaa chako.",
+      "sms": "Arifa za SMS",
+      "sms_desc": "Pokea ujumbe wa maandishi kwa maombi ya haraka ya kazi na mechi.",
+      "save_btn": "Hifadhi mapendeleo"
+    },
+    "account": {
+      "title": "Taarifa za Akaunti",
+      "member_since": "Mwanachama Tangu",
+      "role": "Jukumu la Akaunti",
+      "status": "Hali ya Akaunti",
+      "badge_id": "ID ya Beji",
+      "badge_url": "Kiungo cha Beji",
+      "verified": "Imethibitishwa",
+      "not_verified": "Haijathibitishwa",
+      "request_badge_btn": "Omba Beji ya Mfanyakazi",
+      "verification_badge_title": "Beji ya Uthibitishaji",
+      "verification_badge_desc": "Waonyeshe wateja kuwa umethibitishwa na unaaminika. Kuomba beji hutengeneza kadi ya beji ya wasifu wa kipekee."
+    }
+  },
+  "dashboard_home": {
+    "morning": "Habari za asubuhi",
+    "afternoon": "Habari za mchana",
+    "evening": "Habari za jioni",
+    "greeting_sub": "Hivi ndivyo vinavyoendelea na kazi yako leo.",
+    "worker_badge": "Beji ya Mfanyakazi",
+    "profile_under_review": "Wasifu wako unakaguliwa",
+    "complete_profile": "Kamilisha wasifu wako ili kuidhinishwa",
+    "admin_approval_desc": "Msimamizi ataidhinisha akaunti yako hivi karibuni. Utaonekana kwa waajiri baada ya kuidhinishwa.",
+    "profile_completion_desc": "Fikia 80% ya ukamilishaji wa wasifu ili ustahili kuidhinishwa na msimamizi.",
+    "profile": "Wasifu",
+    "wallet_balance": "Salio la Wallet",
+    "available_balance": "Salio linalopatikana",
+    "active_jobs": "Kazi Zinazoendelea",
+    "currently_hired": "Umeajiriwa sasa",
+    "direct_offers": "Ofa za Moja kwa Moja",
+    "awaiting_reply": "Inasubiri jibu lako",
+    "total_earned": "Jumla ya Mapato",
+    "released_payments": "Malipo yaliyotolewa",
+    "direct_offers_title": "Ofa za Moja kwa Moja",
+    "view_all": "Angalia zote",
+    "direct_offer_label": "Ofa ya Moja kwa Moja",
+    "accept": "Kubali",
+    "reject": "Kataa",
+    "my_wallet": "Wallet Yangu",
+    "in_escrow": "kwenye escrow",
+    "released": "imetolewa",
+    "manage_wallet": "Simamia wallet",
+    "quick_stats": "Takwimu za Haraka",
+    "total_applications": "Jumla ya maombi",
+    "pending_replies": "Majibu yanayosubiri",
+    "payments_released": "Malipo yaliyotolewa",
+    "recent_applications": "Maombi ya Hivi Karibuni",
+    "see_all": "Angalia yote",
+    "no_applications": "Hakuna maombi bado",
+    "no_applications_desc": "Vinjari kazi zilizo wazi na utume maombi ili kuanza kupata mapato",
+    "browse_jobs": "Vinjari kazi",
+    "loading": "Inapakia..."
+  }
+}

@@ -12,19 +12,28 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     <SessionProvider>
       <div style={{ fontFamily:"Inter, DM Sans, system-ui, sans-serif", background:"#090909", color:"#f0f0f0", height:"100vh", overflow:"hidden" }}>
         <style>{`
+          :root {
+            --tb-height: 64px;
+            --sb-width: 260px;
+            --sb-active-width: 260px;
+          }
           .dashboard-sidebar {
             transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
           }
           .dashboard-topbar {
-            transition: left 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: left 0.2s cubic-bezier(0.16, 1, 0.3, 1), height 0.2s;
           }
           .dashboard-main {
-            transition: left 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: left 0.2s cubic-bezier(0.16, 1, 0.3, 1), top 0.2s;
           }
           .mobile-menu-btn {
             display: none !important;
           }
           @media (max-width: 768px) {
+            :root {
+              --sb-width: 0px;
+              --sb-active-width: 260px;
+            }
             .dashboard-sidebar {
               transform: translateX(-100%);
             }
@@ -32,17 +41,21 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               transform: translateX(0);
               box-shadow: 0 0 50px rgba(0,0,0,0.8);
             }
-            .dashboard-topbar, .dashboard-main {
-              left: 0 !important;
-            }
             .mobile-menu-btn {
               display: flex !important;
             }
             .dashboard-main {
               padding: 16px !important;
             }
-            .dashboard-topbar {
-              padding: 0 16px !important;
+          }
+          @media (max-width: 340px) {
+            :root {
+              --tb-height: 50px;
+              --sb-width: 0px;
+              --sb-active-width: 100%;
+            }
+            .dashboard-main {
+              padding: 8px !important;
             }
           }
         `}</style>
@@ -57,7 +70,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         <Sidebar mobileOpen={mobileOpen} closeMobile={() => setMobileOpen(false)} />
         <Topbar onToggleMenu={() => setMobileOpen(true)} />
         <main className="dashboard-main" style={{
-          position:"fixed", top:TB_HEIGHT, left:SB_WIDTH, right:0, bottom:0,
+          position:"fixed", top:"var(--tb-height)", left:"var(--sb-width)", right:0, bottom:0,
           overflowY:"auto", padding:"28px",
           background:"#090909",
         }}>

@@ -4,11 +4,12 @@ import { useState } from "react";
 import { Mail, ArrowLeft } from "lucide-react";
 import { AuthCarousel } from "@/components/auth/auth-carousel";
 import { forgotPassword } from "@/lib/api";
+import { useLanguage } from "@/lib/language-context";
 
 export default function ForgotPasswordPage() {
+  const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
-
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -56,7 +57,7 @@ export default function ForgotPasswordPage() {
               textDecoration: "none", marginBottom: 32,
               transition: "color 0.15s",
             }}>
-              <ArrowLeft size={14} /> Back to sign in
+              <ArrowLeft size={14} /> {t("forgot_password_page.back_to_sign_in")}
             </a>
 
             {!submitted ? (
@@ -71,15 +72,15 @@ export default function ForgotPasswordPage() {
                 </div>
 
                 <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 6px", letterSpacing: "-0.5px" }}>
-                  Forgot your password?
+                  {t("forgot_password_page.title")}
                 </h1>
                 <p style={{ fontSize: 13, color: "#555", margin: "0 0 28px", lineHeight: 1.6 }}>
-                  Enter the email linked to your MpahMapu account and we'll send you a reset link.
+                  {t("forgot_password_page.subtitle")}
                 </p>
 
                 <div style={{ marginBottom: 18 }}>
                   <label style={{ fontSize: 12, fontWeight: 600, color: "#aaa", display: "block", marginBottom: 6 }}>
-                    Email
+                    {t("forgot_password_page.email_label")}
                   </label>
                   <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
                     <span style={{ position: "absolute", left: 13, pointerEvents: "none", display: "flex" }}>
@@ -87,7 +88,7 @@ export default function ForgotPasswordPage() {
                     </span>
                     <input
                       type="email"
-                      placeholder="you@example.com"
+                      placeholder={t("forgot_password_page.email_placeholder")}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
@@ -115,7 +116,7 @@ export default function ForgotPasswordPage() {
                   onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = "#ea6a0a"; }}
                   onMouseLeave={(e) => { if (!loading) e.currentTarget.style.background = "#f97316"; }}
                 >
-                  {loading ? "Sending..." : "Send reset link"}
+                  {loading ? t("forgot_password_page.sending") : t("forgot_password_page.submit_btn")}
                 </button>
               </>
             ) : (
@@ -132,10 +133,10 @@ export default function ForgotPasswordPage() {
                 </div>
 
                 <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 6px", letterSpacing: "-0.5px" }}>
-                  Check your inbox
+                  {t("forgot_password_page.success_title")}
                 </h1>
                 <p style={{ fontSize: 13, color: "#555", margin: "0 0 28px", lineHeight: 1.6 }}>
-                  We sent a reset link to <span style={{ color: "#d0d0d0", fontWeight: 600 }}>{email}</span>. It expires in 15 minutes.
+                  {t("forgot_password_page.success_subtitle", { email })}
                 </p>
 
                 <div style={{
@@ -143,13 +144,13 @@ export default function ForgotPasswordPage() {
                   borderRadius: 10, padding: "14px 16px",
                   fontSize: 12, color: "#555", lineHeight: 1.6,
                 }}>
-                  Didn't get it? Check your spam folder, or{" "}
+                  {t("forgot_password_page.didnt_receive")}{" "}
                   <button
                     type="button"
                     onClick={() => setSubmitted(false)}
                     style={{ background: "none", border: "none", padding: 0, color: "#f97316", fontWeight: 700, fontSize: 12, cursor: "pointer" }}
                   >
-                    try a different email
+                    {t("forgot_password_page.try_different_email")}
                   </button>.
                 </div>
               </>

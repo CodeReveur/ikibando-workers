@@ -2,39 +2,27 @@
 
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { Bell, X, Wallet, Plus } from "lucide-react";
+import { Bell, X, Wallet, Plus, Globe } from "lucide-react";
 import { useSession } from "./session-ctx";
-import { SB_WIDTH } from "./sidebar";
+import { useLanguage } from "@/lib/language-context";
 import { Pip } from "./ui";
 import { getWallet, getPendingApplicationCount, getMyApplications, type WalletDto } from "@/lib/api";
 import { fmt } from "@/lib/dashboard-data";
 
 export const TB_HEIGHT = 64;
 
-const TITLE_MAP: Record<string, string> = {
-  "/seeker/applications": "My Applications",
-  "/seeker/jobs":         "My Jobs",
-  "/seeker/earnings":     "My Earnings",
-  "/seeker/bonuses":      "Bonuses",
-  "/seeker/analytics":   "Analytics",
-  "/seeker/settings":    "Settings",
-  "/owner/offers":        "My Offers",
-  "/owner/payments":      "Payments",
-  "/owner/workers":       "Workers",
-  "/owner/analytics":    "Analytics",
-  "/owner/settings":     "Settings",
-  "/seeker":             "Dashboard",
-  "/owner/help":          "Help",
-};
-
 export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
+  const { t, language, setLanguage } = useLanguage();
   const pathname  = usePathname();
   const session   = useSession();
   const [notifOpen,    setNotifOpen]    = useState(false);
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [wallet,       setWallet]       = useState<WalletDto | null>(null);
   const [pendingCount, setPendingCount] = useState(0);
   const [seekerNotifs, setSeekerNotifs] = useState<{ id: string; jobId: string; text: string; time: string; note?: string | null }[]>([]);
   const ref = useRef<HTMLElement>(null);
+  const langDropdownRef = useRef<HTMLDivElement>(null);
+  const [dateMounted, setDateMounted] = useState(false);
 
   const isOwner = pathname.startsWith("/owner");
 
@@ -72,21 +60,43 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
   }, [isOwner]);
 
   useEffect(() => {
+    setDateMounted(true);
     const handler = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
         setNotifOpen(false);
+      }
+      if (langDropdownRef.current && !langDropdownRef.current.contains(e.target as Node)) {
+        setLangDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const title   = TITLE_MAP[pathname] ?? "Dashboard";
+  const getPageTitle = (path: string) => {
+    let key = "dashboard";
+    if (path === "/seeker/applications") key = "applications";
+    else if (path === "/seeker/jobs") key = "jobs";
+    else if (path === "/seeker/earnings") key = "earnings";
+    else if (path === "/seeker/bonuses") key = "bonuses";
+    else if (path === "/seeker/analytics" || path === "/owner/analytics") key = "analytics";
+    else if (path === "/seeker/settings" || path === "/owner/settings") key = "settings";
+    else if (path === "/owner/offers") key = "offers";
+    else if (path === "/owner/payments") key = "payments";
+    else if (path === "/owner/workers") key = "workers";
+    else if (path === "/owner/help") key = "help";
+    else if (path === "/seeker" || path === "/owner") key = "dashboard";
+    
+    return t("common.nav." + key);
+  };
+
+  const title   = getPageTitle(pathname);
   const unreadN = isOwner ? pendingCount : seekerNotifs.length;
+  const dateLocale = language === "fr" ? "fr-FR" : language === "sw" ? "sw" : language === "kinyy" ? "rw-RW" : "en-GB";
 
   return (
     <header className="dashboard-topbar" ref={ref} style={{
-      position:"fixed", left:SB_WIDTH, top:0, right:0, height:TB_HEIGHT,
+      position:"fixed", left:"var(--sb-width)", top:0, right:0, height:"var(--tb-height)",
       background:"rgba(9,9,9,0.97)", borderBottom:"1px solid #161616",
       backdropFilter:"blur(14px)",
       display:"flex", alignItems:"center", justifyContent:"space-between",
@@ -103,45 +113,129 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
           <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
         </button>
         <div>
-          <p style={{ margin:0, fontSize:17, fontWeight:800, color:"#fff", letterSpacing:"-0.4px" }}>{title}</p>
+          <p className="topbar-title" style={{ margin:0, fontSize:17, fontWeight:800, color:"#fff", letterSpacing:"-0.4px" }}>{title}</p>
           <p style={{ margin:0, fontSize:11, color:"#2e2e2e", display: "none" }} className="topbar-date">
-            {new Date().toLocaleDateString("en-GB", { weekday:"long", day:"numeric", month:"long", year:"numeric" })}
+            {dateMounted ? new Date().toLocaleDateString(dateLocale, { weekday:"long", day:"numeric", month:"long", year:"numeric" }) : ""}
           </p>
           <style>{`@media (min-width: 600px) { .topbar-date { display: block !important; } }`}</style>
+          <style>{`
+            .topbar-icon-btn {
+              background: #131313; border: 1px solid #1c1c1c;
+              border-radius: 10px; width: 40px; height: 40px;
+              display: flex; align-items: center; justify-content: center;
+              cursor: pointer; transition: color 0.12s, border-color 0.12s;
+            }
+            .topbar-icon-btn:hover { border-color: #252525; color: #f97316; }
+
+            .topbar-lang-item {
+              display: flex; align-items: center; justify-content: space-between;
+              width: 100%; padding: 6px 10px; border-radius: 8px; background: transparent;
+              border: none; color: #b0b0b0; font-size: 12px; font-weight: 500;
+              cursor: pointer; transition: background 0.12s, color 0.12s;
+            }
+            .topbar-lang-item:hover { background: #242424; color: #fff; }
+            .topbar-lang-item.active { background: rgba(249,115,22,0.1); color: #f97316; font-weight: 700; }
+
+            @media (max-width: 500px) {
+              .wallet-label { display: none !important; }
+              .wallet-btn { padding: 9px 10px !important; }
+            }
+            @media (max-width: 400px) {
+              .notif-panel { width: 280px !important; right: -60px !important; }
+            }
+            @media (max-width: 340px) {
+              .topbar-icon-btn {
+                width: 30px !important;
+                height: 30px !important;
+                border-radius: 6px !important;
+              }
+              .wallet-btn {
+                padding: 4px 6px !important;
+                border-radius: 6px !important;
+              }
+              .wallet-label, .wallet-plus {
+                display: none !important;
+              }
+              .wallet-amount {
+                font-size: 11px !important;
+              }
+              .dashboard-topbar {
+                padding: 0 10px !important;
+              }
+              .topbar-title {
+                display: none !important;
+              }
+            }
+          `}</style>
         </div>
       </div>
 
-      <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+      <div style={{ display:"flex", alignItems:"center", gap:8, flexShrink:0 }}>
 
-        <a href={isOwner ? "/owner/payments" : "/seeker/earnings"} style={{
+        <a href={isOwner ? "/owner/payments" : "/seeker/earnings"} className="wallet-btn" style={{
           display:"flex", alignItems:"center", gap:8,
           background:"#131313", border:"1px solid #1c1c1c", borderRadius:10,
-          padding:"9px 16px", textDecoration:"none",
+          padding:"9px 16px", textDecoration:"none", flexShrink:0,
         }}>
           <Wallet size={13} color="#f97316" />
-          <span style={{ fontSize:11, color:"#3a3a3a", fontWeight:600 }}>Wallet</span>
-          <span style={{ fontSize:14, fontWeight:800, color: wallet ? (wallet.balance > 0 ? "#f0f0f0" : "#ef4444") : "#555" }}>
+          <span className="wallet-label" style={{ fontSize:11, color:"#3a3a3a", fontWeight:600 }}>{t("common.nav.wallet") || "Wallet"}</span>
+          <span className="wallet-amount" style={{ fontSize:14, fontWeight:800, color: wallet ? (wallet.balance > 0 ? "#f0f0f0" : "#ef4444") : "#555" }}>
             {wallet ? fmt(wallet.balance) : "…"}
           </span>
-          <Plus size={11} color="#f97316" />
+          <Plus size={11} color="#f97316" className="wallet-plus" />
         </a>
+
+        {/* Language Selector */}
+        <div style={{ position:"relative" }} ref={langDropdownRef}>
+          <button
+            className="topbar-icon-btn"
+            onClick={() => setLangDropdownOpen(v => !v)}
+            aria-label="Select language"
+            aria-expanded={langDropdownOpen}
+            style={{ color: langDropdownOpen ? "#f97316" : "#555" }}
+          >
+            <Globe size={15} />
+          </button>
+          
+          {langDropdownOpen && (
+            <div className="lang-dropdown-panel" style={{
+              position:"absolute", top:"calc(100% + 8px)", right:0, width:140,
+              background:"#141414", border:"1px solid #1e1e1e", borderRadius:14,
+              boxShadow:"0 20px 60px rgba(0,0,0,0.7)", padding:"6px",
+              display:"flex", flexDirection:"column", gap:"2px", zIndex:200,
+            }}>
+              <button onClick={() => { setLanguage("en"); setLangDropdownOpen(false); }} className={`topbar-lang-item${language === "en" ? " active" : ""}`}>
+                <span>English</span>
+                {language === "en" && <span style={{ fontSize: 10 }}>✓</span>}
+              </button>
+              <button onClick={() => { setLanguage("fr"); setLangDropdownOpen(false); }} className={`topbar-lang-item${language === "fr" ? " active" : ""}`}>
+                <span>Français</span>
+                {language === "fr" && <span style={{ fontSize: 10 }}>✓</span>}
+              </button>
+              <button onClick={() => { setLanguage("sw"); setLangDropdownOpen(false); }} className={`topbar-lang-item${language === "sw" ? " active" : ""}`}>
+                <span>Kiswahili</span>
+                {language === "sw" && <span style={{ fontSize: 10 }}>✓</span>}
+              </button>
+              <button onClick={() => { setLanguage("kinyy"); setLangDropdownOpen(false); }} className={`topbar-lang-item${language === "kinyy" ? " active" : ""}`}>
+                <span>Kinyarwanda</span>
+                {language === "kinyy" && <span style={{ fontSize: 10 }}>✓</span>}
+              </button>
+            </div>
+          )}
+        </div>
 
         <div style={{ position:"relative" }}>
           <button
             onClick={() => setNotifOpen(p => !p)}
-            style={{
-              position:"relative", background:"#131313", border:"1px solid #1c1c1c",
-              borderRadius:10, width:40, height:40,
-              display:"flex", alignItems:"center", justifyContent:"center",
-              cursor:"pointer", color: notifOpen ? "#f97316" : "#555",
-            }}
+            className="topbar-icon-btn"
+            style={{ color: notifOpen ? "#f97316" : "#555" }}
           >
             <Bell size={15} />
             {unreadN > 0 && <Pip n={unreadN} />}
           </button>
 
           {notifOpen && (
-            <DropPanel title="Notifications" onClose={() => setNotifOpen(false)}>
+            <DropPanel title={t("common.general.notifications") || "Notifications"} onClose={() => setNotifOpen(false)}>
               <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
                 {isOwner ? (
                   pendingCount > 0 ? (
@@ -149,17 +243,16 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
                       <div style={{ width:6, height:6, borderRadius:99, marginTop:5, flexShrink:0, background:"#f97316" }} />
                       <div>
                         <p style={{ margin:"0 0 6px", fontSize:12, color:"#c0c0c0", lineHeight:1.6 }}>
-                          You have <strong style={{ color:"#f97316" }}>{pendingCount}</strong> pending
-                          application{pendingCount !== 1 ? "s" : ""} waiting for review.
+                          {t("notifications.pending_message", { count: pendingCount }) || `You have ${pendingCount} pending applications waiting for review.`}
                         </p>
                         <a href="/owner/workers" style={{ fontSize:11, color:"#f97316", fontWeight:700, textDecoration:"none" }}>
-                          Review now →
+                          {t("notifications.review_now") || "Review now →"}
                         </a>
                       </div>
                     </div>
                   ) : (
                     <div style={{ padding:"24px 16px", textAlign:"center" }}>
-                      <p style={{ margin:0, fontSize:12, color:"#3a3a3a" }}>No pending applications</p>
+                      <p style={{ margin:0, fontSize:12, color:"#3a3a3a" }}>{t("notifications.no_pending") || "No pending applications"}</p>
                     </div>
                   )
                 ) : (
@@ -177,7 +270,7 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
                     </div>
                   )) : (
                     <div style={{ padding:"24px 16px", textAlign:"center" }}>
-                      <p style={{ margin:0, fontSize:12, color:"#3a3a3a" }}>No new notifications</p>
+                      <p style={{ margin:0, fontSize:12, color:"#3a3a3a" }}>{t("notifications.no_new") || "No new notifications"}</p>
                     </div>
                   )
                 )}
@@ -185,7 +278,7 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
               <div style={{ padding:"10px 16px", borderTop: "1px solid #1a1a1a" }}>
                 <a href={isOwner ? "/owner/workers" : "/seeker/applications"}
                   style={{ display:"block", textAlign:"center", fontSize:12, color:"#f97316", fontWeight:600, textDecoration:"none" }}>
-                  {isOwner ? "Manage applications" : "View all applications"}
+                  {isOwner ? (t("notifications.manage_apps") || "Manage applications") : (t("notifications.view_all") || "View all applications")}
                 </a>
               </div>
             </DropPanel>
@@ -199,7 +292,7 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
 
 function DropPanel({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return (
-    <div style={{
+    <div className="notif-panel" style={{
       position:"absolute", top:"calc(100% + 8px)", right:0, width:308,
       background:"#141414", border:"1px solid #1e1e1e", borderRadius:14,
       boxShadow:"0 20px 60px rgba(0,0,0,0.7)", animation:"fadeIn 0.13s ease", zIndex:200,

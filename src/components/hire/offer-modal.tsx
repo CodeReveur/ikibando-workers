@@ -6,6 +6,8 @@ import { X, Calendar, Clock, CheckCircle, Bell, MapPin, Navigation, Loader2 } fr
 import { RWANDA_PROVINCES } from "@/lib/constants";
 import type { WorkerProfileDto } from "@/lib/api";
 
+import { useLanguage } from "@/lib/language-context";
+
 // Leaflet must render client-side only
 const MapPicker = dynamic(
   () => import("../jobs/map-picker").then(m => m.MapPicker),
@@ -45,14 +47,6 @@ const getDurations = (rt: RateType) => {
   if (rt === "year") return Array.from({length: 5}, (_, i) => i + 1);
   return [1];
 };
-const getUnit = (rt: RateType, n: number) => {
-  if (rt === "hr") return `hour${n !== 1 ? "s" : ""}`;
-  if (rt === "day") return `day${n !== 1 ? "s" : ""}`;
-  if (rt === "week") return `week${n !== 1 ? "s" : ""}`;
-  if (rt === "month") return `month${n !== 1 ? "s" : ""}`;
-  if (rt === "year") return `year${n !== 1 ? "s" : ""}`;
-  return "";
-};
 const RATE_LABEL: Record<RateType, string> = { hr:"/hr", day:"/day", week:"/wk", month:"/mo", year:"/yr" };
 
 // ── styles ───────────────────────────────────────────────────────────────────
@@ -76,6 +70,7 @@ const inp: React.CSSProperties = {
 const iconL: React.CSSProperties = { position: "absolute", left: 11, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" };
 
 export function OfferModal({ worker, onClose }: Props) {
+  const { t } = useLanguage();
   const [title,    setTitle]    = useState("");
   const [date,     setDate]     = useState("");
   const [time,     setTime]     = useState("");
@@ -88,6 +83,21 @@ export function OfferModal({ worker, onClose }: Props) {
   const [bid,      setBid]      = useState("");
   const [done,     setDone]     = useState(false);
   const [gpsStatus, setGps]    = useState<"idle"|"loading"|"ok"|"error">("idle");
+
+  const getUnit = (rt: RateType, n: number) => {
+    if (rt === "hr") return t(n !== 1 ? "post_job.units.hours" : "post_job.units.hour") || `hour${n !== 1 ? "s" : ""}`;
+    if (rt === "day") return t(n !== 1 ? "post_job.units.days" : "post_job.units.day") || `day${n !== 1 ? "s" : ""}`;
+    if (rt === "week") return t(n !== 1 ? "post_job.units.weeks" : "post_job.units.week") || `week${n !== 1 ? "s" : ""}`;
+    if (rt === "month") return t(n !== 1 ? "post_job.units.months" : "post_job.units.month") || `month${n !== 1 ? "s" : ""}`;
+    if (rt === "year") return t(n !== 1 ? "post_job.units.years" : "post_job.units.year") || `year${n !== 1 ? "s" : ""}`;
+    return "";
+  };
+
+  const getLocalizedProvinceLabel = (prov: string) => {
+    if (!prov) return "";
+    const key = prov.toLowerCase().replace(/\s+/g, "_");
+    return t(`common.provinces.${key}`) || prov;
+  };
 
   const DRAFT_KEY = `MpahMapu_draft_offer_${worker.id}`;
 
@@ -145,31 +155,35 @@ export function OfferModal({ worker, onClose }: Props) {
           <div style={{ width: 56, height: 56, borderRadius: 999, margin: "0 auto 16px", background: "rgba(34,197,94,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <CheckCircle size={28} color="#22c55e" />
           </div>
-          <h2 style={{ margin: "0 0 6px", fontSize: 18, fontWeight: 900, color: "#fff" }}>Offer sent!</h2>
+          <h2 style={{ margin: "0 0 6px", fontSize: 18, fontWeight: 900, color: "#fff" }}>
+            {t("offer.success.title")}
+          </h2>
           <p style={{ margin: "0 0 20px", fontSize: 13, color: "#555", lineHeight: 1.65 }}>
-            {worker.name} will be notified with your details and a link to accept or negotiate.
+            {t("offer.success.desc", { name: worker.name })}
           </p>
           <div style={{ background: "#141414", border: "1px solid #272727", borderRadius: 12, padding: "14px", textAlign: "left", marginBottom: 20 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
               <Bell size={12} color="#f97316" />
-              <span style={{ fontSize: 10, fontWeight: 700, color: "#f97316", textTransform: "uppercase", letterSpacing: "0.06em" }}>Worker notification</span>
+              <span style={{ fontSize: 10, fontWeight: 700, color: "#f97316", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                {t("offer.success.notification")}
+              </span>
             </div>
             {([
-              ["Job",      title],
-              ["Date",     new Date(date + "T00:00").toLocaleDateString("en-GB", { weekday:"short", day:"numeric", month:"short" }) + " · " + time],
-              ["Duration", `${duration} ${getUnit(rateType, parseInt(duration) || 1)}`],
-              ["Province", province || "-"],
-              ["District", district],
+              [t("offer.fields.job") || "Job",      title],
+              [t("offer.fields.date") || "Date",     new Date(date + "T00:00").toLocaleDateString("en-GB", { weekday:"short", day:"numeric", month:"short" }) + " · " + time],
+              [t("offer.fields.duration") || "Duration", `${duration} ${getUnit(rateType, parseInt(duration) || 1)}`],
+              [t("offer.fields.province") || "Province", getLocalizedProvinceLabel(province) || "-"],
+              [t("offer.fields.district") || "District", district],
               ...(latitude != null ? [["GPS", `${latitude.toFixed(5)}, ${longitude!.toFixed(5)}`]] : []),
-              ["Offer",    fmt(bidNum) + " " + RATE_LABEL[rateType]],
+              [t("offer.fields.offer") || "Offer",    fmt(bidNum) + " " + RATE_LABEL[rateType]],
             ] as [string, string][]).map(([k, v]) => (
-              <p key={k} style={{ margin: "0 0 4px", fontSize: 12, color: k === "Offer" ? "#f97316" : "#aaa" }}>
+              <p key={k} style={{ margin: "0 0 4px", fontSize: 12, color: k === (t("offer.fields.offer") || "Offer") ? "#f97316" : "#aaa" }}>
                 <strong style={{ color: "#555", fontWeight: 600 }}>{k}:</strong> {v}
               </p>
             ))}
           </div>
           <button onClick={onClose} style={{ background: "#141414", border: "1px solid #272727", borderRadius: 10, padding: "10px 24px", fontSize: 13, fontWeight: 700, color: "#aaa", cursor: "pointer", fontFamily: "inherit" }}>
-            Done
+            {t("offer.fields.done") || "Done"}
           </button>
         </div>
       </div>
@@ -184,8 +198,12 @@ export function OfferModal({ worker, onClose }: Props) {
         <div style={{ padding: "20px 20px 0", flexShrink: 0 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
             <div>
-              <p style={{ margin: 0, fontSize: 11, fontWeight: 700, color: "#f97316", textTransform: "uppercase", letterSpacing: "0.08em" }}>Make an offer</p>
-              <p style={{ margin: "2px 0 0", fontSize: 16, fontWeight: 900, color: "#fff" }}>Hire {worker.name.split(" ")[0]}</p>
+              <p style={{ margin: 0, fontSize: 11, fontWeight: 700, color: "#f97316", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                {t("offer.header.title")}
+              </p>
+              <p style={{ margin: "2px 0 0", fontSize: 16, fontWeight: 900, color: "#fff" }}>
+                {t("offer.header.subtitle", { name: worker.name.split(" ")[0] })}
+              </p>
             </div>
             <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "#555" }}><X size={18} /></button>
           </div>
@@ -197,8 +215,8 @@ export function OfferModal({ worker, onClose }: Props) {
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
 
             {/* job title */}
-            <FField label="Job title *">
-              <input placeholder="e.g. Waiter for wedding event"
+            <FField label={t("offer.labels.title") || "Job title *"}>
+              <input placeholder={t("offer.placeholders.title") || "e.g. Waiter for wedding event"}
                 value={title} onChange={e => setTitle(e.target.value)} style={inp}
                 onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                 onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
@@ -207,7 +225,7 @@ export function OfferModal({ worker, onClose }: Props) {
 
             {/* date + time */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <FField label="Start date *">
+              <FField label={t("offer.labels.start_date") || "Start date *"}>
                 <div style={{ position: "relative" }}>
                   <Calendar size={13} color="#444" style={iconL} />
                   <input type="date" value={date} onChange={e => setDate(e.target.value)}
@@ -217,7 +235,7 @@ export function OfferModal({ worker, onClose }: Props) {
                   />
                 </div>
               </FField>
-              <FField label="Start time *">
+              <FField label={t("offer.labels.start_time") || "Start time *"}>
                 <div style={{ position: "relative" }}>
                   <Clock size={13} color="#444" style={iconL} />
                   <input type="time" value={time} onChange={e => setTime(e.target.value)}
@@ -231,23 +249,23 @@ export function OfferModal({ worker, onClose }: Props) {
 
             {/* rate period + duration */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <FField label="Rate period">
+              <FField label={t("offer.labels.rate_period") || "Rate period"}>
                 <div style={{ position: "relative" }}>
                   <select value={rateType} onChange={e => setRateType(e.target.value as RateType)}
                     style={{ ...inp, appearance: "none", paddingRight: 28, color: "#f0f0f0" }}
                     onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                     onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
                   >
-                    <option value="hr">Per hour</option>
-                    <option value="day">Per day</option>
-                    <option value="week">Per week</option>
-                    <option value="month">Per month</option>
-                    <option value="year">Per year</option>
+                    <option value="hr">{t("post_job.options.per_hour") || "Per hour"}</option>
+                    <option value="day">{t("post_job.options.per_day") || "Per day"}</option>
+                    <option value="week">{t("post_job.options.per_week") || "Per week"}</option>
+                    <option value="month">{t("post_job.options.per_month") || "Per month"}</option>
+                    <option value="year">{t("post_job.options.per_year") || "Per year"}</option>
                   </select>
                   <svg style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
                 </div>
               </FField>
-              <FField label="Duration *">
+              <FField label={t("offer.labels.duration") || "Duration *"}>
                 <div style={{ position: "relative" }}>
                   <select value={duration} onChange={e => setDuration(e.target.value)}
                     style={{ ...inp, appearance: "none", WebkitAppearance: "none", cursor: "pointer", color: duration ? "#f0f0f0" : "#555", paddingRight: 28 }}
@@ -263,28 +281,28 @@ export function OfferModal({ worker, onClose }: Props) {
 
             {/* Province + District — searchable */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <FField label="Province">
+              <FField label={t("offer.labels.province") || "Province"}>
                 <SearchSelect
-                  options={RWANDA_PROVINCES.map(p => ({ value: p.label, label: p.label }))}
+                  options={RWANDA_PROVINCES.map(p => ({ value: p.label, label: getLocalizedProvinceLabel(p.label) }))}
                   value={province}
                   onChange={v => { setProvince(v); setDistrict(""); }}
-                  placeholder="Province…"
+                  placeholder={t("offer.placeholders.province") || "Province…"}
                   icon={<MapPin size={13} color="#444" style={iconL} />}
                 />
               </FField>
-              <FField label="District *">
+              <FField label={t("offer.labels.district") || "District *"}>
                 <SearchSelect
                   options={districtsFor(province).map(d => ({ value: d, label: d }))}
                   value={district}
                   onChange={setDistrict}
-                  placeholder="District…"
+                  placeholder={t("offer.placeholders.district") || "District…"}
                   icon={<MapPin size={13} color="#444" style={iconL} />}
                 />
               </FField>
             </div>
 
             {/* Map + GPS */}
-            <FField label="Precise location (click map or use GPS)">
+            <FField label={t("offer.labels.precise_location") || "Precise location (click map or use GPS)"}>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 <MapPicker
                   lat={latitude} lng={longitude}
@@ -302,9 +320,13 @@ export function OfferModal({ worker, onClose }: Props) {
                     {gpsStatus === "loading"
                       ? <Loader2 size={12} style={{ animation: "spin 1s linear infinite" }} />
                       : <Navigation size={12} />}
-                    {gpsStatus === "loading" ? "Detecting…" : gpsStatus === "ok" ? "GPS detected" : "Detect my GPS"}
+                    {gpsStatus === "loading"
+                      ? (t("offer.gps.detecting") || "Detecting…")
+                      : gpsStatus === "ok"
+                        ? (t("offer.gps.detected") || "GPS detected")
+                        : (t("offer.gps.detect") || "Detect my GPS")}
                   </button>
-                  {gpsStatus === "error" && <span style={{ fontSize: 11, color: "#ef4444" }}>Could not access GPS</span>}
+                  {gpsStatus === "error" && <span style={{ fontSize: 11, color: "#ef4444" }}>{t("offer.gps.error") || "Could not access GPS"}</span>}
                   {latitude != null && longitude != null && (
                     <span style={{ fontSize: 11, color: "#555", marginLeft: "auto" }}>
                       {latitude.toFixed(5)}, {longitude.toFixed(5)}
@@ -315,8 +337,8 @@ export function OfferModal({ worker, onClose }: Props) {
             </FField>
 
             {/* offer price */}
-            <FField label={`Your offer price ${RATE_LABEL[rateType]} (RWF) *`}>
-              <input type="number" min={1} placeholder="e.g. 8000"
+            <FField label={t("offer.labels.offer_price", { period: RATE_LABEL[rateType] }) || `Your offer price ${RATE_LABEL[rateType]} (RWF) *`}>
+              <input type="number" min={1} placeholder={t("offer.placeholders.rate") || "e.g. 8000"}
                 value={bid} onChange={e => setBid(e.target.value)}
                 style={{ ...inp, fontWeight: bidNum > 0 ? 700 : 400 }}
                 onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
@@ -337,7 +359,7 @@ export function OfferModal({ worker, onClose }: Props) {
             cursor: canSend ? "pointer" : "not-allowed", fontFamily: "inherit",
             transition: "background 0.15s",
           }}>
-            Send offer
+            {t("offer.buttons.send") || "Send offer"}
           </button>
         </div>
         <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>

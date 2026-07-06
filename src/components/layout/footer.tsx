@@ -1,13 +1,17 @@
-const links = [
-  { href: "/browse",  label: "Browse"  },
-  { href: "/jobs",    label: "Jobs"    },
-  { href: "/about",   label: "About"   },
-  { href: "/contact", label: "Contact" },
-  { href: "/privacy-policy", label: "Privacy" },
-  { href: "/terms-and-conditions",   label: "Terms"   },
-];
+import { useLanguage } from "@/lib/language-context";
 
 export default function Footer() {
+  const { t } = useLanguage();
+
+  const links = [
+    { href: "/browse",  label: t("common.nav.browse")  },
+    { href: "/jobs",    label: t("common.nav.jobs")    },
+    { href: "/about",   label: t("common.nav.about")   },
+    { href: "/contact", label: t("common.nav.contact") },
+    { href: "/privacy-policy", label: t("common.nav.privacy") },
+    { href: "/terms-and-conditions",   label: t("common.nav.terms")   },
+  ];
+
   return (
     <footer style={{
       borderTop: "1px solid #1e1e1e",
@@ -19,7 +23,7 @@ export default function Footer() {
     }}>
       <div>
         <p style={{ margin: 0, fontWeight: 900, fontSize: 15, color: "#f97316" }}>MpahMapu</p>
-        <p style={{ margin: "3px 0 0", fontSize: 11, color: "#444" }}>© 2026 MpahMapu Company Ltd · Kigali, Rwanda</p>
+        <p style={{ margin: "3px 0 0", fontSize: 11, color: "#444" }}>{t("common.footer.copyright")}</p>
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 18, fontSize: 12 }}>
         {links.map(({ href, label }) => (
@@ -34,3 +38,4 @@ export default function Footer() {
     </footer>
   );
 }
+

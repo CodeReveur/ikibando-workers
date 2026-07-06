@@ -5,8 +5,10 @@ import Link from "next/link";
 import { BadgeCheck, ShieldAlert, XCircle, Star, Briefcase, Calendar, MapPin, CheckCircle2, ArrowRight, Loader2 } from "lucide-react";
 import { verifyBadge, type BadgeVerification } from "@/lib/api";
 import { ratingInfo } from "@/lib/rating";
+import { useLanguage } from "@/lib/language-context";
 
 export default function VerifyBadgePage({ params }: { params: Promise<{ badgeId: string }> }) {
+  const { t } = useLanguage();
   const { badgeId } = use(params);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<BadgeVerification | null>(null);
@@ -21,9 +23,13 @@ export default function VerifyBadgePage({ params }: { params: Promise<{ badgeId:
   }, [badgeId]);
 
   const isCompany = data?.accountType === "COMPANY";
-  const roleLabel = isCompany ? "Verified Company" : "Verified Worker";
+  const roleLabel = isCompany ? t("verify_badge_page.role_company") : t("verify_badge_page.role_worker");
   const r = ratingInfo(data?.rating, data?.ratingCount);
   const memberYear = data?.memberSince ? new Date(data.memberSince).getFullYear() : null;
+
+  const localizedCategory = data?.category
+    ? t("common.categories." + data.category.toLowerCase()) || data.category
+    : null;
 
   return (
     <div style={{ minHeight: "100vh", background: "#090909", display: "flex", flexDirection: "column",
@@ -40,7 +46,7 @@ export default function VerifyBadgePage({ params }: { params: Promise<{ badgeId:
         {loading ? (
           <div style={{ padding: "70px 24px", textAlign: "center", color: "#666" }}>
             <Loader2 size={26} color="#f97316" style={{ animation: "spin 1s linear infinite" }} />
-            <p style={{ margin: "14px 0 0", fontSize: 13 }}>Verifying badge…</p>
+            <p style={{ margin: "14px 0 0", fontSize: 13 }}>{t("verify_badge_page.loading")}</p>
             <style>{"@keyframes spin{to{transform:rotate(360deg)}}"}</style>
           </div>
         ) : error || !data || !data.valid ? (
@@ -50,10 +56,9 @@ export default function VerifyBadgePage({ params }: { params: Promise<{ badgeId:
               display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 18px" }}>
               <XCircle size={32} color="#ef4444" />
             </div>
-            <h1 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: "#f0f0f0" }}>Badge not found</h1>
+            <h1 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: "#f0f0f0" }}>{t("verify_badge_page.not_found.title")}</h1>
             <p style={{ margin: "10px 0 0", fontSize: 13, color: "#777", lineHeight: 1.6 }}>
-              No badge with ID <strong style={{ color: "#aaa" }}>{badgeId}</strong> is registered on Mpah Mapu.
-              This badge may be invalid or counterfeit.
+              {t("verify_badge_page.not_found.desc", { badgeId })}
             </p>
           </div>
         ) : (
@@ -66,7 +71,7 @@ export default function VerifyBadgePage({ params }: { params: Promise<{ badgeId:
                 ? <BadgeCheck size={18} color="#22c55e" />
                 : <ShieldAlert size={18} color="#f59e0b" />}
               <span style={{ fontSize: 13, fontWeight: 700, color: data.active ? "#22c55e" : "#f59e0b" }}>
-                {data.active ? "Verified by Mpah Mapu" : `Badge ${(data.status || "inactive").toLowerCase()}`}
+                {data.active ? t("verify_badge_page.verified") : t("verify_badge_page.inactive", { status: data.status || "inactive" })}
               </span>
             </div>
 
@@ -91,11 +96,11 @@ export default function VerifyBadgePage({ params }: { params: Promise<{ badgeId:
 
               {/* meta chips */}
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginTop: 18 }}>
-                {!isCompany && data.category && (
-                  <Chip icon={<Briefcase size={12} />}>{data.category}</Chip>
+                {!isCompany && localizedCategory && (
+                  <Chip icon={<Briefcase size={12} />}>{localizedCategory}</Chip>
                 )}
                 {data.location && <Chip icon={<MapPin size={12} />}>{data.location}</Chip>}
-                {memberYear && <Chip icon={<Calendar size={12} />}>Since {memberYear}</Chip>}
+                {memberYear && <Chip icon={<Calendar size={12} />}>{t("verify_badge_page.since", { year: memberYear })}</Chip>}
               </div>
 
               {/* stats: rating + completed jobs */}
@@ -107,7 +112,9 @@ export default function VerifyBadgePage({ params }: { params: Promise<{ badgeId:
                     <span style={{ fontSize: 13, fontWeight: 700, color: "#666" }}>/5</span>
                   </div>
                   <p style={{ margin: "5px 0 0", fontSize: 11, color: "#666" }}>
-                    {r.hasReviews ? `${r.reviews} review${r.reviews === 1 ? "" : "s"}` : "No reviews yet"}
+                    {r.hasReviews 
+                      ? (r.reviews === 1 ? t("verify_badge_page.reviews_count.one") : t("verify_badge_page.reviews_count.other", { count: r.reviews }))
+                      : t("verify_badge_page.no_reviews")}
                   </p>
                 </div>
                 <div style={{ background: "#0d0d0d", border: "1px solid #232323", borderRadius: 12, padding: "14px 10px" }}>
@@ -115,7 +122,7 @@ export default function VerifyBadgePage({ params }: { params: Promise<{ badgeId:
                     <CheckCircle2 size={15} color="#22c55e" />
                     <span style={{ fontSize: 22, fontWeight: 800, color: "#f0f0f0" }}>{data.completedJobs ?? 0}</span>
                   </div>
-                  <p style={{ margin: "5px 0 0", fontSize: 11, color: "#666" }}>Jobs completed</p>
+                  <p style={{ margin: "5px 0 0", fontSize: 11, color: "#666" }}>{t("verify_badge_page.jobs_completed")}</p>
                 </div>
               </div>
 
@@ -123,7 +130,7 @@ export default function VerifyBadgePage({ params }: { params: Promise<{ badgeId:
               <div style={{ marginTop: 22, background: "#0d0d0d", border: "1px solid #232323",
                 borderRadius: 12, padding: "12px 16px", display: "flex", alignItems: "center",
                 justifyContent: "center", gap: 8 }}>
-                <span style={{ fontSize: 12, color: "#666", fontWeight: 600 }}>ID</span>
+                <span style={{ fontSize: 12, color: "#666", fontWeight: 600 }}>{t("verify_badge_page.id_label")}</span>
                 <span style={{ fontSize: 16, fontWeight: 800, color: "#f97316", letterSpacing: "0.5px",
                   fontFamily: "monospace" }}>{data.badgeId}</span>
               </div>
@@ -132,14 +139,13 @@ export default function VerifyBadgePage({ params }: { params: Promise<{ badgeId:
                 <Link href={`/browse/${data.id}`} style={{ display: "flex", alignItems: "center",
                   justifyContent: "center", gap: 6, marginTop: 16, background: "#f97316", color: "#fff",
                   textDecoration: "none", borderRadius: 12, padding: "12px 16px", fontSize: 13, fontWeight: 700 }}>
-                  View full profile <ArrowRight size={15} />
+                  {t("verify_badge_page.view_profile")} <ArrowRight size={15} />
                 </Link>
               )}
 
               {!data.active && (
                 <p style={{ margin: "16px 0 0", fontSize: 12, color: "#f59e0b", lineHeight: 1.6 }}>
-                  This badge holder's account is currently {(data.status || "inactive").toLowerCase()}.
-                  Please treat this badge with caution.
+                  {t("verify_badge_page.inactive_warning", { status: data.status || "inactive" })}
                 </p>
               )}
             </div>
@@ -148,7 +154,7 @@ export default function VerifyBadgePage({ params }: { params: Promise<{ badgeId:
       </div>
 
       <p style={{ marginTop: 22, fontSize: 11, color: "#444", textAlign: "center" }}>
-        Scan any Mpah Mapu badge to confirm the holder's identity. ·{" "}
+        {t("verify_badge_page.footer_note")} ·{" "}
         <Link href="/" style={{ color: "#666" }}>mpahmapu.com</Link>
       </p>
     </div>

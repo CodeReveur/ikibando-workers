@@ -1,0 +1,1300 @@
+{
+  "common": {
+    "days": {
+      "mon": "Monday",
+      "tue": "Tuesday",
+      "wed": "Wednesday",
+      "thu": "Thursday",
+      "fri": "Friday",
+      "sat": "Saturday",
+      "sun": "Sunday"
+    },
+    "nav": {
+      "browse": "Browse",
+      "jobs": "Jobs",
+      "contact": "Contact",
+      "about": "About",
+      "signin": "Sign in",
+      "signup": "Sign up",
+      "hire_now": "Hire now",
+      "become_worker": "Become a worker",
+      "sign_out": "Sign out",
+      "dashboard": "Dashboard",
+      "offers": "Offers",
+      "requests": "Requests",
+      "applications": "Applications",
+      "settings": "Settings",
+      "profile": "Profile",
+      "employer": "Employer",
+      "job_seeker": "Job Seeker",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "earnings": "My Earnings",
+      "bonuses": "Bonuses",
+      "analytics": "Analytics",
+      "payments": "Payments",
+      "workers": "Workers",
+      "help": "Help",
+      "menu": "Menu",
+      "wallet": "Wallet"
+    },
+    "footer": {
+      "desc": "Connecting verified gig workers in Kigali with local businesses and households.",
+      "copyright": "© 2026 MpahMapu. All rights reserved."
+    },
+    "categories": {
+      "": "Worker",
+      "all": "All",
+      "protocol": "Protocol",
+      "none": "None",
+      "waiters": "Waiters",
+      "baristas": "Baristas",
+      "cleaners": "Cleaners",
+      "security_guards": "Security Guards",
+      "drivers": "Drivers",
+      "delivery_drivers": "Delivery Drivers",
+      "courier_riders": "Courier Riders",
+      "electricians": "Electricians",
+      "plumbers": "Plumbers",
+      "carpenters": "Carpenters",
+      "painters": "Painters",
+      "construction_workers": "Construction Workers",
+      "technicians": "Technicians",
+      "mechanics": "Mechanics",
+      "gardeners": "Gardeners",
+      "landscapers": "Landscapers",
+      "housekeepers": "Housekeepers",
+      "hotel_staff": "Hotel Staff",
+      "shop_attendants": "Shop Attendants",
+      "cashiers": "Cashiers",
+      "warehouse_staff": "Warehouse Staff",
+      "packers": "Packers",
+      "supervisors": "Supervisors",
+      "receptionists": "Receptionists",
+      "call_center_agents": "Call Center Agents",
+      "customer_support": "Customer Support",
+      "office_assistants": "Office Assistants",
+      "tutors": "Tutors",
+      "teachers": "Teachers",
+      "caregivers": "Caregivers",
+      "nurses": "Nurses",
+      "babysitters": "Babysitters",
+      "pet_care": "Pet Care",
+      "photographers": "Photographers",
+      "videographers": "Videographers",
+      "djs": "DJs",
+      "mcs": "MCs",
+      "event_planners": "Event Planners",
+      "florists": "Florists",
+      "barbers": "Barbers",
+      "hair_stylists": "Hair Stylists",
+      "makeup_artists": "Makeup Artists",
+      "tailors": "Tailors",
+      "laundry_services": "Laundry Services",
+      "phone_repair": "Phone Repair",
+      "computer_repair": "Computer Repair",
+      "network_technicians": "Network Technicians",
+      "it_support": "IT Support",
+      "web_developers": "Web Developers",
+      "software_developers": "Software Developers",
+      "graphic_designers": "Graphic Designers",
+      "content_writers": "Content Writers",
+      "translators": "Translators",
+      "accountants": "Accountants",
+      "legal_advisors": "Legal Advisors",
+      "real_estate_agents": "Real Estate Agents",
+      "property_managers": "Property Managers",
+      "hr_professionals": "HR Professionals",
+      "marketing_specialists": "Marketing Specialists",
+      "sales_representatives": "Sales Representatives",
+      "financial_advisors": "Financial Advisors",
+      "waiter": "Waiter / Server",
+      "cook": "Cook",
+      "chef": "Chef",
+      "bartender": "Bartender",
+      "cashier": "Cashier",
+      "receptionist": "Receptionist",
+      "cleaner": "Cleaner",
+      "housekeeper": "Housekeeper",
+      "nanny": "Nanny",
+      "caregiver": "Caregiver",
+      "security": "Security Guard",
+      "event_staff": "Event Staff",
+      "mc": "MC",
+      "musician": "Musician",
+      "dj": "DJ",
+      "driver": "Driver",
+      "delivery_rider": "Delivery Rider",
+      "gardener": "Gardener",
+      "farm_worker": "Farm Worker",
+      "loader": "Loader / Porter",
+      "unloader": "Unloader",
+      "warehouse_worker": "Warehouse Worker",
+      "packer": "Packer",
+      "electrician": "Electrician",
+      "plumber": "Plumber",
+      "painter": "Painter",
+      "carpenter": "Carpenter",
+      "construction_worker": "Construction Worker",
+      "mechanic": "Mechanic",
+      "tailor": "Tailor / Seamstress",
+      "hairdresser": "Hairdresser",
+      "beautician": "Beautician",
+      "tutor": "Tutor",
+      "translator": "Translator",
+      "photographer": "Photographer",
+      "videographer": "Videographer",
+      "graphic_designer": "Graphic Designer",
+      "social_media_manager": "Social Media Manager",
+      "sales_agent": "Sales Agent",
+      "promoter": "Promoter",
+      "marketing_agent": "Marketing Agent",
+      "office_assistant": "Office Assistant",
+      "data_entry": "Data Entry Clerk",
+      "customer_support": "Customer Support",
+      "it_support": "IT Support",
+      "web_developer": "Web Developer",
+      "mobile_developer": "Mobile Developer",
+      "software_engineer": "Software Engineer",
+      "accountant": "Accountant",
+      "other": "Other",
+      "barista": "Barista",
+      "delivery_driver": "Delivery Driver",
+      "courier_rider": "Courier Rider",
+      "technician": "Technician",
+      "landscaper": "Landscaper",
+      "hotel_staff": "Hotel Staff",
+      "shop_attendant": "Shop Attendant",
+      "supervisor": "Supervisor",
+      "call_center_agent": "Call Center Agent",
+      "teacher": "Teacher",
+      "nurse": "Nurse",
+      "babysitter": "Babysitter",
+      "pet_care": "Pet Care",
+      "event_planner": "Event Planner",
+      "florist": "Florist",
+      "barber": "Barber",
+      "hair_stylist": "Hair Stylist",
+      "makeup_artist": "Makeup Artist",
+      "laundry_service": "Laundry Service",
+      "phone_repair": "Phone Repair",
+      "computer_repair": "Computer Repair",
+      "network_technician": "Network Technician",
+      "content_writer": "Content Writer",
+      "legal_advisor": "Legal Advisor",
+      "real_estate_agent": "Real Estate Agent",
+      "property_manager": "Property Manager",
+      "hr_professional": "HR Professional",
+      "marketing_specialist": "Marketing Specialist",
+      "sales_representative": "Sales Representative",
+      "financial_advisor": "Financial Advisor"
+    },
+    "buttons": {
+      "more": "More",
+      "post_request": "Post a request",
+      "become_worker": "Become a worker",
+      "back": "Back",
+      "continue": "Continue",
+      "confirm": "Confirm & freeze funds",
+      "processing": "Processing...",
+      "done": "Done",
+      "cancel": "Cancel",
+      "submit": "Submit"
+    },
+    "general": {
+      "new": "New",
+      "worker": "Worker",
+      "category": "Category",
+      "currency_pattern": "RWF {amount}",
+      "per_hour": "/ hr"
+    }
+  },
+  "home": {
+    "hero": {
+      "location": "Kigali · Rwanda",
+      "title_find": "Find work.",
+      "title_hire": "Hire verified.",
+      "subtitle": "On-demand workers for events, cleaning, security and more - ID-verified, rated, and paid via MoMo."
+    },
+    "sections": {
+      "categories": "Categories",
+      "available_workers": "Available workers",
+      "available_jobs": "Available jobs"
+    },
+    "faqs": {
+      "q1": "How do I hire a worker on MpahMapu?",
+      "a1": "Post a job request with details like category, location, and pay rate. Verified workers will apply instantly, and you can review their profiles and ratings before hiring.",
+      "q2": "How does payment work on MpahMapu?",
+      "a2": "All payments are processed securely through MTN Mobile Money (MoMo). Funds are released to workers upon job completion.",
+      "q3": "Are workers on MpahMapu verified?",
+      "a3": "Yes, every worker on MpahMapu undergoes ID verification before they can accept jobs, ensuring trust and safety for employers.",
+      "q4": "What types of workers can I find on MpahMapu?",
+      "a4": "MpahMapu offers workers across 15+ categories including waiters, cleaners, security guards, drivers, electricians, plumbers, gardeners, event staff, and more.",
+      "q5": "Is MpahMapu available outside Kigali?",
+      "a5": "MpahMapu currently operates primarily in Kigali, Rwanda, with plans to expand to other cities and provinces."
+    }
+  },
+  "about": {
+    "hero": {
+      "tag": "About MpahMapu",
+      "title_main": "Rwanda's on-demand",
+      "title_accent": "workforce platform.",
+      "desc": "MpahMapu connects employers with ID-verified, rated workers across Rwanda - for events, cleaning, security, driving and more. Hired in minutes, paid via MoMo."
+    },
+    "stats": {
+      "workers_val": "2,400+",
+      "workers_lbl": "Verified workers",
+      "jobs_val": "8,900+",
+      "jobs_lbl": "Jobs completed",
+      "categories_val": "15+",
+      "categories_lbl": "Job categories",
+      "rating_val": "4.8★",
+      "rating_lbl": "Average rating"
+    },
+    "story": {
+      "title": "Our story",
+      "p1": "MpahMapu was founded in Rwanda in 2025 after watching skilled workers struggle to find consistent work and employers scramble to find reliable help on short notice. The solution was simple: a platform that makes both sides fast, transparent, and safe.",
+      "p2": "The name MpahMapu means \"a group that comes together to work\" in Kinyarwanda - which is exactly what we're building. A community where every job is done with pride and every worker is treated with respect."
+    },
+    "how_it_works": {
+      "title": "How it works",
+      "step1_title": "Create an account",
+      "step1_body": "Sign up as a worker or employer in under a minute.",
+      "step2_title": "Post or browse",
+      "step2_body": "Employers post jobs; workers browse and apply instantly.",
+      "step3_title": "Get matched fast",
+      "step3_body": "We surface the best-fit workers based on category and location.",
+      "step4_title": "Pay via MoMo",
+      "step4_body": "Secure mobile-money payments - no cash, no disputes."
+    },
+    "values": {
+      "title": "What we stand for",
+      "val1_title": "Trust first",
+      "val1_body": "Every worker is ID-verified before they can accept jobs. Employers know exactly who is showing up.",
+      "val2_title": "Speed matters",
+      "val2_body": "Post a job in under 2 minutes. Workers get notified instantly and can confirm in one tap.",
+      "val3_title": "Fair pay",
+      "val3_body": "We display clear rates upfront. No hidden fees, no cash disputes - payments go through MoMo.",
+      "val4_title": "Community",
+      "val4_body": "Built in Kigali, for Rwandans. We believe every worker deserves dignity and every employer deserves reliability."
+    },
+    "location": {
+      "title": "Based in Rwanda, Rwanda",
+      "desc": "Currently serving Rwanda districts - expanding across East Africa soon."
+    },
+    "cta": {
+      "title": "Ready to get started?",
+      "desc": "Join thousands of workers and employers already on MpahMapu.",
+      "btn_create": "Create account",
+      "btn_contact": "Contact us"
+    }
+  },
+  "contact": {
+    "hero": {
+      "tag": "Get in touch",
+      "title_main": "We'd love to",
+      "title_accent": "hear from you.",
+      "desc": "Whether you have a question, a partnership idea, or just want to say hi - we're here."
+    },
+    "form": {
+      "title": "Send a message",
+      "name_label": "Your name",
+      "email_label": "Email",
+      "subject_label": "Subject",
+      "subject_placeholder": "Select a topic…",
+      "message_label": "Message",
+      "message_placeholder": "Tell us what's on your mind…",
+      "btn_send": "Send message",
+      "btn_sending": "Sending…",
+      "sent_success_title": "Message sent!",
+      "sent_success_desc": "We'll get back to you within 24 hours.",
+      "btn_another": "Send another",
+      "validation_error": "Please fill in all required fields.",
+      "validation_error_title": "Incomplete Form",
+      "send_success_toast": "Your message has been sent. We'll get back to you within 24 hours.",
+      "send_success_toast_title": "Message Sent",
+      "send_fail_toast": "Failed to send message. Please try again or email us directly.",
+      "send_fail_toast_title": "Send Failed"
+    },
+    "topics": {
+      "general": "General question",
+      "partnership": "Partnership",
+      "worker_support": "Worker support",
+      "employer_support": "Employer support",
+      "report_issue": "Report an issue",
+      "other": "Other"
+    },
+    "info": {
+      "email": "Email us",
+      "phone": "Call or WhatsApp",
+      "location": "Location",
+      "response_time": "Response time",
+      "response_value": "Within 24 hours"
+    }
+  },
+  "hire_modal": {
+    "steps": {
+      "details": "Job details",
+      "matches": "Best matches",
+      "summary": "Summary",
+      "indicator": "Step {step} of {total}"
+    },
+    "details": {
+      "category_label": "Job category *",
+      "category_placeholder": "Search category…",
+      "workers_label": "No. of workers",
+      "rate_label": "Rate per worker (RWF) *",
+      "period_label": "Rate period",
+      "period_options": {
+        "hr": "Per hour",
+        "day": "Per day",
+        "week": "Per week",
+        "month": "Per month",
+        "year": "Per year"
+      },
+      "duration_label": "Duration",
+      "payout_breakdown": "{rate}{period} × {workers} worker{plural} × {duration} {unit}",
+      "start_date": "Start date *",
+      "start_time": "Start time *",
+      "province": "Province",
+      "province_placeholder": "Province…",
+      "district": "District *",
+      "district_placeholder": "District…",
+      "location_label": "Precise location (click map or use GPS)",
+      "gps_btn_detect": "Detect my GPS",
+      "gps_btn_detecting": "Detecting…",
+      "gps_btn_detected": "GPS detected",
+      "gps_error": "Could not access GPS",
+      "requirements_label": "Requirements (optional)",
+      "requirements_placeholder": "e.g. must have own transport, certified electrician, fluent in English…"
+    },
+    "matches": {
+      "selected_status": "{selected} of {total} workers selected",
+      "ready": "✓ Ready",
+      "select_more": "Select more",
+      "loading": "Finding workers for {cat}…",
+      "error_title": "Could not load workers",
+      "error_desc": "Check your connection and go back to try again.",
+      "empty_title": "No workers found for {cat}",
+      "empty_desc": "Go back and try a different category.",
+      "available_summary": "{count} worker{plural} available for {cat}",
+      "sorted_proximity": " · sorted by proximity to {district}",
+      "best_match": "BEST MATCH",
+      "nearby": "Nearby",
+      "since_year": "Since {year}",
+      "more_avail": "+{count} more",
+      "select_btn_need": "Select {count} more worker{plural}"
+    },
+    "summary": {
+      "title": "Job summary",
+      "workers_label": "Workers",
+      "rate_label": "Rate",
+      "duration_label": "Duration",
+      "date_label": "Date",
+      "time_label": "Time",
+      "province_label": "Province",
+      "district_label": "District",
+      "gps_label": "GPS",
+      "requirements_label": "Requirements",
+      "assigned_title": "Your workers",
+      "assigned_title_single": "Your worker",
+      "payment_title": "Payment",
+      "payout_label": "Worker payout ({workers} × {duration}h × {rate})",
+      "fee_label": "Platform fee (5%)",
+      "escrow_required": "Total escrow required",
+      "wallet_balance": "Wallet balance",
+      "topup_warning": "You need {amount} more.",
+      "topup_link": "Top up wallet →",
+      "terms_warning": "By confirming, you agree to our terms of service.",
+      "confirm_btn": "Confirm & freeze funds",
+      "processing_btn": "Processing…",
+      "insufficient_btn": "Insufficient balance",
+      "incomplete_btn": "Complete all fields",
+      "signed_out_error": "You must be signed in.",
+      "signed_out_error_title": "Not Signed In",
+      "post_fail_title": "Hire Failed",
+      "success_title": "Booking confirmed!",
+      "success_desc": "{names} {plural} been notified and will confirm shortly.",
+      "success_sub": "The job has been created successfully."
+    }
+  },
+  "signin": {
+    "hero": {
+      "welcome_back": "Welcome back",
+      "subtitle": "Sign in to your MpahMapu account"
+    },
+    "buttons": {
+      "home": "Home",
+      "back_to_home": "Back to home",
+      "signing_in": "Signing in…",
+      "continue_google": "Continue with Google",
+      "continue_facebook": "Continue with Facebook",
+      "submit": "Sign in"
+    },
+    "general": {
+      "or": "OR"
+    },
+    "fields": {
+      "email_label": "Email",
+      "password_label": "Password",
+      "forgot_password_link": "Forgot?"
+    },
+    "footer": {
+      "no_account": "Don't have an account?",
+      "signup_link": "Sign up"
+    },
+    "toasts": {
+      "google_fail_desc": "Google sign-in failed. Please try again.",
+      "login_failed_title": "Login Failed",
+      "google_cancelled_desc": "Google sign-in was cancelled or failed.",
+      "fb_https_desc": "Facebook sign-in requires HTTPS. Use email or Google during local development.",
+      "fb_not_avail_desc": "Facebook sign-in is not available (App ID not configured).",
+      "fb_fail_desc": "Facebook sign-in failed. Please try again.",
+      "email_pass_req_desc": "Please enter your email and password.",
+      "invalid_creds_desc": "Invalid email or password.",
+      "set_password_label": "Set a password via Forgot Password"
+    }
+  },
+  "signup": {
+    "hero": {
+      "title": "Create account",
+      "subtitle": "Join MpahMapu to hire or find work"
+    },
+    "buttons": {
+      "home": "Home",
+      "back_to_home": "Back to home",
+      "signing_in": "Continuing…",
+      "continue_google": "Continue with Google",
+      "continue_facebook": "Continue with Facebook",
+      "registering": "Creating account…",
+      "submit": "Create account"
+    },
+    "general": {
+      "or": "OR"
+    },
+    "fields": {
+      "name_label": "Full Name",
+      "email_label": "Email",
+      "phone_label": "Phone Number",
+      "password_label": "Password",
+      "password_placeholder": "Min. 8 characters",
+      "referral_label": "Referral Code (optional)"
+    },
+    "footer": {
+      "has_account": "Already have an account?",
+      "signin_link": "Sign in",
+      "terms_p1": "By signing up you agree to our",
+      "terms_link": "Terms",
+      "privacy_link": "Privacy Policy"
+    },
+    "errors": {
+      "name_req": "Name is required.",
+      "email_req": "Email is required.",
+      "email_invalid": "Please enter a valid email address.",
+      "phone_req": "Phone number is required.",
+      "phone_invalid": "Invalid phone number format.",
+      "password_req": "Password is required.",
+      "password_min": "Password must be at least 8 characters."
+    },
+    "toasts": {
+      "google_fail_desc": "Google sign-up failed. Please try again.",
+      "signup_failed_title": "Sign Up Failed",
+      "google_cancelled_desc": "Google sign-up was cancelled or failed.",
+      "fb_https_desc": "Facebook sign-up requires HTTPS. Use email or Google during local development.",
+      "fb_not_avail_desc": "Facebook sign-in is not available (App ID not configured).",
+      "fb_fail_desc": "Facebook sign-up failed. Please try again.",
+      "validation_error_desc": "Please fill in all required fields correctly.",
+      "fail_generic_desc": "Registration failed. Please try again."
+    }
+  },
+  "auth_carousel": {
+    "slide0": {
+      "tag": "For workers",
+      "headline": "Get hired\ntoday.",
+      "body": "Browse 100+ daily jobs across Kigali - waiters, cleaners, drivers, security and more. No CV needed.",
+      "quote": "I earned RWF 45,000 this week alone.",
+      "author": "Jean Pierre M.",
+      "role": "Waiter · Kacyiru"
+    },
+    "slide1": {
+      "tag": "For employers",
+      "headline": "Hire in\nminutes.",
+      "body": "ID-verified, rated workers ready to start the same day. Read reviews, compare rates, book instantly.",
+      "quote": "Found a waiter for my event in under 10 minutes.",
+      "author": "Amina K.",
+      "role": "Event Organiser · Kimihurura"
+    },
+    "slide2": {
+      "tag": "Safe payments",
+      "headline": "Pay via\nMoMo.",
+      "body": "Pay and get paid securely via Mobile Money. No cash disputes, no upfront fees - funds held safely.",
+      "quote": "No more cash problems. MoMo makes it simple.",
+      "author": "Eric N.",
+      "role": "Driver · Remera"
+    }
+  },
+  "onboarding": {
+    "steps": {
+      "step1": "Step 1",
+      "step2": "Step 2",
+      "step3": "Step 3",
+      "indicator_lbl": "{step} of 3"
+    },
+    "headers": {
+      "role_select_title": "How will you use MpahMapu?",
+      "role_select_subtitle": "Choose your account type to get started",
+      "email_verify_title": "Verify your email",
+      "email_verify_subtitle": "Enter the code we sent to {email}",
+      "account_type_title": "Who's registering?",
+      "account_type_subtitle_employer": "Are you a company or an individual?",
+      "account_type_subtitle_worker": "Register on your own or as a team",
+      "employer_details_title": "Your business details",
+      "employer_details_subtitle": "Where you operate, what you hire for, and your TIN",
+      "personal_title": "About you",
+      "personal_subtitle": "A few quick details about your background",
+      "location_title": "Where & when",
+      "location_subtitle": "Tell us where you're based and when you're free",
+      "equipment_title": "Your equipment",
+      "equipment_subtitle": "List tools or devices you have access to",
+      "completed_title": "All set!",
+      "completed_subtitle": "Taking you to your dashboard…"
+    },
+    "roles": {
+      "worker_label": "Find Work",
+      "worker_desc": "Browse & apply for jobs",
+      "employer_label": "Hire Workers",
+      "employer_desc": "Post jobs & hire talent",
+      "continue_btn": "Continue as {role}"
+    },
+    "otp": {
+      "placeholder": "6-digit code",
+      "submit_btn": "Verify & Continue",
+      "resend_prompt": "Didn't receive it?",
+      "resend_link": "Resend code",
+      "invalid_code_error": "Please enter a valid code.",
+      "error_title": "Verification Failed",
+      "success_resend": "A new code has been sent to your email.",
+      "success_resend_title": "Code Sent",
+      "resend_fail_generic": "Failed to resend OTP. Please try again.",
+      "resend_fail_title": "Resend Failed"
+    },
+    "account_types": {
+      "individual": { "label": "Individual", "desc": "Just me, working solo" },
+      "team": { "label": "Team", "desc": "A group of workers" },
+      "company": { "label": "Company", "desc": "A registered company" },
+      "crew": { "label": "Crew", "desc": "A working crew" }
+    },
+    "group_fields": {
+      "member_emails_label": "Member emails",
+      "members_count": "· {count} member{plural}",
+      "member_email_placeholder": "Type an email and press Enter…",
+      "member_email_hint": "We'll email each member that they've been added. They receive notifications only — no dashboard access — and can still register their own account later.",
+      "tin_label": "TIN number",
+      "tin_placeholder": "Tax ID — leave blank to skip",
+      "tin_recommended": "(recommended)",
+      "tin_optional": "(optional)",
+      "email_error": "Enter a valid email address.",
+      "email_error_title": "Invalid Email"
+    },
+    "employer_details": {
+      "location_label": "Working Location",
+      "service_type_label": "Service Type",
+      "service_search_placeholder": "Search service types...",
+      "loading_services": "Loading service types...",
+      "submit_btn": "Complete Setup"
+    },
+    "personal": {
+      "dob_label": "Date of Birth",
+      "education_label": "Education Level",
+      "category_label": "Work Category",
+      "category_search_placeholder": "Search categories...",
+      "loading_categories": "Loading categories...",
+      "age_restriction_error": "You must be at least 18 years old to register.",
+      "age_restriction_title": "Age Restriction"
+    },
+    "location_avail": {
+      "location_label": "Your Location",
+      "avail_label": "Weekly Availability",
+      "days_selected": "{count} day{plural} selected"
+    },
+    "equipment": {
+      "label": "Equipment & Tools",
+      "placeholder": "Type and press Enter to add…",
+      "hint": "Press Enter or , to add each item",
+      "suggestions_title": "Common suggestions",
+      "skip_btn": "Skip for now",
+      "onboarding_fail_generic": "Failed to submit onboarding data.",
+      "onboarding_fail_title": "Setup Failed"
+    },
+    "completed": {
+      "title": "You're all set!",
+      "subtitle": "Setting up your dashboard…"
+    },
+    "education": {
+      "none": "None",
+      "primary": "Primary School",
+      "high_school": "High School",
+      "diploma": "Diploma / Certificate",
+      "bachelors": "Bachelor's Degree",
+      "masters": "Master's Degree or Higher"
+    },
+    "equipment_suggestions": {
+      "smartphone": "Smartphone",
+      "laptop": "Laptop",
+      "internet": "Internet Connection",
+      "safety_gear": "Safety Gear",
+      "vehicle": "Vehicle",
+      "power_tools": "Power Tools",
+      "camera": "Camera",
+      "tablet": "Tablet"
+    }
+  },
+  "privacy": {
+    "hero": {
+      "tag": "Legal",
+      "title_main": "Privacy",
+      "title_accent": "Policy",
+      "desc": "We collect only what we need, protect it carefully, and never sell it. Here is exactly how your data is handled on MpahMapu.",
+      "last_updated_prefix": "Last updated:",
+      "last_updated_date": "1 June 2025"
+    },
+    "highlights": {
+      "hl1": {
+        "title": "What we collect",
+        "body": "Name, phone number, ID document, location, and job history - only what's needed to run the platform."
+      },
+      "hl2": {
+        "title": "How we protect it",
+        "body": "Data is encrypted in transit and at rest. ID documents are stored on isolated, access-controlled servers."
+      },
+      "hl3": {
+        "title": "Who we share with",
+        "body": "Only the other party in a confirmed job booking, and MoMo for payment processing. Never sold to advertisers."
+      },
+      "hl4": {
+        "title": "Your right to delete",
+        "body": "Request account deletion at any time. We remove your personal data within 30 days, except where law requires otherwise."
+      }
+    },
+    "intro": {
+      "summary_prefix": "Plain language summary: ",
+      "summary_body": "We use your name, phone, and ID to verify you and run the platform. Payments go through MoMo - we never touch your cash. We share your info only with the person you are working with, and only what they need. You can delete your account any time."
+    },
+    "sections": {
+      "sec1": {
+        "title": "Information we collect",
+        "body": "When you register, we collect your full name, phone number, and national ID number. Workers also submit a photo of their ID document for verification. When you use the platform we collect job history, ratings, and general location data (district level) to match you with nearby opportunities or workers. We do not collect precise GPS coordinates without your explicit consent."
+      },
+      "sec2": {
+        "title": "How we use your information",
+        "body": "We use your data to operate the platform: verifying identities, matching workers to jobs, processing MoMo payments, and displaying your rating to prospective employers or workers. We may also use aggregated, anonymised data to improve our matching algorithms and understand how the platform is used - this data cannot identify you individually."
+      },
+      "sec3": {
+        "title": "Who we share your data with",
+        "body": "When a job is confirmed, the employer can see the worker's name, photo, rating, and job category experience - and vice versa. Beyond this, we share data only with MTN MoMo for payment processing and, if legally required, with Rwandan law enforcement or regulatory authorities. We do not sell, rent, or trade your personal data to any third party for marketing purposes."
+      },
+      "sec4": {
+        "title": "ID verification",
+        "body": "Workers submit a national ID document during onboarding. This document is reviewed by our verification team and then stored in an encrypted, access-restricted environment. Only authorised MpahMapu staff can access raw ID documents, and only for the purpose of resolving disputes or meeting legal obligations. Verified status is displayed as a badge; the underlying document is never shared with employers."
+      },
+      "sec5": {
+        "title": "MoMo and payment data",
+        "body": "We store only the MoMo phone number associated with your account. Full transaction records are held by MTN MoMo under their own privacy policy. MpahMapu retains payment records (amount, date, job reference) for up to 7 years as required by Rwandan tax law."
+      },
+      "sec6": {
+        "title": "Cookies and app analytics",
+        "body": "Our web and mobile platforms use essential cookies to keep you logged in and remember your preferences. We also use privacy-respecting analytics to understand which features are used and where the platform can be improved. Analytics data is aggregated and does not identify individual users. You can disable non-essential cookies in your device or browser settings."
+      },
+      "sec7": {
+        "title": "Data retention",
+        "body": "Active accounts: data is retained as long as your account is open. Deleted accounts: personal data is removed within 30 days of deletion, except for transaction records (7 years, legal requirement) and data relevant to unresolved disputes. Anonymised, aggregated data may be retained indefinitely."
+      },
+      "sec8": {
+        "title": "Your rights",
+        "body": "Under Rwandan law and in the spirit of fair data practice, you have the right to access a copy of your personal data, correct inaccurate information, request deletion of your account and data, and object to certain processing. To exercise any of these rights, contact privacy@MpahMapu.rw or use the in-app support form. We will respond within 10 business days."
+      },
+      "sec9": {
+        "title": "Security",
+        "body": "We use TLS encryption for all data in transit, AES-256 encryption for sensitive data at rest, and strict access controls so that only the staff who need data to do their jobs can access it. We conduct regular internal security reviews. If a breach occurs that affects your data, we will notify you within 72 hours and report it to the Rwanda Information Society Authority (RISA) as required."
+      },
+      "sec10": {
+        "title": "Changes to this policy",
+        "body": "We may update this Privacy Policy to reflect changes in the law or the platform. If changes are material, we will notify you via SMS or in-app notification at least 7 days before they take effect. Continued use of MpahMapu after that date constitutes acceptance."
+      },
+      "sec11": {
+        "title": "Contact us",
+        "body": "For privacy questions, data requests, or to report a concern, contact our data team at privacy@MpahMapu.rw. For general queries use legal@MpahMapu.rw or the contact form on our website."
+      }
+    },
+    "contact_banner": {
+      "title": "Data & privacy questions",
+      "email_prefix": "Email",
+      "email_suffix": "- we respond within 10 business days."
+    },
+    "cta": {
+      "title": "Ready to get started?",
+      "desc": "Join thousands of workers and employers already on MpahMapu.",
+      "btn_signup": "Create account",
+      "btn_terms": "Terms & conditions"
+    }
+  },
+  "terms": {
+    "hero": {
+      "tag": "Legal",
+      "title_main": "Terms &",
+      "title_accent": "Conditions",
+      "desc": "These terms govern your use of MpahMapu as a worker or employer. Please read them carefully before creating an account.",
+      "last_updated_prefix": "Last updated:",
+      "last_updated_date": "1 June 2025"
+    },
+    "intro": {
+      "summary_prefix": "Quick summary: ",
+      "summary_body": "MpahMapu connects workers and employers in Rwanda. You own your work and your earnings. We handle trust, verification, and MoMo payments. Be honest, be respectful, show up on time."
+    },
+    "sections": {
+      "sec1": {
+        "title": "Acceptance of terms",
+        "body": "By creating an account or using MpahMapu - whether as a worker or an employer - you agree to be bound by these Terms and Conditions. If you do not agree, please do not use the platform. We may update these terms from time to time; continued use after any change means you accept the revised terms."
+      },
+      "sec2": {
+        "title": "Who can use MpahMapu",
+        "body": "You must be at least 18 years old and legally permitted to work or hire in Rwanda to create an account. Workers must complete ID verification before accepting jobs. Employers must provide accurate business or personal details when posting jobs. Accounts are non-transferable."
+      },
+      "sec3": {
+        "title": "Posting and accepting jobs",
+        "body": "Employers are responsible for the accuracy of every job post - including location, pay rate, category, and duration. Workers accept jobs based on that information; material misrepresentation may result in account suspension. Workers must complete accepted jobs or cancel with adequate notice. Repeated no-shows may result in removal from the platform."
+      },
+      "sec4": {
+        "title": "Payments via MoMo",
+        "body": "All payments are processed through MTN Mobile Money (MoMo). Employers are charged the agreed rate plus the MpahMapu service fee at the time of job confirmation. Funds are released to workers upon job completion. MpahMapu does not hold funds for longer than necessary and is not responsible for delays caused by MoMo's own processing times."
+      },
+      "sec5": {
+        "title": "Ratings and conduct",
+        "body": "Both workers and employers can be rated after each completed job. Ratings must reflect genuine experience. Fraudulent, retaliatory, or coerced reviews violate these terms and may be removed. All users are expected to communicate respectfully; harassment, discrimination, or abuse of any kind will result in permanent account removal."
+      },
+      "sec6": {
+        "title": "Disputes and refunds",
+        "body": "If a dispute arises - for example, a job was not completed as agreed - either party can raise a claim within 48 hours of the job end time. MpahMapu will review available evidence and make a binding decision. Refunds, where applicable, are processed back via MoMo within 3–5 business days."
+      },
+      "sec7": {
+        "title": "Prohibited uses",
+        "body": "You may not use MpahMapu to solicit workers off-platform to avoid fees, post illegal or hazardous work, collect personal data from other users without consent, or attempt to reverse-engineer, scrape, or interfere with the platform. Violations may result in immediate account termination and, where applicable, legal action."
+      },
+      "sec8": {
+        "title": "Limitation of liability",
+        "body": "MpahMapu is a marketplace and is not the employer or employee of any party. We do not guarantee the quality of work performed, the conduct of any user, or the availability of jobs. To the maximum extent permitted by Rwandan law, MpahMapu's liability for any claim is limited to the fees you paid to us in the 30 days preceding the event giving rise to the claim."
+      },
+      "sec9": {
+        "title": "Governing law",
+        "body": "These terms are governed by the laws of the Republic of Rwanda. Any disputes that cannot be resolved through MpahMapu's internal process will be subject to the exclusive jurisdiction of the courts of Rwanda."
+      },
+      "sec10": {
+        "title": "Contact",
+        "body": "Questions about these terms? Reach us at legal@MpahMapu.rw or through the contact form on our website. We aim to respond within 2 business days."
+      }
+    },
+    "cta": {
+      "title": "Ready to get started?",
+      "desc": "By creating an account you agree to these terms.",
+      "btn_signup": "Create account",
+      "btn_privacy": "Privacy policy"
+    }
+  },
+  "post_job": {
+    "loading_map": "Loading map…",
+    "units": {
+      "hour": "hour",
+      "hours": "hours",
+      "day": "day",
+      "days": "days",
+      "week": "week",
+      "weeks": "weeks",
+      "month": "month",
+      "months": "months",
+      "year": "year",
+      "years": "years"
+    },
+    "steps": {
+      "details": "Job details",
+      "review": "Review & post"
+    },
+    "errors": {
+      "required": "Required",
+      "invalid_rate": "Enter a valid rate",
+      "incomplete_form": "Please fill in all required fields.",
+      "incomplete_form_title": "Incomplete Form",
+      "not_signed_in": "You must be signed in to post a job.",
+      "not_signed_in_title": "Not Signed In",
+      "post_failed": "Failed to post job. Please try again.",
+      "post_failed_title": "Post Failed"
+    },
+    "success": {
+      "title": "Job posted!",
+      "desc": "Your job is live. Verified workers in {location} will start applying shortly."
+    },
+    "fields": {
+      "category": "Category",
+      "date": "Date",
+      "time": "Time",
+      "duration": "Duration",
+      "workers": "Workers",
+      "location": "Location",
+      "rate": "Rate",
+      "escrowed": "Escrowed"
+    },
+    "step_indicator": "Step {current} of {total}",
+    "labels": {
+      "category": "Job category *",
+      "start_date": "Start date *",
+      "start_time": "Start time *",
+      "rate_period": "Rate period",
+      "duration": "Duration",
+      "workers_count": "No. of workers",
+      "province": "Province",
+      "district": "District *",
+      "precise_location": "Precise location (click map or use GPS)",
+      "rate_label": "Rate per worker {period} (RWF) *",
+      "notes": "Additional notes (optional)"
+    },
+    "placeholders": {
+      "search_category": "Search category…",
+      "province": "Province…",
+      "district": "District…",
+      "rate": "e.g. 3000",
+      "notes": "e.g. formal attire required, tools provided, outdoor event…"
+    },
+    "gps": {
+      "detecting": "Detecting…",
+      "detected": "GPS detected",
+      "detect": "Detect my GPS",
+      "error": "Could not access GPS"
+    },
+    "options": {
+      "per_hour": "Per hour",
+      "per_day": "Per day",
+      "per_week": "Per week",
+      "per_month": "Per month",
+      "per_year": "Per year"
+    },
+    "review": {
+      "must_be_signed_in": "You must be signed in as an employer to post a job.",
+      "summary_title": "Job summary",
+      "payment_title": "Payment",
+      "gross": "Gross ({details})",
+      "platform_fee": "Platform fee (25% from worker)",
+      "workers_receive": "Workers receive",
+      "escrow_charge": "Your escrow charge",
+      "wallet_balance": "Wallet balance",
+      "insufficient_funds_msg": "You need {amount} more.",
+      "top_up_link": "Top up wallet →",
+      "agreement_hint": "By posting you agree to our terms. Your contact details are only shared with workers who apply.",
+      "posting_btn": "Posting…",
+      "insufficient_balance_btn": "Insufficient balance",
+      "submit_btn": "Post & freeze funds"
+    }
+  },
+  "offer": {
+    "loading_map": "Loading map…",
+    "success": {
+      "title": "Offer sent!",
+      "desc": "{name} will be notified with your details and a link to accept or negotiate.",
+      "notification": "Worker notification"
+    },
+    "fields": {
+      "job": "Job",
+      "date": "Date",
+      "duration": "Duration",
+      "province": "Province",
+      "district": "District",
+      "offer": "Offer",
+      "done": "Done"
+    },
+    "header": {
+      "title": "Make an offer",
+      "subtitle": "Hire {name}"
+    },
+    "labels": {
+      "title": "Job title *",
+      "start_date": "Start date *",
+      "start_time": "Start time *",
+      "rate_period": "Rate period",
+      "duration": "Duration *",
+      "province": "Province",
+      "district": "District *",
+      "precise_location": "Precise location (click map or use GPS)",
+      "offer_price": "Your offer price {period} (RWF) *"
+    },
+    "placeholders": {
+      "title": "e.g. Waiter for wedding event",
+      "rate": "e.g. 8000",
+      "province": "Province…",
+      "district": "District…"
+    },
+    "gps": {
+      "detecting": "Detecting…",
+      "detected": "GPS detected",
+      "detect": "Detect my GPS",
+      "error": "Could not access GPS"
+    },
+    "buttons": {
+      "send": "Send offer"
+    }
+  },
+  "apply": {
+    "success": {
+      "title": "Application sent!",
+      "desc": "Your application for {title} has been submitted. {name} will be notified."
+    },
+    "header": {
+      "title": "Apply for job"
+    },
+    "errors": {
+      "must_be_signed_in": "You must be signed in to apply for jobs.",
+      "failed": "Failed to submit application. Please try again.",
+      "failed_title": "Application Failed"
+    },
+    "labels": {
+      "best_fit": "Why are you the best fit? (optional)"
+    },
+    "placeholders": {
+      "best_fit": "Describe your experience, skills, or availability that make you ideal for this role…"
+    },
+    "buttons": {
+      "submit": "Submit application",
+      "submitting": "Submitting…",
+      "close": "Close"
+    }
+  },
+  "jobs_page": {
+    "hero": {
+      "subtitle": "Open positions across Rwanda - apply or post your own."
+    },
+    "buttons": {
+      "post_job": "Post a job",
+      "filters": "Filters",
+      "clear_all": "Clear all"
+    },
+    "placeholders": {
+      "search": "Search jobs or categories…"
+    },
+    "filters": {
+      "location": "Location",
+      "min_pay": "Min pay (RWF)",
+      "sort_by": "Sort by",
+      "urgent_only": "Urgent only",
+      "urgent": "Urgent only",
+      "min": "Min",
+      "max_pay": "Max pay (RWF)"
+    },
+    "sort_options": {
+      "newest": "Newest first",
+      "pay_asc": "Pay: low → high",
+      "pay_desc": "Pay: high → low"
+    },
+    "loading": "Loading…",
+    "found_count": "{count} jobs found",
+    "badges": {
+      "urgent": "Urgent"
+    },
+    "cards": {
+      "slots_open": "{count} slots open",
+      "apply": "Apply"
+    },
+    "empty": {
+      "title": "No jobs match your filters.",
+      "desc": "Try adjusting your search or clearing filters."
+    },
+    "cta": {
+      "title": "Need to hire someone?",
+      "desc": "Post a job in under 2 minutes and get matched with ID-verified workers in your area.",
+      "button": "Post a job"
+    }
+  },
+  "browse_page": {
+    "hero": {
+      "subtitle": "Find verified workers or available jobs across Rwanda."
+    },
+    "tabs": {
+      "workers": "Workers",
+      "jobs": "Jobs"
+    },
+    "placeholders": {
+      "search_workers": "Search workers or categories…"
+    },
+    "workers_found": "{count} workers found",
+    "badges": {
+      "available": "Available"
+    },
+    "empty": {
+      "workers": "No workers match your filters."
+    }
+  },
+  "worker_detail": {
+    "not_found": "Worker not found",
+    "not_found_desc": "This profile doesn't exist or has been removed.",
+    "back": "← Back to Browse",
+    "badges": {
+      "verified": "Verified",
+      "unavailable": "Not available",
+      "new": "New worker"
+    },
+    "member_since": "Member since {year}",
+    "sections": {
+      "available_days": "Available days",
+      "education": "Education",
+      "equipment": "Equipment & tools",
+      "trust": "Trust & verification"
+    },
+    "trust": {
+      "identity": "Identity registered on MpahMapu",
+      "member_since": "Active member since {year}",
+      "specialty": "Specialises in {category}",
+      "availability": "{count} days available per week"
+    },
+    "cta": {
+      "button_hire": "Hire {name}",
+      "hire": "Hire {name}",
+      "unavailable": "Unavailable"
+    }
+  },
+  "not_found_page": {
+    "title": "Page Not Found",
+    "heading": "Page Not Found",
+    "description": "Sorry, we couldn't find the page you're looking for. It might have been moved or no longer exists.",
+    "go_home": "Go Home",
+    "browse_workers": "Browse Workers",
+    "find_jobs": "Find Jobs"
+  },
+  "forgot_password_page": {
+    "back_to_sign_in": "Back to sign in",
+    "title": "Forgot your password?",
+    "subtitle": "Enter the email linked to your MpahMapu account and we'll send you a reset link.",
+    "email_label": "Email",
+    "email_placeholder": "you@example.com",
+    "sending": "Sending...",
+    "submit_btn": "Send reset link",
+    "success_title": "Check your inbox",
+    "success_subtitle": "We sent a reset link to {email}. It expires in 15 minutes.",
+    "didnt_receive": "Didn't get it? Check your spam folder, or",
+    "try_different_email": "try a different email"
+  },
+  "reset_password_page": {
+    "back_to_sign_in": "Back to sign in",
+    "title": "Set a new password",
+    "subtitle": "Choose something strong. You won't be able to reuse your last password.",
+    "new_password_label": "New password",
+    "confirm_password_label": "Confirm password",
+    "resetting": "Resetting...",
+    "submit_btn": "Reset password",
+    "success_title": "Password updated",
+    "success_subtitle": "Your password has been reset. All other sessions have been signed out for security.",
+    "signin_btn": "Sign in",
+    "strength": {
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
+    },
+    "toasts": {
+      "missing_token": "Missing or invalid reset token.",
+      "reset_failed": "Reset Failed",
+      "password_short": "Password must be at least 8 characters.",
+      "passwords_mismatch": "Passwords don't match.",
+      "reset_success": "Your password has been reset. You can now sign in.",
+      "password_updated": "Password Updated"
+    }
+  },
+  "verify_badge_page": {
+    "loading": "Verifying badge…",
+    "not_found": {
+      "title": "Badge not found",
+      "desc": "No badge with ID {badgeId} is registered on Mpah Mapu. This badge may be invalid or counterfeit."
+    },
+    "verified": "Verified by Mpah Mapu",
+    "inactive": "Badge {status}",
+    "role_company": "Verified Company",
+    "role_worker": "Verified Worker",
+    "since": "Since {year}",
+    "reviews_count": {
+      "one": "1 review",
+      "other": "{count} reviews"
+    },
+    "no_reviews": "No reviews yet",
+    "jobs_completed": "Jobs completed",
+    "id_label": "ID",
+    "view_profile": "View full profile",
+    "inactive_warning": "This badge holder's account is currently {status}. Please treat this badge with caution.",
+    "footer_note": "Scan any Mpah Mapu badge to confirm the holder's identity."
+  },
+  "badge_wizard": {
+    "identity_title": "Worker Identity Verification",
+    "location_title": "Real Address Verification",
+    "completed_title": "Badge Generated!",
+    "identity_subtitle": "Please provide your photo, National ID, and legal name",
+    "location_subtitle": "Confirm the address saved on your profile",
+    "completed_subtitle": "Your unique badge is ready.",
+    "fields": {
+      "photo_label": "Passport Photo / Selfie",
+      "national_id_label": "National ID Number",
+      "legal_name_label": "Legal Name (Registered Name)",
+      "address_label": "Registered Address"
+    },
+    "toasts": {
+      "photo_success": "Photo uploaded successfully",
+      "photo_failed": "Failed to upload photo",
+      "validation_error": "All identity fields are required.",
+      "submit_failed": "Failed to submit badge information."
+    },
+    "status": {
+      "uploading": "Uploading...",
+      "photo_ready": "Photo ready! Tap to change",
+      "photo_placeholder": "Tap to take selfie or upload",
+      "photo_hint": "Clear front-facing photo",
+      "address_loading": "Loading your saved address…",
+      "address_hint": "This is the address saved on your profile. To change it, update your profile location in Settings.",
+      "address_missing": "No saved address found. Please complete your profile location before requesting a badge."
+    },
+    "continue_btn": "Continue",
+    "submit_btn": "Submit & Generate Badge",
+    "badge_id_label": "Badge ID:",
+    "view_badge_btn": "View My Badge",
+    "close_btn": "Close"
+  },
+  "titles": {
+    "home": "MpahMapu - Hire Verified Workers in Kigali, Rwanda",
+    "browse": "Browse Workers | MpahMapu",
+    "jobs": "Find Jobs | MpahMapu",
+    "about": "About Us | MpahMapu",
+    "contact": "Contact Us | MpahMapu",
+    "privacy_policy": "Privacy Policy | MpahMapu",
+    "terms_and_conditions": "Terms & Conditions | MpahMapu",
+    "signin": "Sign In | MpahMapu",
+    "signup": "Sign Up | MpahMapu",
+    "forgot_password": "Forgot Password | MpahMapu",
+    "reset_password": "Reset Password | MpahMapu",
+    "verify_badge": "Verify Badge | MpahMapu",
+    "not_found": "Page Not Found | MpahMapu"
+  },
+  "settings_page": {
+    "title": "Settings",
+    "subtitle": "Manage your account, security, and preferences",
+    "tabs": {
+      "profile": "Profile",
+      "security": "Security",
+      "notifications": "Notifications",
+      "account": "Account"
+    },
+    "profile": {
+      "title": "Profile Information",
+      "full_name": "Full Name",
+      "phone_number": "Phone Number (MoMo)",
+      "email": "Email Address",
+      "email_hint": "Email address cannot be changed. Contact support to update it.",
+      "save_btn": "Save changes",
+      "saving": "Saving...",
+      "saved": "Saved"
+    },
+    "language": {
+      "title": "Language Preferences",
+      "subtitle": "Choose your preferred language for the dashboard. This will update the text and interface language."
+    },
+    "worker_details": {
+      "title": "Worker Details",
+      "dob": "Date of Birth",
+      "education": "Education Level",
+      "category": "Work Category",
+      "category_search_placeholder": "Search categories...",
+      "location_availability": "Location & Availability",
+      "availability": "Weekly Availability",
+      "equipment": "Equipment & Tools",
+      "equipment_placeholder": "Type a tool and press Enter...",
+      "bio": "Professional Bio",
+      "bio_placeholder": "Tell us about your experience...",
+      "save_worker_btn": "Save Worker Profile"
+    },
+    "security": {
+      "password_title": "Change Password",
+      "cur_password": "Current Password",
+      "new_password": "New Password",
+      "new_password_placeholder": "At least 8 characters",
+      "confirm_password": "Confirm New Password",
+      "confirm_password_placeholder": "Repeat new password",
+      "strength": "Password strength",
+      "totp_title": "Two-Factor Authentication (2FA)",
+      "totp_desc_enabled": "Two-factor authentication is currently active on your account.",
+      "totp_desc_disabled": "Add an extra layer of security by requiring a verification code when signing in.",
+      "totp_enable_btn": "Enable 2FA",
+      "totp_disable_btn": "Disable 2FA",
+      "totp_setup_title": "Setup 2FA",
+      "totp_setup_desc": "Scan this QR code with your authenticator app (like Google Authenticator) and enter the 6-digit code below.",
+      "totp_code_placeholder": "000000",
+      "totp_verify_btn": "Verify & Enable",
+      "active_sessions_title": "Active Sessions",
+      "logout_devices_btn": "Log out other devices",
+      "current_session": "Current Session"
+    },
+    "notifications": {
+      "title": "Notification Preferences",
+      "desc": "Choose how and when you want to receive alerts and notifications.",
+      "email": "Email Notifications",
+      "email_desc": "Receive job updates, billing invoices, and account alerts.",
+      "push": "Push Notifications",
+      "push_desc": "Get instant updates directly in your browser or device.",
+      "sms": "SMS Alerts",
+      "sms_desc": "Get text messages for urgent job requests and matches.",
+      "save_btn": "Save preferences"
+    },
+    "account": {
+      "title": "Account Information",
+      "member_since": "Member Since",
+      "role": "Account Role",
+      "status": "Account Status",
+      "badge_id": "Badge ID",
+      "badge_url": "Badge Link",
+      "verified": "Verified",
+      "not_verified": "Not Verified",
+      "request_badge_btn": "Request Worker Badge",
+      "verification_badge_title": "Verification Badge",
+      "verification_badge_desc": "Show clients you are verified and trustworthy. Requesting a badge generates a unique profile badge card."
+    }
+  },
+  "dashboard_home": {
+    "morning": "Good morning",
+    "afternoon": "Good afternoon",
+    "evening": "Good evening",
+    "greeting_sub": "Here's what's happening with your work today.",
+    "worker_badge": "Worker Badge",
+    "profile_under_review": "Your profile is under review",
+    "complete_profile": "Complete your profile to get approved",
+    "admin_approval_desc": "An admin will approve your account shortly. You'll be visible to employers once approved.",
+    "profile_completion_desc": "Reach 80% profile completion to become eligible for admin approval.",
+    "profile": "Profile",
+    "wallet_balance": "Wallet Balance",
+    "available_balance": "Available balance",
+    "active_jobs": "Active Jobs",
+    "currently_hired": "Currently hired",
+    "direct_offers": "Direct Offers",
+    "awaiting_reply": "Awaiting your reply",
+    "total_earned": "Total Earned",
+    "released_payments": "Released payments",
+    "direct_offers_title": "Direct Offers",
+    "view_all": "View all",
+    "direct_offer_label": "Direct Offer",
+    "accept": "Accept",
+    "reject": "Reject",
+    "my_wallet": "My Wallet",
+    "in_escrow": "in escrow",
+    "released": "released",
+    "manage_wallet": "Manage wallet",
+    "quick_stats": "Quick Stats",
+    "total_applications": "Total applications",
+    "pending_replies": "Pending replies",
+    "payments_released": "Payments released",
+    "recent_applications": "Recent Applications",
+    "see_all": "See all",
+    "no_applications": "No applications yet",
+    "no_applications_desc": "Browse open jobs and apply to start earning",
+    "browse_jobs": "Browse jobs",
+    "loading": "Loading..."
+  }
+}

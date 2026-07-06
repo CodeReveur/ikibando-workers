@@ -6,11 +6,12 @@ import {
   Eye, EyeOff, CheckCircle, XCircle, Smartphone,
   Copy, RefreshCw, AlertTriangle, ChevronRight,
   ToggleLeft, ToggleRight, MapPin, X as XIcon,
-  Briefcase, Calendar, GraduationCap, Wrench, Clock,
+  Briefcase, Calendar, GraduationCap, Wrench, Clock, Globe,
 } from "lucide-react";
 import { useSession } from "@/components/dashboard/session-ctx";
 import { PageLoader } from "@/components/dashboard/ui";
 import { useToast } from "@/components/ui/toast";
+import { useLanguage } from "@/lib/language-context";
 import {
   updateProfile,
   changePassword,
@@ -194,38 +195,103 @@ export function SettingsPage({ roleLabel }: { roleLabel: string }) {
   const session = useSession();
   const { success, error: toastError } = useToast();
   const [tab, setTab] = useState<Tab>("profile");
+  const { t } = useLanguage();
 
   if (!session) return <PageLoader />;
 
   return (
     <div style={{ fontFamily: "inherit" }}>
+      <style>{`
+        .settings-container {
+          display: flex;
+          gap: 20px;
+          align-items: flex-start;
+        }
+        .settings-sidebar {
+          flex-shrink: 0;
+          width: 190px;
+        }
+        .responsive-grid-2 {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+        }
+        .responsive-grid-220 {
+          display: grid;
+          grid-template-columns: 220px 1fr;
+        }
+        @media (max-width: 768px) {
+          .settings-container {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 16px;
+          }
+          .settings-sidebar {
+            width: 100% !important;
+            position: static !important;
+            display: grid !important;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 6px !important;
+          }
+          .settings-sidebar button {
+            justify-content: center;
+            margin-bottom: 0 !important;
+            white-space: nowrap;
+            padding: 10px 16px !important;
+          }
+        }
+        @media (max-width: 600px) {
+          .responsive-grid-2 {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+          }
+          .responsive-grid-220 {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+          }
+          .account-row {
+            border-right: none !important;
+          }
+        }
+        @media (max-width: 340px) {
+          .settings-sidebar {
+            grid-template-columns: 1fr !important;
+          }
+          .skills-grid {
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)) !important;
+          }
+          .schedule-grid {
+            grid-template-columns: repeat(4, 1fr) !important;
+          }
+        }
+      `}</style>
+
       {/* Page heading */}
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: "#e8e8e8", letterSpacing: "-0.4px" }}>
-          Settings
+          {t("settings_page.title")}
         </h1>
         <p style={{ margin: "4px 0 0", fontSize: 13, color: "#444" }}>
-          Manage your account, security, and preferences
+          {t("settings_page.subtitle")}
         </p>
       </div>
 
       {/* Two-column layout: left nav + right content */}
-      <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
+      <div className="settings-container">
 
         {/* Left vertical nav */}
-        <div style={{
-          flexShrink: 0, width: 190,
+        <div className="settings-sidebar" style={{
           background: "#0e0e0e", border: "1px solid #1e1e1e",
           borderRadius: 12, padding: 6,
           position: "sticky", top: 0,
         }}>
-          {TABS.map(t => {
-            const active = tab === t.id;
-            const Icon = t.icon;
+          {TABS.map(tabItem => {
+            const active = tab === tabItem.id;
+            const Icon = tabItem.icon;
             return (
               <button
-                key={t.id}
-                onClick={() => setTab(t.id)}
+                key={tabItem.id}
+                onClick={() => setTab(tabItem.id)}
                 style={{
                   display: "flex", alignItems: "center", gap: 10,
                   width: "100%", padding: "10px 14px", borderRadius: 8, border: "none",
@@ -239,7 +305,7 @@ export function SettingsPage({ roleLabel }: { roleLabel: string }) {
                 }}
               >
                 <Icon size={14} color={active ? "#f97316" : "#444"} />
-                {t.label}
+                {t("settings_page.tabs." + tabItem.id)}
               </button>
             );
           })}
@@ -270,6 +336,7 @@ function ProfileTab({
   success: (m: string) => void;
   toastError: (m: string) => void;
 }) {
+  const { language, setLanguage, t } = useLanguage();
   const [name,    setName]    = useState(session.name  ?? "");
   const [phone,   setPhone]   = useState(session.phone ?? "");
   const [saving,  setSaving]  = useState(false);
@@ -324,13 +391,13 @@ function ProfileTab({
       <div style={card}>
         <div style={cardHeader}>
           <User size={14} color="#555" />
-          <p style={cardHeaderLabel}>Profile Information</p>
+          <p style={cardHeaderLabel}>{t("settings_page.profile.title")}</p>
         </div>
         <div style={cardBody}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+          <div className="responsive-grid-2" style={{ gap: 16, marginBottom: 16 }}>
 
             <div>
-              <label style={fieldLabel}>Full Name</label>
+              <label style={fieldLabel}>{t("settings_page.profile.full_name")}</label>
               <div style={{ position: "relative" }}>
                 <User size={13} color="#444" style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
                 <input
@@ -345,7 +412,7 @@ function ProfileTab({
             </div>
 
             <div>
-              <label style={fieldLabel}>Phone Number (MoMo)</label>
+              <label style={fieldLabel}>{t("settings_page.profile.phone_number")}</label>
               <div style={{ position: "relative" }}>
                 <Phone size={13} color="#444" style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
                 <input
@@ -363,7 +430,7 @@ function ProfileTab({
           </div>
 
           <div style={{ marginBottom: 20 }}>
-            <label style={fieldLabel}>Email Address</label>
+            <label style={fieldLabel}>{t("settings_page.profile.email")}</label>
             <div style={{ position: "relative" }}>
               <Mail size={13} color="#444" style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
               <input
@@ -374,7 +441,7 @@ function ProfileTab({
               />
               <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 10, color: "#333", fontWeight: 600 }}>LOCKED</span>
             </div>
-            <p style={{ margin: "5px 0 0", fontSize: 11, color: "#333" }}>Email address cannot be changed. Contact support to update it.</p>
+            <p style={{ margin: "5px 0 0", fontSize: 11, color: "#333" }}>{t("settings_page.profile.email_hint")}</p>
           </div>
 
           <button
@@ -382,8 +449,46 @@ function ProfileTab({
             disabled={saving}
             style={{ ...primaryBtn, opacity: saving ? 0.6 : 1 }}
           >
-            {saved ? <><CheckCircle size={14} /> Saved</> : saving ? <><RefreshCw size={14} /> Saving…</> : "Save changes"}
+            {saved ? <><CheckCircle size={14} /> {t("settings_page.profile.saved")}</> : saving ? <><RefreshCw size={14} /> {t("settings_page.profile.saving")}</> : t("settings_page.profile.save_btn")}
           </button>
+        </div>
+      </div>
+
+      {/* Language Preferences Card */}
+      <div style={card}>
+        <div style={cardHeader}>
+          <Globe size={14} color="#555" />
+          <p style={cardHeaderLabel}>{t("settings_page.language.title")}</p>
+        </div>
+        <div style={cardBody}>
+          <p style={{ margin: "0 0 14px", fontSize: 13, color: "#888", lineHeight: 1.5 }}>
+            {t("settings_page.language.subtitle")}
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+            {[
+              { code: "en", label: "English" },
+              { code: "fr", label: "Français" },
+              { code: "sw", label: "Kiswahili" },
+              { code: "kinyy", label: "Kinyarwanda" },
+            ].map(lang => {
+              const active = language === lang.code;
+              return (
+                <button
+                  key={lang.code}
+                  onClick={() => setLanguage(lang.code as any)}
+                  style={{
+                    padding: "10px 16px", fontSize: 13, fontWeight: 600, borderRadius: 8,
+                    border: `1px solid ${active ? "#f97316" : "#222"}`,
+                    background: active ? "rgba(249,115,22,0.12)" : "#141414",
+                    color: active ? "#f97316" : "#c0c0c0",
+                    cursor: "pointer", fontFamily: "inherit", transition: "all 0.12s",
+                  }}
+                >
+                  {lang.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -431,6 +536,7 @@ function WorkerProfileSection({
   success: (m: string) => void;
   toastError: (m: string) => void;
 }) {
+  const { t } = useLanguage();
   const stored = readWorkerFields();
 
   const [dob,          setDob]          = useState(stored?.dob ?? "");
@@ -518,14 +624,14 @@ function WorkerProfileSection({
       <div style={card}>
         <div style={cardHeader}>
           <Briefcase size={14} color="#555" />
-          <p style={cardHeaderLabel}>Worker Details</p>
+          <p style={cardHeaderLabel}>{t("settings_page.worker_details.title")}</p>
         </div>
         <div style={{ ...cardBody, display: "flex", flexDirection: "column", gap: 20 }}>
 
           {/* DOB + Education side by side */}
-          <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: 16 }}>
+          <div className="responsive-grid-220" style={{ gap: 16 }}>
             <div>
-              <label style={fieldLabel}><Calendar size={11} style={{ marginRight: 4, verticalAlign: "middle" }} />Date of Birth</label>
+              <label style={fieldLabel}><Calendar size={11} style={{ marginRight: 4, verticalAlign: "middle" }} />{t("settings_page.worker_details.dob")}</label>
               <input
                 type="date"
                 value={dob}
@@ -537,7 +643,7 @@ function WorkerProfileSection({
             </div>
 
             <div>
-              <label style={fieldLabel}><GraduationCap size={11} style={{ marginRight: 4, verticalAlign: "middle" }} />Education Level</label>
+              <label style={fieldLabel}><GraduationCap size={11} style={{ marginRight: 4, verticalAlign: "middle" }} />{t("settings_page.worker_details.education")}</label>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
                 {EDUCATION_OPTIONS.map(opt => (
                   <button
@@ -560,17 +666,17 @@ function WorkerProfileSection({
 
           {/* Work category */}
           <div>
-            <label style={fieldLabel}><Briefcase size={11} style={{ marginRight: 4, verticalAlign: "middle" }} />Work Category</label>
+            <label style={fieldLabel}><Briefcase size={11} style={{ marginRight: 4, verticalAlign: "middle" }} />{t("settings_page.worker_details.category")}</label>
             <input
               type="text"
-              placeholder="Search categories…"
+              placeholder={t("settings_page.worker_details.category_search_placeholder")}
               value={catSearch}
               onChange={e => setCatSearch(e.target.value)}
               style={{ ...fieldInput, padding: "9px 14px", marginBottom: 10 }}
               onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
               onBlur={e => (e.currentTarget.style.borderColor = "#222")}
             />
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 8, maxHeight: 200, overflowY: "auto", paddingRight: 4 }}>
+            <div className="skills-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 8, maxHeight: 200, overflowY: "auto", paddingRight: 4 }}>
               {categories
                 .filter(c =>
                   c.displayName.toLowerCase().includes(catSearch.toLowerCase()) ||
@@ -593,7 +699,7 @@ function WorkerProfileSection({
                     {c.nameKinyarwanda && <div style={{ fontSize: 10, opacity: 0.6, marginTop: 1 }}>{c.nameKinyarwanda}</div>}
                   </button>
                 ))}
-              {categories.length === 0 && <span style={{ fontSize: 12, color: "#444" }}>Loading categories…</span>}
+              {categories.length === 0 && <span style={{ fontSize: 12, color: "#444" }}>Loading...</span>}
             </div>
           </div>
         </div>
@@ -603,9 +709,9 @@ function WorkerProfileSection({
       <div style={card}>
         <div style={cardHeader}>
           <MapPin size={14} color="#555" />
-          <p style={cardHeaderLabel}>Location & Availability</p>
+          <p style={cardHeaderLabel}>{t("settings_page.worker_details.location_availability")}</p>
         </div>
-        <div style={{ ...cardBody, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+        <div className="responsive-grid-2" style={{ ...cardBody, gap: 20 }}>
 
           {/* Left: structured address */}
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -616,11 +722,12 @@ function WorkerProfileSection({
           <div>
             <label style={{ ...fieldLabel, marginBottom: 12 }}>
               <Clock size={11} style={{ marginRight: 4, verticalAlign: "middle" }} />
-              Weekly Availability
+              {t("settings_page.worker_details.availability")}
             </label>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 6, marginBottom: 14 }}>
+            <div className="schedule-grid" style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 6, marginBottom: 14 }}>
               {DAYS.map(day => {
                 const active = availability.includes(day);
+                const dayLabel = t("common.days." + day.toLowerCase());
                 return (
                   <button
                     key={day}
@@ -633,18 +740,18 @@ function WorkerProfileSection({
                       cursor: "pointer", fontFamily: "inherit", transition: "all 0.12s",
                     }}
                   >
-                    {day}
+                    {dayLabel ? dayLabel.substring(0, 3) : day}
                   </button>
                 );
               })}
             </div>
             {availability.length > 0 ? (
               <p style={{ margin: 0, fontSize: 12, color: "#555" }}>
-                {availability.length} day{availability.length > 1 ? "s" : ""} selected:{" "}
-                <span style={{ color: "#888" }}>{availability.map(d => FULL_DAYS[d]).join(", ")}</span>
+                {availability.length} {availability.length === 1 ? "day" : "days"} selected:{" "}
+                <span style={{ color: "#888" }}>{availability.map(d => t("common.days." + d.toLowerCase())).join(", ")}</span>
               </p>
             ) : (
-              <p style={{ margin: 0, fontSize: 12, color: "#333" }}>Select the days you are available to work.</p>
+              <p style={{ margin: 0, fontSize: 12, color: "#333" }}>{t("settings_page.worker_details.availability_hint")}</p>
             )}
           </div>
 
@@ -655,7 +762,7 @@ function WorkerProfileSection({
       <div style={card}>
         <div style={cardHeader}>
           <Wrench size={14} color="#555" />
-          <p style={cardHeaderLabel}>Equipment & Tools</p>
+          <p style={cardHeaderLabel}>{t("settings_page.worker_details.equipment")}</p>
         </div>
         <div style={cardBody}>
           <div
@@ -691,7 +798,7 @@ function WorkerProfileSection({
               onChange={e => setEquipInput(e.target.value)}
               onKeyDown={equipKeyDown}
               onBlur={() => equipInput.trim() && addEquipItem(equipInput)}
-              placeholder={equipment.length === 0 ? "Type a tool and press Enter…" : ""}
+              placeholder={equipment.length === 0 ? t("settings_page.worker_details.equipment_placeholder") : ""}
               style={{ flex: 1, minWidth: 140, background: "transparent", border: "none", outline: "none", fontSize: 13, color: "#e0e0e0", fontFamily: "inherit" }}
             />
           </div>
@@ -718,7 +825,7 @@ function WorkerProfileSection({
         disabled={saving}
         style={{ ...primaryBtn, marginBottom: 32, opacity: saving ? 0.6 : 1 }}
       >
-        {saved ? <><CheckCircle size={14} /> Saved</> : saving ? <><RefreshCw size={14} /> Saving…</> : "Save Worker Profile"}
+        {saved ? <><CheckCircle size={14} /> {t("settings_page.profile.saved")}</> : saving ? <><RefreshCw size={14} /> {t("settings_page.profile.saving")}</> : t("settings_page.worker_details.save_worker_btn")}
       </button>
     </>
   );
@@ -752,6 +859,7 @@ function PasswordSection({
   success: (m: string) => void;
   toastError: (m: string) => void;
 }) {
+  const { t } = useLanguage();
   const [cur,      setCur]      = useState("");
   const [next,     setNext]     = useState("");
   const [confirm,  setConfirm]  = useState("");
@@ -782,14 +890,14 @@ function PasswordSection({
     <div style={card}>
       <div style={cardHeader}>
         <Lock size={14} color="#555" />
-        <p style={cardHeaderLabel}>Change Password</p>
+        <p style={cardHeaderLabel}>{t("settings_page.security.password_title")}</p>
       </div>
       <div style={cardBody}>
 
         {/* Top row: current + new side by side */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+        <div className="responsive-grid-2" style={{ gap: 16, marginBottom: 16 }}>
           <div>
-            <label style={fieldLabel}>Current Password</label>
+            <label style={fieldLabel}>{t("settings_page.security.cur_password")}</label>
             <div style={{ position: "relative" }}>
               <Lock size={13} color="#444" style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
               <input
@@ -807,12 +915,12 @@ function PasswordSection({
               </button>
             </div>
             <a href="/forgot-password" style={{ fontSize: 11, color: "#f97316", textDecoration: "none", fontWeight: 600, display: "inline-block", marginTop: 6 }}>
-              Forgot password? <ChevronRight size={10} style={{ verticalAlign: "middle" }} />
+              {t("titles.forgot_password").split(" | ")[0]}? <ChevronRight size={10} style={{ verticalAlign: "middle" }} />
             </a>
           </div>
 
           <div>
-            <label style={fieldLabel}>New Password</label>
+            <label style={fieldLabel}>{t("settings_page.security.new_password")}</label>
             <div style={{ position: "relative" }}>
               <Lock size={13} color="#444" style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
               <input
@@ -820,7 +928,7 @@ function PasswordSection({
                 value={next}
                 onChange={e => setNext(e.target.value)}
                 style={fieldInputNoPad}
-                placeholder="At least 8 characters"
+                placeholder={t("settings_page.security.new_password_placeholder")}
                 onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                 onBlur={e => (e.currentTarget.style.borderColor = "#222")}
               />
@@ -845,9 +953,9 @@ function PasswordSection({
         </div>
 
         {/* Confirm + button row */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, alignItems: "flex-end" }}>
+        <div className="responsive-grid-2" style={{ gap: 16, alignItems: "flex-end" }}>
           <div>
-            <label style={fieldLabel}>Confirm New Password</label>
+            <label style={fieldLabel}>{t("settings_page.security.confirm_password")}</label>
             <div style={{ position: "relative" }}>
               <Lock size={13} color="#444" style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
               <input
@@ -855,7 +963,7 @@ function PasswordSection({
                 value={confirm}
                 onChange={e => setConfirm(e.target.value)}
                 style={fieldInputNoPad}
-                placeholder="Repeat new password"
+                placeholder={t("settings_page.security.confirm_password_placeholder")}
                 onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                 onBlur={e => (e.currentTarget.style.borderColor = "#222")}
               />
@@ -870,7 +978,7 @@ function PasswordSection({
           </div>
           <div>
             <button onClick={handleSubmit} disabled={saving} style={{ ...primaryBtn, width: "100%", justifyContent: "center", opacity: saving ? 0.6 : 1 }}>
-              {saving ? <><RefreshCw size={14} /> Updating…</> : "Update Password"}
+              {saving ? <><RefreshCw size={14} /> {t("settings_page.profile.saving")}</> : t("settings_page.profile.save_btn")}
             </button>
           </div>
         </div>
@@ -903,6 +1011,7 @@ function TotpSection({
   success: (m: string) => void;
   toastError: (m: string) => void;
 }) {
+  const { t } = useLanguage();
   const [enabled,  setEnabled]  = useState(session.totpEnabled);
   const [phase,    setPhase]    = useState<TotpPhase>("idle");
   const [qrUri,    setQrUri]    = useState("");
@@ -973,7 +1082,7 @@ function TotpSection({
     <div style={card}>
       <div style={cardHeader}>
         <Smartphone size={14} color="#555" />
-        <p style={cardHeaderLabel}>Two-Factor Authentication (2FA)</p>
+        <p style={cardHeaderLabel}>{t("settings_page.security.totp_title")}</p>
         <span style={{
           marginLeft: "auto", fontSize: 11, fontWeight: 700,
           color: enabled ? "#22c55e" : "#555",
@@ -981,7 +1090,7 @@ function TotpSection({
           border: `1px solid ${enabled ? "#1a4020" : "#222"}`,
           borderRadius: 20, padding: "3px 10px",
         }}>
-          {enabled ? "ENABLED" : "DISABLED"}
+          {enabled ? t("settings_page.security.totp_desc_enabled").substring(0,0) || "ENABLED" : t("settings_page.security.totp_desc_disabled").substring(0,0) || "DISABLED"}
         </span>
       </div>
       <div style={cardBody}>
@@ -991,16 +1100,16 @@ function TotpSection({
           <>
             <p style={{ margin: "0 0 16px", fontSize: 13, color: "#666", lineHeight: 1.6 }}>
               {enabled
-                ? "2FA is active on your account. Each login requires a code from your authenticator app in addition to your password."
-                : "Add an extra layer of security to your account. After enabling, you'll need your authenticator app every time you sign in."}
+                ? t("settings_page.security.totp_desc_enabled")
+                : t("settings_page.security.totp_desc_disabled")}
             </p>
             {enabled ? (
               <button onClick={() => { setPhase("disable"); setCode(""); }} style={dangerBtn}>
-                <XCircle size={14} /> Disable 2FA
+                <XCircle size={14} /> {t("settings_page.security.totp_disable_btn")}
               </button>
             ) : (
               <button onClick={handleSetup} disabled={loading} style={{ ...primaryBtn, opacity: loading ? 0.6 : 1 }}>
-                {loading ? <><RefreshCw size={14} /> Setting up…</> : <><Shield size={14} /> Enable 2FA</>}
+                {loading ? <><RefreshCw size={14} /> {t("settings_page.profile.saving")}</> : <><Shield size={14} /> {t("settings_page.security.totp_enable_btn")}</>}
               </button>
             )}
           </>
@@ -1010,7 +1119,7 @@ function TotpSection({
         {phase === "setup" && (
           <div>
             <p style={{ margin: "0 0 16px", fontSize: 13, color: "#666", lineHeight: 1.6 }}>
-              Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.), then enter the 6-digit code below to confirm.
+              {t("settings_page.security.totp_setup_desc")}
             </p>
             <div style={{
               background: "#fff", borderRadius: 12, padding: 12,
@@ -1023,7 +1132,7 @@ function TotpSection({
 
             <div style={{ marginBottom: 16 }}>
               <p style={{ margin: "0 0 6px", fontSize: 11, color: "#444", fontWeight: 600 }}>
-                CAN&apos;T SCAN? ENTER THIS KEY MANUALLY:
+                {t("settings_page.security.totp_cant_scan") || "CAN'T SCAN? ENTER THIS KEY MANUALLY:"}
               </p>
               <div style={{
                 display: "flex", alignItems: "center", gap: 8,
@@ -1039,7 +1148,7 @@ function TotpSection({
             </div>
 
             <div style={{ marginBottom: 16 }}>
-              <label style={fieldLabel}>Verification Code</label>
+              <label style={fieldLabel}>{t("settings_page.security.totp_code_label") || "Verification Code"}</label>
               <input
                 value={code}
                 onChange={e => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
@@ -1049,7 +1158,7 @@ function TotpSection({
                   fontSize: 22, letterSpacing: "0.4em",
                   textAlign: "center", fontFamily: "monospace",
                 }}
-                placeholder="000000"
+                placeholder={t("settings_page.security.totp_code_placeholder")}
                 onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                 onBlur={e => (e.currentTarget.style.borderColor = "#222")}
               />
@@ -1057,10 +1166,10 @@ function TotpSection({
 
             <div style={{ display: "flex", gap: 10 }}>
               <button onClick={handleEnable} disabled={loading} style={{ ...primaryBtn, opacity: loading ? 0.6 : 1 }}>
-                {loading ? <><RefreshCw size={14} /> Verifying…</> : <><CheckCircle size={14} /> Confirm & Enable</>}
+                {loading ? <><RefreshCw size={14} /> {t("settings_page.profile.saving")}</> : <><CheckCircle size={14} /> {t("settings_page.security.totp_verify_btn")}</>}
               </button>
               <button onClick={() => { setPhase("idle"); setCode(""); }} style={ghostBtn}>
-                Cancel
+                {t("settings_page.security.cancel") || "Cancel"}
               </button>
             </div>
           </div>
@@ -1076,11 +1185,11 @@ function TotpSection({
             }}>
               <AlertTriangle size={15} color="#f59e0b" style={{ flexShrink: 0, marginTop: 1 }} />
               <p style={{ margin: 0, fontSize: 13, color: "#c0603a", lineHeight: 1.6 }}>
-                Disabling 2FA makes your account less secure. Enter your current authenticator code to confirm.
+                {t("settings_page.security.totp_disable_warning") || "Disabling 2FA makes your account less secure. Enter your current authenticator code to confirm."}
               </p>
             </div>
             <div style={{ marginBottom: 16 }}>
-              <label style={fieldLabel}>Current Authenticator Code</label>
+              <label style={fieldLabel}>{t("settings_page.security.totp_current_code_label") || "Current Authenticator Code"}</label>
               <input
                 value={code}
                 onChange={e => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
@@ -1090,17 +1199,17 @@ function TotpSection({
                   fontSize: 22, letterSpacing: "0.4em",
                   textAlign: "center", fontFamily: "monospace",
                 }}
-                placeholder="000000"
+                placeholder={t("settings_page.security.totp_code_placeholder")}
                 onFocus={e => (e.currentTarget.style.borderColor = "#ef4444")}
                 onBlur={e => (e.currentTarget.style.borderColor = "#222")}
               />
             </div>
             <div style={{ display: "flex", gap: 10 }}>
               <button onClick={handleDisable} disabled={loading} style={{ ...dangerBtn, background: "#ef44440d", opacity: loading ? 0.6 : 1 }}>
-                {loading ? <><RefreshCw size={14} /> Disabling…</> : <><XCircle size={14} /> Disable 2FA</>}
+                {loading ? <><RefreshCw size={14} /> {t("settings_page.profile.saving")}</> : <><XCircle size={14} /> {t("settings_page.security.totp_disable_btn")}</>}
               </button>
               <button onClick={() => { setPhase("idle"); setCode(""); }} style={ghostBtn}>
-                Cancel
+                {t("settings_page.security.cancel") || "Cancel"}
               </button>
             </div>
           </div>
@@ -1113,15 +1222,16 @@ function TotpSection({
 /* ── Active sessions note ────────────────────────────────────────────────── */
 
 function ActiveSessionsSection() {
+  const { t } = useLanguage();
   return (
     <div style={card}>
       <div style={cardHeader}>
         <Info size={14} color="#555" />
-        <p style={cardHeaderLabel}>Login Alerts</p>
+        <p style={cardHeaderLabel}>{t("settings_page.security.active_sessions_title")}</p>
       </div>
       <div style={cardBody}>
         <p style={{ margin: 0, fontSize: 13, color: "#555", lineHeight: 1.6 }}>
-          Every time you sign in, a security alert is sent to your registered email address. This helps you detect unauthorized access to your account.
+          {t("settings_page.security.active_sessions_desc") || "Every time you sign in, a security alert is sent to your registered email address. This helps you detect unauthorized access to your account."}
         </p>
       </div>
     </div>
@@ -1133,6 +1243,7 @@ function ActiveSessionsSection() {
 ═══════════════════════════════════════════════════════════════════════════ */
 
 function NotificationsTab({ role }: { role: string }) {
+  const { t } = useLanguage();
   const [prefs, setPrefs] = useState<NotifPrefs>(loadNotifPrefs);
   const isEmployer = role === "EMPLOYER";
 
@@ -1145,17 +1256,17 @@ function NotificationsTab({ role }: { role: string }) {
   }, []);
 
   const workerItems: { key: keyof NotifPrefs; label: string; desc: string }[] = [
-    { key: "emailJobAlerts",            label: "New Job Alerts",          desc: "Notify me when new jobs matching my skills are posted" },
-    { key: "emailApplicationUpdates",   label: "Application Updates",     desc: "Email when my application status changes (accepted / rejected)" },
-    { key: "emailPaymentNotifications", label: "Payment Notifications",   desc: "Earning confirmations and wallet payouts" },
-    { key: "emailLoginAlerts",          label: "Login Alerts",            desc: "Security email when a new device signs in to my account" },
+    { key: "emailJobAlerts",            label: t("settings_page.notifications.job_alerts") || "New Job Alerts",          desc: t("settings_page.notifications.job_alerts_desc") || "Notify me when new jobs matching my skills are posted" },
+    { key: "emailApplicationUpdates",   label: t("settings_page.notifications.app_updates") || "Application Updates",     desc: t("settings_page.notifications.app_updates_desc") || "Email when my application status changes (accepted / rejected)" },
+    { key: "emailPaymentNotifications", label: t("settings_page.notifications.payment") || "Payment Notifications",   desc: t("settings_page.notifications.payment_desc") || "Earning confirmations and wallet payouts" },
+    { key: "emailLoginAlerts",          label: t("settings_page.notifications.login_alerts") || "Login Alerts",            desc: t("settings_page.notifications.login_alerts_desc") || "Security email when a new device signs in to my account" },
   ];
 
   const employerItems: { key: keyof NotifPrefs; label: string; desc: string }[] = [
-    { key: "emailNewApplications",      label: "New Applications",        desc: "Alert when a worker applies to one of my job postings" },
-    { key: "emailApplicationUpdates",   label: "Application Status",      desc: "Confirmation emails when I accept or reject applicants" },
-    { key: "emailPaymentNotifications", label: "Payment Notifications",   desc: "Wallet top-ups, job payment holds, and releases" },
-    { key: "emailLoginAlerts",          label: "Login Alerts",            desc: "Security email when a new device signs in to my account" },
+    { key: "emailNewApplications",      label: t("settings_page.notifications.new_apps") || "New Applications",        desc: t("settings_page.notifications.new_apps_desc") || "Alert when a worker applies to one of my job postings" },
+    { key: "emailApplicationUpdates",   label: t("settings_page.notifications.app_status") || "Application Status",      desc: t("settings_page.notifications.app_status_desc") || "Confirmation emails when I accept or reject applicants" },
+    { key: "emailPaymentNotifications", label: t("settings_page.notifications.payment") || "Payment Notifications",   desc: t("settings_page.notifications.payment_employer_desc") || "Wallet top-ups, job payment holds, and releases" },
+    { key: "emailLoginAlerts",          label: t("settings_page.notifications.login_alerts") || "Login Alerts",            desc: t("settings_page.notifications.login_alerts_desc") || "Security email when a new device signs in to my account" },
   ];
 
   const items = isEmployer ? employerItems : workerItems;
@@ -1164,7 +1275,7 @@ function NotificationsTab({ role }: { role: string }) {
     <div style={card}>
       <div style={cardHeader}>
         <Bell size={14} color="#555" />
-        <p style={cardHeaderLabel}>Email Notifications</p>
+        <p style={cardHeaderLabel}>{t("settings_page.notifications.title")}</p>
       </div>
       <div style={{ padding: "8px 0" }}>
         {items.map((item, i) => (
@@ -1205,6 +1316,7 @@ function AccountTab({
   session: NonNullable<ReturnType<typeof useSession>>;
   roleLabel: string;
 }) {
+  const { t, language } = useLanguage();
   const [copied, setCopied] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
   const isWorker = session.role === "WORKER";
@@ -1213,17 +1325,26 @@ function AccountTab({
     ? (typeof window !== "undefined" ? `${window.location.origin}/browse/${session.id}` : `/browse/${session.id}`)
     : null;
 
+  const dateLocaleMap: Record<string, string> = {
+    rw: "rw-RW",
+    kinyy: "rw-RW",
+    sw: "sw-TZ",
+    fr: "fr-FR",
+    en: "en-US",
+  };
+  const currentLocale = dateLocaleMap[language] || "en-RW";
+
   const joinedDate = session.createdAt
-    ? new Date(session.createdAt).toLocaleDateString("en-RW", { year: "numeric", month: "long", day: "numeric" })
+    ? new Date(session.createdAt).toLocaleDateString(currentLocale, { year: "numeric", month: "long", day: "numeric" })
     : "—";
 
   const rows: { label: string; value: string }[] = [
-    { label: "Account Type", value: roleLabel },
-    { label: "Email",        value: session.email },
-    { label: "Role",         value: session.role },
-    { label: "Member Since", value: joinedDate },
-    { label: "Email Status", value: session.emailVerified ? "Verified" : "Unverified" },
-    { label: "2FA",          value: session.totpEnabled   ? "Enabled"  : "Disabled" },
+    { label: t("settings_page.account.role"), value: roleLabel },
+    { label: t("settings_page.profile.email"), value: session.email },
+    { label: "Role", value: session.role },
+    { label: t("settings_page.account.member_since"), value: joinedDate },
+    { label: t("settings_page.account.status"), value: session.emailVerified ? t("settings_page.account.verified") : t("settings_page.account.not_verified") },
+    { label: "2FA", value: session.totpEnabled ? "Enabled" : "Disabled" },
   ];
 
   const handleCopy = () => {
@@ -1250,11 +1371,11 @@ function AccountTab({
         <div style={card}>
           <div style={cardHeader}>
             <User size={14} color="#555" />
-            <p style={cardHeaderLabel}>Public Profile</p>
+            <p style={cardHeaderLabel}>{t("settings_page.account.public_profile") || "Public Profile"}</p>
           </div>
           <div style={cardBody}>
             <p style={{ margin: "0 0 14px", fontSize: 13, color: "#555", lineHeight: 1.6 }}>
-              This is your public profile link. Employers can view your skills, location, and availability here.
+              {t("settings_page.account.public_profile_desc") || "This is your public profile link. Employers can view your skills, location, and availability here."}
             </p>
             <div style={{
               display: "flex", alignItems: "center", gap: 10,
@@ -1302,13 +1423,13 @@ function AccountTab({
                   <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                   <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
                 </svg>
-                View Public Profile
+                {t("settings_page.account.view_profile_btn") || "View Public Profile"}
               </a>
               <button
                 onClick={handleCopy}
                 style={{ ...primaryBtn, fontSize: 12, opacity: copied ? 1 : 1, background: copied ? "#22c55e" : "#f97316" }}
               >
-                {copied ? <><CheckCircle size={13} /> Copied!</> : <><Copy size={13} /> Copy Link</>}
+                {copied ? <><CheckCircle size={13} /> {t("settings_page.profile.saved") || "Copied!"}</> : <><Copy size={13} /> {t("settings_page.account.copy_link_btn") || "Copy Link"}</>}
               </button>
             </div>
           </div>
@@ -1319,12 +1440,13 @@ function AccountTab({
       <div style={card}>
         <div style={cardHeader}>
           <Info size={14} color="#555" />
-          <p style={cardHeaderLabel}>Account Information</p>
+          <p style={cardHeaderLabel}>{t("settings_page.account.title")}</p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", padding: "8px 0" }}>
+        <div className="responsive-grid-2" style={{ padding: "8px 0" }}>
           {rows.map((r, i) => (
             <div
               key={r.label}
+              className="account-row"
               style={{
                 display: "flex", flexDirection: "column", gap: 4,
                 padding: "14px 20px",
@@ -1344,7 +1466,7 @@ function AccountTab({
         <div style={card}>
           <div style={cardHeader}>
             <Shield size={14} color="#555" />
-            <p style={cardHeaderLabel}>Worker Badge</p>
+            <p style={cardHeaderLabel}>{t("settings_page.account.verification_badge_title")}</p>
           </div>
           <div style={{ ...cardBody, display: "flex", alignItems: "center", gap: 20 }}>
             {session.photoUrl && (
@@ -1352,8 +1474,12 @@ function AccountTab({
               <img src={session.photoUrl} alt="Badge Photo" style={{ width: 64, height: 64, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(249,115,22,0.3)" }} />
             )}
             <div style={{ flex: 1 }}>
-              <p style={{ margin: "0 0 4px", fontSize: 13, color: "#aaa" }}>Your verified worker badge ID is <strong style={{ color: "#f97316" }}>{session.badgeId}</strong>.</p>
-              <p style={{ margin: "0 0 14px", fontSize: 12, color: "#666" }}>You can use this badge to identify yourself to employers.</p>
+              <p style={{ margin: "0 0 4px", fontSize: 13, color: "#aaa" }}>
+                {t("settings_page.account.badge_verified_id_prefix") || "Your verified worker badge ID is "} <strong style={{ color: "#f97316" }}>{session.badgeId}</strong>.
+              </p>
+              <p style={{ margin: "0 0 14px", fontSize: 12, color: "#666" }}>
+                {t("settings_page.account.badge_verified_hint") || "You can use this badge to identify yourself to employers."}
+              </p>
               <a
                 href={session.badgeUrl}
                 target="_blank"
@@ -1372,20 +1498,24 @@ function AccountTab({
         <div style={card}>
           <div style={cardHeader}>
             <Shield size={14} color="#555" />
-            <p style={cardHeaderLabel}>Worker Badge</p>
+            <p style={cardHeaderLabel}>{t("settings_page.account.verification_badge_title")}</p>
           </div>
           <div style={{ ...cardBody, display: "flex", alignItems: "center", gap: 20 }}>
             <div style={{ width: 64, height: 64, borderRadius: "50%", background: "#222", border: "2px dashed #444", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <User size={24} color="#555" />
             </div>
             <div style={{ flex: 1 }}>
-              <p style={{ margin: "0 0 4px", fontSize: 13, color: "#aaa" }}>You don&apos;t have a verified worker badge yet.</p>
-              <p style={{ margin: "0 0 14px", fontSize: 12, color: "#666" }}>A badge helps you stand out and builds trust with employers.</p>
+              <p style={{ margin: "0 0 4px", fontSize: 13, color: "#aaa" }}>
+                {t("settings_page.account.badge_not_verified_desc") || "You don't have a verified worker badge yet."}
+              </p>
+              <p style={{ margin: "0 0 14px", fontSize: 12, color: "#666" }}>
+                {t("settings_page.account.badge_not_verified_hint") || "A badge helps you stand out and builds trust with employers."}
+              </p>
               <button
                 onClick={() => setShowWizard(true)}
                 style={{ ...primaryBtn, fontSize: 12, padding: "8px 16px" }}
               >
-                Generate Badge
+                {t("settings_page.account.request_badge_btn")}
               </button>
             </div>
           </div>
@@ -1406,14 +1536,14 @@ function AccountTab({
       <div style={{ ...card, border: "1px solid #2a1111" }}>
         <div style={{ ...cardHeader, borderBottom: "1px solid #2a1111" }}>
           <AlertTriangle size={14} color="#ef4444" />
-          <p style={{ ...cardHeaderLabel, color: "#7a2020" }}>Danger Zone</p>
+          <p style={{ ...cardHeaderLabel, color: "#7a2020" }}>{t("settings_page.account.danger_zone") || "Danger Zone"}</p>
         </div>
         <div style={cardBody}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
             <div>
-              <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "#c0603a" }}>Delete Account</p>
+              <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "#c0603a" }}>{t("settings_page.account.delete_account") || "Delete Account"}</p>
               <p style={{ margin: "4px 0 0", fontSize: 12, color: "#555", lineHeight: 1.5 }}>
-                Permanently deletes your account and all associated data. This cannot be undone.
+                {t("settings_page.account.delete_account_desc") || "Permanently deletes your account and all associated data. This cannot be undone."}
               </p>
             </div>
             <button
@@ -1421,11 +1551,11 @@ function AccountTab({
               title="Account deletion is not yet available. Contact support."
               style={{ ...dangerBtn, opacity: 0.45, cursor: "not-allowed", whiteSpace: "nowrap" }}
             >
-              <AlertTriangle size={13} /> Delete Account
+              <AlertTriangle size={13} /> {t("settings_page.account.delete_account") || "Delete Account"}
             </button>
           </div>
           <p style={{ margin: "12px 0 0", fontSize: 11, color: "#3a3a3a" }}>
-            To delete your account, please contact support at support@MpahMapu.rw
+            {t("settings_page.account.delete_account_hint") || "To delete your account, please contact support at support@MpahMapu.rw"}
           </p>
         </div>
       </div>

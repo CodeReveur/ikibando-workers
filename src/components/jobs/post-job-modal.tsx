@@ -110,7 +110,10 @@ const iconL: React.CSSProperties = {
 };
 
 // ── component ────────────────────────────────────────────────────────────────
+import { useLanguage } from "@/lib/language-context";
+
 export function PostJobModal({ onClose }: { onClose: () => void }) {
+  const { t } = useLanguage();
   const { error: toastError, success: toastSuccess } = useToast();
   const [step, setStep]           = useState(0);
   const [done, setDone]           = useState(false);
@@ -128,6 +131,28 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
   const [errors, setErrors] = useState<Partial<Record<keyof JobForm, string>>>({});
 
   const DRAFT_KEY = "MpahMapu_draft_postjob";
+
+  const getUnit = (rt: RateType, n: number) => {
+    if (rt === "hr") return t(n !== 1 ? "post_job.units.hours" : "post_job.units.hour") || `hour${n !== 1 ? "s" : ""}`;
+    if (rt === "day") return t(n !== 1 ? "post_job.units.days" : "post_job.units.day") || `day${n !== 1 ? "s" : ""}`;
+    if (rt === "week") return t(n !== 1 ? "post_job.units.weeks" : "post_job.units.week") || `week${n !== 1 ? "s" : ""}`;
+    if (rt === "month") return t(n !== 1 ? "post_job.units.months" : "post_job.units.month") || `month${n !== 1 ? "s" : ""}`;
+    if (rt === "year") return t(n !== 1 ? "post_job.units.years" : "post_job.units.year") || `year${n !== 1 ? "s" : ""}`;
+    return "";
+  };
+
+  const getLocalizedCategoryLabel = (value: string) => {
+    const defaultLabel = JOB_CATEGORIES.find(c => c.value === value)?.label ?? value;
+    return t(`common.categories.${value}`) || defaultLabel;
+  };
+
+  const getLocalizedProvinceLabel = (prov: string) => {
+    if (!prov) return "";
+    const key = prov.toLowerCase().replace(/\s+/g, "_");
+    return t(`common.provinces.${key}`) || prov;
+  };
+
+  const stepsList = [t("post_job.steps.details") || "Job details", t("post_job.steps.review") || "Review & post"];
 
   // Restore draft on open
   useEffect(() => {
@@ -180,22 +205,22 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
 
   function validateStep0() {
     const errs: typeof errors = {};
-    if (!job.category)     errs.category  = "Required";
-    if (!job.date)         errs.date      = "Required";
-    if (!job.time)         errs.time      = "Required";
-    if (!job.district)     errs.district  = "Required";
-    if (!job.ratePerHour || parseInt(job.ratePerHour) < 1) errs.ratePerHour = "Enter a valid rate";
+    if (!job.category)     errs.category  = t("post_job.errors.required") || "Required";
+    if (!job.date)         errs.date      = t("post_job.errors.required") || "Required";
+    if (!job.time)         errs.time      = t("post_job.errors.required") || "Required";
+    if (!job.district)     errs.district  = t("post_job.errors.required") || "Required";
+    if (!job.ratePerHour || parseInt(job.ratePerHour) < 1) errs.ratePerHour = t("post_job.errors.invalid_rate") || "Enter a valid rate";
     setErrors(errs);
     return Object.keys(errs).length === 0;
   }
 
   function handleNext() {
     if (step === 0 && validateStep0()) { setErrors({}); setStep(1); }
-    else if (step === 0) toastError("Please fill in all required fields.", { title: "Incomplete Form" });
+    else if (step === 0) toastError(t("post_job.errors.incomplete_form") || "Please fill in all required fields.", { title: t("post_job.errors.incomplete_form_title") || "Incomplete Form" });
   }
 
   async function handlePost() {
-    if (!token) { toastError("You must be signed in to post a job.", { title: "Not Signed In" }); return; }
+    if (!token) { toastError(t("post_job.errors.not_signed_in") || "You must be signed in to post a job.", { title: t("post_job.errors.not_signed_in_title") || "Not Signed In" }); return; }
     setSubmitting(true);
     try {
       const startTime = job.date && job.time
@@ -218,7 +243,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
       try { localStorage.removeItem(DRAFT_KEY); } catch {}
       setDone(true);
     } catch (e: any) {
-      toastError(apiError(e, "Failed to post job. Please try again."), { title: "Post Failed" });
+      toastError(apiError(e, t("post_job.errors.post_failed") || "Failed to post job. Please try again."), { title: t("post_job.errors.post_failed_title") || "Post Failed" });
     } finally {
       setSubmitting(false);
     }
@@ -230,11 +255,11 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
   const escrow      = rate * hours * heads;      // employer pays gross; platform fee deducted from worker side
   const platformFee = Math.round(escrow * 0.25);
   const workerPay   = escrow - platformFee;      // net workers receive (75%)
-  const catLabel = JOB_CATEGORIES.find(c => c.value === job.category)?.label ?? job.category;
+  const catLabel = getLocalizedCategoryLabel(job.category);
   const dateLabel = job.date
     ? new Date(job.date + "T00:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })
     : "-";
-  const locationLabel = [job.province, job.district].filter(Boolean).join(" › ");
+  const locationLabel = [getLocalizedProvinceLabel(job.province), job.district].filter(Boolean).join(" › ");
 
   // ── SUCCESS ────────────────────────────────────────────────────────────────
   if (done) return (
@@ -251,24 +276,24 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
               <CheckCircle size={30} color="#22c55e" />
             </div>
             <h2 style={{ margin: "0 0 8px", fontSize: 22, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px" }}>
-              Job posted!
+              {t("post_job.success.title")}
             </h2>
             <p style={{ margin: "0 0 16px", fontSize: 14, color: "#aaa", lineHeight: 1.6 }}>
-              Your job is live. Verified workers in <strong style={{ color: "#f0f0f0" }}>{locationLabel || job.district}</strong> will start applying shortly.
+              {t("post_job.success.desc", { location: locationLabel || job.district })}
             </p>
             <div style={{ background: "#141414", border: "1px solid #1e1e1e", borderRadius: 12, padding: "14px 16px", marginBottom: 24, textAlign: "left" }}>
               {([
-                ["Category",  catLabel],
-                ["Date",      dateLabel],
-                ["Time",      job.time || "-"],
-                ["Duration",  `${job.durationHours} ${getUnit(job.rateType, hours)}`],
-                ["Workers",   `${heads}`],
-                ["Location",  locationLabel || job.district],
-                ["Rate",      fmt(rate) + " " + RATE_LABEL[job.rateType]],
-                ...(escrow > 0 ? [["Escrowed", fmt(escrow)]] : []),
+                [t("post_job.fields.category") || "Category",  catLabel],
+                [t("post_job.fields.date") || "Date",      dateLabel],
+                [t("post_job.fields.time") || "Time",      job.time || "-"],
+                [t("post_job.fields.duration") || "Duration",  `${job.durationHours} ${getUnit(job.rateType, hours)}`],
+                [t("post_job.fields.workers") || "Workers",   `${heads}`],
+                [t("post_job.fields.location") || "Location",  locationLabel || job.district],
+                [t("post_job.fields.rate") || "Rate",      fmt(rate) + " " + RATE_LABEL[job.rateType]],
+                ...(escrow > 0 ? [[t("post_job.fields.escrowed") || "Escrowed", fmt(escrow)]] : []),
               ] as [string, string][]).map(([k, v]) => <SRow key={k} k={k} v={v} />)}
             </div>
-            <button onClick={onClose} style={{ ...btnPrimary, width: "100%" }}>Done</button>
+            <button onClick={onClose} style={{ ...btnPrimary, width: "100%" }}>{t("common.buttons.done") || "Done"}</button>
           </div>
         </div>
       </Overlay>
@@ -287,10 +312,10 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
             <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
               <div>
                 <p style={{ margin: 0, fontSize: 11, color: "#555", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                  Step {step + 1} of {STEPS.length}
+                  {t("post_job.step_indicator", { current: String(step + 1), total: String(stepsList.length) })}
                 </p>
                 <h2 style={{ margin: "3px 0 0", fontSize: 18, fontWeight: 800, color: "#fff", letterSpacing: "-0.4px" }}>
-                  {STEPS[step]}
+                  {stepsList[step]}
                 </h2>
               </div>
               <button onClick={onClose} style={{
@@ -303,7 +328,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
               </button>
             </div>
             <div style={{ display: "flex", gap: 4, marginBottom: 20 }}>
-              {STEPS.map((_, i) => (
+              {stepsList.map((_, i) => (
                 <div key={i} style={{
                   flex: 1, height: 3, borderRadius: 999,
                   background: i <= step ? "#f97316" : "#272727",
@@ -321,19 +346,19 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
 
                 {/* Category — searchable */}
-                <FField label="Job category *" error={errors.category}>
+                <FField label={t("post_job.labels.category") || "Job category *"} error={errors.category}>
                   <SearchSelect
-                    options={JOB_CATEGORIES.map(c => ({ value: c.value, label: c.label }))}
+                    options={JOB_CATEGORIES.map(c => ({ value: c.value, label: getLocalizedCategoryLabel(c.value) }))}
                     value={job.category}
                     onChange={v => setJob(f => ({ ...f, category: v }))}
-                    placeholder="Search category…"
+                    placeholder={t("post_job.placeholders.search_category") || "Search category…"}
                     icon={<Search size={13} color="#444" style={iconL} />}
                   />
                 </FField>
 
                 {/* Date + Time */}
                 <div className="pj-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  <FField label="Start date *" error={errors.date}>
+                  <FField label={t("post_job.labels.start_date") || "Start date *"} error={errors.date}>
                     <div style={{ position: "relative" }}>
                       <Calendar size={13} color="#444" style={iconL} />
                       <input type="date" min={todayStr()}
@@ -344,7 +369,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                       />
                     </div>
                   </FField>
-                  <FField label="Start time *" error={errors.time}>
+                  <FField label={t("post_job.labels.start_time") || "Start time *"} error={errors.time}>
                     <div style={{ position: "relative" }}>
                       <Clock size={13} color="#444" style={iconL} />
                       <input type="time"
@@ -359,23 +384,23 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
 
                 {/* Duration + Workers */}
                 <div className="pj-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  <FField label="Rate period">
+                  <FField label={t("post_job.labels.rate_period") || "Rate period"}>
                     <div style={{ position: "relative" }}>
                       <select value={job.rateType} onChange={e => setJob(f => ({ ...f, rateType: e.target.value as RateType }))}
                         style={{ ...inp, appearance: "none", paddingRight: 28, color: "#f0f0f0" }}
                         onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                         onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
                       >
-                        <option value="hr">Per hour</option>
-                        <option value="day">Per day</option>
-                        <option value="week">Per week</option>
-                        <option value="month">Per month</option>
-                        <option value="year">Per year</option>
+                        <option value="hr">{t("post_job.options.per_hour") || "Per hour"}</option>
+                        <option value="day">{t("post_job.options.per_day") || "Per day"}</option>
+                        <option value="week">{t("post_job.options.per_week") || "Per week"}</option>
+                        <option value="month">{t("post_job.options.per_month") || "Per month"}</option>
+                        <option value="year">{t("post_job.options.per_year") || "Per year"}</option>
                       </select>
                       <ChevronDown size={13} color="#555" style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
                     </div>
                   </FField>
-                  <FField label="Duration">
+                  <FField label={t("post_job.labels.duration") || "Duration"}>
                     <div style={{ position: "relative" }}>
                       <AlarmClock size={13} color="#444" style={iconL} />
                       <select value={job.durationHours} onChange={e => setJob(f => ({ ...f, durationHours: e.target.value }))}
@@ -391,7 +416,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                 </div>
                 
                 <div className="pj-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  <FField label="No. of workers">
+                  <FField label={t("post_job.labels.workers_count") || "No. of workers"}>
                     <div style={{ position: "relative" }}>
                       <Users size={13} color="#444" style={iconL} />
                       <input type="number" min="1" max="50"
@@ -406,28 +431,28 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
 
                 {/* Province + District — searchable */}
                 <div className="pj-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  <FField label="Province">
+                  <FField label={t("post_job.labels.province") || "Province"}>
                     <SearchSelect
-                      options={RWANDA_PROVINCES.map(p => ({ value: p.label, label: p.label }))}
+                      options={RWANDA_PROVINCES.map(p => ({ value: p.label, label: getLocalizedProvinceLabel(p.label) }))}
                       value={job.province}
                       onChange={v => setJob(f => ({ ...f, province: v, district: "" }))}
-                      placeholder="Province…"
+                      placeholder={t("post_job.placeholders.province") || "Province…"}
                       icon={<MapPin size={13} color="#444" style={iconL} />}
                     />
                   </FField>
-                  <FField label="District *" error={errors.district}>
+                  <FField label={t("post_job.labels.district") || "District *"} error={errors.district}>
                     <SearchSelect
                       options={districtsFor(job.province).map(d => ({ value: d, label: d }))}
                       value={job.district}
                       onChange={v => setJob(f => ({ ...f, district: v }))}
-                      placeholder="District…"
+                      placeholder={t("post_job.placeholders.district") || "District…"}
                       icon={<MapPin size={13} color="#444" style={iconL} />}
                     />
                   </FField>
                 </div>
 
                 {/* Map + GPS */}
-                <FField label="Precise location (click map or use GPS)">
+                <FField label={t("post_job.labels.precise_location") || "Precise location (click map or use GPS)"}>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     <MapPicker
                       lat={job.latitude}
@@ -452,11 +477,15 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                         {gpsStatus === "loading"
                           ? <Loader2 size={12} style={{ animation: "spin 1s linear infinite" }} />
                           : <Navigation size={12} />}
-                        {gpsStatus === "loading" ? "Detecting…" : gpsStatus === "ok" ? "GPS detected" : "Detect my GPS"}
+                        {gpsStatus === "loading"
+                          ? (t("post_job.gps.detecting") || "Detecting…")
+                          : gpsStatus === "ok"
+                            ? (t("post_job.gps.detected") || "GPS detected")
+                            : (t("post_job.gps.detect") || "Detect my GPS")}
                       </button>
 
                       {gpsStatus === "error" && (
-                        <span style={{ fontSize: 11, color: "#ef4444" }}>Could not access GPS</span>
+                        <span style={{ fontSize: 11, color: "#ef4444" }}>{t("post_job.gps.error") || "Could not access GPS"}</span>
                       )}
 
                       {job.latitude != null && job.longitude != null && (
@@ -469,8 +498,8 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                 </FField>
 
                 {/* Rate */}
-                <FField label={`Rate per worker ${RATE_LABEL[job.rateType]} (RWF) *`} error={errors.ratePerHour}>
-                  <input type="number" min="0" placeholder="e.g. 3000"
+                <FField label={(t("post_job.labels.rate_label", { period: RATE_LABEL[job.rateType] }) || `Rate per worker ${RATE_LABEL[job.rateType]} (RWF) *`)} error={errors.ratePerHour}>
+                  <input type="number" min="0" placeholder={t("post_job.placeholders.rate") || "e.g. 3000"}
                     value={job.ratePerHour} onChange={e => setJob(f => ({ ...f, ratePerHour: e.target.value }))}
                     style={inp}
                     onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
@@ -478,16 +507,16 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                   />
                   {rate > 0 && hours > 0 && (
                     <p style={{ margin: "4px 0 0", fontSize: 11, color: "#555" }}>
-                      Escrow: <strong style={{ color: "#f97316" }}>{fmt(escrow)}</strong>
+                      {t("post_job.fields.escrowed") || "Escrowed"}: <strong style={{ color: "#f97316" }}>{fmt(escrow)}</strong>
                       {" "}({heads} × {hours}h × {fmt(rate)})
                     </p>
                   )}
                 </FField>
 
                 {/* Notes */}
-                <FField label="Additional notes (optional)">
+                <FField label={t("post_job.labels.notes") || "Additional notes (optional)"}>
                   <RichTextEditor
-                    placeholder="e.g. formal attire required, tools provided, outdoor event…"
+                    placeholder={t("post_job.placeholders.notes") || "e.g. formal attire required, tools provided, outdoor event…"}
                     value={job.notes}
                     onChange={v => setJob(f => ({ ...f, notes: v }))}
                   />
@@ -502,53 +531,53 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                 {!token && (
                   <div style={{ background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 10, padding: "10px 14px" }}>
                     <p style={{ margin: 0, fontSize: 12, color: "#ef4444" }}>
-                      You must be{" "}
-                      <a href="/signin" style={{ color: "#f97316", fontWeight: 700 }} onClick={() => saveRedirect()}>signed in</a>
-                      {" "}as an employer to post a job.
+                      <a href="/signin" style={{ color: "#f97316", fontWeight: 700 }} onClick={() => saveRedirect()}>
+                        {t("post_job.review.must_be_signed_in")}
+                      </a>
                     </p>
                   </div>
                 )}
 
                 <div style={{ background: "#141414", border: "1px solid #1e1e1e", borderRadius: 12, padding: "14px 16px" }}>
                   <p style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                    Job summary
+                    {t("post_job.review.summary_title")}
                   </p>
                   {([
-                    ["Category",  catLabel],
-                    ["Date",      dateLabel],
-                    ["Time",      job.time || "-"],
-                    ["Duration",  `${job.durationHours} ${getUnit(job.rateType, hours)}`],
-                    ["Workers",   `${heads} worker${heads !== 1 ? "s" : ""}`],
-                    ["Province",  job.province || "-"],
-                    ["District",  job.district],
+                    [t("post_job.fields.category") || "Category",  catLabel],
+                    [t("post_job.fields.date") || "Date",      dateLabel],
+                    [t("post_job.fields.time") || "Time",      job.time || "-"],
+                    [t("post_job.fields.duration") || "Duration",  `${job.durationHours} ${getUnit(job.rateType, hours)}`],
+                    [t("post_job.fields.workers") || "Workers",   `${heads} worker${heads !== 1 ? "s" : ""}`],
+                    [t("post_job.labels.province") || "Province",  getLocalizedProvinceLabel(job.province) || "-"],
+                    [t("post_job.labels.district") || "District",  job.district],
                     ...(job.latitude != null ? [["GPS", `${job.latitude.toFixed(5)}, ${job.longitude!.toFixed(5)}`]] : []),
-                    ["Rate",      fmt(rate) + " " + RATE_LABEL[job.rateType] + " per worker"],
-                    ...(escrow > 0 ? [["Escrowed", fmt(escrow)]] : []),
-                    ...(job.notes ? [["Notes", job.notes]] : []),
+                    [t("post_job.fields.rate") || "Rate",      fmt(rate) + " " + RATE_LABEL[job.rateType]],
+                    ...(escrow > 0 ? [[t("post_job.fields.escrowed") || "Escrowed", fmt(escrow)]] : []),
+                    ...(job.notes ? [[t("post_job.labels.notes") || "Notes", job.notes]] : []),
                   ] as [string, string][]).map(([k, v]) => <SRow key={k} k={k} v={v} />)}
                 </div>
 
                 {/* ESCROW / WALLET BLOCK */}
                 <div style={{ marginTop: 8 }}>
-                  <p style={{ margin: "0 0 10px", fontSize: 13, fontWeight: 700, color: "#fff" }}>Payment</p>
+                  <p style={{ margin: "0 0 10px", fontSize: 13, fontWeight: 700, color: "#fff" }}>{t("post_job.review.payment_title")}</p>
 
                   {/* escrow breakdown */}
                   {escrow > 0 && (
                     <div style={{ background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10, padding: "12px 14px", marginBottom: 12 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                        <span style={{ fontSize: 12, color: "#666" }}>Gross ({heads} × {hours}h × {fmt(rate)})</span>
+                        <span style={{ fontSize: 12, color: "#666" }}>{t("post_job.review.gross", { details: `${heads} × ${hours}h × ${fmt(rate)}` })}</span>
                         <span style={{ fontSize: 12, color: "#d0d0d0", fontWeight: 600 }}>{fmt(escrow)}</span>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                        <span style={{ fontSize: 12, color: "#666" }}>Platform fee (25% from worker)</span>
+                        <span style={{ fontSize: 12, color: "#666" }}>{t("post_job.review.platform_fee")}</span>
                         <span style={{ fontSize: 12, color: "#ef4444", fontWeight: 600 }}>−{fmt(platformFee)}</span>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, paddingBottom: 8, borderBottom: "1px solid #1e1e1e" }}>
-                        <span style={{ fontSize: 12, color: "#666" }}>Workers receive</span>
+                        <span style={{ fontSize: 12, color: "#666" }}>{t("post_job.review.workers_receive")}</span>
                         <span style={{ fontSize: 12, color: "#22c55e", fontWeight: 600 }}>{fmt(workerPay)}</span>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <span style={{ fontSize: 13, color: "#aaa", fontWeight: 700 }}>Your escrow charge</span>
+                        <span style={{ fontSize: 13, color: "#aaa", fontWeight: 700 }}>{t("post_job.review.escrow_charge")}</span>
                         <span style={{ fontSize: 14, color: "#f97316", fontWeight: 800 }}>{fmt(escrow)}</span>
                       </div>
                     </div>
@@ -563,22 +592,22 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: walletBal !== null && walletBal < escrow ? 8 : 0 }}>
                       {/* wallet icon */}
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={walletBal !== null && walletBal < escrow ? "#ef4444" : "#22c55e"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                      <span style={{ fontSize: 12, color: "#aaa" }}>Wallet balance</span>
+                      <span style={{ fontSize: 12, color: "#aaa" }}>{t("post_job.review.wallet_balance")}</span>
                       <span style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginLeft: "auto" }}>
                         {walletBal !== null ? fmt(walletBal) : "—"}
                       </span>
                     </div>
                     {walletBal !== null && walletBal < escrow && (
                       <p style={{ margin: 0, fontSize: 12, color: "#ef4444", lineHeight: 1.5 }}>
-                        You need <strong>{fmt(escrow - walletBal)}</strong> more.{" "}
-                        <a href="/owner/payments" style={{ color: "#f97316", fontWeight: 700, textDecoration: "underline" }}>Top up wallet →</a>
+                        {t("post_job.review.insufficient_funds_msg", { amount: fmt(escrow - walletBal) })}{" "}
+                        <a href="/owner/payments" style={{ color: "#f97316", fontWeight: 700, textDecoration: "underline" }}>{t("post_job.review.top_up_link")}</a>
                       </p>
                     )}
                   </div>
                 </div>
 
                 <p style={{ margin: 0, fontSize: 11, color: "#444", lineHeight: 1.7, textAlign: "center", padding: "0 8px" }}>
-                  By posting you agree to our terms. Your contact details are only shared with workers who apply.
+                  {t("post_job.review.agreement_hint")}
                 </p>
               </div>
             )}
@@ -590,12 +619,12 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
             <div style={{ display: "flex", gap: 10 }}>
               {step > 0 && (
                 <button onClick={() => { setErrors({}); setStep(s => s - 1); }} style={btnBack}>
-                  ← Back
+                  ← {t("common.buttons.back") || "Back"}
                 </button>
               )}
               {step === 0 ? (
                 <button onClick={handleNext} style={{ ...btnPrimary, flex: 1 }}>
-                  Continue →
+                  {t("common.buttons.continue") || "Continue"} →
                 </button>
               ) : (
                 <button
@@ -606,7 +635,11 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                     cursor: (submitting || (walletBal !== null && walletBal < escrow)) ? "not-allowed" : "pointer" }}
                 >
                   {submitting && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
-                  {submitting ? "Posting…" : walletBal !== null && walletBal < escrow ? `Insufficient balance` : "Post & freeze funds"}
+                  {submitting
+                    ? (t("post_job.review.posting_btn") || "Posting…")
+                    : walletBal !== null && walletBal < escrow
+                      ? (t("post_job.review.insufficient_balance_btn") || "Insufficient balance")
+                      : (t("post_job.review.submit_btn") || "Post & freeze funds")}
                 </button>
               )}
             </div>

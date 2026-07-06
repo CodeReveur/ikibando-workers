@@ -1,13 +1,64 @@
 "use client";
 
 import Footer from "@/components/layout/footer";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { getWorkers, getJobs, daysAgo, type WorkerProfileDto, type JobDto } from "@/lib/api";
 import { ratingInfo } from "@/lib/rating";
+import { useLanguage } from "@/lib/language-context";
 import {
   UtensilsCrossed, Sparkles, Shield, Car, Zap, Wrench, Leaf,
   Camera, Package, Home, HardHat, Search, SlidersHorizontal,
   MapPin, Briefcase, Users, X, ChevronDown, Star,
+  Baby,
+  BadgeDollarSign,
+  Bed,
+  Bike,
+  BookOpen,
+  Building2,
+  Calculator,
+  ChefHat,
+  ClipboardList,
+  Code2,
+  Coffee,
+  Cog,
+  Dog,
+  Drill,
+  Flower,
+  Globe,
+  GraduationCap,
+  Hammer,
+  Headphones,
+  HeartHandshake,
+  KeyRound,
+  Languages,
+  Laptop,
+  Megaphone,
+  Mic,
+  MonitorSmartphone,
+  Music,
+  PackageCheck,
+  Paintbrush,
+  Palette,
+  PartyPopper,
+  PenSquare,
+  PenTool,
+  PhoneCall,
+  Scale,
+  Scissors,
+  Shirt,
+  ShirtIcon,
+  ShoppingBag,
+  Smartphone,
+  Stethoscope,
+  Store,
+  Trees,
+  TrendingUp,
+  Truck,
+  UserCheck,
+  Video,
+  Wifi,
+  House,
 } from "lucide-react";
 import { BreadcrumbSchema, ServiceSchema } from "@/components/seo/json-ld";
 
@@ -18,17 +69,67 @@ type SortJob = "amount_asc" | "amount_desc" | "newest";
 
 // ── data ───────────────────────────────────────────────────────────────────
 const CATEGORIES = [
-  { icon: UtensilsCrossed, label: "Waiters" },
-  { icon: Sparkles,        label: "Cleaners" },
-  { icon: Shield,          label: "Security" },
-  { icon: Car,             label: "Drivers" },
-  { icon: Zap,             label: "Electricians" },
-  { icon: Wrench,          label: "Plumbers" },
-  { icon: Leaf,            label: "Gardeners" },
-  { icon: Camera,          label: "Photographers" },
-  { icon: Package,         label: "Movers" },
-  { icon: Home,            label: "Domestic Help" },
-  { icon: HardHat,         label: "Construction" },
+  { icon: UtensilsCrossed, label: "Waiters", key: "waiters", apiValues: ["waiter"] },
+  { icon: Coffee, label: "Baristas", key: "baristas", apiValues: ["bartender"] },
+  { icon: Sparkles, label: "Cleaners", key: "cleaners", apiValues: ["cleaner"] },
+  { icon: Shield, label: "Security Guards", key: "security_guards", apiValues: ["security"] },
+  { icon: Car, label: "Drivers", key: "drivers", apiValues: ["driver"] },
+  { icon: Truck, label: "Delivery Drivers", key: "delivery_drivers", apiValues: ["delivery_rider"] },
+  { icon: Bike, label: "Courier Riders", key: "courier_riders", apiValues: ["delivery_rider"] },
+  { icon: Zap, label: "Electricians", key: "electricians", apiValues: ["electrician"] },
+  { icon: Wrench, label: "Plumbers", key: "plumbers", apiValues: ["plumber"] },
+  { icon: Hammer, label: "Carpenters", key: "carpenters", apiValues: ["carpenter"] },
+  { icon: Paintbrush, label: "Painters", key: "painters", apiValues: ["painter"] },
+  { icon: HardHat, label: "Construction Workers", key: "construction_workers", apiValues: ["construction_worker"] },
+  { icon: Drill, label: "Technicians", key: "technicians", apiValues: ["it_support"] },
+  { icon: Cog, label: "Mechanics", key: "mechanics", apiValues: ["mechanic"] },
+  { icon: Leaf, label: "Gardeners", key: "gardeners", apiValues: ["gardener"] },
+  { icon: Trees, label: "Landscapers", key: "landscapers", apiValues: ["gardener"] },
+  { icon: House, label: "Housekeepers", key: "housekeepers", apiValues: ["housekeeper"] },
+  { icon: Bed, label: "Hotel Staff", key: "hotel_staff", apiValues: ["housekeeper", "waiter"] },
+  { icon: ShoppingBag, label: "Shop Attendants", key: "shop_attendants", apiValues: ["sales_agent"] },
+  { icon: Store, label: "Cashiers", key: "cashiers", apiValues: ["cashier"] },
+  { icon: Package, label: "Warehouse Staff", key: "warehouse_staff", apiValues: ["warehouse_worker"] },
+  { icon: PackageCheck, label: "Packers", key: "packers", apiValues: ["packer"] },
+  { icon: ClipboardList, label: "Supervisors", key: "supervisors", apiValues: ["office_assistant"] },
+  { icon: UserCheck, label: "Receptionists", key: "receptionists", apiValues: ["receptionist"] },
+  { icon: PhoneCall, label: "Call Center Agents", key: "call_center_agents", apiValues: ["customer_support"] },
+  { icon: Headphones, label: "Customer Support", key: "customer_support", apiValues: ["customer_support"] },
+  { icon: Briefcase, label: "Office Assistants", key: "office_assistants", apiValues: ["office_assistant"] },
+  { icon: GraduationCap, label: "Tutors", key: "tutors", apiValues: ["tutor"] },
+  { icon: BookOpen, label: "Teachers", key: "teachers", apiValues: ["tutor"] },
+  { icon: HeartHandshake, label: "Caregivers", key: "caregivers", apiValues: ["caregiver"] },
+  { icon: Stethoscope, label: "Nurses", key: "nurses", apiValues: ["caregiver"] },
+  { icon: Baby, label: "Babysitters", key: "babysitters", apiValues: ["nanny"] },
+  { icon: Dog, label: "Pet Care", key: "pet_care", apiValues: ["other"] },
+  { icon: Camera, label: "Photographers", key: "photographers", apiValues: ["photographer"] },
+  { icon: Video, label: "Videographers", key: "videographers", apiValues: ["videographer"] },
+  { icon: Music, label: "DJs", key: "djs", apiValues: ["dj"] },
+  { icon: Mic, label: "MCs", key: "mcs", apiValues: ["mc"] },
+  { icon: PartyPopper, label: "Event Planners", key: "event_planners", apiValues: ["promoter"] },
+  { icon: Flower, label: "Florists", key: "florists", apiValues: ["gardener"] },
+  { icon: Scissors, label: "Barbers", key: "barbers", apiValues: ["hairdresser"] },
+  { icon: Sparkles, label: "Hair Stylists", key: "hair_stylists", apiValues: ["hairdresser"] },
+  { icon: Palette, label: "Makeup Artists", key: "makeup_artists", apiValues: ["beautician"] },
+  { icon: Shirt, label: "Tailors", key: "tailors", apiValues: ["tailor"] },
+  { icon: ShirtIcon, label: "Laundry Services", key: "laundry_services", apiValues: ["housekeeper"] },
+  { icon: Smartphone, label: "Phone Repair", key: "phone_repair", apiValues: ["it_support"] },
+  { icon: Laptop, label: "Computer Repair", key: "computer_repair", apiValues: ["it_support"] },
+  { icon: Wifi, label: "Network Technicians", key: "network_technicians", apiValues: ["it_support"] },
+  { icon: MonitorSmartphone, label: "IT Support", key: "it_support", apiValues: ["it_support"] },
+  { icon: Globe, label: "Web Developers", key: "web_developers", apiValues: ["web_developer"] },
+  { icon: Code2, label: "Software Developers", key: "software_developers", apiValues: ["software_engineer"] },
+  { icon: PenTool, label: "Graphic Designers", key: "graphic_designers", apiValues: ["graphic_designer"] },
+  { icon: PenSquare, label: "Content Writers", key: "content_writers", apiValues: ["data_entry"] },
+  { icon: Languages, label: "Translators", key: "translators", apiValues: ["translator"] },
+  { icon: Calculator, label: "Accountants", key: "accountants", apiValues: ["accountant"] },
+  { icon: Scale, label: "Legal Advisors", key: "legal_advisors", apiValues: ["other"] },
+  { icon: Building2, label: "Real Estate Agents", key: "real_estate_agents", apiValues: ["sales_agent"] },
+  { icon: KeyRound, label: "Property Managers", key: "property_managers", apiValues: ["office_assistant"] },
+  { icon: Users, label: "HR Professionals", key: "hr_professionals", apiValues: ["office_assistant"] },
+  { icon: TrendingUp, label: "Marketing Specialists", key: "marketing_specialists", apiValues: ["marketing_agent"] },
+  { icon: Megaphone, label: "Sales Representatives", key: "sales_representatives", apiValues: ["sales_agent"] },
+  { icon: BadgeDollarSign, label: "Financial Advisors", key: "financial_advisors", apiValues: ["accountant"] },
 ];
 
 const LOCATIONS = ["Kacyiru", "Nyamirambo", "Kimihurura", "Remera", "Gisozi", "Kicukiro", "Gikondo", "Kanombe", "Kigali-wide"];
@@ -65,6 +166,9 @@ const CSS = `
   }
   select { appearance: none; -webkit-appearance: none; }
   ::-webkit-scrollbar { display: none; }
+  @media (max-width: 600px) {
+    .browse-title { font-size: 22px !important; }
+  }
 `;
 
 // ── helpers ────────────────────────────────────────────────────────────────
@@ -86,8 +190,8 @@ function ActiveChip({ label, onRemove }: { label: string; onRemove: () => void }
   );
 }
 
-function SelectField({ label, value, onChange, options }: {
-  label: string; value: string; onChange: (v: string) => void; options: string[];
+function SelectField({ label, value, onChange, options, labels }: {
+  label: string; value: string; onChange: (v: string) => void; options: string[]; labels?: string[];
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -101,11 +205,11 @@ function SelectField({ label, value, onChange, options }: {
           style={{
             width: "100%", background: "#1c1c1c", border: "1px solid #2a2a2a",
             borderRadius: 10, padding: "9px 32px 9px 12px", fontSize: 13,
-            color: value ? "#f0f0f0" : "#555", cursor: "pointer",
+            color: value ? "#f0f0f0" : "#555", cursor: "pointer", outline: "none",
           }}
         >
           <option value="">All</option>
-          {options.map(o => <option key={o} value={o}>{o}</option>)}
+          {options.map((o, i) => <option key={o} value={o}>{labels ? labels[i] : o}</option>)}
         </select>
         <ChevronDown size={13} color="#555" style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
       </div>
@@ -114,7 +218,9 @@ function SelectField({ label, value, onChange, options }: {
 }
 
 // ── main page ──────────────────────────────────────────────────────────────
-export default function BrowsePage() {
+function BrowsePageInner() {
+  const { t } = useLanguage();
+  const searchParams = useSearchParams();
   const [tab, setTab] = useState<Tab>("workers");
   const [search, setSearch] = useState("");
   const [showFilters, setShowFilters] = useState(false);
@@ -141,9 +247,24 @@ export default function BrowsePage() {
     ]).catch(() => {}).finally(() => setLoadingData(false));
   }, []);
 
+  useEffect(() => {
+    const cat = searchParams.get('category');
+    const tab = searchParams.get('tab');
+    if (cat) {
+      const match = CATEGORIES.find(c => c.key === cat.toLowerCase() || c.label.toLowerCase() === cat.toLowerCase());
+      if (match) setFilterCategory(match.key);
+      else setFilterCategory(cat);
+    }
+    if (tab === 'jobs') setTab('jobs');
+    if (tab === 'workers') setTab('workers');
+  }, [searchParams]);
+
   // active filter chips
   const activeFilters = [
-    filterCategory  && { label: filterCategory,  clear: () => setFilterCategory("") },
+    filterCategory  && {
+      label: t("common.categories." + filterCategory) || filterCategory,
+      clear: () => setFilterCategory("")
+    },
     filterLocation  && { label: filterLocation,  clear: () => setFilterLocation("") },
     filterMinAmount && tab === "jobs" && { label: `Min RWF ${Number(filterMinAmount).toLocaleString()}`, clear: () => setFilterMinAmount("") },
     filterMaxAmount && tab === "jobs" && { label: `Max RWF ${Number(filterMaxAmount).toLocaleString()}`, clear: () => setFilterMaxAmount("") },
@@ -156,9 +277,17 @@ export default function BrowsePage() {
   // filtered workers
   const filteredWorkers = useMemo(() => {
     let list = workers.filter((w: WorkerProfileDto) => {
+      const expType = (w.experienceType ?? "").toLowerCase();
       if (search && !w.name.toLowerCase().includes(search.toLowerCase())
-        && !(w.experienceType ?? "").toLowerCase().includes(search.toLowerCase())) return false;
-      if (filterCategory && (w.experienceType ?? "").toLowerCase() !== filterCategory.toLowerCase()) return false;
+        && !expType.includes(search.toLowerCase())) return false;
+      if (filterCategory) {
+        const catObj = CATEGORIES.find(c => c.key === filterCategory);
+        if (catObj) {
+          if (!catObj.apiValues.includes(expType)) return false;
+        } else {
+          if (expType !== filterCategory.toLowerCase()) return false;
+        }
+      }
       if (filterLocation && (w.district ?? "").toLowerCase() !== filterLocation.toLowerCase()) return false;
       return true;
     });
@@ -169,9 +298,17 @@ export default function BrowsePage() {
   // filtered jobs
   const filteredJobs = useMemo(() => {
     let list = jobs.filter((j: JobDto) => {
+      const jobCat = j.category.toLowerCase();
       if (search && !j.title.toLowerCase().includes(search.toLowerCase())
-        && !j.category.toLowerCase().includes(search.toLowerCase())) return false;
-      if (filterCategory && j.category.toLowerCase() !== filterCategory.toLowerCase()) return false;
+        && !jobCat.includes(search.toLowerCase())) return false;
+      if (filterCategory) {
+        const catObj = CATEGORIES.find(c => c.key === filterCategory);
+        if (catObj) {
+          if (!catObj.apiValues.includes(jobCat)) return false;
+        } else {
+          if (jobCat !== filterCategory.toLowerCase()) return false;
+        }
+      }
       if (filterLocation && j.district.toLowerCase() !== filterLocation.toLowerCase()) return false;
       if (filterMinAmount && j.ratePerHour < Number(filterMinAmount)) return false;
       if (filterMaxAmount && j.ratePerHour > Number(filterMaxAmount)) return false;
@@ -202,8 +339,12 @@ export default function BrowsePage() {
 
         {/* PAGE TITLE */}
         <div style={{ marginBottom: 28 }}>
-          <h1 style={{ margin: 0, fontSize: 28, fontWeight: 900, color: "#fff", letterSpacing: "-0.8px" }}>Browse</h1>
-          <p style={{ margin: "4px 0 0", fontSize: 13, color: "#555" }}>Find verified workers or available jobs across Kigali.</p>
+          <h1 className="browse-title" style={{ margin: 0, fontSize: 28, fontWeight: 900, color: "#fff", letterSpacing: "-0.8px" }}>
+            {t("common.nav.browse")}
+          </h1>
+          <p style={{ margin: "4px 0 0", fontSize: 13, color: "#555" }}>
+            {t("browse_page.hero.subtitle")}
+          </p>
         </div>
 
         {/* TAB SWITCH */}
@@ -211,7 +352,10 @@ export default function BrowsePage() {
           display: "inline-flex", background: "#1c1c1c", border: "1px solid #272727",
           borderRadius: 999, padding: 4, marginBottom: 24, gap: 4,
         }}>
-          {([["workers", Users, "Workers"], ["jobs", Briefcase, "Jobs"]] as const).map(([key, Icon, label]) => (
+          {([
+            ["workers", Users, t("browse_page.tabs.workers") || "Workers"],
+            ["jobs", Briefcase, t("browse_page.tabs.jobs") || "Jobs"]
+          ] as const).map(([key, Icon, label]) => (
             <button
               key={key}
               onClick={() => setTab(key)}
@@ -235,7 +379,7 @@ export default function BrowsePage() {
             <Search size={15} color="#555" style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
             <input
               type="text"
-              placeholder={tab === "workers" ? "Search workers or categories…" : "Search jobs or categories…"}
+              placeholder={tab === "workers" ? (t("browse_page.placeholders.search_workers") || "Search workers or categories…") : (t("jobs_page.placeholders.search") || "Search jobs or categories…")}
               value={search}
               onChange={e => setSearch(e.target.value)}
               style={{
@@ -257,7 +401,7 @@ export default function BrowsePage() {
             }}
           >
             <SlidersHorizontal size={14} />
-            Filters {activeFilters.length > 0 && `(${activeFilters.length})`}
+            {t("jobs_page.buttons.filters") || "Filters"} {activeFilters.length > 0 && `(${activeFilters.length})`}
           </button>
         </div>
 
@@ -268,23 +412,53 @@ export default function BrowsePage() {
             padding: "20px", marginBottom: 16,
           }}>
             <div className="filter-panel">
-              <SelectField label="Category" value={filterCategory} onChange={setFilterCategory}
-                options={CATEGORIES.map(c => c.label)} />
-              <SelectField label="Location" value={filterLocation} onChange={setFilterLocation}
-                options={LOCATIONS} />
+              <SelectField
+                label={t("common.sections.categories") || "Category"}
+                value={filterCategory}
+                onChange={setFilterCategory}
+                options={CATEGORIES.map(c => c.key)}
+                labels={CATEGORIES.map(c => t("common.categories." + c.key) || c.label)}
+              />
+              <SelectField
+                label={t("jobs_page.filters.location") || "Location"}
+                value={filterLocation}
+                onChange={setFilterLocation}
+                options={LOCATIONS}
+              />
 
               {tab === "workers" && (
-                <SelectField label="Sort by" value={sortWorker} onChange={v => setSortWorker(v as SortWorker)}
-                  options={["name"]} />
+                <SelectField
+                  label={t("jobs_page.filters.sort_by") || "Sort by"}
+                  value={sortWorker}
+                  onChange={v => setSortWorker(v as SortWorker)}
+                  options={["name"]}
+                />
               )}
 
               {tab === "jobs" && <>
-                <SelectField label="Min pay (RWF)" value={filterMinAmount} onChange={setFilterMinAmount}
-                  options={["5000", "8000", "10000", "15000"]} />
-                <SelectField label="Max pay (RWF)" value={filterMaxAmount} onChange={setFilterMaxAmount}
-                  options={["10000", "15000", "20000", "30000"]} />
-                <SelectField label="Sort by" value={sortJob} onChange={v => setSortJob(v as SortJob)}
-                  options={["newest", "amount_asc", "amount_desc"]} />
+                <SelectField
+                  label={t("jobs_page.filters.min_pay") || "Min pay (RWF)"}
+                  value={filterMinAmount}
+                  onChange={setFilterMinAmount}
+                  options={["5000", "8000", "10000", "15000"]}
+                />
+                <SelectField
+                  label={t("jobs_page.filters.max_pay") || "Max pay (RWF)"}
+                  value={filterMaxAmount}
+                  onChange={setFilterMaxAmount}
+                  options={["10000", "15000", "20000", "30000"]}
+                />
+                <SelectField
+                  label={t("jobs_page.filters.sort_by") || "Sort by"}
+                  value={sortJob}
+                  onChange={v => setSortJob(v as SortJob)}
+                  options={["newest", "amount_asc", "amount_desc"]}
+                  labels={[
+                    t("jobs_page.sort_options.newest") || "Newest first",
+                    t("jobs_page.sort_options.pay_asc") || "Pay: low → high",
+                    t("jobs_page.sort_options.pay_desc") || "Pay: high → low"
+                  ]}
+                />
               </>}
             </div>
 
@@ -301,94 +475,100 @@ export default function BrowsePage() {
               background: "none", border: "none", fontSize: 11, color: "#555",
               cursor: "pointer", padding: "3px 8px", fontWeight: 600,
             }}>
-              Clear all
+              {t("jobs_page.buttons.clear_all")}
             </button>
           </div>
         )}
 
         {/* RESULTS COUNT */}
         <p style={{ fontSize: 12, color: "#444", marginBottom: 14, fontWeight: 600 }}>
-          {loadingData ? "Loading…"
+          {loadingData
+            ? (t("jobs_page.loading") || "Loading…")
             : tab === "workers"
-            ? `${filteredWorkers.length} worker${filteredWorkers.length !== 1 ? "s" : ""} found`
-            : `${filteredJobs.length} job${filteredJobs.length !== 1 ? "s" : ""} found`}
+              ? (t("browse_page.workers_found", { count: filteredWorkers.length }) || `${filteredWorkers.length} workers found`)
+              : (t("jobs_page.found_count", { count: filteredJobs.length }) || `${filteredJobs.length} jobs found`)}
         </p>
 
         {/* WORKERS GRID */}
         {tab === "workers" && (
           loadingData ? <BrowseLoading />
           : filteredWorkers.length === 0
-            ? <Empty label="No workers match your filters." />
+            ? <Empty label={t("browse_page.empty.workers") || "No workers match your filters."} />
             : <div className="browse-grid">
-                {filteredWorkers.map((w: WorkerProfileDto) => (
-                  <a key={w.id} href={`/browse/${w.id}`} className="bcard" style={{
-                    background: "#1c1c1c", border: "1px solid #272727", borderRadius: 14,
-                    padding: "16px", display: "flex", flexDirection: "column", gap: 12,
-                    textDecoration: "none",
-                  }}>
-                    {/* top row */}
-                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <div style={{
-                          width: 42, height: 42, borderRadius: 999, flexShrink: 0,
-                          background: "rgba(249,115,22,0.12)",
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                          fontSize: 16, fontWeight: 800, color: "#f97316",
-                        }}>
-                          {w.name[0]}
+                {filteredWorkers.map((w: WorkerProfileDto) => {
+                  const expType = (w.experienceType ?? "").toLowerCase();
+                  const wCatKey = CATEGORIES.find(c => c.apiValues.includes(expType))?.key || expType;
+                  const localizedWCat = t("common.categories." + wCatKey) || w.categoryName || w.experienceType || t("common.general.worker");
+                  return (
+                    <a key={w.id} href={`/browse/${w.id}`} className="bcard" style={{
+                      background: "#1c1c1c", border: "1px solid #272727", borderRadius: 14,
+                      padding: "16px", display: "flex", flexDirection: "column", gap: 12,
+                      textDecoration: "none",
+                    }}>
+                      {/* top row */}
+                      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                          <div style={{
+                            width: 42, height: 42, borderRadius: 999, flexShrink: 0,
+                            background: "rgba(249,115,22,0.12)",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            fontSize: 16, fontWeight: 800, color: "#f97316",
+                          }}>
+                            {w.name[0]}
+                          </div>
+                          <div>
+                            <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
+                            <p style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2 }}>{localizedWCat}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
-                          <p style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2 }}>{w.categoryName ?? w.experienceType ?? "Worker"}</p>
-                        </div>
-                      </div>
-                      {w.availability.length > 0 && (
-                        <span style={{
-                          fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "3px 8px",
-                          background: "rgba(34,197,94,0.1)", color: "#22c55e",
-                        }}>
-                          Available
-                        </span>
-                      )}
-                    </div>
-
-                    {/* rating + location */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                      {(() => {
-                        const r = ratingInfo(w.rating, w.ratingCount);
-                        return (
-                          <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
-                            <Star size={11} color="#f97316" fill={r.hasReviews ? "#f97316" : "none"} />
-                            <span style={{ fontSize: 11, fontWeight: 700, color: r.hasReviews ? "#f97316" : "#666" }}>
-                              {r.hasReviews ? `${r.value} · ${r.reviews} review${r.reviews === 1 ? "" : "s"}` : "New"}
-                            </span>
+                        {w.availability.length > 0 && (
+                          <span style={{
+                            fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "3px 8px",
+                            background: "rgba(34,197,94,0.1)", color: "#22c55e",
+                          }}>
+                            {t("browse_page.badges.available") || "Available"}
                           </span>
-                        );
-                      })()}
-                      {(w.locationShort ?? w.district) && (
-                        <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                          <MapPin size={11} color="#555" />
-                          <span style={{ fontSize: 11, color: "#555" }}>{w.locationShort ?? w.district}</span>
-                        </span>
-                      )}
-                    </div>
-
-                    {/* equipment tags */}
-                    {w.equipment.length > 0 && (
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-                        {w.equipment.slice(0, 3).map(eq => (
-                          <span key={eq} style={{
-                            fontSize: 9, fontWeight: 600, borderRadius: 999, padding: "2px 7px",
-                            background: "rgba(249,115,22,0.07)", color: "#f97316",
-                          }}>{eq}</span>
-                        ))}
-                        {w.equipment.length > 3 && (
-                          <span style={{ fontSize: 9, color: "#555" }}>+{w.equipment.length - 3} more</span>
                         )}
                       </div>
-                    )}
-                  </a>
-                ))}
+
+                      {/* rating + location */}
+                      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                        {(() => {
+                          const r = ratingInfo(w.rating, w.ratingCount);
+                          return (
+                            <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                              <Star size={11} color="#f97316" fill={r.hasReviews ? "#f97316" : "none"} />
+                              <span style={{ fontSize: 11, fontWeight: 700, color: r.hasReviews ? "#f97316" : "#666" }}>
+                                {r.hasReviews ? `${r.value} · ${r.reviews} review${r.reviews === 1 ? "" : "s"}` : t("common.general.new")}
+                              </span>
+                            </span>
+                          );
+                        })()}
+                        {(w.locationShort ?? w.district) && (
+                          <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                            <MapPin size={11} color="#555" />
+                            <span style={{ fontSize: 11, color: "#555" }}>{w.locationShort ?? w.district}</span>
+                          </span>
+                        )}
+                      </div>
+
+                      {/* equipment tags */}
+                      {w.equipment.length > 0 && (
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                          {w.equipment.slice(0, 3).map(eq => (
+                            <span key={eq} style={{
+                              fontSize: 9, fontWeight: 600, borderRadius: 999, padding: "2px 7px",
+                              background: "rgba(249,115,22,0.07)", color: "#f97316",
+                            }}>{eq}</span>
+                          ))}
+                          {w.equipment.length > 3 && (
+                            <span style={{ fontSize: 9, color: "#555" }}>+{w.equipment.length - 3} more</span>
+                          )}
+                        </div>
+                      )}
+                    </a>
+                  );
+                })}
               </div>
         )}
 
@@ -396,10 +576,12 @@ export default function BrowsePage() {
         {tab === "jobs" && (
           loadingData ? <BrowseLoading />
           : filteredJobs.length === 0
-            ? <Empty label="No jobs match your filters." />
+            ? <Empty label={t("jobs_page.empty.title") || "No jobs match your filters."} />
             : <div className="browse-grid">
                 {filteredJobs.map((j: JobDto) => {
                   const posted = daysAgo(j.createdAt);
+                  const jCatKey = CATEGORIES.find(c => c.apiValues.includes(j.category.toLowerCase()))?.key || j.category;
+                  const localizedJCat = t("common.categories." + jCatKey) || j.category;
                   return (
                     <a key={j.id} href={`/jobs/${j.id}`} className="bcard" style={{
                       display: "flex", flexDirection: "column", gap: 12,
@@ -412,7 +594,7 @@ export default function BrowsePage() {
                           fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "3px 8px", flexShrink: 0,
                           background: "rgba(249,115,22,0.1)", color: "#f97316",
                         }}>
-                          {j.category}
+                          {localizedJCat}
                         </span>
                       </div>
                       <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
@@ -422,7 +604,7 @@ export default function BrowsePage() {
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
                         <span style={{ fontSize: 15, fontWeight: 800, color: "#f97316" }}>
                           {fmt(j.ratePerHour)}
-                          <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}> / hr</span>
+                          <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}>{t("common.general.per_hour") || " / hr"}</span>
                         </span>
                         <span style={{ fontSize: 11, color: "#444" }}>
                           {posted === 0 ? "Today" : `${posted}d ago`}
@@ -438,6 +620,14 @@ export default function BrowsePage() {
 
       <Footer />
     </main>
+  );
+}
+
+export default function BrowsePage() {
+  return (
+    <Suspense fallback={<div style={{ background: '#111', minHeight: '100vh' }} />}>
+      <BrowsePageInner />
+    </Suspense>
   );
 }
 
@@ -458,11 +648,14 @@ function BrowseLoading() {
 }
 
 function Empty({ label }: { label: string }) {
+  const { t } = useLanguage();
   return (
     <div style={{ textAlign: "center", padding: "60px 20px", color: "#444" }}>
       <p style={{ fontSize: 32, margin: "0 0 12px" }}>🔍</p>
       <p style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>{label}</p>
-      <p style={{ margin: "6px 0 0", fontSize: 12, color: "#333" }}>Try adjusting your filters or search term.</p>
+      <p style={{ margin: "6px 0 0", fontSize: 12, color: "#333" }}>
+        {t("jobs_page.empty.desc") || "Try adjusting your filters or search term."}
+      </p>
     </div>
   );
 }

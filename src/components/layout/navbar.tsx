@@ -3,16 +3,20 @@
 import { useState, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { HireModal } from "@/components/hire/hire-modal";
-import { LogOut, Briefcase, FileText, Home, Users, ChevronDown, Settings, Menu, X } from "lucide-react";
+import { LogOut, Briefcase, FileText, Home, Users, ChevronDown, Settings, Menu, X, Globe } from "lucide-react";
+import { useLanguage } from "@/lib/language-context";
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
+  const { language, setLanguage, t } = useLanguage();
   const [hireOpen, setHireOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const langDropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -23,6 +27,9 @@ export default function Navbar() {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setDropdownOpen(false);
+      }
+      if (langDropdownRef.current && !langDropdownRef.current.contains(e.target as Node)) {
+        setLangDropdownOpen(false);
       }
       if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target as Node)) {
         setMobileMenuOpen(false);
@@ -45,10 +52,10 @@ export default function Navbar() {
   };
 
   const links = [
-    { href: "/browse",  label: "Browse"  },
-    { href: "/jobs",    label: "Jobs"    },
-    { href: "/contact", label: "Contact" },
-    { href: "/about",   label: "About"   },
+    { href: "/browse",  label: t("common.nav.browse")  },
+    { href: "/jobs",    label: t("common.nav.jobs")    },
+    { href: "/contact", label: t("common.nav.contact") },
+    { href: "/about",   label: t("common.nav.about")   },
   ];
 
   if (
@@ -67,21 +74,22 @@ export default function Navbar() {
     .toUpperCase() ?? "?";
 
   const firstName = user?.name?.split(" ")[0] ?? "";
-  const roleLabel = user?.role === "EMPLOYER" ? "Employer" : "Job Seeker";
+  const roleLabel = user?.role === "EMPLOYER" ? t("common.nav.employer") : t("common.nav.job_seeker");
 
   const dashboardLinks = user?.role === "EMPLOYER"
     ? [
-        { href: "/owner",          icon: <Home size={14} />,      label: "Dashboard"    },
-        { href: "/owner/offers",   icon: <Briefcase size={14} />, label: "Offers"       },
-        { href: "/owner/workers",  icon: <Users size={14} />,     label: "Requests"     },
-        { href: "/owner/settings", icon: <Settings size={14} />,  label: "Settings"     },
+        { href: "/owner",          icon: <Home size={14} />,      label: t("common.nav.dashboard")    },
+        { href: "/owner/offers",   icon: <Briefcase size={14} />, label: t("common.nav.offers")       },
+        { href: "/owner/workers",  icon: <Users size={14} />,     label: t("common.nav.requests")     },
+        { href: "/owner/settings", icon: <Settings size={14} />,  label: t("common.nav.settings")     },
       ]
     : [
-        { href: "/seeker",               icon: <Home size={14} />,      label: "Dashboard"    },
-        { href: "/seeker/jobs",          icon: <Briefcase size={14} />, label: "Jobs"         },
-        { href: "/seeker/applications",  icon: <FileText size={14} />,  label: "Applications" },
-        { href: "/seeker/settings",      icon: <Settings size={14} />,  label: "Settings"     },
+        { href: "/seeker",               icon: <Home size={14} />,      label: t("common.nav.dashboard")    },
+        { href: "/seeker/jobs",          icon: <Briefcase size={14} />, label: t("common.nav.jobs")         },
+        { href: "/seeker/applications",  icon: <FileText size={14} />,  label: t("common.nav.applications") },
+        { href: "/seeker/settings",      icon: <Settings size={14} />,  label: t("common.nav.settings")     },
       ];
+
 
   return (
     <>
@@ -98,6 +106,7 @@ export default function Navbar() {
         }
 
         .profile-dropdown { animation: fadeSlideDown 0.18s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .lang-dropdown    { animation: fadeSlideDown 0.18s cubic-bezier(0.16,1,0.3,1) forwards; }
         .mobile-menu      { animation: mobileMenuIn 0.2s cubic-bezier(0.16,1,0.3,1) forwards; }
 
         .nav-link { color: #555; font-weight: 400; text-decoration: none; transition: color 0.15s; font-size: 13px; }
@@ -115,13 +124,31 @@ export default function Navbar() {
         .dd-item.danger { color: #f87171; }
         .dd-item.danger:hover { background: rgba(239,68,68,0.08); color: #ef4444; }
 
+        .lang-btn {
+          display: flex; align-items: center; gap: 4px;
+          background: transparent; border: none;
+          border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 600;
+          color: #aaa; cursor: pointer; transition: background 0.15s, color 0.15s;
+          height: 28px; box-sizing: border-box;
+        }
+        .lang-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        
+        .lang-item {
+          display: flex; align-items: center; justify-content: space-between;
+          width: 100%; padding: 8px 12px; border-radius: 8px; background: transparent;
+          border: none; text-align: left; font-size: 13px; font-weight: 500; color: #b0b0b0;
+          cursor: pointer; transition: background 0.12s, color 0.12s;
+        }
+        .lang-item:hover { background: #242424; color: #fff; }
+        .lang-item.active { background: rgba(249,115,22,0.1); color: #f97316; font-weight: 700; }
+
         .hire-btn {
           background: transparent; color: #f97316;
           border: 1.5px solid rgba(249,115,22,0.5); border-radius: 999px;
           padding: 6px 16px; font-size: 13px; font-weight: 700;
           cursor: pointer; font-family: inherit;
           transition: background 0.15s, border-color 0.15s, color 0.15s;
-          white-space: nowrap;
+          white-space: nowrap; height: 34px; display: inline-flex; align-items: center;
         }
         .hire-btn:hover { background: rgba(249,115,22,0.1); border-color: #f97316; color: #fb923c; }
 
@@ -208,13 +235,54 @@ export default function Navbar() {
               );
             })}
             {!user && (
-              <a href="/signin" className={`nav-link${pathname === "/signin" ? " active" : ""}`}>Sign in</a>
+              <a href="/signin" className={`nav-link${pathname === "/signin" ? " active" : ""}`}>{t("common.nav.signin")}</a>
             )}
           </div>
 
-          {/* Desktop: hire + profile */}
+          {/* Desktop: hire + language + profile */}
           <div className="desktop-right" style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <button className="hire-btn" onClick={() => setHireOpen(true)}>Hire now</button>
+            {/* Language Selector */}
+            <div style={{ position: "relative" }} ref={langDropdownRef}>
+              <button
+                className="lang-btn"
+                onClick={() => setLangDropdownOpen((v) => !v)}
+                aria-expanded={langDropdownOpen}
+              >
+                <Globe size={11} color="#aaa" />
+                <span style={{ textTransform: "uppercase" }}>{language === "kinyy" ? "kin" : language}</span>
+                <ChevronDown size={9} color="#666" style={{ transition: "transform 0.2s", transform: langDropdownOpen ? "rotate(180deg)" : "rotate(0deg)" }} />
+              </button>
+
+              {langDropdownOpen && (
+                <div className="lang-dropdown" style={{
+                  position: "absolute", top: "calc(100% + 10px)", right: 0,
+                  width: 140, background: "#161616",
+                  border: "1px solid #272727", borderRadius: 14,
+                  boxShadow: "0 16px 40px rgba(0,0,0,0.6)", overflow: "hidden",
+                  padding: "6px", display: "flex", flexDirection: "column", gap: "2px",
+                  zIndex: 100,
+                }}>
+                  <button onClick={() => { setLanguage("en"); setLangDropdownOpen(false); }} className={`lang-item${language === "en" ? " active" : ""}`}>
+                    <span>English</span>
+                    {language === "en" && <span style={{ fontSize: 11 }}>✓</span>}
+                  </button>
+                  <button onClick={() => { setLanguage("fr"); setLangDropdownOpen(false); }} className={`lang-item${language === "fr" ? " active" : ""}`}>
+                    <span>Français</span>
+                    {language === "fr" && <span style={{ fontSize: 11 }}>✓</span>}
+                  </button>
+                  <button onClick={() => { setLanguage("sw"); setLangDropdownOpen(false); }} className={`lang-item${language === "sw" ? " active" : ""}`}>
+                    <span>Kiswahili</span>
+                    {language === "sw" && <span style={{ fontSize: 11 }}>✓</span>}
+                  </button>
+                  <button onClick={() => { setLanguage("kinyy"); setLangDropdownOpen(false); }} className={`lang-item${language === "kinyy" ? " active" : ""}`}>
+                    <span>Kinyarwanda</span>
+                    {language === "kinyy" && <span style={{ fontSize: 11 }}>✓</span>}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <button className="hire-btn" onClick={() => setHireOpen(true)}>{t("common.nav.hire_now")}</button>
 
             {user && (
               <div style={{ position: "relative" }} ref={dropdownRef}>
@@ -241,9 +309,7 @@ export default function Navbar() {
                       background: "#22c55e", border: "2px solid #161616",
                     }} />
                   </div>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: "#d0d0d0", maxWidth: 72, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {firstName}
-                  </span>
+                  
                   <ChevronDown size={12} color="#555" style={{ transition: "transform 0.2s", transform: dropdownOpen ? "rotate(180deg)" : "rotate(0deg)", flexShrink: 0 }} />
                 </button>
 
@@ -276,7 +342,7 @@ export default function Navbar() {
                       ))}
                     </div>
                     <div style={{ padding: "4px 6px 6px", borderTop: "1px solid #1f1f1f" }}>
-                      <button onClick={handleSignOut} className="dd-item danger"><LogOut size={14} />Sign out</button>
+                      <button onClick={handleSignOut} className="dd-item danger"><LogOut size={14} />{t("common.nav.sign_out")}</button>
                     </div>
                   </div>
                 )}
@@ -333,7 +399,7 @@ export default function Navbar() {
                   );
                 })}
                 {!user && (
-                  <a href="/signin" className={`mobile-nav-link${pathname === "/signin" ? " active" : ""}`}>Sign in</a>
+                  <a href="/signin" className={`mobile-nav-link${pathname === "/signin" ? " active" : ""}`}>{t("common.nav.signin")}</a>
                 )}
 
                 {user && (
@@ -345,16 +411,37 @@ export default function Navbar() {
                   </>
                 )}
 
+                {/* Mobile Language Selector */}
+                <div style={{ padding: "10px 14px", borderTop: "1px solid #1f1f1f", marginTop: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#888" }}>
+                    <Globe size={14} />
+                    <span>Language</span>
+                  </div>
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value as any)}
+                    style={{
+                      background: "#161616", border: "1px solid #272727", borderRadius: 8,
+                      color: "#fff", fontSize: 13, padding: "4px 8px", outline: "none", cursor: "pointer"
+                    }}
+                  >
+                    <option value="en">English</option>
+                    <option value="fr">Français</option>
+                    <option value="sw">Kiswahili</option>
+                    <option value="kinyy">Kinyarwanda</option>
+                  </select>
+                </div>
+
                 <div style={{ padding: "8px 6px 2px" }}>
                   <button className="hire-btn-mobile" onClick={() => { setMobileMenuOpen(false); setHireOpen(true); }}>
-                    Hire now
+                    {t("common.nav.hire_now")}
                   </button>
                 </div>
 
                 {user && (
                   <div style={{ padding: "6px 6px 4px", borderTop: "1px solid #1f1f1f", marginTop: 8 }}>
                     <button onClick={handleSignOut} className="dd-item danger" style={{ borderRadius: 10, padding: "10px 14px", fontSize: 14 }}>
-                      <LogOut size={14} />Sign out
+                      <LogOut size={14} />{t("common.nav.sign_out")}
                     </button>
                   </div>
                 )}
