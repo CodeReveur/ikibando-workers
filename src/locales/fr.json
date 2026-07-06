@@ -205,7 +205,11 @@
       "worker": "Travailleur",
       "category": "Catégorie",
       "currency_pattern": "{amount} RWF",
-      "per_hour": "/ h"
+      "per_hour": "/ h",
+      "on": "le",
+      "rejected": "Refusé",
+      "failed": "Échoué",
+      "success": "Succès"
     }
   },
   "home": {
@@ -1328,7 +1332,9 @@
     "total_released": "Total libéré",
     "in_escrow": "En dépôt",
     "jobs_total": "Total des emplois",
-    "loading": "Chargement..."
+    "loading": "Chargement...",
+    "status_pending": "En attente",
+    "status_refunded": "Remboursé"
   },
   "seeker_job_detail": {
     "back": "Retour",
@@ -1438,6 +1444,10 @@
     "no_txns_desc": "Les gains apparaissent ici lorsque les employeurs libèrent le paiement après avoir terminé un travail.",
     "released_on": "Libéré le",
     "withdrawal": "Retrait",
+    "topup": "Recharge",
+    "payment": "Paiement de travail",
+    "wd_mtn_momo": "Retrait vers MTN MoMo",
+    "wd_airtel_money": "Retrait vers Airtel Money",
     "escrow_explain": "Les employeurs déposent des fonds en dépôt lors de la publication d'un emploi. Vos gains sont conservés en toute sécurité jusqu'à ce que l'employeur marque le travail comme terminé. Une fois libérés, les fonds apparaissent dans le solde de votre portefeuille et peuvent être retirés vers votre compte MoMo.",
     "withdraw_title": "Retrait vers Mobile Money",
     "available_balance": "Solde disponible",

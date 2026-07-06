@@ -70,7 +70,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         <Sidebar mobileOpen={mobileOpen} closeMobile={() => setMobileOpen(false)} />
         <Topbar onToggleMenu={() => setMobileOpen(true)} />
         <main className="dashboard-main" style={{
-          position:"fixed", top:"var(--tb-height)", left:"var(--sb-width)", right:0, bottom:0,
+          position:"absolute", top:"var(--tb-height)", left:"var(--sb-width)", right:0, bottom:0,
           overflowY:"auto", padding:"28px",
           background:"#090909",
         }}>

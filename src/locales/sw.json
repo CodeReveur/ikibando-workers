@@ -205,7 +205,11 @@
       "worker": "Mfanyakazi",
       "category": "Kategoria",
       "currency_pattern": "RWF {amount}",
-      "per_hour": "/ saa"
+      "per_hour": "/ saa",
+      "on": "mnamo",
+      "rejected": "Imekataliwa",
+      "failed": "Imeshindwa",
+      "success": "Imefanikiwa"
     }
   },
   "home": {
@@ -1328,7 +1332,9 @@
     "total_released": "Jumla ya Zilizotolewa",
     "in_escrow": "Kwenye Escrow",
     "jobs_total": "Jumla ya Kazi",
-    "loading": "Inapakia..."
+    "loading": "Inapakia...",
+    "status_pending": "Inasubiri",
+    "status_refunded": "Imerejeshwa"
   },
   "seeker_job_detail": {
     "back": "Nyuma",
@@ -1438,6 +1444,10 @@
     "no_txns_desc": "Mapato huonekana hapa pale waajiri wanapotoa malipo baada ya kukamilisha kazi.",
     "released_on": "Imetolewa mnamo",
     "withdrawal": "Utoaji wa Pesa",
+    "topup": "Kuweka Pesa",
+    "payment": "Malipo ya Kazi",
+    "wd_mtn_momo": "Kutoa pesa kwenda MTN MoMo",
+    "wd_airtel_money": "Kutoa pesa kwenda Airtel Money",
     "escrow_explain": "Waajiri huweka pesa kwenye escrow wanapoweka kazi. Mapato yako yanashikiliwa salama hadi mwajiri atakapoweka alama ya kazi kukamilika. Yakitolewa, pesa huonekana kwenye salio la wallet yako na inaweza kutolewa kwenda kwenye akaunti yako ya MoMo.",
     "withdraw_title": "Toa kwenda Mobile Money",
     "available_balance": "Salio lililopo",

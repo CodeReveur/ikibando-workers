@@ -488,7 +488,7 @@ export default function SeekerJobDetail() {
 
       {/* Verify modal */}
       {showVerify && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", zIndex: 500, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
           <div style={{ background: "#111", border: "1px solid #222", borderRadius: 18, width: "100%", maxWidth: 420, padding: 28 }}>
             <p style={{ margin: "0 0 6px", fontSize: 16, fontWeight: 800, color: "#fff" }}>{t("seeker_job_detail.finish_job_modal")}</p>
             <p style={{ margin: "0 0 18px", fontSize: 12, color: "#555" }}>

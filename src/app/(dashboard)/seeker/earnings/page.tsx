@@ -74,9 +74,14 @@ export default function SeekerEarnings() {
     } finally { setWdBusy(false); }
   };
 
-  const localizedStatusLabel = (status: string) => {
-    if (status === "RELEASED" || status === "SUCCESS") return t("seeker_applications.done") || "Released";
-    if (status === "PENDING" || status === "HELD") return t("seeker_job_detail.held_in_escrow") || "In Escrow";
+  const localizedStatusLabel = (status: string, type: string) => {
+    if (type === "WITHDRAWAL" || type === "TOPUP") {
+      if (status === "SUCCESS") return t("common.general.success") || "Success";
+      if (status === "PENDING") return t("seeker_jobs.status_pending") || "Pending";
+      if (status === "FAILED") return t("common.general.failed") || "Failed";
+    }
+    if (status === "RELEASED" || status === "SUCCESS") return t("seeker_earnings.released_on") || "Released";
+    if (status === "PENDING" || status === "HELD") return t("seeker_earnings.in_escrow") || "In Escrow";
     if (status === "REFUNDED") return t("seeker_jobs.status_refunded") || "Refunded";
     if (status === "FAILED") return t("common.general.failed") || "Failed";
     return status;
@@ -179,19 +184,29 @@ export default function SeekerEarnings() {
                   </div>
                   <div style={{ minWidth:0 }}>
                     <p style={{ margin:0, fontSize:13, fontWeight:600, color:"#d0d0d0", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
-                      {tX.jobTitle ?? (tX.notes?.includes("Withdrawal") ? (t("seeker_earnings.withdrawal") || "Withdrawal") : (t("seeker_jobs.tab_all") || "Transaction"))}
+                      {tX.jobTitle ?? (
+                        tX.type === "WITHDRAWAL" ? (t("seeker_earnings.withdrawal") || "Withdrawal") :
+                        tX.type === "TOPUP" ? (t("seeker_earnings.topup") || "Top Up") :
+                        tX.type === "PAYMENT" ? (t("seeker_earnings.payment") || "Job Payment") :
+                        (t("seeker_jobs.tab_all") || "Transaction")
+                      )}
                     </p>
                     <p style={{ margin:0, fontSize:11, color:"#333" }}>
                       {new Date(tX.createdAt).toLocaleDateString(currentLocale, { day:"numeric", month:"short", year:"numeric" })}
                       {isRelease && tX.releasedAt ? ` · ${t("seeker_earnings.released_on") || "Released"} ${new Date(tX.releasedAt).toLocaleDateString(currentLocale)}` : ""}
                     </p>
-                    {tX.notes?.includes("Withdrawal") && (
-                      <p style={{ margin:0, fontSize:10, color:"#3a3a3a" }}>{tX.notes}</p>
+                    {tX.notes && (
+                      <p style={{ margin:0, fontSize:10, color:"#3a3a3a" }}>
+                        {tX.notes
+                          .replace("Withdrawal to MTN MoMo", t("seeker_earnings.wd_mtn_momo") || "Withdrawal to MTN MoMo")
+                          .replace("Withdrawal to Airtel Money", t("seeker_earnings.wd_airtel_money") || "Withdrawal to Airtel Money")
+                        }
+                      </p>
                     )}
                   </div>
                 </div>
                 <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
-                  <span style={{ fontSize:10, fontWeight:700, borderRadius:99, padding:"3px 9px", color:s.color, background:s.bg }}>{localizedStatusLabel(tX.status)}</span>
+                  <span style={{ fontSize:10, fontWeight:700, borderRadius:99, padding:"3px 9px", color:s.color, background:s.bg }}>{localizedStatusLabel(tX.status, tX.type)}</span>
                   <p style={{ margin:0, fontSize:15, fontWeight:800, color: isRelease ? "#22c55e" : "#e0e0e0" }}>
                     {isRelease ? "+" : ""}{fmt(tX.amountRwf)}
                   </p>
@@ -212,7 +227,7 @@ export default function SeekerEarnings() {
 
       {/* Withdraw modal */}
       {wdOpen && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", zIndex:500, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", zIndex:9999, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
           <div style={{ background:"#111", border:"1px solid #222", borderRadius:18, width:"100%", maxWidth:440, padding:"28px" }}>
             <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:22 }}>
               <p style={{ margin:0, fontSize:16, fontWeight:800, color:"#fff" }}>{t("seeker_earnings.withdraw_title")}</p>

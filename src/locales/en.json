@@ -206,7 +206,11 @@
       "worker": "Worker",
       "category": "Category",
       "currency_pattern": "RWF {amount}",
-      "per_hour": "/ hr"
+      "per_hour": "/ hr",
+      "on": "on",
+      "rejected": "Rejected",
+      "failed": "Failed",
+      "success": "Success"
     }
   },
   "home": {
@@ -1329,7 +1333,9 @@
     "total_released": "Total Released",
     "in_escrow": "In Escrow",
     "jobs_total": "Jobs Total",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "status_pending": "Pending",
+    "status_refunded": "Refunded"
   },
   "seeker_job_detail": {
     "back": "Back",
@@ -1439,6 +1445,10 @@
     "no_txns_desc": "Earnings appear here when employers release payment after completing a job.",
     "released_on": "Released",
     "withdrawal": "Withdrawal",
+    "topup": "Top Up",
+    "payment": "Job Payment",
+    "wd_mtn_momo": "Withdrawal to MTN MoMo",
+    "wd_airtel_money": "Withdrawal to Airtel Money",
     "escrow_explain": "Employers deposit funds into escrow when posting a job. Your earnings are held securely until the employer marks the job complete. Once released, funds appear in your wallet balance and can be withdrawn to your MoMo account.",
     "withdraw_title": "Withdraw to Mobile Money",
     "available_balance": "Available balance",

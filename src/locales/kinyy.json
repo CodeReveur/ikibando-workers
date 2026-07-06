@@ -205,7 +205,11 @@
       "worker": "Umukozi",
       "category": "Icyiciro",
       "currency_pattern": "RWF {amount}",
-      "per_hour": "/ isaha"
+      "per_hour": "/ isaha",
+      "on": "ku itariki",
+      "rejected": "Yahakanywe",
+      "failed": "Byaranze",
+      "success": "Byakunze ✅"
     }
   },
   "home": {
@@ -1326,9 +1330,11 @@
     "released_to_wallet_on": "yoherejwe kuri konti yawe ku itariki",
     "held_in_escrow": "yafunzwe muri escrow — azafungurwa umukoresha nemeza ko akazi karangiye",
     "total_released": "Ayishyuwe yose",
-    "in_escrow": "Ayafunzwe",
+    "in_escrow": "Ategerejwe",
     "jobs_total": "Dosiye zose",
-    "loading": "Biratunganywa..."
+    "loading": "Biratunganywa...",
+    "status_pending": "Itegerejwe",
+    "status_refunded": "Yasubijwe"
   },
   "seeker_job_detail": {
     "back": "Gusubira inyuma",
@@ -1438,6 +1444,10 @@
     "no_txns_desc": "Amafaranga yinjijwe yoherezwa hano iyo umukoresha yemeje ko akazi karangiye.",
     "released_on": "Yafunguwe ku itariki",
     "withdrawal": "Ubwabuzi bw'amafaranga",
+    "topup": "Kuzuza konti",
+    "payment": "Ubwishyure bw'akazi",
+    "wd_mtn_momo": "Kubikuza kuri MTN MoMo",
+    "wd_airtel_money": "Kubikuza kuri Airtel Money",
     "escrow_explain": "Abakoresha babanza kubitsa amafaranga muri escrow iyo basaba abakozi. Amafaranga uhembwa abikwa neza kugeza igihe wasoreje akazi. Iyo yafunguwe, ahita aza kuri konti yawe bityo ukaba wayabikuza kuri MoMo yawe.",
     "withdraw_title": "Kubikura kuri Mobile Money",
     "available_balance": "Amafaranga ufite ubu",
@@ -1492,7 +1502,7 @@
     "completed_paid": "Kemejwe no kwishyurwa",
     "in_escrow": "Ayafunzwe",
     "awaiting_release": "Ategereje gufungurwa",
-    "active_jobs": "Akazi kacyo",
+    "active_jobs": "Akazi kawe",
     "currently_hired": "Abo ukorera ubu",
     "applications": "Dosiye zoherejwe",
     "all_time": "Ibihe byose",
@@ -1503,7 +1513,7 @@
     "completion_rate": "Igipimo cy'Isoza",
     "based_on_resolved": "Bishingiye ku {count} zakiriwe",
     "completed_out_of": "{done} zarangiye mu {total}",
-    "top_categories": "Ibyiciro by'Imbere",
+    "top_categories": "Ibyiciro biri Imbere",
     "earnings_by_job": "Ayinjijwe ku kazi",
     "no_history": "Nta mateka y'akazi aragaragara"
   }
