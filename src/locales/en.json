@@ -1526,5 +1526,37 @@
     "top_categories": "Top Categories",
     "earnings_by_job": "Earnings by Job",
     "no_history": "No job history yet"
+  },
+  "notifications": {
+    "accepted_message": "Your application for \"{title}\" was accepted!",
+    "rejected_message": "Your application for \"{title}\" was not selected.",
+    "pending_message": "You have {count} pending applications waiting for review.",
+    "review_now": "Review now →",
+    "no_pending": "No pending applications",
+    "no_new": "No new notifications",
+    "manage_apps": "Manage applications",
+    "view_all": "View all applications"
+  },
+  "transaction_detail": {
+    "title": "Transaction Details",
+    "back": "Back to Wallet",
+    "amount": "Amount",
+    "txn_id": "Transaction ID",
+    "copy_id": "Copy ID",
+    "copied": "Copied!",
+    "type": "Transaction Type",
+    "status": "Status",
+    "date": "Date & Time",
+    "provider": "Payment Provider",
+    "phone": "Phone Number",
+    "notes": "Description / Notes",
+    "held_at": "Held in Escrow At",
+    "released_at": "Released At",
+    "refunded_at": "Refunded At",
+    "refund_reason": "Refund Reason",
+    "platform_fee": "Platform Fee",
+    "worker_payout": "Net Payout",
+    "not_found": "Transaction not found",
+    "not_found_desc": "This transaction may not exist or you do not have permission to view it."
   }
 }

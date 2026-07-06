@@ -1451,8 +1451,8 @@
     "no_txns": "Nta bikorwa by'amafaranga birabaho ubu",
     "no_txns_desc": "Amafaranga yinjijwe yoherezwa hano iyo umukoresha yemeje ko akazi karangiye.",
     "released_on": "Yafunguwe ku itariki",
-    "withdrawal": "Ubwabuzi bw'amafaranga",
-    "topup": "Kuzuza konti",
+    "withdrawal": "Kubikuza amafaranga",
+    "topup": "Kongera kuri konti",
     "payment": "Ubwishyure bw'akazi",
     "wd_mtn_momo": "Kubikuza kuri MTN MoMo",
     "wd_airtel_money": "Kubikuza kuri Airtel Money",
@@ -1525,5 +1525,37 @@
     "top_categories": "Ibyiciro biri Imbere",
     "earnings_by_job": "Ayinjijwe ku kazi",
     "no_history": "Nta mateka y'akazi aragaragara"
+  },
+  "notifications": {
+    "accepted_message": "Dosiye yawe y'akazi ka \"{title}\" yakiriwe!",
+    "rejected_message": "Dosiye yawe y'akazi ka \"{title}\" ntiyatoranyijwe.",
+    "pending_message": "Ufite dosiye {count} zitegereje gusuzumwa.",
+    "review_now": "Kagua ubu →",
+    "no_pending": "Nta dosiye zitegereje gukagurwa",
+    "no_new": "Nta notification nshya ufite",
+    "manage_apps": "Gucunga dosiye",
+    "view_all": "Reba dosiye zose"
+  },
+  "transaction_detail": {
+    "title": "Ibiranga Igikorwa",
+    "back": "Subira kuri Wallet",
+    "amount": "Umubare w'amafaranga",
+    "txn_id": "ID y'Igikorwa",
+    "copy_id": "Kopia ID",
+    "copied": "Kopia yakozwe!",
+    "type": "Ubwoko bw'Igikorwa",
+    "status": "Uko bihagaze",
+    "date": "Itariki n'Isaha",
+    "provider": "Uburyo bwo Kwishyura",
+    "phone": "Nimero y'Itelefone",
+    "notes": "Ibisobanuro",
+    "held_at": "Yafunzwe ku itariki",
+    "released_at": "Yafunguwe ku itariki",
+    "refunded_at": "Yasubijwe ku itariki",
+    "refund_reason": "Impamvu yo gusubizwa",
+    "platform_fee": "Umusanzu wa Platform",
+    "worker_payout": "Ayishyurwa Net",
+    "not_found": "Igikorwa nticyabonetse",
+    "not_found_desc": "Iki gikorwa gishobora kuba kitagihari cyangwa nta burenganzira ufite bwo kukireba."
   }
 }

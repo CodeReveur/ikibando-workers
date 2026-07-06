@@ -19,7 +19,17 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [wallet,       setWallet]       = useState<WalletDto | null>(null);
   const [pendingCount, setPendingCount] = useState(0);
-  const [seekerNotifs, setSeekerNotifs] = useState<{ id: string; jobId: string; text: string; time: string; note?: string | null }[]>([]);
+
+  const dateLocaleMap: Record<string, string> = {
+    rw: "rw-RW",
+    kinyy: "rw-RW",
+    sw: "sw-TZ",
+    fr: "fr-FR",
+    en: "en-US",
+  };
+  const currentLocale = dateLocaleMap[language] || "en-RW";
+
+  const [seekerNotifs, setSeekerNotifs] = useState<{ id: string; jobId: string; jobTitle: string; status: string; time: string; note?: string | null }[]>([]);
   const ref = useRef<HTMLElement>(null);
   const langDropdownRef = useRef<HTMLDivElement>(null);
   const [dateMounted, setDateMounted] = useState(false);
@@ -43,11 +53,10 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
             .map(a => ({
               id: String(a.id),
               jobId: String(a.jobId ?? ""),
-              text: a.status === "ACCEPTED"
-                ? `Your application for "${a.jobTitle}" was accepted!`
-                : `Your application for "${a.jobTitle}" was not selected.`,
+              jobTitle: a.jobTitle || "Job",
+              status: a.status,
               note: a.responseNote,
-              time: a.respondedAt ? new Date(a.respondedAt).toLocaleDateString() : "Recently",
+              time: a.respondedAt ? new Date(a.respondedAt).toLocaleDateString(currentLocale) : "Recently",
             }));
           setSeekerNotifs(notifs);
         }).catch(() => {});
@@ -57,7 +66,7 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
     fetchAll();
     const interval = setInterval(fetchAll, 5000);
     return () => clearInterval(interval);
-  }, [isOwner]);
+  }, [isOwner, currentLocale]);
 
   useEffect(() => {
     setDateMounted(true);
@@ -260,11 +269,15 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
                     <div key={i} style={{ padding:"14px 16px", borderBottom:"1px solid #141414", display:"flex", gap:10 }}>
                       <div style={{ width:6, height:6, borderRadius:99, marginTop:5, flexShrink:0, background:"#f97316" }} />
                       <div style={{ flex: 1 }}>
-                        <p style={{ margin:"0 0 4px", fontSize:12, color:"#c0c0c0", lineHeight:1.5 }}>{n.text}</p>
-                        {n.note && <p style={{ margin:"0 0 8px", fontSize:11, color:"#888", fontStyle:"italic", background:"#111", padding:"6px 10px", borderRadius:6, border:"1px solid #1a1a1a" }}>Note: {n.note}</p>}
+                        <p style={{ margin:"0 0 4px", fontSize:12, color:"#c0c0c0", lineHeight:1.5 }}>
+                          {n.status === "ACCEPTED"
+                            ? (t("notifications.accepted_message")?.replace("{title}", n.jobTitle) || `Your application for "${n.jobTitle}" was accepted!`)
+                            : (t("notifications.rejected_message")?.replace("{title}", n.jobTitle) || `Your application for "${n.jobTitle}" was not selected.`)}
+                        </p>
+                        {n.note && <p style={{ margin:"0 0 8px", fontSize:11, color:"#888", fontStyle:"italic", background:"#111", padding:"6px 10px", borderRadius:6, border:"1px solid #1a1a1a" }}>{t("seeker_jobs.note_from_employer") || "Note:"} {n.note}</p>}
                         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                           <p style={{ margin:0, fontSize:10, color:"#444" }}>{n.time}</p>
-                          <a href={n.text.includes("accepted") ? `/seeker/jobs/${n.jobId}` : `/seeker/applications`} style={{ fontSize:10, color:"#f97316", textDecoration:"none", fontWeight:600 }}>View details →</a>
+                          <a href={n.status === "ACCEPTED" ? `/seeker/jobs/${n.jobId}` : `/seeker/applications`} style={{ fontSize:10, color:"#f97316", textDecoration:"none", fontWeight:600 }}>{t("seeker_jobs.track_link") || "Track"} →</a>
                         </div>
                       </div>
                     </div>
@@ -297,7 +310,15 @@ function DropPanel({ title, onClose, children }: { title: string; onClose: () =>
       background:"#141414", border:"1px solid #1e1e1e", borderRadius:14,
       boxShadow:"0 20px 60px rgba(0,0,0,0.7)", animation:"fadeIn 0.13s ease", zIndex:200,
     }}>
-      <style>{`@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}`}</style>
+      <style>{`
+        @keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+        @media (max-width: 340px) {
+          .notif-panel {
+            width: 280px !important;
+            right: -40px !important;
+          }
+        }
+      `}</style>
       <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"13px 16px 10px", borderBottom:"1px solid #1a1a1a" }}>
         <p style={{ margin:0, fontWeight:700, fontSize:13, color:"#e0e0e0" }}>{title}</p>
         <button onClick={onClose} style={{ background:"none", border:"none", cursor:"pointer", color:"#444", display:"flex" }}><X size={14} /></button>

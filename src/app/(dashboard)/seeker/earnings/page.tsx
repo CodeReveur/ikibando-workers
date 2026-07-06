@@ -13,6 +13,7 @@ type WdMethod = "MTN_MOMO" | "AIRTEL_MONEY";
 import { StatCard, SectionHead, PageLoader } from "@/components/dashboard/ui";
 import { fmt } from "@/lib/dashboard-data";
 import { useLanguage } from "@/lib/language-context";
+import Link from "next/link";
 import { useToast } from "@/components/ui/toast";
 
 const STATUS_STYLE: Record<string, { label: string; color: string; bg: string }> = {
@@ -110,6 +111,8 @@ export default function SeekerEarnings() {
       <style>{`
         @keyframes spin{to{transform:rotate(360deg)}}
         .seeker-stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:28px; }
+        .txn-row-link { display:flex; align-items:center; justify-content:space-between; text-decoration:none; cursor:pointer; transition:background 0.15s; }
+        .txn-row-link:hover { background: rgba(255,255,255,0.02) !important; }
         @media (max-width: 900px) {
           .seeker-stats-grid { grid-template-columns:1fr; }
         }
@@ -174,8 +177,7 @@ export default function SeekerEarnings() {
             const s = STATUS_STYLE[tX.status] ?? STATUS_STYLE.PENDING;
             const isRelease = tX.status === "RELEASED";
             return (
-              <div key={tX.id} style={{
-                display:"flex", alignItems:"center", justifyContent:"space-between",
+              <Link href={`/seeker/earnings/transactions/${tX.id}`} key={tX.id} className="txn-row-link" style={{
                 padding:"16px 20px",
                 borderBottom: idx < txns.length - 1 ? "1px solid #181818" : "none",
               }}>
@@ -216,7 +218,7 @@ export default function SeekerEarnings() {
                     {isRelease ? "+" : ""}{fmt(tX.amountRwf)}
                   </p>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>

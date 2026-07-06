@@ -1525,5 +1525,37 @@
     "top_categories": "Meilleures catégories",
     "earnings_by_job": "Gains par emploi",
     "no_history": "Aucun historique d'emploi"
+  },
+  "notifications": {
+    "accepted_message": "Votre candidature pour « {title} » a été acceptée !",
+    "rejected_message": "Votre candidature pour « {title} » n'a pas été sélectionnée.",
+    "pending_message": "Vous avez {count} candidatures en attente d'examen.",
+    "review_now": "Examiner maintenant →",
+    "no_pending": "Aucune candidature en attente",
+    "no_new": "Aucune nouvelle notification",
+    "manage_apps": "Gérer les candidatures",
+    "view_all": "Voir toutes les candidatures"
+  },
+  "transaction_detail": {
+    "title": "Détails de la transaction",
+    "back": "Retour au portefeuille",
+    "amount": "Montant",
+    "txn_id": "ID de transaction",
+    "copy_id": "Copier l'ID",
+    "copied": "Copié !",
+    "type": "Type de transaction",
+    "status": "Statut",
+    "date": "Date et heure",
+    "provider": "Moyen de paiement",
+    "phone": "Numéro de téléphone",
+    "notes": "Description / Notes",
+    "held_at": "Mis en dépôt le",
+    "released_at": "Libéré le",
+    "refunded_at": "Remboursé le",
+    "refund_reason": "Raison du remboursement",
+    "platform_fee": "Frais de plateforme",
+    "worker_payout": "Paiement net",
+    "not_found": "Transaction non trouvée",
+    "not_found_desc": "Cette transaction n'existe pas ou vous n'avez pas l'autorisation de la consulter."
   }
 }

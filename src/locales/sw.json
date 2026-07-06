@@ -1525,5 +1525,37 @@
     "top_categories": "Kategoria Maarufu",
     "earnings_by_job": "Mapato kwa Kazi",
     "no_history": "Bado hakuna historia ya kazi"
+  },
+  "notifications": {
+    "accepted_message": "Maombi yako ya \"{title}\" yamekubaliwa!",
+    "rejected_message": "Maombi yako ya \"{title}\" hayajachaguliwa.",
+    "pending_message": "Una maombi {count} yanayosubiri kukaguliwa.",
+    "review_now": "Kagua sasa →",
+    "no_pending": "Hakuna maombi yanayosubiri",
+    "no_new": "Hakuna arifa mpya",
+    "manage_apps": "Simamia maombi",
+    "view_all": "Angalia maombi yote"
+  },
+  "transaction_detail": {
+    "title": "Maelezo ya Miamala",
+    "back": "Rudi kwenye Wallet",
+    "amount": "Kiasi",
+    "txn_id": "ID ya Muamala",
+    "copy_id": "Nakili ID",
+    "copied": "Imenakiliwa!",
+    "type": "Aina ya Muamala",
+    "status": "Hali ya Muamala",
+    "date": "Tarehe na Muda",
+    "provider": "Mtoa Huduma",
+    "phone": "Nambari ya Simu",
+    "notes": "Maelezo / Maelezo mafupi",
+    "held_at": "Imewekwa Escrow Mnamo",
+    "released_at": "Imetolewa Mnamo",
+    "refunded_at": "Imerejeshwa Mnamo",
+    "refund_reason": "Sababu ya Kurejesha",
+    "platform_fee": "Ada ya Jukwaa",
+    "worker_payout": "Malipo Halisi",
+    "not_found": "Muamala haukupatikana",
+    "not_found_desc": "Muamala huu haupo au huna ruhusa ya kuuona."
   }
 }
