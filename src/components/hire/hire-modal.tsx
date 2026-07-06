@@ -8,11 +8,12 @@ import {
   AlarmClock, Search, Navigation, Loader2, Star,
 } from "lucide-react";
 import { JOB_CATEGORIES, RWANDA_PROVINCES } from "@/lib/constants";
-import { getWorkers, postJob, applyForJob, updateApplicationStatus, getWallet, type WorkerProfileDto } from "@/lib/api";
+import { getWorkers, postJob, applyForJob, updateApplicationStatus, getWallet, registerWithEmail, loginWithEmail, topupWallet, type WorkerProfileDto } from "@/lib/api";
 import { ratingInfo } from "@/lib/rating";
 import { useToast } from "@/components/ui/toast";
 import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
 import { useLanguage } from "@/lib/language-context";
+import { useSession } from "@/components/dashboard/session-ctx";
 
 // Leaflet must render client-side only
 const MapPicker = dynamic(
@@ -122,8 +123,32 @@ export function HireModal({ onClose }: { onClose: () => void }) {
   const [done, setDone]    = useState(false);
   const [submitting, setSub]   = useState(false);
   const [gpsStatus, setGps] = useState<"idle"|"loading"|"ok"|"error">("idle");
+  const [token, setToken] = useState<string | null>(null);
+
+  const session = useSession();
+  const hasSession = !!(session && session.role === "EMPLOYER");
+
+  // Anonymous user fields
+  const [anonName, setAnonName] = useState("");
+  const [anonEmail, setAnonEmail] = useState("");
+  const [anonPhone, setAnonPhone] = useState("");
+
+  // Payment method fields
+  const [payMethod, setPayMethod] = useState<"WALLET" | "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD">("MTN_MOMO");
+  const [paymentPhone, setPaymentPhone] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvv, setCardCvv] = useState("");
 
   const DRAFT_KEY = "MpahMapu_draft_hire";
+
+  useEffect(() => {
+    if (hasSession) {
+      setPayMethod("WALLET");
+    } else {
+      setPayMethod("MTN_MOMO");
+    }
+  }, [hasSession]);
 
   // Restore draft on open
   useEffect(() => {
@@ -133,8 +158,11 @@ export function HireModal({ onClose }: { onClose: () => void }) {
         const { form: saved } = JSON.parse(raw);
         if (saved) setForm(f => ({ ...f, ...saved }));
       }
-      const token = localStorage.getItem("access_token");
-      if (token) getWallet(token).then(w => setWalletBal(w.balance)).catch(() => {});
+      const tokenVal = localStorage.getItem("access_token");
+      if (tokenVal) {
+        setToken(tokenVal);
+        getWallet(tokenVal).then(w => setWalletBal(w.balance)).catch(() => {});
+      }
     } catch {}
   }, []);
 
@@ -188,6 +216,82 @@ export function HireModal({ onClose }: { onClose: () => void }) {
     );
   }
 
+  async function handleConfirmHire() {
+    setSub(true);
+    let activeToken = localStorage.getItem("access_token") || token;
+    try {
+      if (!hasSession) {
+        // Register & login anonymous user
+        try {
+          await registerWithEmail({
+            name: anonName,
+            email: anonEmail,
+            phone: anonPhone,
+            password: "EmployerPassword2026!",
+            role: "EMPLOYER"
+          });
+        } catch (regErr: any) {
+          if (regErr?.response?.data?.message?.toLowerCase().includes("email already")) {
+            throw new Error("This email is already registered. Please sign in to your account first.");
+          }
+          throw regErr;
+        }
+
+        const loginRes = await loginWithEmail({
+          email: anonEmail,
+          password: "EmployerPassword2026!"
+        });
+
+        activeToken = loginRes.accessToken;
+        setToken(activeToken);
+        localStorage.setItem("user", JSON.stringify(loginRes.user));
+        localStorage.setItem("access_token", loginRes.accessToken);
+        localStorage.setItem("refresh_token", loginRes.refreshToken);
+      }
+
+      if (!activeToken) {
+        throw new Error("Failed to authenticate session");
+      }
+
+      // Handle direct topup if not WALLET
+      if (payMethod !== "WALLET") {
+        await topupWallet({
+          amount: total,
+          phoneNumber: paymentPhone || anonPhone || session?.phone || "0780000000",
+          paymentMethod: payMethod,
+          notes: "direct payment"
+        }, activeToken);
+      }
+
+      const startTime = form.date && form.time
+        ? `${form.date}T${form.time}:00Z`
+        : new Date().toISOString();
+
+      const job = await postJob({
+        category: form.category, district: form.district,
+        province: form.province || undefined,
+        latitude: form.latitude ?? undefined, longitude: form.longitude ?? undefined,
+        ratePerHour: parseInt(form.budget) || 0,
+        headcount: selected.length || 1,
+        urgency: "IMMEDIATE",
+        startTime, durationHours: parseInt(form.durationHours) || 1,
+        rateType: form.rateType === "hr" ? "PER_HOUR" : form.rateType === "day" ? "PER_DAY" : form.rateType === "week" ? "PER_WEEK" : form.rateType === "month" ? "PER_MONTH" : "PER_YEAR",
+      }, activeToken);
+
+      await Promise.all(selected.map(async w => {
+        const app = await applyForJob(job.id as unknown as string, { bestFit: "Hire Now selection", appliedVia: "HIRE_NOW", workerId: w.id as unknown as string }, activeToken!);
+        await updateApplicationStatus(app.id as unknown as string, { status: "ACCEPTED" }, activeToken!);
+      }));
+
+      try { localStorage.removeItem(DRAFT_KEY); } catch {}
+      setDone(true);
+    } catch (e: any) {
+      toastError(e?.response?.data?.message ?? e?.message ?? "Payment failed. Please try again.", { title: t("hire_modal.summary.post_fail_title") });
+    } finally {
+      setSub(false);
+    }
+  }
+
   const headcountNum = Math.max(1, parseInt(form.headcount, 10) || 1);
   const isMulti      = headcountNum > 1;
 
@@ -221,14 +325,30 @@ export function HireModal({ onClose }: { onClose: () => void }) {
     ? new Date(form.date + "T00:00").toLocaleDateString("en-GB", { weekday:"short", day:"numeric", month:"short" })
     : "-";
 
-  const canNext = [
-    !!(form.category && form.budget && form.date && form.time && form.district),
-    selectionValid,
-    walletBal === null || walletBal >= total,   // hard block if balance is known and insufficient
-  ];
+  const isReviewStep = hasSession ? (step === 2) : (step === 3);
+  const isPaymentDetailsValid = payMethod === "WALLET"
+    ? (walletBal !== null && walletBal >= total)
+    : (payMethod === "MTN_MOMO" || payMethod === "AIRTEL_MONEY"
+       ? !!(paymentPhone || anonPhone || session?.phone)
+       : !!(cardNumber && cardExpiry && cardCvv));
+
+  const canNext = hasSession
+    ? [
+        !!(form.category && form.budget && form.date && form.time && form.district),
+        selectionValid,
+        isPaymentDetailsValid
+      ]
+    : [
+        !!(form.category && form.budget && form.date && form.time && form.district),
+        selectionValid,
+        !!(anonName && anonEmail && anonPhone),
+        isPaymentDetailsValid
+      ];
 
   const { t } = useLanguage();
-  const STEPS = [t("hire_modal.steps.details"), t("hire_modal.steps.matches"), t("hire_modal.steps.summary")];
+  const STEPS = hasSession
+    ? [t("hire_modal.steps.details") || "Job details", t("hire_modal.steps.matches") || "Best Matches", t("hire_modal.steps.summary") || "Summary & Pay"]
+    : [t("hire_modal.steps.details") || "Job details", t("hire_modal.steps.matches") || "Best Matches", "Account details", t("hire_modal.steps.summary") || "Summary & Pay"];
 
   const selectedNames = selected.map(w => w.name).join(", ");
 
@@ -551,8 +671,26 @@ export function HireModal({ onClose }: { onClose: () => void }) {
               </div>
             )}
 
-            {/* ── STEP 2: SUMMARY & PAY ── */}
-            {step === 2 && (
+            {/* ── STEP 2: ACCOUNT DETAILS (Only if not signed in) ── */}
+            {step === 2 && !hasSession && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                <p style={{ margin: "0 0 4px", fontSize: 13, color: "#aaa", lineHeight: 1.5 }}>
+                  Please enter your contact details. This will automatically create an employer account to manage your hires.
+                </p>
+                <FField label="Full Name *">
+                  <input type="text" placeholder="Jean Pierre Mugisha" value={anonName} onChange={e => setAnonName(e.target.value)} style={inp} />
+                </FField>
+                <FField label="Email Address *">
+                  <input type="email" placeholder="pierre@example.com" value={anonEmail} onChange={e => setAnonEmail(e.target.value)} style={inp} />
+                </FField>
+                <FField label="Phone Number *">
+                  <input type="text" placeholder="0781234567" value={anonPhone} onChange={e => setAnonPhone(e.target.value)} style={inp} />
+                </FField>
+              </div>
+            )}
+
+            {/* ── STEP 2 or 3: SUMMARY & PAY ── */}
+            {isReviewStep && (
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 <SCard title={t("hire_modal.summary.title")}>
                   {([
@@ -599,48 +737,97 @@ export function HireModal({ onClose }: { onClose: () => void }) {
 
                 {/* ESCROW / WALLET BLOCK */}
                 <div style={{ marginTop: 24 }}>
-                  <p style={{ margin: "0 0 12px", fontSize: 13, fontWeight: 700, color: "#fff" }}>{t("hire_modal.summary.payment_title")}</p>
+                  <p style={{ margin: "0 0 12px", fontSize: 13, fontWeight: 700, color: "#fff" }}>{t("hire_modal.summary.payment_title") || "Payment Details"}</p>
 
                   {/* escrow breakdown */}
                   {total > 0 && (
                     <div style={{ background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10, padding: "12px 14px", marginBottom: 12 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                         <span style={{ fontSize: 12, color: "#666" }}>
-                          {t("hire_modal.summary.payout_label", { workers: headcountNum, duration: durationNum, rate: fmt(budget) })}
+                          Gross worker payout ({headcountNum} × {durationNum}h × {fmt(budget)})
                         </span>
                         <span style={{ fontSize: 12, color: "#d0d0d0", fontWeight: 600 }}>{fmt(jobAmount)}</span>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, paddingBottom: 8, borderBottom: "1px solid #1e1e1e" }}>
-                        <span style={{ fontSize: 12, color: "#666" }}>{t("hire_modal.summary.fee_label")}</span>
-                        <span style={{ fontSize: 12, color: "#d0d0d0", fontWeight: 600 }}>{fmt(fee)}</span>
+                        <span style={{ fontSize: 12, color: "#666" }}>Platform handling charge (5% fee)</span>
+                        <span style={{ fontSize: 12, color: "#22c55e", fontWeight: 600 }}>+{fmt(fee)}</span>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <span style={{ fontSize: 13, color: "#aaa", fontWeight: 700 }}>{t("hire_modal.summary.escrow_required")}</span>
+                        <span style={{ fontSize: 13, color: "#aaa", fontWeight: 700 }}>Total amount to pay</span>
                         <span style={{ fontSize: 14, color: "#f97316", fontWeight: 800 }}>{fmt(total)}</span>
                       </div>
                     </div>
                   )}
 
-                  {/* wallet balance */}
-                  <div style={{
-                    background: walletBal !== null && walletBal < total ? "rgba(239,68,68,0.06)" : "rgba(34,197,94,0.04)",
-                    border: `1px solid ${walletBal !== null && walletBal < total ? "rgba(239,68,68,0.2)" : "rgba(34,197,94,0.15)"}`,
-                    borderRadius: 10, padding: "12px 14px",
-                  }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: walletBal !== null && walletBal < total ? 8 : 0 }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={walletBal !== null && walletBal < total ? "#ef4444" : "#22c55e"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                      <span style={{ fontSize: 12, color: "#aaa" }}>{t("hire_modal.summary.wallet_balance")}</span>
-                      <span style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginLeft: "auto" }}>
-                        {walletBal !== null ? fmt(walletBal) : "—"}
-                      </span>
+                  {/* Payment methods selector */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
+                    <p style={{ margin: "0 0 4px", fontSize: 11, fontWeight: 700, color: "#666", textTransform: "uppercase" }}>Select Payment Method</p>
+                    
+                    {hasSession && (
+                      <label style={{ display: "flex", alignItems: "center", gap: 8, background: "#141414", border: payMethod === "WALLET" ? "1px solid #f97316" : "1px solid #2a2a2a", borderRadius: 10, padding: "10px 14px", cursor: "pointer" }}>
+                        <input type="radio" name="payMethod" value="WALLET" checked={payMethod === "WALLET"} onChange={() => setPayMethod("WALLET")} style={{ accentColor: "#f97316" }} />
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                          <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>Pay from Wallet Balance</span>
+                          <span style={{ fontSize: 11, color: walletBal !== null && walletBal < total ? "#ef4444" : "#22c55e" }}>
+                            Available balance: {walletBal !== null ? fmt(walletBal) : "—"}
+                          </span>
+                        </div>
+                      </label>
+                    )}
+
+                    <label style={{ display: "flex", alignItems: "center", gap: 8, background: "#141414", border: payMethod === "MTN_MOMO" ? "1px solid #f97316" : "1px solid #2a2a2a", borderRadius: 10, padding: "10px 14px", cursor: "pointer" }}>
+                      <input type="radio" name="payMethod" value="MTN_MOMO" checked={payMethod === "MTN_MOMO"} onChange={() => setPayMethod("MTN_MOMO")} style={{ accentColor: "#f97316" }} />
+                      <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>MTN Mobile Money</span>
+                    </label>
+
+                    <label style={{ display: "flex", alignItems: "center", gap: 8, background: "#141414", border: payMethod === "AIRTEL_MONEY" ? "1px solid #f97316" : "1px solid #2a2a2a", borderRadius: 10, padding: "10px 14px", cursor: "pointer" }}>
+                      <input type="radio" name="payMethod" value="AIRTEL_MONEY" checked={payMethod === "AIRTEL_MONEY"} onChange={() => setPayMethod("AIRTEL_MONEY")} style={{ accentColor: "#f97316" }} />
+                      <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>Airtel Money</span>
+                    </label>
+
+                    <label style={{ display: "flex", alignItems: "center", gap: 8, background: "#141414", border: (payMethod === "VISA" || payMethod === "MASTERCARD") ? "1px solid #f97316" : "1px solid #2a2a2a", borderRadius: 10, padding: "10px 14px", cursor: "pointer" }}>
+                      <input type="radio" name="payMethod" value="VISA" checked={payMethod === "VISA" || payMethod === "MASTERCARD"} onChange={() => setPayMethod("VISA")} style={{ accentColor: "#f97316" }} />
+                      <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>Visa / Mastercard</span>
+                    </label>
+                  </div>
+
+                  {/* Payment method fields */}
+                  {(payMethod === "MTN_MOMO" || payMethod === "AIRTEL_MONEY") && (
+                    <FField label="Mobile Money Phone Number *">
+                      <input type="text" placeholder="e.g. 0780000000" value={paymentPhone} onChange={e => setPaymentPhone(e.target.value)} style={inp} />
+                    </FField>
+                  )}
+
+                  {(payMethod === "VISA" || payMethod === "MASTERCARD") && (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10, background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10, padding: 12 }}>
+                      <div style={{ display: "flex", gap: 8, marginBottom: 4 }}>
+                        <button type="button" onClick={() => setPayMethod("VISA")} style={{ flex: 1, padding: "6px", fontSize: 11, fontWeight: 700, borderRadius: 6, border: payMethod === "VISA" ? "1px solid #f97316" : "1px solid #222", background: payMethod === "VISA" ? "rgba(249,115,22,0.06)" : "#0a0a0a", color: "#fff" }}>Visa</button>
+                        <button type="button" onClick={() => setPayMethod("MASTERCARD")} style={{ flex: 1, padding: "6px", fontSize: 11, fontWeight: 700, borderRadius: 6, border: payMethod === "MASTERCARD" ? "1px solid #f97316" : "1px solid #222", background: payMethod === "MASTERCARD" ? "rgba(249,115,22,0.06)" : "#0a0a0a", color: "#fff" }}>Mastercard</button>
+                      </div>
+                      <FField label="Card Number">
+                        <input type="text" placeholder="4111 2222 3333 4444" value={cardNumber} onChange={e => setCardNumber(e.target.value)} style={inp} />
+                      </FField>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                        <FField label="Expiry Date">
+                          <input type="text" placeholder="MM/YY" value={cardExpiry} onChange={e => setCardExpiry(e.target.value)} style={inp} />
+                        </FField>
+                        <FField label="CVV">
+                          <input type="password" placeholder="123" value={cardCvv} onChange={e => setCardCvv(e.target.value)} style={inp} />
+                        </FField>
+                      </div>
                     </div>
-                    {walletBal !== null && walletBal < total && (
+                  )}
+
+                  {payMethod === "WALLET" && walletBal !== null && walletBal < total && (
+                    <div style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 10, padding: "10px 14px", marginTop: 10 }}>
                       <p style={{ margin: 0, fontSize: 12, color: "#ef4444", lineHeight: 1.5 }}>
                         {t("hire_modal.summary.topup_warning", { amount: fmt(total - walletBal) })}{" "}
-                        <a href="/owner/payments" style={{ color: "#f97316", fontWeight: 700, textDecoration: "underline" }}>{t("hire_modal.summary.topup_link")}</a>
+                        <span style={{ color: "#f97316", fontWeight: 700, cursor: "pointer", textDecoration: "underline" }} onClick={() => setPayMethod("MTN_MOMO")}>
+                          Use direct deposit payment instead
+                        </span>
                       </p>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
 
                 <p style={{ margin: "24px 0 0", fontSize: 11, color: "#444", lineHeight: 1.7, textAlign: "center" }}>
@@ -656,7 +843,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
             {step > 0 && (
               <button onClick={() => setStep(s => s - 1)} style={btnBack}>← {t("common.buttons.back")}</button>
             )}
-            {step < 2 ? (
+            {!isReviewStep ? (
               <button
                 onClick={() => { if (canNext[step]) setStep(s => s + 1); }}
                 disabled={!canNext[step]}
@@ -668,45 +855,15 @@ export function HireModal({ onClose }: { onClose: () => void }) {
               </button>
             ) : (
               <button
-                onClick={async () => {
-                  if (!canNext[2] || submitting) return;
-                  const token = localStorage.getItem("access_token");
-                  if (!token) { toastError(t("hire_modal.summary.signed_out_error"), { title: t("hire_modal.summary.signed_out_error_title") }); return; }
-                  setSub(true);
-                  try {
-                    const startTime = form.date && form.time
-                      ? `${form.date}T${form.time}:00Z`
-                      : new Date().toISOString();
-                    const job = await postJob({
-                      category: form.category, district: form.district,
-                      province: form.province || undefined,
-                      latitude: form.latitude ?? undefined, longitude: form.longitude ?? undefined,
-                      ratePerHour: parseInt(form.budget) || 0,
-                      headcount: selected.length || 1,
-                      urgency: "IMMEDIATE",
-                      startTime, durationHours: parseInt(form.durationHours) || 1,
-                      rateType: form.rateType === "hr" ? "PER_HOUR" : form.rateType === "day" ? "PER_DAY" : form.rateType === "week" ? "PER_WEEK" : form.rateType === "month" ? "PER_MONTH" : "PER_YEAR",
-                    }, token);
-                    await Promise.all(selected.map(async w => {
-                      const app = await applyForJob(job.id as unknown as string, { bestFit: "Hire Now selection", appliedVia: "HIRE_NOW", workerId: w.id as unknown as string }, token);
-                      await updateApplicationStatus(app.id as unknown as string, { status: "ACCEPTED" }, token);
-                    }));
-                    try { localStorage.removeItem(DRAFT_KEY); } catch {}
-                    setDone(true);
-                  } catch (e: any) {
-                    toastError(e?.response?.data?.message ?? "Payment failed. Please try again.", { title: t("hire_modal.summary.post_fail_title") });
-                  } finally { setSub(false); }
-                }}
-                disabled={!canNext[2] || submitting}
-                style={{ ...btnPrimary, flex: 1, opacity: (canNext[2] && !submitting) ? 1 : 0.45, cursor: (canNext[2] && !submitting) ? "pointer" : "not-allowed" }}
+                onClick={handleConfirmHire}
+                disabled={submitting || !isPaymentDetailsValid}
+                style={{ ...btnPrimary, flex: 1, opacity: (isPaymentDetailsValid && !submitting) ? 1 : 0.45, cursor: (isPaymentDetailsValid && !submitting) ? "pointer" : "not-allowed" }}
               >
                 {submitting
-                  ? t("hire_modal.summary.processing_btn")
-                  : walletBal !== null && walletBal < total
-                  ? t("hire_modal.summary.insufficient_btn")
-                  : canNext[2]
-                  ? t("hire_modal.summary.confirm_btn")
-                  : t("hire_modal.summary.incomplete_btn")}
+                  ? t("hire_modal.summary.processing_btn") || "Processing…"
+                  : !isPaymentDetailsValid && payMethod === "WALLET"
+                    ? t("hire_modal.summary.insufficient_btn") || "Insufficient balance"
+                    : t("hire_modal.summary.confirm_btn") || "Pay & hire now"}
               </button>
             )}
           </div>

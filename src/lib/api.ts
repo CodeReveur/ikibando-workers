@@ -488,7 +488,7 @@ export interface TransferDto {
 }
 
 export async function topupWallet(
-  payload: { amount: number; phoneNumber: string; paymentMethod: "MTN_MOMO" | "AIRTEL_MONEY" },
+  payload: { amount: number; phoneNumber: string; paymentMethod: "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD"; notes?: string },
   token: string,
 ): Promise<TransferDto> {
   const { data } = await http.post("/api/wallet/topup", payload, { headers: authHeader(token) });
