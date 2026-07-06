@@ -89,8 +89,9 @@ export default function SignUpPage() {
     setFieldErrors((f) => ({ ...f, [field]: err }));
   };
 
-  /* ── Facebook SDK bootstrap ──────────────────────────────────────────── */
+  /* ── Facebook SDK bootstrap (Disabled for v1) ────────────────────────── */
   useEffect(() => {
+    /*
     const appId = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID;
     if (!appId) return;
 
@@ -107,6 +108,7 @@ export default function SignUpPage() {
       s.defer = true;
       document.body.appendChild(s);
     }
+    */
 
     // Auto-detect country code for phone number
     fetch("https://ipapi.co/country_calling_code/")
@@ -143,7 +145,8 @@ export default function SignUpPage() {
     onError: () => toastError(t("signup.toasts.google_cancelled_desc"), { title: t("signup.toasts.signup_failed_title") }),
   });
 
-  /* ── Facebook handler ───────────────────────────────────────────────── */
+  /* ── Facebook handler (Disabled for v1) ─────────────────────────────── */
+  /*
   const handleFacebook = () => {
     if (window.location.protocol !== "https:") {
       toastError(t("signup.toasts.fb_https_desc"), { title: t("signup.toasts.signup_failed_title") });
@@ -177,6 +180,7 @@ export default function SignUpPage() {
       { scope: "public_profile,email" }
     );
   };
+  */
 
   /* ── Email / password handler ───────────────────────────────────────── */
   const handleSubmit = async () => {
@@ -555,12 +559,14 @@ export default function SignUpPage() {
                 disabled={loading !== null}
                 onClick={() => handleGoogle()}
               />
+              {/* Facebook auth disabled in v1
               <SocialBtn
                 icon={<FacebookIcon />}
                 label={loading === "facebook" ? t("signup.buttons.signing_in") : t("signup.buttons.continue_facebook")}
                 disabled={loading !== null}
                 onClick={handleFacebook}
               />
+              */}
             </div>
 
             <Divider />

@@ -52,7 +52,8 @@ export default function SignInPage() {
     }
   };
 
-  /* ── Facebook SDK bootstrap ──────────────────────────────────────────── */
+  /* ── Facebook SDK bootstrap (Disabled for v1) ────────────────────────── */
+  /*
   useEffect(() => {
     const appId = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID;
     if (!appId) return;
@@ -71,6 +72,7 @@ export default function SignInPage() {
       document.body.appendChild(s);
     }
   }, []);
+  */
 
   /* ── Google handler ─────────────────────────────────────────────────── */
   const handleGoogle = useGoogleLogin({
@@ -87,7 +89,8 @@ export default function SignInPage() {
     onError: () => toastError(t("signin.toasts.google_cancelled_desc"), { title: t("signin.toasts.login_failed_title") }),
   });
 
-  /* ── Facebook handler ───────────────────────────────────────────────── */
+  /* ── Facebook handler (Disabled for v1) ─────────────────────────────── */
+  /*
   const handleFacebook = () => {
     if (window.location.protocol !== "https:") {
       toastError(t("signin.toasts.fb_https_desc"), { title: t("signin.toasts.login_failed_title") });
@@ -113,6 +116,7 @@ export default function SignInPage() {
       { scope: "public_profile,email" }
     );
   };
+  */
 
   /* ── Email / password handler ───────────────────────────────────────── */
   const handleSubmit = async () => {
@@ -480,12 +484,14 @@ export default function SignInPage() {
                 disabled={loading !== null}
                 onClick={() => handleGoogle()}
               />
+              {/* Facebook auth disabled in v1
               <SocialBtn
                 icon={<FacebookIcon />}
                 label={loading === "facebook" ? t("signin.buttons.signing_in") : t("signin.buttons.continue_facebook")}
                 disabled={loading !== null}
                 onClick={handleFacebook}
               />
+              */}
             </div>
 
             <Divider />
