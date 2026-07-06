@@ -1172,6 +1172,8 @@
     "forgot_password": "Mot de passe oublié | MpahMapu",
     "reset_password": "Réinitialiser le mot de passe | MpahMapu",
     "verify_badge": "Vérifier le badge | MpahMapu",
+    "dashboard": "Tableau de bord | MpahMapu",
+    "settings": "Paramètres | MpahMapu",
     "not_found": "Page non trouvée | MpahMapu"
   },
   "settings_page": {

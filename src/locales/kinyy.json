@@ -1172,6 +1172,8 @@
     "forgot_password": "Wibagiwe ijambo ry'ibanga | MpahMapu",
     "reset_password": "Hindura ijambo ry'ibanga | MpahMapu",
     "verify_badge": "Genzura Ibirango | MpahMapu",
+    "dashboard": "Dashboard | MpahMapu",
+    "settings": "Igenamiterere | MpahMapu",
     "not_found": "Urupapuro ntirubonetse | MpahMapu"
   },
   "settings_page": {
@@ -1258,7 +1260,7 @@
     }
   },
   "dashboard_home": {
-    "morning": "Mwiriwe neza",
+    "morning": "Mwaramutse neza",
     "afternoon": "Mwiriwe neza",
     "evening": "Umugoroba mwiza",
     "greeting_sub": "Dore uko iby'akazi kawe bihagaze uyu munsi.",
@@ -1268,9 +1270,9 @@
     "admin_approval_desc": "Ubuyobozi burahita bwemeza konti yawe vuba. Urahita ugaragarira abakoresha umaze kwemezwa.",
     "profile_completion_desc": "Kura profile yawe kuri 80% ngo ube wemerewe kwemezwa n'ubuyobozi.",
     "profile": "Umwirondoro",
-    "wallet_balance": "Amafaranga afite",
+    "wallet_balance": "Amafaranga ufite",
     "available_balance": "Ayaboneka ubu",
-    "active_jobs": "Akazi kacyo",
+    "active_jobs": "Akazi kose",
     "currently_hired": "Abo ukorera ubu",
     "direct_offers": "Ubusabe Butaziguye",
     "awaiting_reply": "Utegerezwa gusubiza",

@@ -1173,6 +1173,8 @@
     "forgot_password": "Forgot Password | MpahMapu",
     "reset_password": "Reset Password | MpahMapu",
     "verify_badge": "Verify Badge | MpahMapu",
+    "dashboard": "Dashboard | MpahMapu",
+    "settings": "Settings | MpahMapu",
     "not_found": "Page Not Found | MpahMapu"
   },
   "settings_page": {

@@ -112,6 +112,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     else if (path === "/forgot-password") titleKey = "forgot_password";
     else if (path === "/reset-password") titleKey = "reset_password";
     else if (path.startsWith("/verify/")) titleKey = "verify_badge";
+    else if (path.endsWith("/settings")) titleKey = "settings";
+    else if (path.startsWith("/seeker") || path.startsWith("/owner")) titleKey = "dashboard";
     else titleKey = "not_found";
 
     const translatedTitle = t("titles." + titleKey);
