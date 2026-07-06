@@ -14,11 +14,7 @@ import {
 import { ratingLabel } from "@/lib/rating";
 import { fmt } from "@/lib/dashboard-data";
 import { RichTextDisplay } from "@/components/ui/rich-text-editor";
-
-const d  = (iso: string | null | undefined) =>
-  iso ? new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : null;
-const dt = (iso: string | null | undefined) =>
-  iso ? new Date(iso).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : null;
+import { useLanguage } from "@/lib/language-context";
 
 type Stage = { done: boolean; active: boolean; label: string; date?: string | null; content: React.ReactNode };
 
@@ -82,6 +78,21 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
 export default function SeekerJobDetail() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
+  const { t, language } = useLanguage();
+
+  const dateLocaleMap: Record<string, string> = {
+    rw: "rw-RW",
+    kinyy: "rw-RW",
+    sw: "sw-TZ",
+    fr: "fr-FR",
+    en: "en-US",
+  };
+  const currentLocale = dateLocaleMap[language] || "en-RW";
+
+  const d  = (iso: string | null | undefined) =>
+    iso ? new Date(iso).toLocaleDateString(currentLocale, { day: "numeric", month: "short", year: "numeric" }) : null;
+  const dt = (iso: string | null | undefined) =>
+    iso ? new Date(iso).toLocaleString(currentLocale, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : null;
 
   const [job,    setJob]    = useState<JobDto | null>(null);
   const [app,    setApp]    = useState<ApplicationDto | null>(null);
@@ -180,17 +191,17 @@ export default function SeekerJobDetail() {
   const stages: Stage[] = [
     {
       done: true, active: false,
-      label: isHireNow ? "You received a direct offer" : "You applied",
+      label: isHireNow ? t("seeker_job_detail.direct_offer_recv") : t("seeker_job_detail.you_applied"),
       date: d(app?.createdAt),
       content: app ? (
         <div>
           <p style={{ margin: 0, fontSize: 11, color: "#555" }}>
-            {isHireNow ? "The employer sent you a direct hire offer" : "You submitted an application"}
-            {app.createdAt ? ` on ${d(app.createdAt)}` : ""}
+            {isHireNow ? t("seeker_job_detail.direct_offer_desc") : t("seeker_job_detail.applied_desc")}
+            {app.createdAt ? ` ${t("common.general.on") || "on"} ${d(app.createdAt)}` : ""}
           </p>
           {app.bestFit && (
             <p style={{ margin: "6px 0 0", fontSize: 11, color: "#888", fontStyle: "italic" }}>
-              Your note: "{app.bestFit}"
+              {t("seeker_job_detail.your_note")} "{app.bestFit}"
             </p>
           )}
         </div>
@@ -198,17 +209,23 @@ export default function SeekerJobDetail() {
     },
     {
       done: isViewed || !!appStatus && appStatus !== "PENDING", active: isViewed && isPending,
-      label: isViewed ? "Employer reviewed your application" : "Awaiting employer review",
+      label: isViewed ? t("seeker_job_detail.employer_reviewed") : t("seeker_job_detail.awaiting_review"),
       date: isViewed && app?.respondedAt ? d(app.respondedAt) : undefined,
       content: !isViewed && isPending ? (
-        <p style={{ margin: 0, fontSize: 11, color: "#555" }}>Your application is in the queue. You'll be notified when the employer responds.</p>
+        <p style={{ margin: 0, fontSize: 11, color: "#555" }}>{t("seeker_job_detail.in_queue_desc")}</p>
       ) : null,
     },
     {
       done: !isPending, active: isPending && isViewed,
       label: !isPending
-        ? `Application ${appStatus}`
-        : "Awaiting decision",
+        ? `${t("seeker_jobs.tab_all") || "Application"} ${
+            appStatus === "ACCEPTED"
+              ? (t("settings_page.account.verified") || "Accepted")
+              : appStatus === "REJECTED"
+              ? (t("common.general.rejected") || "Rejected")
+              : (t("seeker_job_detail.app_withdrawn") || "Withdrawn")
+          }`
+        : t("seeker_job_detail.awaiting_decision"),
       date: app?.respondedAt ? d(app.respondedAt) : undefined,
       content: !isPending ? (
         <div>
@@ -217,22 +234,22 @@ export default function SeekerJobDetail() {
               ? <CheckCircle size={14} color="#22c55e" />
               : <X size={14} color="#ef4444" />}
             <span style={{ fontSize: 12, fontWeight: 700, color: isAccepted ? "#22c55e" : "#ef4444" }}>
-              {isAccepted ? "You got the job!" : appStatus === "REJECTED" ? "Not selected this time" : "Application withdrawn"}
+              {isAccepted ? t("seeker_job_detail.got_job") : appStatus === "REJECTED" ? t("seeker_job_detail.not_selected") : t("seeker_job_detail.app_withdrawn")}
             </span>
           </div>
           {app?.responseNote && (
             <p style={{ margin: "4px 0 0", fontSize: 11, color: "#888", fontStyle: "italic" }}>
-              Employer note: "{app.responseNote}"
+              {t("seeker_job_detail.employer_note")} "{app.responseNote}"
             </p>
           )}
         </div>
       ) : isPending && isHireNow ? (
-        <p style={{ margin: 0, fontSize: 11, color: "#555" }}>Accept or decline this direct offer using the buttons above.</p>
+        <p style={{ margin: 0, fontSize: 11, color: "#555" }}>{t("seeker_job_detail.decline_btn_desc")}</p>
       ) : null,
     },
     {
       done: isAccepted && (startPast || isCompleted), active: isAccepted && !startPast && !isCompleted,
-      label: "Job Scheduled",
+      label: t("seeker_job_detail.job_scheduled"),
       date: job.startTime ? dt(job.startTime) : undefined,
       content: isAccepted ? (
         <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
@@ -259,12 +276,12 @@ export default function SeekerJobDetail() {
     },
     {
       done: isCompleted, active: isAccepted && startPast && !isCompleted,
-      label: "Job Completed",
+      label: t("seeker_job_detail.job_completed"),
       date: d(job.completedAt),
       content: isCompleted ? (
         <div>
           <p style={{ margin: 0, fontSize: 11, color: "#888" }}>
-            Job marked complete by employer{job.completedAt ? ` on ${d(job.completedAt)}` : ""}.
+            {t("seeker_job_detail.marked_complete_by_employer")}{job.completedAt ? ` ${t("common.general.on") || "on"} ${d(job.completedAt)}` : ""}.
           </p>
           {job.completionNotes && (
             <p style={{ margin: "4px 0 0", fontSize: 11, color: "#666", fontStyle: "italic" }}>"{job.completionNotes}"</p>
@@ -274,26 +291,26 @@ export default function SeekerJobDetail() {
     },
     {
       done: isReleased, active: isCompleted && !isReleased,
-      label: isReleased ? "Payment Received" : "Payment Pending Release",
+      label: isReleased ? t("seeker_job_detail.payment_received") : t("seeker_job_detail.payment_pending"),
       date: txn?.releasedAt ? d(txn.releasedAt) : undefined,
       content: myPayout != null ? (
         <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
           <div>
-            <p style={{ margin: "0 0 2px", fontSize: 10, color: "#444" }}>Your earnings</p>
+            <p style={{ margin: "0 0 2px", fontSize: 10, color: "#444" }}>{t("seeker_job_detail.your_earnings")}</p>
             <p style={{ margin: 0, fontSize: 20, fontWeight: 900, color: isReleased ? "#22c55e" : "#f97316" }}>
               {isReleased ? "+" : ""}RWF {myPayout.toLocaleString()}
             </p>
           </div>
           <div>
-            <p style={{ margin: "0 0 2px", fontSize: 10, color: "#444" }}>Status</p>
+            <p style={{ margin: "0 0 2px", fontSize: 10, color: "#444" }}>{t("seeker_job_detail.status")}</p>
             <span style={{ fontSize: 11, fontWeight: 700, color: isReleased ? "#22c55e" : "#f59e0b" }}>
-              {isReleased ? "In your wallet" : "Held in escrow"}
+              {isReleased ? t("seeker_job_detail.in_your_wallet") : t("seeker_job_detail.held_in_escrow")}
             </span>
           </div>
         </div>
       ) : isAccepted && !isCompleted ? (
         <p style={{ margin: 0, fontSize: 11, color: "#555" }}>
-          Payment will be released to your wallet once the employer marks the job complete.
+          {t("seeker_job_detail.payment_released_desc")}
         </p>
       ) : null,
     },
@@ -306,13 +323,22 @@ export default function SeekerJobDetail() {
 
   return (
     <div>
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      <style>{`
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .job-detail-grid { display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
+        @media (max-width: 900px) {
+          .job-detail-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 340px) {
+          .job-detail-grid { gap: 10px; }
+        }
+      `}</style>
 
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
         <button onClick={() => router.back()}
           style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", cursor: "pointer", color: "#555", fontSize: 12, fontFamily: "inherit", padding: 0, marginBottom: 14 }}>
-          <ArrowLeft size={14} /> Back
+          <ArrowLeft size={14} /> {t("seeker_job_detail.back")}
         </button>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
           <div>
@@ -320,12 +346,12 @@ export default function SeekerJobDetail() {
               <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: "#fff" }}>{job.title}</h1>
               {appStatus && (
                 <span style={{ fontSize: 10, fontWeight: 700, borderRadius: 99, padding: "3px 10px", color: STATUS_COLOR[appStatus] ?? "#888", background: `${STATUS_COLOR[appStatus] ?? "#888"}18` }}>
-                  {appStatus}
+                  {appStatus === "ACCEPTED" ? (t("settings_page.account.verified") || "ACCEPTED") : appStatus === "REJECTED" ? (t("common.general.rejected") || "REJECTED") : appStatus}
                 </span>
               )}
             </div>
             <p style={{ margin: 0, fontSize: 12, color: "#444" }}>
-              by {job.employerName} · {job.category} · {job.district}
+              {t("common.general.by") || "by"} {job.employerName} · {job.category} · {job.district}
             </p>
           </div>
 
@@ -334,12 +360,12 @@ export default function SeekerJobDetail() {
             {isPending && isHireNow && (
               showNote ? (
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <input placeholder="Optional message…" value={note} onChange={e => setNote(e.target.value)}
+                  <input placeholder={t("common.general.optional_message") || "Optional message…"} value={note} onChange={e => setNote(e.target.value)}
                     style={{ ...inp, width: 180 }} />
                   <button disabled={!!busy} onClick={() => doDecision(showNote)}
                     style={{ background: showNote === "ACCEPTED" ? "#22c55e" : "#ef4444", color: "#000", border: "none", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 5 }}>
                     {busy ? <Loader2 size={12} style={{ animation: "spin 0.8s linear infinite" }} /> : null}
-                    {showNote === "ACCEPTED" ? "Confirm Accept" : "Confirm Decline"}
+                    {showNote === "ACCEPTED" ? t("seeker_job_detail.confirm_accept") : t("seeker_job_detail.confirm_decline")}
                   </button>
                   <button onClick={() => { setShowNote(null); setNote(""); }}
                     style={{ background: "#1a1a1a", color: "#666", border: "1px solid #222", borderRadius: 8, padding: "8px 12px", fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}>
@@ -350,11 +376,11 @@ export default function SeekerJobDetail() {
                 <>
                   <button disabled={!!busy} onClick={() => setShowNote("ACCEPTED")}
                     style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(34,197,94,0.08)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-                    <CheckCircle size={12} /> Accept Offer
+                    <CheckCircle size={12} /> {t("seeker_job_detail.accept_offer")}
                   </button>
                   <button disabled={!!busy} onClick={() => setShowNote("REJECTED")}
                     style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(239,68,68,0.08)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-                    <X size={12} /> Decline
+                    <X size={12} /> {t("seeker_job_detail.decline")}
                   </button>
                 </>
               )
@@ -362,18 +388,18 @@ export default function SeekerJobDetail() {
             {isPending && !isHireNow && (
               <button disabled={busy === "withdraw"} onClick={doWithdraw}
                 style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(239,68,68,0.08)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-                {busy === "withdraw" ? <Loader2 size={12} style={{ animation: "spin 0.8s linear infinite" }} /> : <X size={12} />} Withdraw Application
+                {busy === "withdraw" ? <Loader2 size={12} style={{ animation: "spin 0.8s linear infinite" }} /> : <X size={12} />} {t("seeker_job_detail.withdraw_app")}
               </button>
             )}
             {isAccepted && !job.workerVerified && !isCompleted && (
               <button disabled={busy === "verify"} onClick={() => setShowVerify(true)}
                 style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(96,165,250,0.08)", color: "#60a5fa", border: "1px solid rgba(96,165,250,0.2)", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-                <CheckCircle size={12} /> Finish
+                <CheckCircle size={12} /> {t("seeker_job_detail.finish")}
               </button>
             )}
             {job.workerVerified && !isCompleted && (
               <span style={{ fontSize: 12, fontWeight: 700, color: "#22c55e", padding: "8px 14px", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 8, background: "rgba(34,197,94,0.08)" }}>
-                Finished. Waiting for employer...
+                {t("seeker_job_detail.finished_waiting")}
               </span>
             )}
           </div>
@@ -381,11 +407,11 @@ export default function SeekerJobDetail() {
       </div>
 
       {/* Body */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 20, alignItems: "start" }}>
+      <div className="job-detail-grid">
         {/* Left: Timeline */}
         <div style={{ background: "#111", border: "1px solid #1c1c1c", borderRadius: 16, padding: "24px 28px" }}>
           <p style={{ margin: "0 0 24px", fontSize: 11, fontWeight: 700, color: "#333", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-            Application Timeline
+            {t("seeker_job_detail.app_timeline")}
           </p>
           <Timeline stages={stages} />
         </div>
@@ -394,7 +420,7 @@ export default function SeekerJobDetail() {
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {/* Employer */}
           <div style={{ background: "#111", border: "1px solid #1c1c1c", borderRadius: 14, padding: "16px 18px" }}>
-            <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: "0.08em" }}>Employer</p>
+            <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: "0.08em" }}>{t("seeker_job_detail.employer")}</p>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <div style={{ width: 36, height: 36, borderRadius: 99, background: "rgba(249,115,22,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <User size={16} color="#f97316" />
@@ -411,38 +437,38 @@ export default function SeekerJobDetail() {
 
           {/* Job details */}
           <div style={{ background: "#111", border: "1px solid #1c1c1c", borderRadius: 14, padding: "16px 18px" }}>
-            <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: "0.08em" }}>Job Details</p>
-            <InfoRow label="Category" value={job.category} />
-            <InfoRow label="Location" value={`${job.district}${job.province ? `, ${job.province}` : ""}`} />
-            {job.locationNotes && <InfoRow label="Location Notes" value={<RichTextDisplay content={job.locationNotes} />} />}
-            <InfoRow label="Rate" value={`RWF ${job.ratePerHour?.toLocaleString()} / hr`} />
-            <InfoRow label="Duration" value={`${job.durationHours} hours`} />
-            <InfoRow label="Headcount" value={`${job.headcount} worker${job.headcount !== 1 ? "s" : ""}`} />
-            <InfoRow label="Urgency" value={job.urgency?.replace("_", " ")} />
-            {job.startTime && <InfoRow label="Start Time" value={dt(job.startTime) ?? "—"} />}
-            {job.requirements && <InfoRow label="Requirements" value={<RichTextDisplay content={job.requirements} />} />}
+            <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: "0.08em" }}>{t("seeker_job_detail.job_details")}</p>
+            <InfoRow label={t("seeker_job_detail.category")} value={job.category} />
+            <InfoRow label={t("seeker_job_detail.location")} value={`${job.district}${job.province ? `, ${job.province}` : ""}`} />
+            {job.locationNotes && <InfoRow label={t("seeker_job_detail.location_notes")} value={<RichTextDisplay content={job.locationNotes} />} />}
+            <InfoRow label={t("seeker_job_detail.rate")} value={`RWF ${job.ratePerHour?.toLocaleString()} / hr`} />
+            <InfoRow label={t("seeker_job_detail.duration")} value={`${job.durationHours} hours`} />
+            <InfoRow label={t("seeker_job_detail.headcount")} value={`${job.headcount} ${job.headcount !== 1 ? t("seeker_job_detail.workers") : t("seeker_job_detail.worker")}`} />
+            <InfoRow label={t("seeker_job_detail.urgency")} value={job.urgency?.replace("_", " ")} />
+            {job.startTime && <InfoRow label={t("seeker_job_detail.start_time")} value={dt(job.startTime) ?? "—"} />}
+            {job.requirements && <InfoRow label={t("seeker_job_detail.requirements")} value={<RichTextDisplay content={job.requirements} />} />}
           </div>
 
           {/* Earnings */}
           {isAccepted && (
             <div style={{ background: "#111", border: "1px solid #1c1c1c", borderRadius: 14, padding: "16px 18px" }}>
-              <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: "0.08em" }}>Your Earnings</p>
+              <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: "0.08em" }}>{t("seeker_job_detail.your_earnings")}</p>
               <div style={{ textAlign: "center", padding: "8px 0" }}>
                 <p style={{ margin: "0 0 4px", fontSize: 32, fontWeight: 900, color: isReleased ? "#22c55e" : "#f97316" }}>
                   RWF {myPayout != null ? myPayout.toLocaleString() : Math.round(job.ratePerHour * (job.durationHours ?? 1)).toLocaleString()}
                 </p>
                 <p style={{ margin: 0, fontSize: 11, color: "#444" }}>
                   {isReleased
-                    ? `Paid to your wallet on ${d(txn?.releasedAt)}`
+                    ? `${t("seeker_jobs.released_to_wallet") || "Paid to your wallet"} ${t("common.general.on") || "on"} ${d(txn?.releasedAt)}`
                     : myPayout != null
-                    ? "Held in escrow · released on completion"
-                    : `Estimated · RWF ${job.ratePerHour?.toLocaleString()} × ${job.durationHours}h`}
+                    ? t("seeker_job_detail.released_on_completion")
+                    : `${t("seeker_job_detail.estimated")} · RWF ${job.ratePerHour?.toLocaleString()} × ${job.durationHours}h`}
                 </p>
               </div>
               {isReleased && (
                 <button onClick={() => router.push("/seeker/earnings")}
                   style={{ width: "100%", marginTop: 12, background: "rgba(34,197,94,0.08)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 8, padding: "9px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-                  <Wallet size={12} /> View in Earnings
+                  <Wallet size={12} /> {t("seeker_job_detail.view_in_earnings")}
                 </button>
               )}
             </div>
@@ -452,9 +478,9 @@ export default function SeekerJobDetail() {
           <div style={{ background: "#111", border: "1px solid #1c1c1c", borderRadius: 14, padding: "14px 18px", display: "flex", alignItems: "center", gap: 8 }}>
             <div style={{ width: 8, height: 8, borderRadius: 99, background: job.status === "OPEN" ? "#22c55e" : job.status === "COMPLETED" ? "#60a5fa" : "#ef4444", flexShrink: 0 }} />
             <p style={{ margin: 0, fontSize: 12, color: "#666" }}>
-              Job is <strong style={{ color: "#aaa" }}>{job.status}</strong>
-              {isCompleted && job.completedAt ? ` · Completed ${d(job.completedAt)}` : ""}
-              {isCancelled ? " — this job was cancelled" : ""}
+              {t("seeker_job_detail.job_is")} <strong style={{ color: "#aaa" }}>{job.status}</strong>
+              {isCompleted && job.completedAt ? ` · ${t("seeker_job_detail.completed_on")} ${d(job.completedAt)}` : ""}
+              {isCancelled ? ` — ${t("seeker_job_detail.job_cancelled")}` : ""}
             </p>
           </div>
         </div>
@@ -464,16 +490,16 @@ export default function SeekerJobDetail() {
       {showVerify && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", zIndex: 500, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
           <div style={{ background: "#111", border: "1px solid #222", borderRadius: 18, width: "100%", maxWidth: 420, padding: 28 }}>
-            <p style={{ margin: "0 0 6px", fontSize: 16, fontWeight: 800, color: "#fff" }}>Finish Job</p>
+            <p style={{ margin: "0 0 6px", fontSize: 16, fontWeight: 800, color: "#fff" }}>{t("seeker_job_detail.finish_job_modal")}</p>
             <p style={{ margin: "0 0 18px", fontSize: 12, color: "#555" }}>
-              Confirm that you have completed this job by entering your Badge MPU ID.
+              {t("seeker_job_detail.confirm_finish_desc")}
             </p>
             
-            <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "#3a3a3a" }}>YOUR BADGE MPU ID (REQUIRED)</p>
+            <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "#3a3a3a" }}>{t("seeker_job_detail.badge_id_req")}</p>
             <input value={badgeId} onChange={e => setBadgeId(e.target.value)}
               placeholder="e.g. MPU-12345" style={{ ...inp, width: "100%", marginBottom: 18, textTransform: "uppercase" }} />
               
-            <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "#3a3a3a" }}>RATE THE EMPLOYER (REQUIRED)</p>
+            <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "#3a3a3a" }}>{t("seeker_job_detail.rate_employer_req")}</p>
             <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
               {[1, 2, 3, 4, 5].map(star => (
                 <button key={star} onClick={() => setRating(star)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 24, color: star <= rating ? "#f97316" : "#333", padding: 0 }}>
@@ -482,27 +508,27 @@ export default function SeekerJobDetail() {
               ))}
             </div>
 
-            <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "#3a3a3a" }}>FEEDBACK (REQUIRED)</p>
+            <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "#3a3a3a" }}>{t("seeker_job_detail.feedback_req")}</p>
             <select value={feedbackOption} onChange={e => setFeedbackOption(e.target.value)} style={{ ...inp, width: "100%", marginBottom: feedbackOption === "Other (requires text)" ? 10 : 18 }}>
-              <option value="Pays on time">Pays on time</option>
-              <option value="Good instructor">Good instructor</option>
-              <option value="Gives tips">Gives tips</option>
-              <option value="Needs Improvement">Needs Improvement</option>
-              <option value="Other (requires text)">Other (requires text)</option>
+              <option value="Pays on time">{t("seeker_job_detail.pays_on_time") || "Pays on time"}</option>
+              <option value="Good instructor">{t("seeker_job_detail.good_instructor") || "Good instructor"}</option>
+              <option value="Gives tips">{t("seeker_job_detail.gives_tips") || "Gives tips"}</option>
+              <option value="Needs Improvement">{t("seeker_job_detail.needs_improvement") || "Needs Improvement"}</option>
+              <option value="Other (requires text)">{t("seeker_job_detail.other_option") || "Other (requires text)"}</option>
             </select>
             {feedbackOption === "Other (requires text)" && (
               <textarea value={feedbackText} onChange={e => setFeedbackText(e.target.value)}
-                rows={2} placeholder="Please describe..." style={{ ...inp, width: "100%", resize: "vertical", marginBottom: 18 }} />
+                rows={2} placeholder={t("seeker_job_detail.please_describe") || "Please describe..."} style={{ ...inp, width: "100%", resize: "vertical", marginBottom: 18 }} />
             )}
             
             <div style={{ display: "flex", gap: 10 }}>
               <button disabled={busy === "verify"} onClick={doVerify}
                 style={{ flex: 1, background: "#22c55e", color: "#000", border: "none", borderRadius: 9, padding: 12, fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-                {busy === "verify" ? <Loader2 size={13} style={{ animation: "spin 0.8s linear infinite" }} /> : <CheckCircle size={13} />} Finish
+                {busy === "verify" ? <Loader2 size={13} style={{ animation: "spin 0.8s linear infinite" }} /> : <CheckCircle size={13} />} {t("seeker_job_detail.finish")}
               </button>
               <button onClick={() => setShowVerify(false)}
                 style={{ flex: 1, background: "transparent", color: "#555", border: "1px solid #222", borderRadius: 9, padding: 12, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
-                Cancel
+                {t("seeker_job_detail.cancel")}
               </button>
             </div>
           </div>

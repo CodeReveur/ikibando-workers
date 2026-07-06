@@ -11,15 +11,31 @@ import {
 } from "@/lib/api";
 import { ST, fmt } from "@/lib/dashboard-data";
 import { StatCard, SectionHead, Dot, PageLoader } from "@/components/dashboard/ui";
+import { useLanguage } from "@/lib/language-context";
 
 const CSS = `
   .job-card { transition:border-color 0.12s, background 0.12s; }
   .job-card:hover { border-color:#222 !important; }
+  .seeker-stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px; }
+  .seeker-tabs { display:flex; gap:4px; margin-bottom:18px; background:#0f0f0f; border-radius:10px; padding:4px; width:fit-content; }
+  .seeker-summary-box { margin-top:20px; background:rgba(249,115,22,0.03); border:1px solid rgba(249,115,22,0.1); border-radius:12px; padding:14px 18px; display:flex; gap:24px; flex-wrap:wrap; }
+  @media (max-width: 900px) {
+    .seeker-stats-grid { grid-template-columns:repeat(2,1fr); }
+  }
+  @media (max-width: 500px) {
+    .seeker-stats-grid { grid-template-columns:1fr; }
+  }
+  @media (max-width: 340px) {
+    .seeker-stats-grid { gap:6px; margin-bottom:14px; }
+    .seeker-tabs { flex-wrap:wrap; width:100%; justify-content:center; }
+    .seeker-summary-box { padding:8px 12px; gap:12px; }
+  }
 `;
 
 type TabKey = "active" | "completed" | "all";
 
 export default function SeekerJobs() {
+  const { t, language } = useLanguage();
   const [apps,    setApps]    = useState<ApplicationDto[]>([]);
   const [txns,    setTxns]    = useState<PaymentDto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,25 +71,34 @@ export default function SeekerJobs() {
   })();
 
   const TABS: { key: TabKey; label: string; count: number }[] = [
-    { key:"active",    label:`Active (${active.length})`,       count:active.length },
-    { key:"completed", label:`Completed (${completed.length})`, count:completed.length },
-    { key:"all",       label:`All (${accepted.length})`,        count:accepted.length },
+    { key:"active",    label: `${t("seeker_jobs.tab_active") || "Active"} (${active.length})`,       count:active.length },
+    { key:"completed", label: `${t("seeker_jobs.tab_completed") || "Completed"} (${completed.length})`, count:completed.length },
+    { key:"all",       label: `${t("seeker_jobs.tab_all") || "All"} (${accepted.length})`,        count:accepted.length },
   ];
+
+  const dateLocaleMap: Record<string, string> = {
+    rw: "rw-RW",
+    kinyy: "rw-RW",
+    sw: "sw-TZ",
+    fr: "fr-FR",
+    en: "en-US",
+  };
+  const currentLocale = dateLocaleMap[language] || "en-RW";
 
   return (
     <div>
       <style>{CSS}</style>
 
       {/* Stats */}
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12, marginBottom:24 }}>
-        <StatCard label="Active Jobs"    value={String(active.length)}    sub="In progress"       accent="#22c55e" />
-        <StatCard label="Completed"      value={String(completed.length)} sub="Paid out"          accent="#60a5fa" />
-        <StatCard label="Via Hire Now"   value={String(hireNow.length)}   sub="Direct hires"      accent="#a78bfa" />
-        <StatCard label="Total Earned"   value={fmt(totalEarned)}         sub="Released earnings" accent="#f97316" />
+      <div className="seeker-stats-grid">
+        <StatCard label={t("seeker_jobs.active_jobs")}    value={String(active.length)}    sub={t("seeker_jobs.in_progress")}       accent="#22c55e" />
+        <StatCard label={t("seeker_jobs.completed")}      value={String(completed.length)} sub={t("seeker_jobs.paid_out")}          accent="#60a5fa" />
+        <StatCard label={t("seeker_jobs.via_hire_now")}   value={String(hireNow.length)}   sub={t("seeker_jobs.direct_hires")}      accent="#a78bfa" />
+        <StatCard label={t("seeker_jobs.total_earned")}   value={fmt(totalEarned)}         sub={t("seeker_jobs.released_earnings")} accent="#f97316" />
       </div>
 
       {/* Tabs */}
-      <div style={{ display:"flex", gap:4, marginBottom:18, background:"#0f0f0f", borderRadius:10, padding:4, width:"fit-content" }}>
+      <div className="seeker-tabs">
         {TABS.map(({ key, label }) => (
           <button key={key} onClick={() => setTab(key)} style={{
             padding:"7px 18px", borderRadius:7, fontSize:12, fontWeight:700, border:"none",
@@ -93,10 +118,10 @@ export default function SeekerJobs() {
         <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:14, padding:"40px 24px", textAlign:"center" }}>
           <Briefcase size={28} color="#2a2a2a" style={{ marginBottom:12 }} />
           <p style={{ margin:"0 0 6px", color:"#555", fontSize:14, fontWeight:600 }}>
-            {tab === "active" ? "No active jobs right now" : tab === "completed" ? "No completed jobs yet" : "No hired jobs"}
+            {tab === "active" ? t("seeker_jobs.no_active") : tab === "completed" ? t("seeker_jobs.no_completed") : t("seeker_jobs.no_hired")}
           </p>
           <p style={{ margin:"0 0 16px", color:"#333", fontSize:12 }}>
-            {tab !== "completed" && <><a href="/jobs" style={{ color:"#f97316" }}>Browse open jobs</a> to get hired</>}
+            {tab !== "completed" && <a href="/jobs" style={{ color:"#f97316" }}>{t("seeker_jobs.browse_open_jobs_desc")}</a>}
           </p>
         </div>
       )}
@@ -131,16 +156,16 @@ export default function SeekerJobs() {
                     <p style={{ margin:0, fontWeight:700, fontSize:14, color:"#e8e8e8" }}>{app.jobTitle}</p>
 
                     {isReleased && (
-                      <span style={{ fontSize:9, fontWeight:700, borderRadius:99, padding:"2px 7px", color:"#22c55e", background:"rgba(34,197,94,0.1)" }}>Completed & Paid</span>
+                      <span style={{ fontSize:9, fontWeight:700, borderRadius:99, padding:"2px 7px", color:"#22c55e", background:"rgba(34,197,94,0.1)" }}>{t("seeker_jobs.status_completed")}</span>
                     )}
                     {isEscrow && (
-                      <span style={{ fontSize:9, fontWeight:700, borderRadius:99, padding:"2px 7px", color:"#f59e0b", background:"rgba(245,158,11,0.1)" }}>In Progress</span>
+                      <span style={{ fontSize:9, fontWeight:700, borderRadius:99, padding:"2px 7px", color:"#f59e0b", background:"rgba(245,158,11,0.1)" }}>{t("seeker_jobs.status_in_progress")}</span>
                     )}
                     {!pmt && (
-                      <span style={{ fontSize:9, fontWeight:700, borderRadius:99, padding:"2px 7px", color:"#60a5fa", background:"rgba(96,165,250,0.1)" }}>Hired</span>
+                      <span style={{ fontSize:9, fontWeight:700, borderRadius:99, padding:"2px 7px", color:"#60a5fa", background:"rgba(96,165,250,0.1)" }}>{t("seeker_jobs.status_hired")}</span>
                     )}
                     {app.appliedVia === "HIRE_NOW" && (
-                      <span style={{ fontSize:9, fontWeight:700, borderRadius:99, padding:"2px 7px", color:"#a78bfa", background:"rgba(167,139,250,0.1)" }}>Direct Hire</span>
+                      <span style={{ fontSize:9, fontWeight:700, borderRadius:99, padding:"2px 7px", color:"#a78bfa", background:"rgba(167,139,250,0.1)" }}>{t("seeker_jobs.status_direct_hire")}</span>
                     )}
                   </div>
 
@@ -151,12 +176,12 @@ export default function SeekerJobs() {
                     <span style={{ fontSize:12, color:"#3a3a3a" }}>{app.jobCategory}</span>
                     <Dot />
                     <Clock size={10} color="#2a2a2a" />
-                    <span style={{ fontSize:12, color:"#3a3a3a" }}>{new Date(app.createdAt).toLocaleDateString()}</span>
+                    <span style={{ fontSize:12, color:"#3a3a3a" }}>{new Date(app.createdAt).toLocaleDateString(currentLocale)}</span>
                   </div>
 
                   {app.responseNote && (
                     <p style={{ margin:"6px 0 0", fontSize:11, color:"#22c55e", fontStyle:"italic" }}>
-                      Note from employer: "{app.responseNote}"
+                      {t("seeker_jobs.note_from_employer")} "{app.responseNote}"
                     </p>
                   )}
                 </div>
@@ -173,7 +198,7 @@ export default function SeekerJobs() {
                   )}
                   <a href={`/seeker/jobs/${app.jobId}`}
                     style={{ display:"inline-flex", alignItems:"center", gap:3, marginTop:6, fontSize:10, fontWeight:700, color:"#60a5fa", textDecoration:"none" }}>
-                    Track →
+                    {t("seeker_jobs.track_link")} →
                   </a>
                 </div>
               </div>
@@ -184,8 +209,8 @@ export default function SeekerJobs() {
                   <Wallet size={12} color={isReleased ? "#22c55e" : "#f59e0b"} />
                   <p style={{ margin:0, fontSize:11, color: isReleased ? "#22c55e" : "#555" }}>
                     {isReleased
-                      ? `${fmt(pmt.amountRwf)} released to your wallet${pmt.releasedAt ? ` on ${new Date(pmt.releasedAt).toLocaleDateString()}` : ""}`
-                      : `${fmt(pmt.amountRwf)} held in escrow — paid when employer marks job complete`}
+                      ? `${fmt(pmt.amountRwf)} ${t("seeker_jobs.released_to_wallet")}${pmt.releasedAt ? ` ${t("seeker_jobs.released_to_wallet_on")} ${new Date(pmt.releasedAt).toLocaleDateString(currentLocale)}` : ""}`
+                      : `${fmt(pmt.amountRwf)} ${t("seeker_jobs.held_in_escrow")}`}
                   </p>
                 </div>
               )}
@@ -195,7 +220,7 @@ export default function SeekerJobs() {
                 <div style={{ borderTop:"1px solid #191919", padding:"14px 20px", background:"rgba(34,197,94,0.02)" }}>
                   <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:6 }}>
                     <Star size={13} color="#f59e0b" fill="#f59e0b" />
-                    <span style={{ fontSize:11, fontWeight:700, color:"#444" }}>Employer Feedback</span>
+                    <span style={{ fontSize:11, fontWeight:700, color:"#444" }}>{t("seeker_jobs.feedback_label")}</span>
                   </div>
                   <p style={{ margin:0, fontSize:12, color:"#4a4a4a", fontStyle:"italic", lineHeight:1.6 }}>"{feedback}"</p>
                 </div>
@@ -207,17 +232,17 @@ export default function SeekerJobs() {
 
       {/* Earnings summary */}
       {accepted.length > 0 && (
-        <div style={{ marginTop:20, background:"rgba(249,115,22,0.03)", border:"1px solid rgba(249,115,22,0.1)", borderRadius:12, padding:"14px 18px", display:"flex", gap:24, flexWrap:"wrap" }}>
+        <div className="seeker-summary-box">
           <div>
-            <p style={{ margin:"0 0 2px", fontSize:10, fontWeight:700, color:"#3a3a3a", textTransform:"uppercase", letterSpacing:"0.07em" }}>Total Released</p>
+            <p style={{ margin:"0 0 2px", fontSize:10, fontWeight:700, color:"#3a3a3a", textTransform:"uppercase", letterSpacing:"0.07em" }}>{t("seeker_jobs.total_released")}</p>
             <p style={{ margin:0, fontSize:18, fontWeight:900, color:"#22c55e" }}>{fmt(totalEarned)}</p>
           </div>
           <div>
-            <p style={{ margin:"0 0 2px", fontSize:10, fontWeight:700, color:"#3a3a3a", textTransform:"uppercase", letterSpacing:"0.07em" }}>In Escrow</p>
+            <p style={{ margin:"0 0 2px", fontSize:10, fontWeight:700, color:"#3a3a3a", textTransform:"uppercase", letterSpacing:"0.07em" }}>{t("seeker_jobs.in_escrow")}</p>
             <p style={{ margin:0, fontSize:18, fontWeight:900, color:"#f59e0b" }}>{fmt(inEscrow)}</p>
           </div>
           <div>
-            <p style={{ margin:"0 0 2px", fontSize:10, fontWeight:700, color:"#3a3a3a", textTransform:"uppercase", letterSpacing:"0.07em" }}>Jobs Total</p>
+            <p style={{ margin:"0 0 2px", fontSize:10, fontWeight:700, color:"#3a3a3a", textTransform:"uppercase", letterSpacing:"0.07em" }}>{t("seeker_jobs.jobs_total")}</p>
             <p style={{ margin:0, fontSize:18, fontWeight:900, color:"#e0e0e0" }}>{accepted.length}</p>
           </div>
         </div>
