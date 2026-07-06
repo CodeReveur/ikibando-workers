@@ -1809,5 +1809,69 @@
     "complete_modal_desc": "This will release RWF {amount} to the worker(s). This action cannot be undone.",
     "complete_and_release": "Complete & Release Payment",
     "confirm_cancel_alert": "Cancel this job? The escrowed amount will be refunded to your wallet."
+  },
+  "seeker_help": {
+    "faq1_q": "How do I get paid?",
+    "faq1_a": "Your earnings are held in escrow when a job starts and are released directly to your wallet as soon as the employer marks the job complete. You can transfer wallet funds to your MTN MoMo or Airtel Money account anytime.",
+    "faq2_q": "What is the platform fee?",
+    "faq2_a": "We deduct a 25% platform fee from worker earnings to maintain the service, verify users, and process MTN MoMo transactions.",
+    "faq3_q": "How do I get jobs?",
+    "faq3_a": "Make sure your profile details, specialties, education, and district are complete. Employers can find you in 'Browse Workers' or you can apply to open jobs listed in the marketplace.",
+    "faq4_q": "How do I verify completion?",
+    "faq4_a": "Once you finish the job, ask the employer to scan your worker badge or mark the job complete from their dashboard to release your payout.",
+    "faq5_q": "What happens if there is a dispute?",
+    "faq5_a": "If an employer refuses to release payment or opens a dispute, our support team reviews the case within 2 hours. We will contact both parties to resolve the issue based on work evidence."
+  },
+  "bazabot": {
+    "welcome": "Hello {userName}! I am BazaBot, your MpahMapu support assistant. How can I help you today?",
+    "greetings": "Hello! I am BazaBot, your helper. Hope you are having a wonderful day! How can I assist you with MpahMapu today?",
+    "feeling": "As an AI assistant, I don't have feelings, but I'm always energized and ready to help you navigate MpahMapu!",
+    "quotes": "\"Success is not final, failure is not fatal: it is the courage to continue that counts.\" - Winston Churchill. Keep pushing your limits!",
+    "business": "MpahMapu is designed to empower businesses and workers alike. Secure escrow payments and verified badges keep our business ecosystem thriving.",
+    "starter1": "Here is a detailed explanation of how it works: ",
+    "starter2": "Regarding your question, let me provide you with all the details: ",
+    "starter3": "Certainly! Here is the complete information you need: ",
+    "starter4": "To help you understand this thoroughly: ",
+    "starter5": "I can explain that in detail: ",
+    "escrow": {
+      "overview": "Here at MpahMapu, we operate a fully automated secure escrow framework. For every gig booked, the funds are instantly reserved from the employer's wallet balance. This guarantees to the gig worker that their time and effort are financially secured before they even travel to the job site. The rate is calculated as rate times hours times number of workers plus a 5% escrow handling charge.",
+      "process": "Once you click 'Book Now', the system processes the request at {time} and freezes the total value. The funds remain in a pending escrow state during the entire shift. After the worker completes the task, they present their QR badge to the employer. Scanning the badge or clicking 'Mark Complete' triggers the instant payout release.",
+      "guidelines": "All escrow funds are subject to our strict verification policy. Employers have up to 24 hours after completion to inspect the quality of work. If a dispute is raised, the funds will remain frozen until our admin support team verifies the case evidence and makes a final decision."
+    },
+    "refund": {
+      "overview": "We understand that plans can change, which is why MpahMapu provides a transparent refund procedure. If a job is canceled under valid terms, the frozen escrow balance is immediately credited back to the employer's wallet. Refunds are handled in real-time, ensuring your cash flow remains fluid.",
+      "process": "To request a refund, navigate to your Payments tab, select the HELD transaction, and click 'Request Refund'. For open bookings, cancellations made more than 2 hours before the start time are fully refunded. Cancellations within the 2-hour window incur a small 10% worker compensation fee.",
+      "guidelines": "Any refund requests filed after the work has commenced are audited by support. Our team evaluates the chat timeline, work logs, and user reports. Once approved, the funds show up in your wallet balance, which you can withdraw via MTN MoMo or Airtel Money."
+    },
+    "verify": {
+      "overview": "Safety and reliability are our highest priorities. Every service seeker and worker on MpahMapu undergoes a rigorous identity verification process before they can interact on the platform. This builds a high-trust community of verified professionals in Kigali.",
+      "process": "During registration, workers upload their National ID card, submit police clearance reports, and provide references from past employers. Our admin team reviews each application within 24 hours. Verified users receive a checkmark badge on their profile.",
+      "guidelines": "We continuously monitor user ratings. If a worker receives reviews below 3.5 stars, their account is put under review. Background checks are re-audited biannually. Any violation of our community standards results in immediate badge suspension."
+    },
+    "fee": {
+      "overview": "To sustain our high-speed transaction infrastructure and safety check systems, MpahMapu charges a service fee. This fee allows us to provide verified profiles, process MTN MoMo transactions instantly, and offer live support mediation.",
+      "process": "Workers are charged a {fee} service fee on their gross earnings. For example, if a job pays RWF 10,000, RWF 2,500 is automatically deducted at payout time, and RWF 7,500 is sent to your wallet. Employers only pay a minor 5% escrow transaction fee at booking.",
+      "guidelines": "All platform fee deductions are displayed clearly on the invoice under your My Earnings tab. The service fee is non-refundable as it covers payment processor costs and system overhead. Detailed fee receipts are emailed for accounting."
+    },
+    "job": {
+      "overview": "MpahMapu connects hundreds of skilled gig workers with local businesses and households in Kigali. Getting jobs is simple when your profile stands out. Keep your specialties, hourly rates, and working hours updated to match employer requests.",
+      "process": "When employers need workers, they can post a job in the marketplace or browse verified profiles. You can search the marketplace, view hourly rates, and apply. Once an employer accepts your application, the job starts on the selected date.",
+      "guidelines": "Workers should only apply to jobs they are fully qualified to perform. Arriving late or failing to show up without 24 hours notice will negatively impact your rating and may lead to temporary account suspension. Always communicate via chat."
+    },
+    "complete": {
+      "overview": "Marking a job complete is the final step in the MpahMapu workflow. This action tells the smart contract systems that the agreed work has been finished successfully and it is time to release the funds to the worker.",
+      "process": "Upon finishing your shift, present your worker QR code badge to the employer. They will scan it using their phone camera, or they can click 'Mark Complete' on their dashboard. Payout is processed instantly and reflects in your earnings.",
+      "guidelines": "Always ensure the employer completes the job on-site. If they forget, send a polite message via chat. If the employer refuses to mark completion despite work being done, do not worry; contact BazaBot support to submit work proof."
+    },
+    "dispute": {
+      "overview": "While we strive for perfect gig experiences, disagreements can sometimes happen. MpahMapu has a dedicated dispute mediation department to handle conflicts regarding quality of work, hours completed, or payment releases.",
+      "process": "To open a dispute, go to the job page and click 'Raise Dispute'. You will be asked to upload evidence, such as photos of the finished work, chat screenshots, or time logs. Our support team is notified and freezes the escrow balance.",
+      "guidelines": "Dispute reviews begin within 2 business hours. Our agents contact both the employer and the worker to hear both sides. Decisions are made impartially based on platform guidelines and submitted proof, and funds are distributed accordingly."
+    },
+    "fallback": {
+      "overview": "Your query requires personal support team intervention. BazaBot has logged your current conversation history and account details to create a priority support ticket in our customer relations management backend.",
+      "process": "Our support system has generated a ticket at {time} and sent an urgent notification email to all admin accounts. A live support manager is reviewing the chat logs and will contact you directly on your registered email address.",
+      "guidelines": "To get help even faster, you can click the green 'WhatsApp Call' or 'Live Chat' button in the header. This will open a direct line to our support team on WhatsApp where you can chat with a real person immediately."
+    }
   }
 }

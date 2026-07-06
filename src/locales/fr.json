@@ -1808,5 +1808,69 @@
     "complete_modal_desc": "Cela libérera RWF {amount} pour le(s) travailleur(s). Cette action est irréversible.",
     "complete_and_release": "Terminer & Libérer le paiement",
     "confirm_cancel_alert": "Annuler cet emploi ? Le montant déposé sera remboursé sur votre portefeuille."
+  },
+  "seeker_help": {
+    "faq1_q": "Comment suis-je payé ?",
+    "faq1_a": "Vos gains sont bloqués en dépôt fiduciaire (escrow) au début du travail et sont versés directement sur votre portefeuille dès que l'employeur marque la mission comme terminée. Vous pouvez transférer vos fonds vers votre compte MTN MoMo ou Airtel Money à tout moment.",
+    "faq2_q": "Quels sont les frais de plateforme ?",
+    "faq2_a": "Nous déduisons des frais de plateforme de 25 % sur les gains des travailleurs pour maintenir le service, vérifier les utilisateurs et traiter les transactions MoMo.",
+    "faq3_q": "Comment obtenir des missions ?",
+    "faq3_a": "Assurez-vous que les détails de votre profil, vos spécialités, votre éducation et votre district sont complets. Les employeurs peuvent vous trouver dans la recherche ou vous pouvez postuler aux offres publiées.",
+    "faq4_q": "Comment valider la fin d'un travail ?",
+    "faq4_a": "Une fois le travail terminé, demandez à l'employeur de scanner votre badge de travailleur ou de marquer la mission comme terminée depuis son tableau de bord pour libérer votre paiement.",
+    "faq5_q": "Que se passe-t-il en cas de litige ?",
+    "faq5_a": "Si un employeur refuse de libérer le paiement ou ouvre un litige, notre équipe d'assistance examine le dossier sous 2 heures. Nous contacterons les deux parties pour résoudre le problème sur la base des preuves de travail."
+  },
+  "bazabot": {
+    "welcome": "Bonjour {userName} ! Je suis BazaBot, votre assistant de support MpahMapu. Comment puis-je vous aider aujourd'hui ?",
+    "greetings": "Bonjour ! Je suis BazaBot, votre assistant. J'espère que vous passez une excellente journée ! Comment puis-je vous aider sur MpahMapu aujourd'hui ?",
+    "feeling": "En tant qu'assistant IA, je n'ai pas de sentiments, mais je suis toujours plein d'énergie et prêt à vous aider à naviguer sur MpahMapu !",
+    "quotes": "\"Le succès n'est pas final, l'échec n'est pas fatal : c'est le courage de continuer qui compte.\" - Winston Churchill. Continuez à repousser vos limites !",
+    "business": "MpahMapu est conçu pour autonomiser les entreprises et les travailleurs. Les dépôts fiduciaires sécurisés et les badges vérifiés maintiennent la prospérité de notre écosystème d'affaires.",
+    "starter1": "Voici une explication détaillée de son fonctionnement : ",
+    "starter2": "Concernant votre question, permettez-moi de vous donner tous les détails : ",
+    "starter3": "Certainement ! Voici les informations complètes dont vous avez besoin : ",
+    "starter4": "Pour vous aider à comprendre cela en profondeur : ",
+    "starter5": "Je peux vous expliquer cela en détail : ",
+    "escrow": {
+      "overview": "Chez MpahMapu, nous gérons un système de dépôt fiduciaire (escrow) entièrement automatisé et sécurisé. Pour chaque mission réservée, les fonds correspondants sont immédiatement bloqués depuis le portefeuille de l'employeur. Cela garantit au travailleur indépendant que son temps et son effort sont financièrement garantis avant même qu'il ne se déplace sur le lieu de travail. Le tarif est calculé selon la formule : tarif par heure × heures × nombre de travailleurs plus 5% de frais de gestion.",
+      "process": "Dès que vous cliquez sur 'Réserver', le système traite la demande à {time} et gèle le montant total. Les fonds restent dans cet état de dépôt bloqué pendant toute la durée de la mission. Une fois la tâche accomplie, le travailleur présente son badge QR à l'employeur. Le scan du badge ou le clic sur 'Marquer comme terminé' libère instantanément le paiement.",
+      "guidelines": "Tous les fonds du dépôt fiduciaire sont soumis à notre politique de vérification stricte. Les employeurs ont jusqu'à 24 heures après la fin des travaux pour inspecter la qualité du service. Si un litige est ouvert, les fonds resteront bloqués jusqu'à ce que notre équipe d'administration examine les preuves et prenne une décision finale."
+    },
+    "refund": {
+      "overview": "Nous comprenons que les plans peuvent changer, c'est pourquoi MpahMapu propose une procédure de remboursement claire et transparente. Si un travail est annulé selon des conditions valables, le solde bloqué du dépôt est immédiatement recrédité sur le portefeuille de l'employeur. Les remboursements sont traités en temps réel pour assurer la fluidité de votre trésorerie.",
+      "process": "Pour demander un remboursement, accédez à votre onglet Paiements, sélectionnez la transaction bloquée (HELD) et cliquez sur 'Demander un remboursement'. Pour les réservations en cours, les annulations effectuées plus de 2 heures avant l'heure de début sont intégralement remboursées. Les annulations effectuées moins de 2 heures avant entraînent des frais de 10% pour dédommager le travailleur.",
+      "guidelines": "Toute demande de remboursement déposée après le début des travaux fait l'objet d'un audit par notre support client. Notre équipe évalue l'historique du chat, les rapports de travail et les signalements. Une fois approuvés, les fonds apparaissent sur votre solde de portefeuille, que vous pouvez retirer via MTN MoMo ou Airtel Money."
+    },
+    "verify": {
+      "overview": "La sécurité et la fiabilité sont nos priorités absolues. Chaque chercheur de services et travailleur sur MpahMapu passe par un processus de vérification d'identité rigoureux avant de pouvoir interagir sur la plateforme. Cela permet de bâtir une communauté de confiance de professionnels vérifiés à Kigali.",
+      "process": "Lors de l'inscription, les travailleurs téléchargent leur carte nationale d'identité, soumettent des extraits de casier judiciaire et fournissent des références d'anciens employeurs. Notre équipe examine chaque dossier sous 24 heures. Les utilisateurs vérifiés reçoivent un badge de coche verte sur leur profil.",
+      "guidelines": "Nous surveillons en permanence les évaluations. Si un travailleur reçoit des notes inférieures à 3,5 étoiles, sa konti est mise sous surveillance. Les antécédents sont revérifiés deux fois par an. Tout manquement à nos normes communautaires entraîne la suspension immédiate du badge."
+    },
+    "fee": {
+      "overview": "Pour maintenir notre infrastructure de transaction ultra-rapide et nos systèmes de contrôle de sécurité, MpahMapu applique des frais de service. Ces frais nous permettent de proposer des profils vérifiés, de traiter instantanément les transferts MTN MoMo et de fournir un support client de médiation.",
+      "process": "Les travailleurs paient des frais de service de {fee} sur leurs gains bruts. Par exemple, si une mission rapporte 10 000 RWF, 2 500 RWF sont automatiquement déduits lors de la libération du paiement, et 7 500 RWF sont versés dans votre portefeuille. Les employeurs ne paient qu'un frais mineur de 5% lors du dépôt.",
+      "guidelines": "Toutes les déductions de frais de plateforme figurent clairement sur la facture disponible dans votre onglet Mes Gains. Les frais de service ne sont pas remboursables car ils couvrent les coûts de paiement mobile et la gestion des serveurs. Des reçus détaillés vous sont envoyés par e-mail."
+    },
+    "job": {
+      "overview": "MpahMapu met en relation des centaines de travailleurs qualifiés avec des entreprises et des ménages locaux à Kigali. Décrocher des missions est simple lorsque votre profil est attractif. Pensez à actualiser vos spécialités, vos tarifs horaires et vos disponibilités pour correspondre aux recherches.",
+      "process": "Lorsque les employeurs ont besoin de personnel, ils peuvent publier un emploi dans le catalogue ou parcourir les profils vérifiés. Vous pouvez explorer les offres, vérifier le tarif horaire et postuler. Dès que l'employeur valide votre demande, le travail commence à la date prévue.",
+      "guidelines": "Les travailleurs doivent postuler uniquement aux missions qu'ils sont pleinement qualifiés pour accomplir. Arriver en retard ou ne pas se présenter sans prévenir 24 heures à l'avance nuira à votre note globale et pourra entraîner une suspension. Communiquez toujours via le chat interne."
+    },
+    "complete": {
+      "overview": "Valider la fin d'un travail est l'étape finale du processus MpahMapu. Cette action signale aux systèmes intelligents que le travail convenu a été correctement réalisé et qu'il est temps de débloquer et transférer les fonds correspondants vers le travailleur.",
+      "process": "Une fois votre shift terminé, présentez votre badge de code QR travailleur à l'employeur. Il le scannera avec son appareil photo, ou cliquera sur 'Marquer comme terminé' depuis sa dashboard. Le versement est traité instantanément et s'affiche dans vos gains.",
+      "guidelines": "Assurez-vous toujours que l'employeur valide le travail sur place. S'il oublie, envoyez-lui un message poli via le chat. Si l'employeur refuse de valider la fin des travaux alors que le service a été rendu, contactez le support BazaBot pour soumettre vos preuves."
+    },
+    "dispute": {
+      "overview": "Bien que nous fassions tout pour offrir d'excellentes expériences, des désaccords peuvent parfois survenir. MpahMapu dispose d'un service de médiation dédié pour traiter les conflits liés à la qualité du travail, aux heures effectuées ou au blocage des paiements.",
+      "process": "Pour ouvrir un litige, accédez à la page du projet et cliquez sur 'Soumettre un litige'. Il vous sera demandé d'ajouter des preuves (photos du travail, captures d'écran du chat, feuilles d'heures). Notre équipe d'assistance est notifiée et suspend temporairement le dépôt.",
+      "guidelines": "L'examen des litiges commence dans un délai de 2 heures ouvrables. Nos agents contactent les deux parties pour recueillir leurs témoignages. Les décisions sont rendues de manière impartiale sur la base des règles de la plateforme et des preuves fournies."
+    },
+    "fallback": {
+      "overview": "Votre demande nécessite l'intervention d'un conseiller de notre support client. BazaBot a enregistré l'historique de votre conversation et les détails de votre compte pour créer un ticket d'assistance prioritaire dans notre système de gestion.",
+      "process": "Notre support a généré un ticket d'incident à {time} et envoyé un e-mail d'alerte urgent aux adresses des administrateurs. Un responsable de la médiation analyse vos messages et vous recontactera directement sur votre adresse e-mail enregistrée.",
+      "guidelines": "Pour obtenir de l'aide encore plus rapidement, vous pouvez cliquer sur le bouton vert 'Appel WhatsApp' ou 'Live Chat' dans l'en-tête. Cela vous mettra en relation immédiate sur WhatsApp avec un membre de notre équipe d'assistance pour échanger en direct."
+    }
   }
 }

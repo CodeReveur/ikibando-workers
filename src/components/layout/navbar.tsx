@@ -17,6 +17,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const langDropdownRef = useRef<HTMLDivElement>(null);
+  const mobileLangDropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,7 +29,9 @@ export default function Navbar() {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setDropdownOpen(false);
       }
-      if (langDropdownRef.current && !langDropdownRef.current.contains(e.target as Node)) {
+      const clickedInsideDesktopLang = langDropdownRef.current && langDropdownRef.current.contains(e.target as Node);
+      const clickedInsideMobileLang = mobileLangDropdownRef.current && mobileLangDropdownRef.current.contains(e.target as Node);
+      if (!clickedInsideDesktopLang && !clickedInsideMobileLang) {
         setLangDropdownOpen(false);
       }
       if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target as Node)) {
@@ -90,6 +93,12 @@ export default function Navbar() {
         { href: "/seeker/settings",      icon: <Settings size={14} />,  label: t("common.nav.settings")     },
       ];
 
+  const langOptions: { code: "en" | "fr" | "sw" | "kinyy"; label: string }[] = [
+    { code: "en",    label: "English" },
+    { code: "fr",    label: "Français" },
+    { code: "sw",    label: "Kiswahili" },
+    { code: "kinyy", label: "Kinyarwanda" },
+  ];
 
   return (
     <>
@@ -132,7 +141,17 @@ export default function Navbar() {
           height: 28px; box-sizing: border-box;
         }
         .lang-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
-        
+
+        .lang-btn-mobile {
+          display: flex; align-items: center; justify-content: center; gap: 4px;
+          background: transparent; border: none;
+          border-radius: 8px; height: 36px; padding: 0 6px;
+          color: #888; cursor: pointer; transition: background 0.15s, color 0.15s;
+          flex-shrink: 0; font-size: 11px; font-weight: 700; text-transform: uppercase;
+          font-family: inherit;
+        }
+        .lang-btn-mobile:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
         .lang-item {
           display: flex; align-items: center; justify-content: space-between;
           width: 100%; padding: 8px 12px; border-radius: 8px; background: transparent;
@@ -176,6 +195,8 @@ export default function Navbar() {
         }
         .hamburger-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
+        .mobile-controls { display: none; align-items: center; gap: 8px; flex-shrink: 0; }
+
         .mobile-nav-link {
           display: flex; align-items: center;
           padding: 11px 14px; color: #888; text-decoration: none;
@@ -187,7 +208,7 @@ export default function Navbar() {
 
         /* ── Desktop only ── */
         @media (min-width: 601px) {
-          .hamburger-btn       { display: none !important; }
+          .mobile-controls     { display: none !important; }
           .mobile-menu-wrapper { display: none !important; }
         }
 
@@ -195,7 +216,7 @@ export default function Navbar() {
         @media (max-width: 600px) {
           .desktop-links   { display: none !important; }
           .desktop-right   { display: none !important; }
-          .hamburger-btn   { display: flex !important; }
+          .mobile-controls { display: flex !important; }
           .nav-logo img    { width: 120px !important; height: 48px !important; }
         }
       `}</style>
@@ -262,22 +283,16 @@ export default function Navbar() {
                   padding: "6px", display: "flex", flexDirection: "column", gap: "2px",
                   zIndex: 100,
                 }}>
-                  <button onClick={() => { setLanguage("en"); setLangDropdownOpen(false); }} className={`lang-item${language === "en" ? " active" : ""}`}>
-                    <span>English</span>
-                    {language === "en" && <span style={{ fontSize: 11 }}>✓</span>}
-                  </button>
-                  <button onClick={() => { setLanguage("fr"); setLangDropdownOpen(false); }} className={`lang-item${language === "fr" ? " active" : ""}`}>
-                    <span>Français</span>
-                    {language === "fr" && <span style={{ fontSize: 11 }}>✓</span>}
-                  </button>
-                  <button onClick={() => { setLanguage("sw"); setLangDropdownOpen(false); }} className={`lang-item${language === "sw" ? " active" : ""}`}>
-                    <span>Kiswahili</span>
-                    {language === "sw" && <span style={{ fontSize: 11 }}>✓</span>}
-                  </button>
-                  <button onClick={() => { setLanguage("kinyy"); setLangDropdownOpen(false); }} className={`lang-item${language === "kinyy" ? " active" : ""}`}>
-                    <span>Kinyarwanda</span>
-                    {language === "kinyy" && <span style={{ fontSize: 11 }}>✓</span>}
-                  </button>
+                  {langOptions.map(({ code, label }) => (
+                    <button
+                      key={code}
+                      onClick={() => { setLanguage(code); setLangDropdownOpen(false); }}
+                      className={`lang-item${language === code ? " active" : ""}`}
+                    >
+                      <span>{label}</span>
+                      {language === code && <span style={{ fontSize: 11 }}>✓</span>}
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
@@ -309,7 +324,7 @@ export default function Navbar() {
                       background: "#22c55e", border: "2px solid #161616",
                     }} />
                   </div>
-                  
+
                   <ChevronDown size={12} color="#555" style={{ transition: "transform 0.2s", transform: dropdownOpen ? "rotate(180deg)" : "rotate(0deg)", flexShrink: 0 }} />
                 </button>
 
@@ -350,15 +365,52 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile: hamburger */}
-          <button
-            className="hamburger-btn"
-            onClick={() => setMobileMenuOpen((v) => !v)}
-            aria-label="Toggle menu"
-            aria-expanded={mobileMenuOpen}
-          >
-            {mobileMenuOpen ? <X size={17} /> : <Menu size={17} />}
-          </button>
+          {/* Mobile: language switch + hamburger, grouped together on the right */}
+          <div className="mobile-controls">
+            <div style={{ position: "relative" }} ref={mobileLangDropdownRef}>
+              <button
+                className="lang-btn-mobile"
+                onClick={() => setLangDropdownOpen((v) => !v)}
+                aria-label="Change language"
+                aria-expanded={langDropdownOpen}
+              >
+                <Globe size={14} />
+                <span>{language === "kinyy" ? "kin" : language}</span>
+                <ChevronDown size={9} color="#666" style={{ transition: "transform 0.2s", transform: langDropdownOpen ? "rotate(180deg)" : "rotate(0deg)" }} />
+              </button>
+
+              {langDropdownOpen && (
+                <div className="lang-dropdown" style={{
+                  position: "absolute", top: "calc(100% + 10px)", right: 0,
+                  width: 150, maxWidth: "60vw", background: "#161616",
+                  border: "1px solid #272727", borderRadius: 14,
+                  boxShadow: "0 16px 40px rgba(0,0,0,0.6)", overflow: "hidden",
+                  padding: "6px", display: "flex", flexDirection: "column", gap: "2px",
+                  zIndex: 100,
+                }}>
+                  {langOptions.map(({ code, label }) => (
+                    <button
+                      key={code}
+                      onClick={() => { setLanguage(code); setLangDropdownOpen(false); }}
+                      className={`lang-item${language === code ? " active" : ""}`}
+                    >
+                      <span>{label}</span>
+                      {language === code && <span style={{ fontSize: 11 }}>✓</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <button
+              className="hamburger-btn"
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              aria-label="Toggle menu"
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? <X size={17} /> : <Menu size={17} />}
+            </button>
+          </div>
         </nav>
 
         {/* ── Mobile slide-down menu ── */}
@@ -410,27 +462,6 @@ export default function Navbar() {
                     ))}
                   </>
                 )}
-
-                {/* Mobile Language Selector */}
-                <div style={{ padding: "10px 14px", borderTop: "1px solid #1f1f1f", marginTop: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#888" }}>
-                    <Globe size={14} />
-                    <span>Language</span>
-                  </div>
-                  <select
-                    value={language}
-                    onChange={(e) => setLanguage(e.target.value as any)}
-                    style={{
-                      background: "#161616", border: "1px solid #272727", borderRadius: 8,
-                      color: "#fff", fontSize: 13, padding: "4px 8px", outline: "none", cursor: "pointer"
-                    }}
-                  >
-                    <option value="en">English</option>
-                    <option value="fr">Français</option>
-                    <option value="sw">Kiswahili</option>
-                    <option value="kinyy">Kinyarwanda</option>
-                  </select>
-                </div>
 
                 <div style={{ padding: "8px 6px 2px" }}>
                   <button className="hire-btn-mobile" onClick={() => { setMobileMenuOpen(false); setHireOpen(true); }}>

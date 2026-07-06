@@ -659,4 +659,18 @@ export async function submitContact(payload: {
   await http.post("/api/contact", payload);
 }
 
+export async function getContactThread(email: string): Promise<any[]> {
+  const { data } = await http.get(`/api/contact/thread?email=${encodeURIComponent(email)}`);
+  return data.data;
+}
+
+export async function sendContactTyping(email: string, typer: "USER" | "AGENT", isTyping: boolean): Promise<void> {
+  await http.post(`/api/contact/typing?email=${encodeURIComponent(email)}&typer=${typer}&isTyping=${isTyping}`);
+}
+
+export async function getContactTypingStatus(email: string): Promise<{ userTyping: boolean; agentTyping: boolean }> {
+  const { data } = await http.get(`/api/contact/typing?email=${encodeURIComponent(email)}`);
+  return data.data;
+}
+
 export { daysAgo };

@@ -1809,5 +1809,69 @@
     "complete_modal_desc": "Ibi birerekana ko akazi karangiye kandi bihe umukozi/abakozi amafaranga yafunzwe. Mbere yo kwishyura, banza uhe umukozi amanota.",
     "complete_and_release": "Emeza & Kora Payout",
     "confirm_cancel_alert": "Guhagarika aka kazi? Amafaranga yafunzwe azasubizwa kuri wallet yawe."
+  },
+  "seeker_help": {
+    "faq1_q": "Nishyurwa nte?",
+    "faq1_a": "Amafaranga yawe afungirwa muri escrow iyo akazi gatangiye maze agahita yoherezwa kuri wallet yawe iyo umukoresha yemeje ko akazi karangiye. Ushobora kuyakura kuri wallet ukayohereza kuri MTN MoMo cyangwa Airtel Money umunsi wose.",
+    "faq2_q": "Ni ayahe mafaranga ya platform (fee)?",
+    "faq2_a": "Dukata 25% ku mafaranga umukozi yorejwe kugira ngo tubashe kubungabunga platform, kugenzura abakoresha n'abakozi, ndetse no kwishyura MoMo transactions.",
+    "faq3_q": "Nabonera nte akazi?",
+    "faq3_a": "Emeza ko umwirondoro wawe, ubumenyi, amashuri, ndetse n'akarere utuyemo byuzuye neza. Abakoresha bashobora kugushakira ahabonetse abakozi cyangwa nawe ugasaba akazi katangajwe mu isoko ry'imirimo.",
+    "faq4_q": "Nemeza nte ko akazi karangiye?",
+    "faq4_a": "Iyo urangije akazi, baza umukoresha wawe gusikana badge yawe y'umukozi cyangwa kwemeza ko akazi karangiye kuri dashboard ye kugira ngo amafaranga yawe arekurwe.",
+    "faq5_q": "Bigenze bite iyo habonetse impaka?",
+    "faq5_a": "Iyo umukoresha wanze kurekura amafaranga cyangwa agafungura impaka, ikipe yacu isuzuma impaka zose mu masaha 2. Duvugana n'impande zombi tugakemura ikibazo hashingiwe ku bimenyetso by'akazi kakozwe."
+  },
+  "bazabot": {
+    "welcome": "Muraho {userName}! Ndi BazaBot, umufasha wawe mu gukemura ibibazo kuri MpahMapu. Nshobora kugufasha nte uyu munsi?",
+    "greetings": "Muraho! Ndi BazaBot, umufasha wawe. Ndizera ko ufite umunsi mwiza! Nshobora kugufasha nte kuri MpahMapu uyu munsi?",
+    "feeling": "Nka robot (AI), nta sentiments ngira, ariko niteguye buri gihe kandi mfite ingufu zo kugufasha gukoresha MpahMapu!",
+    "quotes": "\"Intsinzi si yo ndunduro, gutsindwa si urupfu: icyangombwa ni ubushake bwo gukomeza mbaraga.\" - Winston Churchill. Komeza uharanire kugera ku ntego zawe!",
+    "business": "MpahMapu yashyiriweho gufasha ubucuruzi ndetse n'abakozi. Uburyo bwizewe bwo gufunga ubwishyu (escrow) na badge zemejwe bituma urubuga rwacu rukomeza gutera imbere.",
+    "starter1": "Uko bikora nguku mu buryo burambuye: ",
+    "starter2": "Ku kibazo cyawe, reka nguhe amakuru yose ahagije: ",
+    "starter3": "Yego rwose! Hano hari amakuru yose ukeneye: ",
+    "starter4": "Kugira ngo ubashe kubisobanukirwa neza: ",
+    "starter5": "Nshobora kugusobanurira ibi mu buryo burambuye: ",
+    "escrow": {
+      "overview": "Hano kuri MpahMapu, dukoresha uburyo bwo gufunga amafaranga (escrow) bwizewe kandi bwikora. Kuri buri kazi kamaze kwemezwa, amafaranga ahita afungirwa akurwa kuri wallet y'umukoresha. Ibi byizera umukozi ko igihe cye n'imbaraga ze bitazapfa ubusa ndetse ko ubwishyu bwemejwe na mbere y'uko agera aho akazi gakorerwa. Igiciro kibarwa nk'igiciro cy'isaha × amasaha × umubare w'abakozi wongeyeho 5% ya service fee yo gufunga ubwishyu.",
+      "process": "Iyo ukanze 'Book Now', sisitemu ihita yakira ubusabe bwawe saa {time} ikazibira amafaranga yose hamwe. Amafaranga aguma afunzwe muri escrow mu gihe cyose cy'akazi. Iyo umukozi arangije akazi, yerekana badge ye y'umukozi ifite QR code. Gusikana iyi badge cyangwa gukanda 'Mark Complete' bihita birekura amafaranga ako kanya akajya kuri wallet y'umukozi.",
+      "guidelines": "Amafaranga yose yafunzwe agengwa n'amabwiriza yacu yo kugenzura. Abakoresha bafite amasaha agera kuri 24 nyuma yo kurangiza akazi kugira ngo bagenzure ubuziranenge bwako. Iyo impaka zafunguwe, amafaranga aguma afunzwe kugeza igihe ikipe yacu ishinzwe ubufasha isuzumye ibimenyetso ikagira umwanzuro ifata."
+    },
+    "refund": {
+      "overview": "Twemera ko amaprogram ashobora guhinduka, bityo rero MpahMapu ibaha uburyo bwo gusubizwa amafaranga mu mucyo. Iyo akazi gahagaritswe mu buryo bwemewe, amafaranga yose yari yafunzwe ahita asubizwa kuri wallet y'umukoresha. Gusubizwa bikorwa mu gihe nyacyo (real-time) kugira ngo konti yawe igume ifite amafaranga.",
+      "process": "Niba ushaka gusubizwa amafaranga, jya ahanditse Payments, uhitemo transaction yafunzwe (HELD), maze ukande 'Request Refund'. Kuri gahunda z'akazi zigifunguye, guhagarika bikozwe mbere y'amasaha 2 ngo akazi gatangire bisubizwa 100%. Iyo uhagaritse mu masaha ari munsi ya 2 akazi gasigaje, ukatwa 10% yo guha indishyi umukozi.",
+      "guidelines": "Ubusabe bwose bwo gusubizwa amafaranga nyuma y'uko akazi gatangira busuzumwa n'ikipe yacu. Ikipe yacu isuzuma ibiganiro bya chat, raporo z'akazi, ndetse n'umwirondoro w'abakoresha. Iyo byemejwe, amafaranga ahita agaragara kuri wallet yawe kandi ushobora kuyakura ukayohereza kuri MTN MoMo cyangwa Airtel Money."
+    },
+    "verify": {
+      "overview": "Umutekano n'ubwizerane nibyo dushyira imbere cyane. Buri mukozi ndetse n'umukoresha kuri MpahMapu anyura mu kugenzura umwirondoro (identity verification) mbere yo gukoresha platform. Ibi bituma twubaka umuryango w'abanyamwuga bizewe kandi bagenzuwe i Kigali.",
+      "process": "Mu gihe cyo kwiyandikisha, abakozi bohereza ikarita y'indangamuntu (ID), inyandiko z'ubushinjacyaha (police clearance), ndetse n'abantu bashobora kubemeza (references). Ikipe yacu isuzuma buri busabe mu masaha 24. Abakozi bagenzuwe bahabwa badge y'icyatsi kibara umutekano kuri profile yabo.",
+      "guidelines": "Dukurikiranira hafi amanota (ratings) abakozi bahabwa. Iyo umukozi abonye amanota ari munsi ya 3.5 stars, profile ye ihita ishyirwa mu gihe cy'igerageza. Ibyangombwa bidasanzwe bigenzurwa kabiri mu mwaka. Ubwifatanye cyangwa imyitwarire mibi ihita itemesha badge y'umukozi."
+    },
+    "fee": {
+      "overview": "Kugira ngo tubashe gukomeza kubungabunga platform, kohereza ubwishyu mu buryo bwihuse, ndetse n'umutekano w'abakoresha n'abakozi, MpahMapu yaka amafaranga ya service fee. Iyi fee idufasha kugenzura profiles, kwishyura MTN MoMo transactions, ndetse no gukemura impaka.",
+      "process": "Abakozi bakatwa {fee} kuri buri mushahara bahawe. Nk'urugero, niba akazi kishyuwe RWF 10,000, RWF 2,500 ihita ikatwa ku buryo bwikora, maze RWF 7,500 ikoherezwa kuri wallet yawe. Abakoresha bo bishyura gusa 5% ya transaction fee mu gihe cyo gufunga escrow.",
+      "guidelines": "Amafaranga yose yashyizweho na platform agaragara mu mucyo kuri fagitire yawe munsi ya tab ya My Earnings. Iyi service fee ntishobora gusubizwa kuko ikoreshwa mu kwishyura payment processors ndetse no gupayisha server. Inyandiko zose zoherezwa kuri email yawe."
+    },
+    "job": {
+      "overview": "MpahMapu ihuza abakozi b'abanyamyuga benshi cyane n'ibigo by'ubucuruzi ndetse n'ingo zitandukanye i Kigali. Kubona akazi biroroshye cyane iyo profile yawe yuzuye neza. Gira ubumenyi, ibiciro by'isaha, ndetse n'amasaha ukoramo byuzuye kugira ngo uhure n'ubusabe bw'abakoresha.",
+      "process": "Iyo abakoresha bakeneye abakozi, bashobora gutangaza akazi mu isoko ry'imirimo cyangwa bagashakira ahanditse abakozi bagenzuwe. Ushobora gushakisha mu isoko, ukareba igiciro cy'isaha, maze ugasaba. Iyo umukoresha nemeye ubusabe bwawe, akazi gahita gatangira ku munsi wagenwe.",
+      "guidelines": "Abakozi bakwiriye gusaba gusa imirimo bafitiye ubumenyi buhagije. Gutinda cyangwa kutaboneka ku kazi utatanze integuza y'amasaha 24 mbere bigabanya amanota yawe kandi bishobora gutuma konti yawe ihagarikwa by'agateganyo. Koresha chat kugira ngo uvugane n'umukoresha."
+    },
+    "complete": {
+      "overview": "Kwemeza ko akazi karangiye niyo ntambwe ya nyuma muri MpahMapu. Ibi byerekana sisitemu ko imirimo yari yashyiranyweho yarangiye neza, bityo ko igomba kurekura amafaranga yari yafunzwe ikayahereza umukozi.",
+      "process": "Iyo urangije amasaha yawe y'akazi, yereke umukoresha QR code badge yawe. Arabisikana akoresheje camera y'intelefone ye, cyangwa agakanda 'Mark Complete' kuri dashboard ye. Ubwishyu buhita bwoherezwa kuri wallet yawe ako kanya.",
+      "guidelines": "Emeza ko umukoresha yemeza akazi mbere y'uko uvaho. Iyo yabyibagiwe, mwandikire mu mucyo kuri chat. Iyo umukoresha wanze kwemeza ko akazi karangiye kandi wamukoreye, contacta support ya BazaBot maze uheze ibimenyetso by'akazi."
+    },
+    "dispute": {
+      "overview": "Nubwo dukora ibishoboka byose kugira ngo imirimo igende neza, impaka zishobora kuvuka hagati y'umukoresha n'umukozi. MpahMapu ifite ishami rishinzwe gukemura impaka zishingiye ku buziranenge bw'akazi, amasaha yakozwe, cyangwa ubwishyu.",
+      "process": "Niba ushaka gufungura impaka, jya ku rupapuro rw'akazi maze ukande 'Raise Dispute'. Usabwa kohereza ibimenyetso nka photos z'akazi kakozwe, chat screenshots, cyangwa inyandiko z'amasaha. Ikipe yacu ihita imenyekanishwa maze ikafunga ubwishyu.",
+      "guidelines": "Kugenzura impaka bitangira mu masaha 2 y'akazi. Abalive agents bacu bavugana n'umukoresha ndetse n'umukozi kugira ngo bumve impande zombi. Umwanzuro ufatwa nta kubogama hashingiwe ku miterere y'akazi n'ibimenyetso, maze amafaranga akarekurwa."
+    },
+    "fallback": {
+      "overview": "Ikibazo cyawe gisaba ubufasha bw'umuntu (live agent). BazaBot yabitse inyandiko zose z'ibiganiro twagiranye ndetse n'amakuru ya konti yawe kugira ngo ifungure ubusabe bw'ubufasha (support ticket) buhambaye mu buryo bwa sisitemu yacu.",
+      "process": "Sisitemu yacu yafunguye ticket nshya saa {time} maze ihita yoherereza email ya alarm abadmin bose kuri platform. Manager ushinzwe ubufasha agiye gusuzuma ibiganiro maze ahite akwandikira kuri email yawe wiyandikishijeho.",
+      "guidelines": "Kugira ngo ubone ubufasha vuba cyane, ushobora gukanda ku gice cy'icyatsi kibara 'WhatsApp Call' cyangwa 'Live Chat' hejuru ku rupapuro. Ibi bikugeza kuri support team yacu kuri WhatsApp maze ukavugana n'umuntu ako kanya."
+    }
   }
 }

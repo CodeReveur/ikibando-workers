@@ -8,6 +8,6 @@ export function ContentWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAuth = AUTH_PATHS.includes(pathname) || pathname.startsWith("/dashboard") || pathname.startsWith("/seeker") || pathname.startsWith("/owner");
   return (
-    <div style={isAuth ? {} : { paddingTop: "72px" }}>{children}</div>
+    <div style={isAuth ? {} : { paddingTop: "72px", background: "#111" }}>{children}</div>
   );
 }

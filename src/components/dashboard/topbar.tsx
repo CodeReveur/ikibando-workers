@@ -93,7 +93,7 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
     else if (path === "/owner/offers" || path.startsWith("/owner/offers/")) key = "offers";
     else if (path === "/owner/payments") key = "payments";
     else if (path === "/owner/workers" || path.startsWith("/owner/workers/")) key = "workers";
-    else if (path === "/owner/help") key = "help";
+    else if (path === "/owner/help" || path === "/seeker/help") key = "help";
     else if (path.startsWith("/owner/jobs/")) key = "jobs";
     else if (path === "/seeker" || path === "/owner") key = "dashboard";
     

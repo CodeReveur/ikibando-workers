@@ -20,6 +20,7 @@ const SEEKER_NAV = [
   { href:"/seeker/bonuses",      label:"Bonuses",         icon:Gift      },
   { href:"/seeker/analytics",   label:"Analytics",       icon:BarChart2 },
   { href:"/seeker/settings",    label:"Settings",        icon:Settings  },
+  { href:"/seeker/help",        label:"Help",            icon:HelpCircle },
 ];
 
 const OWNER_NAV = [
@@ -68,7 +69,7 @@ export function Sidebar({ mobileOpen, closeMobile }: { mobileOpen?: boolean; clo
     else if (href === "/owner/payments") key = "payments";
     else if (href === "/owner/workers") key = "workers";
     else if (href === "/owner/analytics" || href === "/seeker/analytics") key = "analytics";
-    else if (href === "/owner/help") key = "help";
+    else if (href === "/owner/help" || href === "/seeker/help") key = "help";
     
     return key ? t("common.nav." + key) : defaultLabel;
   };
