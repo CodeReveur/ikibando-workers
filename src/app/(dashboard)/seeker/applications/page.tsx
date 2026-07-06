@@ -11,6 +11,7 @@ import {
 } from "@/lib/api";
 import { ST, fmt } from "@/lib/dashboard-data";
 import { StatCard, SectionHead, Dot, PageLoader } from "@/components/dashboard/ui";
+import { useLanguage } from "@/lib/language-context";
 
 const CSS = `
   .app-row { transition:background 0.1s; }
@@ -23,12 +24,35 @@ const CSS = `
   .act-btn.reject:hover { background:rgba(239,68,68,0.14); border-color:#ef4444; }
   .act-btn.withdraw { background:rgba(239,68,68,0.05); color:#ef4444; border-color:rgba(239,68,68,0.15); }
   .act-btn.withdraw:hover { background:rgba(239,68,68,0.12); border-color:#ef4444; }
+  .seeker-stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px; }
+  .seeker-tabs { display:flex; gap:4px; margin-bottom:18px; background:#0f0f0f; border-radius:10px; padding:4px; width:fit-content; }
+  @media (max-width: 900px) {
+    .seeker-stats-grid { grid-template-columns:repeat(2,1fr); }
+  }
+  @media (max-width: 500px) {
+    .seeker-stats-grid { grid-template-columns:1fr; }
+  }
+  @media (max-width: 340px) {
+    .seeker-stats-grid { gap:6px; margin-bottom:14px; }
+    .seeker-tabs { flex-wrap:wrap; width:100%; justify-content:center; }
+    .app-row { flex-direction:column; align-items:stretch !important; gap:8px !important; }
+    .app-row > div { align-items:flex-start !important; text-align:left !important; }
+  }
   @keyframes spin { to { transform:rotate(360deg); } }
 `;
 
 type TabKey = "offers" | "active" | "applied" | "all";
 
 export default function SeekerApplications() {
+  const { t, language } = useLanguage();
+  const dateLocaleMap: Record<string, string> = {
+    rw: "rw-RW",
+    kinyy: "rw-RW",
+    sw: "sw-TZ",
+    fr: "fr-FR",
+    en: "en-US",
+  };
+  const currentLocale = dateLocaleMap[language] || "en-RW";
   const [apps,      setApps]      = useState<ApplicationDto[]>([]);
   const [loading,   setLoading]   = useState(true);
   const [tab,       setTab]       = useState<TabKey>("offers");
@@ -94,10 +118,10 @@ export default function SeekerApplications() {
   };
 
   const TABS: { key: TabKey; label: string; count: number }[] = [
-    { key:"offers",  label:"Direct Offers",   count:hireNowPending.length },
-    { key:"active",  label:"Active",          count:accepted.length },
-    { key:"applied", label:"Applied",         count:selfPending.length },
-    { key:"all",     label:"All",             count:apps.length },
+    { key:"offers",  label: t("seeker_applications.tab_offers") || "Direct Offers",   count:hireNowPending.length },
+    { key:"active",  label: t("seeker_applications.tab_active") || "Active",          count:accepted.length },
+    { key:"applied", label: t("seeker_applications.tab_applied") || "Applied",         count:selfPending.length },
+    { key:"all",     label: t("seeker_applications.tab_all") || "All",             count:apps.length },
   ];
 
   return (
@@ -105,15 +129,15 @@ export default function SeekerApplications() {
       <style>{CSS}</style>
 
       {/* Stats */}
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12, marginBottom:24 }}>
-        <StatCard label="Total Applied"    value={String(apps.length)}           sub="All time"         accent="#f97316" />
-        <StatCard label="Active Jobs"      value={String(accepted.length)}       sub="Currently hired"  accent="#22c55e" />
-        <StatCard label="Direct Offers"    value={String(hireNowPending.length)} sub="Need response"    accent="#60a5fa" />
-        <StatCard label="Pending Replies"  value={String(selfPending.length)}    sub="Waiting on employer" accent="#f59e0b" />
+      <div className="seeker-stats-grid">
+        <StatCard label={t("seeker_applications.total_applied") || "Total Applied"}    value={String(apps.length)}           sub={t("seeker_applications.all_time") || "All time"}         accent="#f97316" />
+        <StatCard label={t("seeker_applications.active_jobs") || "Active Jobs"}      value={String(accepted.length)}       sub={t("seeker_applications.currently_hired") || "Currently hired"}  accent="#22c55e" />
+        <StatCard label={t("seeker_applications.direct_offers") || "Direct Offers"}    value={String(hireNowPending.length)} sub={t("seeker_applications.need_response") || "Need response"}    accent="#60a5fa" />
+        <StatCard label={t("seeker_applications.pending_replies") || "Pending Replies"}  value={String(selfPending.length)}    sub={t("seeker_applications.waiting_on_employer") || "Waiting on employer"} accent="#f59e0b" />
       </div>
 
       {/* Tabs */}
-      <div style={{ display:"flex", gap:4, marginBottom:18, background:"#0f0f0f", borderRadius:10, padding:4, width:"fit-content", flexWrap:"wrap" }}>
+      <div className="seeker-tabs">
         {TABS.map(({ key, label, count }) => (
           <button key={key} onClick={() => setTab(key)} style={{
             padding:"7px 18px", borderRadius:7, fontSize:12, fontWeight:700, border:"none",
@@ -137,13 +161,13 @@ export default function SeekerApplications() {
         <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:14, padding:"40px 24px", textAlign:"center" }}>
           <FileText size={28} color="#2a2a2a" style={{ marginBottom:12 }} />
           <p style={{ margin:"0 0 6px", color:"#555", fontSize:14, fontWeight:600 }}>
-            {tab === "offers"  ? "No direct offers yet"
-             : tab === "active"  ? "No active jobs yet"
-             : tab === "applied" ? "No pending applications"
-             : "No applications yet"}
+            {tab === "offers"  ? t("seeker_applications.no_offers")
+             : tab === "active"  ? t("seeker_applications.no_active")
+             : tab === "applied" ? t("seeker_applications.no_applied")
+             : t("seeker_applications.no_all")}
           </p>
           <p style={{ margin:"0 0 16px", color:"#333", fontSize:12 }}>
-            {tab === "offers" ? "Employers can send you a direct offer from your profile" : <><a href="/jobs" style={{ color:"#f97316" }}>Browse open jobs</a> to apply</>}
+            {tab === "offers" ? t("seeker_applications.offers_hint") : <a href="/jobs" style={{ color:"#f97316" }}>{t("seeker_applications.browse_jobs_desc")}</a>}
           </p>
         </div>
       )}
@@ -154,6 +178,14 @@ export default function SeekerApplications() {
           const isActing = actionMap[app.id] === "loading";
           const isDone   = actionMap[app.id] === "done";
           const showNote = noteFor === app.id;
+
+          const localizedStatusLabel = app.status === "ACCEPTED"
+            ? (t("settings_page.account.verified") || "Accepted")
+            : app.status === "REJECTED"
+            ? (t("common.general.rejected") || "Rejected")
+            : app.status === "WITHDRAWN"
+            ? (t("seeker_job_detail.app_withdrawn") || "Withdrawn")
+            : (t("seeker_jobs.status_pending") || "Pending");
 
           return (
             <div key={app.id}>
@@ -178,13 +210,13 @@ export default function SeekerApplications() {
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
                     <p style={{ margin:0, fontWeight:700, fontSize:14, color:"#e8e8e8" }}>{app.jobTitle}</p>
-                    <span style={{ fontSize:9, fontWeight:700, borderRadius:99, padding:"2px 7px", color:st.color, background:st.bg }}>{st.label}</span>
+                    <span style={{ fontSize:9, fontWeight:700, borderRadius:99, padding:"2px 7px", color:st.color, background:st.bg }}>{localizedStatusLabel}</span>
                     {app.appliedVia === "HIRE_NOW" && (
-                      <span style={{ fontSize:9, fontWeight:700, borderRadius:99, padding:"2px 7px", color:"#60a5fa", background:"rgba(96,165,250,0.1)" }}>Direct Offer</span>
+                      <span style={{ fontSize:9, fontWeight:700, borderRadius:99, padding:"2px 7px", color:"#60a5fa", background:"rgba(96,165,250,0.1)" }}>{t("seeker_applications.tab_offers")}</span>
                     )}
                     {app.status === "PENDING" && app.appliedVia === "HIRE_NOW" && (
                       <span style={{ fontSize:9, fontWeight:700, borderRadius:99, padding:"2px 7px", color:"#f97316", background:"rgba(249,115,22,0.1)", display:"inline-flex", alignItems:"center", gap:3 }}>
-                        <AlertCircle size={8} /> Needs response
+                        <AlertCircle size={8} /> {t("seeker_applications.needs_response_badge")}
                       </span>
                     )}
                   </div>
@@ -195,19 +227,19 @@ export default function SeekerApplications() {
                     <span style={{ fontSize:11, color:"#3a3a3a" }}>{app.jobDistrict}</span>
                     <Dot />
                     <Clock size={9} color="#2a2a2a" />
-                    <span style={{ fontSize:11, color:"#3a3a3a" }}>{new Date(app.createdAt).toLocaleDateString()}</span>
+                    <span style={{ fontSize:11, color:"#3a3a3a" }}>{new Date(app.createdAt).toLocaleDateString(currentLocale)}</span>
                   </div>
                   {app.bestFit && (
                     <p style={{ margin:"5px 0 0", fontSize:11, color:"#3e3e3e", fontStyle:"italic" }}>"{app.bestFit}"</p>
                   )}
                   {app.responseNote && (
                     <p style={{ margin:"5px 0 0", fontSize:11, color: app.status === "ACCEPTED" ? "#22c55e" : "#ef4444", fontStyle:"italic" }}>
-                      Employer: "{app.responseNote}"
+                      {t("seeker_job_detail.employer") || "Employer"}: "{app.responseNote}"
                     </p>
                   )}
                   {app.respondedAt && (
                     <p style={{ margin:"3px 0 0", fontSize:10, color:"#2a2a2a" }}>
-                      Responded {new Date(app.respondedAt).toLocaleDateString()}
+                      {t("seeker_applications.responded_prefix")} {new Date(app.respondedAt).toLocaleDateString(currentLocale)}
                     </p>
                   )}
                 </div>
@@ -221,25 +253,25 @@ export default function SeekerApplications() {
                   {!isActing && !isDone && !showNote && app.status === "PENDING" && app.appliedVia === "HIRE_NOW" && (
                     <div style={{ display:"flex", gap:6 }}>
                       <button className="act-btn accept" onClick={() => { setPendingAct({ appId:app.id, act:"ACCEPTED" }); setNoteFor(app.id); setNoteText(""); }}>
-                        <Check size={10} style={{ marginRight:3 }} />Accept
+                        <Check size={10} style={{ marginRight:3 }} />{t("seeker_applications.accept")}
                       </button>
                       <button className="act-btn reject" onClick={() => doRespond(app.id, "REJECTED")}>
-                        <X size={10} style={{ marginRight:3 }} />Reject
+                        <X size={10} style={{ marginRight:3 }} />{t("seeker_applications.reject")}
                       </button>
                     </div>
                   )}
 
                   {!isActing && !isDone && !showNote && app.status === "PENDING" && app.appliedVia !== "HIRE_NOW" && (
-                    <button className="act-btn withdraw" onClick={() => doWithdraw(app.id)}>Withdraw</button>
+                    <button className="act-btn withdraw" onClick={() => doWithdraw(app.id)}>{t("seeker_applications.withdraw")}</button>
                   )}
 
                   {isDone && (
-                    <span style={{ fontSize:11, color:"#22c55e", fontWeight:700 }}>Done ✓</span>
+                    <span style={{ fontSize:11, color:"#22c55e", fontWeight:700 }}>{t("seeker_applications.done")}</span>
                   )}
 
                   {!isActing && !isDone && (
                     <a href={`/seeker/jobs/${app.jobId}`} style={{ fontSize:11, color:"#60a5fa", fontWeight:700, textDecoration:"none", display:"inline-flex", alignItems:"center", gap:4 }}>
-                      Track <ChevronRight size={11} />
+                      {t("seeker_applications.track")} <ChevronRight size={11} />
                     </a>
                   )}
                 </div>
@@ -249,23 +281,23 @@ export default function SeekerApplications() {
               {showNote && (
                 <div style={{ padding:"10px 18px 14px 74px", background:"#0b0b0b", borderTop:"1px solid #141414" }}>
                   <p style={{ margin:"0 0 6px", fontSize:11, fontWeight:700, color:"#22c55e" }}>
-                    Accept offer — add a message (optional)
+                    {t("seeker_applications.accept_title")}
                   </p>
                   <input
                     autoFocus
                     value={noteText}
                     onChange={e => setNoteText(e.target.value)}
-                    placeholder="e.g. Looking forward to it! I'll be there on time."
+                    placeholder={t("seeker_applications.optional_placeholder")}
                     style={inp}
                   />
                   <div style={{ display:"flex", gap:8, marginTop:8 }}>
                     <button className="act-btn accept"
                       onClick={() => pendingAct && doRespond(pendingAct.appId, pendingAct.act, noteText || undefined)}>
-                      Confirm Acceptance
+                      {t("seeker_applications.confirm_acceptance")}
                     </button>
                     <button className="act-btn" style={{ color:"#555", borderColor:"#222", background:"transparent" }}
                       onClick={() => { setNoteFor(null); setPendingAct(null); setNoteText(""); }}>
-                      Cancel
+                      {t("seeker_applications.cancel")}
                     </button>
                   </div>
                 </div>

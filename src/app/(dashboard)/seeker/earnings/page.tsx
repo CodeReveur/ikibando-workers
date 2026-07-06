@@ -12,6 +12,7 @@ import {
 type WdMethod = "MTN_MOMO" | "AIRTEL_MONEY";
 import { StatCard, SectionHead, PageLoader } from "@/components/dashboard/ui";
 import { fmt } from "@/lib/dashboard-data";
+import { useLanguage } from "@/lib/language-context";
 
 const STATUS_STYLE: Record<string, { label: string; color: string; bg: string }> = {
   RELEASED: { label:"Released",   color:"#22c55e", bg:"rgba(34,197,94,0.08)"   },
@@ -23,6 +24,16 @@ const STATUS_STYLE: Record<string, { label: string; color: string; bg: string }>
 };
 
 export default function SeekerEarnings() {
+  const { t, language } = useLanguage();
+  const dateLocaleMap: Record<string, string> = {
+    rw: "rw-RW",
+    kinyy: "rw-RW",
+    sw: "sw-TZ",
+    fr: "fr-FR",
+    en: "en-US",
+  };
+  const currentLocale = dateLocaleMap[language] || "en-RW";
+
   const [wallet,   setWallet]   = useState<WalletDto | null>(null);
   const [txns,     setTxns]     = useState<PaymentDto[]>([]);
   const [loading,  setLoading]  = useState(true);
@@ -50,17 +61,25 @@ export default function SeekerEarnings() {
   const doWithdraw = async () => {
     const token = localStorage.getItem("access_token")!;
     const amount = parseInt(wdAmt, 10);
-    if (!amount || amount < 500) { setWdErr("Minimum withdrawal is RWF 500"); return; }
-    if (amount > (wallet?.balance ?? 0)) { setWdErr("Amount exceeds wallet balance"); return; }
-    if (!wdPhone.trim() || wdPhone.replace(/\D/g,"").length < 9) { setWdErr("Enter a valid phone number"); return; }
+    if (!amount || amount < 500) { setWdErr(t("seeker_earnings.min_wd_err") || "Minimum withdrawal is RWF 500"); return; }
+    if (amount > (wallet?.balance ?? 0)) { setWdErr(t("seeker_earnings.exceeds_err") || "Amount exceeds wallet balance"); return; }
+    if (!wdPhone.trim() || wdPhone.replace(/\D/g,"").length < 9) { setWdErr(t("seeker_earnings.valid_phone_err") || "Enter a valid phone number"); return; }
     setWdBusy(true); setWdErr("");
     try {
       await requestWithdrawal({ amount, phoneNumber: wdPhone.trim(), paymentMethod: wdMethod }, token);
       await load(); // refresh wallet + transactions
       setWdOpen(false); setWdAmt(""); setWdPhone("");
     } catch (e: any) {
-      setWdErr(apiError(e, "Withdrawal failed. Please try again."));
+      setWdErr(apiError(e, t("seeker_earnings.wd_failed_err") || "Withdrawal failed. Please try again."));
     } finally { setWdBusy(false); }
+  };
+
+  const localizedStatusLabel = (status: string) => {
+    if (status === "RELEASED" || status === "SUCCESS") return t("seeker_applications.done") || "Released";
+    if (status === "PENDING" || status === "HELD") return t("seeker_job_detail.held_in_escrow") || "In Escrow";
+    if (status === "REFUNDED") return t("seeker_jobs.status_refunded") || "Refunded";
+    if (status === "FAILED") return t("common.general.failed") || "Failed";
+    return status;
   };
 
   if (loading) return <PageLoader />;
@@ -78,6 +97,18 @@ export default function SeekerEarnings() {
 
   return (
     <div>
+      <style>{`
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .seeker-stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:28px; }
+        @media (max-width: 900px) {
+          .seeker-stats-grid { grid-template-columns:1fr; }
+        }
+        @media (max-width: 340px) {
+          .seeker-stats-grid { gap:6px; }
+          .wd-providers { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+
       {/* Wallet hero card */}
       <div style={{
         background:"linear-gradient(135deg,#141414 0%,#111 100%)",
@@ -87,13 +118,15 @@ export default function SeekerEarnings() {
         <div style={{ position:"absolute", top:-50, right:-50, width:180, height:180, borderRadius:999, background:"rgba(249,115,22,0.03)", pointerEvents:"none" }} />
         <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10 }}>
           <Wallet size={16} color="#f97316" />
-          <p style={{ margin:0, fontSize:11, fontWeight:700, color:"#3a3a3a", textTransform:"uppercase", letterSpacing:"0.08em" }}>My Wallet</p>
+          <p style={{ margin:0, fontSize:11, fontWeight:700, color:"#3a3a3a", textTransform:"uppercase", letterSpacing:"0.08em" }}>{t("seeker_earnings.my_wallet")}</p>
         </div>
         <p style={{ margin:"0 0 6px", fontSize:42, fontWeight:900, color:"#fff", letterSpacing:"-2px" }}>
           {fmt(wallet?.balance ?? 0)}
         </p>
         <p style={{ margin:"0 0 22px", fontSize:12, color:"#333" }}>
-          {fmt(inEscrow)} in escrow · {fmt(released)} released total
+          {t("seeker_earnings.in_escrow_released")
+            ?.replace("{inEscrow}", fmt(inEscrow))
+            ?.replace("{released}", fmt(released)) || `${fmt(inEscrow)} in escrow · ${fmt(released)} released total`}
         </p>
         <button
           onClick={() => { setWdOpen(true); setWdAmt(""); setWdPhone(""); setWdErr(""); }}
@@ -105,62 +138,62 @@ export default function SeekerEarnings() {
             fontSize:13, fontWeight:700, cursor:(wallet?.balance ?? 0) > 0 ? "pointer" : "not-allowed",
             fontFamily:"inherit",
           }}>
-          Withdraw to MoMo
+          {t("seeker_earnings.withdraw_momo")}
         </button>
       </div>
 
       {/* Stats */}
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:12, marginBottom:28 }}>
-        <StatCard label="Total Released" value={fmt(released)}      sub="Paid to wallet"      accent="#22c55e" />
-        <StatCard label="In Escrow"      value={fmt(inEscrow)}      sub="Awaiting completion" accent="#f59e0b" />
-        <StatCard label="Jobs Paid"      value={String(jobCount)}   sub="Completed jobs"      accent="#60a5fa" />
+      <div className="seeker-stats-grid">
+        <StatCard label={t("seeker_earnings.total_released")} value={fmt(released)}      sub={t("seeker_earnings.paid_to_wallet")}      accent="#22c55e" />
+        <StatCard label={t("seeker_earnings.in_escrow")}      value={fmt(inEscrow)}      sub={t("seeker_earnings.awaiting_completion")} accent="#f59e0b" />
+        <StatCard label={t("seeker_earnings.jobs_paid")}      value={String(jobCount)}   sub={t("seeker_earnings.completed_jobs")}      accent="#60a5fa" />
       </div>
 
       {/* Transaction list */}
-      <SectionHead title="Transaction History" />
+      <SectionHead title={t("seeker_earnings.txn_history") || "Transaction History"} />
 
       {txns.length === 0 ? (
         <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:14, padding:"40px 24px", textAlign:"center" }}>
           <CreditCard size={28} color="#2a2a2a" style={{ marginBottom:12 }} />
-          <p style={{ margin:"0 0 6px", color:"#555", fontSize:14, fontWeight:600 }}>No transactions yet</p>
-          <p style={{ margin:0, color:"#333", fontSize:12 }}>Earnings appear here when employers release payment after completing a job.</p>
+          <p style={{ margin:"0 0 6px", color:"#555", fontSize:14, fontWeight:600 }}>{t("seeker_earnings.no_txns")}</p>
+          <p style={{ margin:0, color:"#333", fontSize:12 }}>{t("seeker_earnings.no_txns_desc")}</p>
         </div>
       ) : (
         <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:14, overflow:"hidden", marginBottom:16 }}>
-          {txns.map((t, i) => {
-            const s = STATUS_STYLE[t.status] ?? STATUS_STYLE.PENDING;
-            const isRelease = t.status === "RELEASED";
+          {txns.map((tX, idx) => {
+            const s = STATUS_STYLE[tX.status] ?? STATUS_STYLE.PENDING;
+            const isRelease = tX.status === "RELEASED";
             return (
-              <div key={t.id} style={{
+              <div key={tX.id} style={{
                 display:"flex", alignItems:"center", justifyContent:"space-between",
                 padding:"16px 20px",
-                borderBottom: i < txns.length - 1 ? "1px solid #181818" : "none",
+                borderBottom: idx < txns.length - 1 ? "1px solid #181818" : "none",
               }}>
                 <div style={{ display:"flex", alignItems:"center", gap:12, flex:1, minWidth:0 }}>
                   <div style={{ width:40, height:40, borderRadius:10, flexShrink:0, background:s.bg, display:"flex", alignItems:"center", justifyContent:"center" }}>
                     {isRelease
                       ? <ArrowUpRight size={16} color="#22c55e" />
-                      : t.status === "REFUNDED"
+                      : tX.status === "REFUNDED"
                       ? <ArrowDownLeft size={16} color="#60a5fa" />
                       : <Clock size={16} color="#f59e0b" />}
                   </div>
                   <div style={{ minWidth:0 }}>
                     <p style={{ margin:0, fontSize:13, fontWeight:600, color:"#d0d0d0", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
-                      {t.jobTitle ?? (t.notes?.includes("Withdrawal") ? "Withdrawal" : "Transaction")}
+                      {tX.jobTitle ?? (tX.notes?.includes("Withdrawal") ? (t("seeker_earnings.withdrawal") || "Withdrawal") : (t("seeker_jobs.tab_all") || "Transaction"))}
                     </p>
                     <p style={{ margin:0, fontSize:11, color:"#333" }}>
-                      {new Date(t.createdAt).toLocaleDateString("en-GB", { day:"numeric", month:"short", year:"numeric" })}
-                      {isRelease && t.releasedAt ? ` · Released ${new Date(t.releasedAt).toLocaleDateString()}` : ""}
+                      {new Date(tX.createdAt).toLocaleDateString(currentLocale, { day:"numeric", month:"short", year:"numeric" })}
+                      {isRelease && tX.releasedAt ? ` · ${t("seeker_earnings.released_on") || "Released"} ${new Date(tX.releasedAt).toLocaleDateString(currentLocale)}` : ""}
                     </p>
-                    {t.notes?.includes("Withdrawal") && (
-                      <p style={{ margin:0, fontSize:10, color:"#3a3a3a" }}>{t.notes}</p>
+                    {tX.notes?.includes("Withdrawal") && (
+                      <p style={{ margin:0, fontSize:10, color:"#3a3a3a" }}>{tX.notes}</p>
                     )}
                   </div>
                 </div>
                 <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
-                  <span style={{ fontSize:10, fontWeight:700, borderRadius:99, padding:"3px 9px", color:s.color, background:s.bg }}>{s.label}</span>
+                  <span style={{ fontSize:10, fontWeight:700, borderRadius:99, padding:"3px 9px", color:s.color, background:s.bg }}>{localizedStatusLabel(tX.status)}</span>
                   <p style={{ margin:0, fontSize:15, fontWeight:800, color: isRelease ? "#22c55e" : "#e0e0e0" }}>
-                    {isRelease ? "+" : ""}{fmt(t.amountRwf)}
+                    {isRelease ? "+" : ""}{fmt(tX.amountRwf)}
                   </p>
                 </div>
               </div>
@@ -170,11 +203,10 @@ export default function SeekerEarnings() {
       )}
 
       {/* Escrow explanation */}
-      <div style={{ background:"rgba(34,197,94,0.03)", border:"1px solid rgba(34,197,94,0.1)", borderRadius:12, padding:"14px 18px", display:"flex", gap:10 }}>
+      <div style={{ background:"rgba(34,197,94,0.03)", border:"1px solid rgba(34,197,94,0.1)", borderRadius:12, padding:"14px 18px", display:"flex", gap:10, marginTop:9 }}>
         <Shield size={16} color="#22c55e" style={{ flexShrink:0, marginTop:2 }} />
         <p style={{ margin:0, fontSize:12, color:"#3e3e3e", lineHeight:1.7 }}>
-          Employers deposit funds into escrow when posting a job. Your earnings are held securely until the employer marks the job complete.
-          Once released, funds appear in your wallet balance and can be withdrawn to your MoMo account.
+          {t("seeker_earnings.escrow_explain")}
         </p>
       </div>
 
@@ -183,23 +215,24 @@ export default function SeekerEarnings() {
         <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", zIndex:500, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
           <div style={{ background:"#111", border:"1px solid #222", borderRadius:18, width:"100%", maxWidth:440, padding:"28px" }}>
             <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:22 }}>
-              <p style={{ margin:0, fontSize:16, fontWeight:800, color:"#fff" }}>Withdraw to Mobile Money</p>
+              <p style={{ margin:0, fontSize:16, fontWeight:800, color:"#fff" }}>{t("seeker_earnings.withdraw_title")}</p>
               <button onClick={() => { setWdOpen(false); setWdErr(""); }} style={{ background:"none", border:"none", cursor:"pointer", color:"#555" }}><X size={18} /></button>
             </div>
 
             <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:10, padding:"12px 16px", marginBottom:18 }}>
-              <p style={{ margin:"0 0 2px", fontSize:11, color:"#3a3a3a" }}>Available balance</p>
+              <p style={{ margin:"0 0 2px", fontSize:11, color:"#3a3a3a" }}>{t("seeker_earnings.available_balance")}</p>
               <p style={{ margin:0, fontSize:22, fontWeight:900, color:"#22c55e" }}>{fmt(wallet?.balance ?? 0)}</p>
             </div>
 
             {/* Provider selector */}
-            <p style={{ margin:"0 0 8px", fontSize:11, fontWeight:700, color:"#3a3a3a", letterSpacing:"0.06em" }}>MOBILE MONEY PROVIDER</p>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:18 }}>
+            <p style={{ margin:"0 0 8px", fontSize:11, fontWeight:700, color:"#3a3a3a", letterSpacing:"0.06em" }}>{t("seeker_earnings.momo_provider")}</p>
+            <div className="wd-providers" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:18 }}>
               <button onClick={() => setWdMethod("MTN_MOMO")} style={{
                 background: wdMethod === "MTN_MOMO" ? "rgba(255,204,0,0.08)" : "#141414",
                 border:`1px solid ${wdMethod === "MTN_MOMO" ? "#ffcc00" : "#222"}`,
                 borderRadius:12, padding:"14px 12px", cursor:"pointer",
                 display:"flex", alignItems:"center", gap:12, transition:"all 0.15s",
+                width:"100%",
               }}>
                 <div style={{ width:38, height:38, borderRadius:8, background:"#ffcc00", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
                   <svg width="24" height="14" viewBox="0 0 60 34" fill="none">
@@ -216,6 +249,7 @@ export default function SeekerEarnings() {
                 border:`1px solid ${wdMethod === "AIRTEL_MONEY" ? "#ff3333" : "#222"}`,
                 borderRadius:12, padding:"14px 12px", cursor:"pointer",
                 display:"flex", alignItems:"center", gap:12, transition:"all 0.15s",
+                width:"100%",
               }}>
                 <div style={{ width:38, height:38, borderRadius:8, background:"#ff0000", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
                   <svg width="22" height="22" viewBox="0 0 50 50" fill="none">
@@ -229,16 +263,16 @@ export default function SeekerEarnings() {
               </button>
             </div>
 
-            <p style={{ margin:"0 0 6px", fontSize:11, fontWeight:700, color:"#3a3a3a", letterSpacing:"0.06em" }}>AMOUNT (RWF)</p>
+            <p style={{ margin:"0 0 6px", fontSize:11, fontWeight:700, color:"#3a3a3a", letterSpacing:"0.06em" }}>{t("seeker_earnings.amount_rwf")}</p>
             <input
               style={{ ...inp, marginBottom:14 }}
-              type="number" min="1000" max={wallet?.balance ?? 0}
-              placeholder="Min. RWF 500"
+              type="number" min="500" max={wallet?.balance ?? 0}
+              placeholder={t("seeker_earnings.min_amount") || "Min. RWF 500"}
               value={wdAmt} onChange={e => setWdAmt(e.target.value)}
             />
 
             <p style={{ margin:"0 0 6px", fontSize:11, fontWeight:700, color:"#3a3a3a", letterSpacing:"0.06em" }}>
-              {wdMethod === "MTN_MOMO" ? "MTN" : "AIRTEL"} PHONE NUMBER
+              {t("seeker_earnings.phone_num_label")?.replace("{provider}", wdMethod === "MTN_MOMO" ? "MTN" : "AIRTEL") || `${wdMethod === "MTN_MOMO" ? "MTN" : "AIRTEL"} PHONE NUMBER`}
             </p>
             <input
               style={{ ...inp, marginBottom:6 }}
@@ -247,7 +281,7 @@ export default function SeekerEarnings() {
               value={wdPhone} onChange={e => setWdPhone(e.target.value)}
             />
             <p style={{ margin:"0 0 18px", fontSize:11, color:"#2a2a2a", lineHeight:1.6 }}>
-              Funds will be sent to your mobile money account within minutes.
+              {t("seeker_earnings.phone_hint")}
             </p>
 
             {wdErr && <p style={{ margin:"0 0 12px", fontSize:12, color:"#ef4444", background:"rgba(239,68,68,0.07)", borderRadius:8, padding:"8px 12px" }}>{wdErr}</p>}
@@ -263,10 +297,19 @@ export default function SeekerEarnings() {
                   display:"flex", alignItems:"center", justifyContent:"center", gap:8,
                 }}
               >
-                {wdBusy ? <><Loader2 size={14} style={{ animation:"spin 0.7s linear infinite" }} /> Processing…</> : `Withdraw ${wdAmt ? fmt(parseInt(wdAmt, 10)||0) : ""}`}
+                {wdBusy ? (
+                  <>
+                    <Loader2 size={14} style={{ animation:"spin 0.7s linear infinite" }} />{" "}
+                    {t("seeker_earnings.processing") || "Processing…"}
+                  </>
+                ) : (
+                  t("seeker_earnings.withdraw_btn")
+                    ?.replace("{amount}", wdAmt ? fmt(parseInt(wdAmt, 10)||0) : "") ||
+                  `Withdraw ${wdAmt ? fmt(parseInt(wdAmt, 10)||0) : ""}`
+                )}
               </button>
               <button onClick={() => { setWdOpen(false); setWdErr(""); }} style={{ flex:1, background:"transparent", color:"#555", border:"1px solid #222", borderRadius:9, padding:"12px", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>
-                Cancel
+                {t("seeker_earnings.cancel")}
               </button>
             </div>
           </div>
