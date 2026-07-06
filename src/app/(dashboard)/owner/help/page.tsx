@@ -3,29 +3,40 @@
 import { useState } from "react";
 import { MessageSquare, Mail, Phone, FileText, ChevronRight } from "lucide-react";
 import { SectionHead } from "@/components/dashboard/ui";
+import { useLanguage } from "@/lib/language-context";
 
-const FAQS = [
-  { q:"How does escrow work?",              a:"Your payment is locked in escrow as soon as you confirm a booking. It is only released to the worker after you mark the job complete. You have 24 hours post-completion to raise a dispute." },
-  { q:"How do I raise a dispute?",          a:"Go to the relevant completed job and click \"Raise Dispute\". Our team reviews all disputes within 2 business hours and will contact both parties." },
-  { q:"Can I cancel a booking?",            a:"Yes. Free cancellation is available up to 2 hours before the scheduled start time. Late cancellations may incur a 10% fee to compensate the worker." },
-  { q:"How are workers verified?",          a:"All workers on MpahMapu go through ID verification and reference checks before being listed on the platform. Verified badges indicate completed checks." },
-  { q:"What payment methods are supported?",a:"We currently support MTN MoMo and Airtel Money. Bank transfers are coming soon." },
-];
-
-const CHANNELS = [
-  { icon:MessageSquare, label:"Live Chat",     sub:"Usually replies in 5 min",  color:"#60a5fa" },
-  { icon:Mail,          label:"Email Support", sub:"support@MpahMapu.rw",        color:"#f97316" },
-  { icon:Phone,         label:"Call Us",       sub:"+250 788 000 100",           color:"#22c55e" },
-  { icon:FileText,      label:"User Guide",    sub:"Read the full docs",         color:"#a78bfa" },
-];
+const CSS = `
+  .help-channels-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:28px; }
+  @media (max-width: 480px) {
+    .help-channels-grid { grid-template-columns:1fr; }
+  }
+`;
 
 export default function OwnerHelp() {
+  const { t } = useLanguage();
   const [open, setOpen] = useState<number | null>(null);
+
+  const FAQS = [
+    { q: t("owner_help.faq1_q") || "How does escrow work?",              a: t("owner_help.faq1_a") || "Your payment is locked in escrow as soon as you confirm a booking. It is only released to the worker after you mark the job complete. You have 24 hours post-completion to raise a dispute." },
+    { q: t("owner_help.faq2_q") || "How do I raise a dispute?",          a: t("owner_help.faq2_a") || "Go to the relevant completed job and click \"Raise Dispute\". Our team reviews all disputes within 2 business hours and will contact both parties." },
+    { q: t("owner_help.faq3_q") || "Can I cancel a booking?",            a: t("owner_help.faq3_a") || "Yes. Free cancellation is available up to 2 hours before the scheduled start time. Late cancellations may incur a 10% fee to compensate the worker." },
+    { q: t("owner_help.faq4_q") || "How are workers verified?",          a: t("owner_help.faq4_a") || "All workers on MpahMapu go through ID verification and reference checks before being listed on the platform. Verified badges indicate completed checks." },
+    { q: t("owner_help.faq5_q") || "What payment methods are supported?", a: t("owner_help.faq5_a") || "We currently support MTN MoMo and Airtel Money. Bank transfers are coming soon." },
+  ];
+
+  const CHANNELS = [
+    { icon:MessageSquare, label: t("owner_help.live_chat") || "Live Chat",     sub: t("owner_help.live_chat_sub") || "Usually replies in 5 min",  color:"#60a5fa" },
+    { icon:Mail,          label: t("owner_help.email_support") || "Email Support", sub:"support@MpahMapu.rw",        color:"#f97316" },
+    { icon:Phone,         label: t("owner_help.call_us") || "Call Us",       sub:"+250 788 000 100",           color:"#22c55e" },
+    { icon:FileText,      label: t("owner_help.user_guide") || "User Guide",    sub: t("owner_help.user_guide_sub") || "Read the full docs",         color:"#a78bfa" },
+  ];
 
   return (
     <div style={{ maxWidth:580 }}>
+      <style>{CSS}</style>
+
       {/* Support channels */}
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:28 }}>
+      <div className="help-channels-grid">
         {CHANNELS.map(({ icon:Icon, label, sub, color }) => (
           <div key={label} className="dash-card" style={{
             background:"#131313", border:"1px solid #1c1c1c", borderRadius:14,
@@ -44,7 +55,7 @@ export default function OwnerHelp() {
         ))}
       </div>
 
-      <SectionHead title="Frequently Asked Questions" />
+      <SectionHead title={t("owner_help.faq_title") || "Frequently Asked Questions"} />
 
       <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
         {FAQS.map((faq, i) => (
