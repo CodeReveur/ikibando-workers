@@ -315,7 +315,7 @@ export function SettingsPage({ roleLabel }: { roleLabel: string }) {
         <div style={{ flex: 1, minWidth: 0 }}>
           {tab === "profile"       && <ProfileTab session={session} roleLabel={roleLabel} success={success} toastError={toastError} />}
           {tab === "security"      && <SecurityTab session={session} success={success} toastError={toastError} />}
-          {tab === "notifications" && <NotificationsTab role={session.role} />}
+          {tab === "notifications" && <NotificationsTab role={session.role} success={success} />}
           {tab === "account"       && <AccountTab session={session} roleLabel={roleLabel} />}
         </div>
 
@@ -1242,7 +1242,7 @@ function ActiveSessionsSection() {
    NOTIFICATIONS TAB
 ═══════════════════════════════════════════════════════════════════════════ */
 
-function NotificationsTab({ role }: { role: string }) {
+function NotificationsTab({ role, success }: { role: string; success: (m: string) => void }) {
   const { t } = useLanguage();
   const [prefs, setPrefs] = useState<NotifPrefs>(loadNotifPrefs);
   const isEmployer = role === "EMPLOYER";
@@ -1251,9 +1251,10 @@ function NotificationsTab({ role }: { role: string }) {
     setPrefs(prev => {
       const next = { ...prev, [key]: !prev[key] };
       saveNotifPrefs(next);
+      success(t("settings_page.notifications.save_success") || "Preferences saved successfully");
       return next;
     });
-  }, []);
+  }, [success, t]);
 
   const workerItems: { key: keyof NotifPrefs; label: string; desc: string }[] = [
     { key: "emailJobAlerts",            label: t("settings_page.notifications.job_alerts") || "New Job Alerts",          desc: t("settings_page.notifications.job_alerts_desc") || "Notify me when new jobs matching my skills are posted" },

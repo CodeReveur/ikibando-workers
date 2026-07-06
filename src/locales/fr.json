@@ -36,7 +36,8 @@
       "workers": "Travailleurs",
       "help": "Aide",
       "menu": "Menu",
-      "wallet": "Portefeuille"
+      "wallet": "Portefeuille",
+      "notifications": "Notifications"
     },
     "footer": {
       "desc": "Connecter des travailleurs indépendants vérifiés à Kigali avec des entreprises locales et des ménages.",
@@ -1247,7 +1248,21 @@
       "push_desc": "Recevez des mises à jour instantanées directement sur votre navigateur ou appareil.",
       "sms": "Alertes SMS",
       "sms_desc": "Recevez des SMS pour les demandes et correspondances d'emploi urgentes.",
-      "save_btn": "Enregistrer les préférences"
+      "save_btn": "Enregistrer les préférences",
+      "job_alerts": "Nouvelles alertes d'emploi",
+      "job_alerts_desc": "M'avertir lorsque de nouveaux emplois correspondant à mes compétences sont publiés",
+      "app_updates": "Mises à jour des candidatures",
+      "app_updates_desc": "E-mail lorsque le statut de ma candidature change (accepté / rejeté)",
+      "payment": "Notifications de paiement",
+      "payment_desc": "Confirmations de gains et retraits du portefeuille",
+      "login_alerts": "Alertes de connexion",
+      "login_alerts_desc": "E-mail de sécurité lorsqu'un nouvel appareil se connecte à mon compte",
+      "new_apps": "Nouvelles candidatures",
+      "new_apps_desc": "Alerte lorsqu'un travailleur postule à l'une de mes offres d'emploi",
+      "app_status": "Statut de la candidature",
+      "app_status_desc": "E-mails de confirmation lorsque j'accepte ou rejette des candidats",
+      "payment_employer_desc": "Recharges de portefeuille, blocages et libérations de paiement",
+      "save_success": "Préférences enregistrées avec succès"
     },
     "account": {
       "title": "Informations du compte",
@@ -1334,7 +1349,10 @@
     "jobs_total": "Total des emplois",
     "loading": "Chargement...",
     "status_pending": "En attente",
-    "status_refunded": "Remboursé"
+    "status_refunded": "Remboursé",
+    "status_open": "Ouvert",
+    "status_filled": "Pourvu",
+    "status_cancelled": "Annulé"
   },
   "seeker_job_detail": {
     "back": "Retour",
@@ -1728,7 +1746,17 @@
     "faq4_q": "Comment les travailleurs sont-ils vérifiés ?",
     "faq4_a": "Tous les travailleurs sur MpahMapu passent par une vérification d'identité et des contrôles de référence avant d'être répertoriés sur la plateforme. Les badges vérifiés indiquent les contrôles terminés.",
     "faq5_q": "Quels modes de paiement sont pris en charge ?",
-    "faq5_a": "Nous prenons actuellement en charge MTN MoMo et Airtel Money. Les virements bancaires seront bientôt disponibles."
+    "faq5_a": "Nous prenons actuellement en charge MTN MoMo et Airtel Money. Les virements bancaires seront bientôt disponibles.",
+    "bot_title": "Assistant Virtuel",
+    "bot_greeting": "Bonjour {name} ! Je suis votre assistant MpahMapu. Comment puis-je vous aider aujourd'hui ?",
+    "bot_escrow": "Tous les paiements sont bloqués en dépôt fiduciaire. Les fonds ne sont libérés au travailleur qu'après validation de fin de l'emploi.",
+    "bot_refund": "Vous pouvez demander un remboursement sur les paiements bloqués (HELD). Allez dans Mes Paiements, cliquez sur 'Demander un remboursement'.",
+    "bot_verify": "Tous les travailleurs sont vérifiés par carte d'identité et antécédents avant d'accepter des missions.",
+    "bot_fallback": "Merci pour votre message. Pour une assistance personnalisée, veuillez cliquer sur l'option WhatsApp en haut pour discuter directement avec nous !",
+    "chip_escrow": "Comment fonctionne le dépôt ?",
+    "chip_refund": "Comment demander un remboursement ?",
+    "chip_verify": "Les travailleurs sont-ils vérifiés ?",
+    "input_placeholder": "Poser une question..."
   },
   "owner_jobs": {
     "back_to_jobs": "Retour à mes offres",

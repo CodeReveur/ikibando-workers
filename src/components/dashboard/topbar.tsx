@@ -245,7 +245,7 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
           </button>
 
           {notifOpen && (
-            <DropPanel title={t("common.general.notifications") || "Notifications"} onClose={() => setNotifOpen(false)}>
+            <DropPanel title={t("common.nav.notifications") || "Notifications"} onClose={() => setNotifOpen(false)}>
               <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
                 {isOwner ? (
                   pendingCount > 0 ? (
@@ -272,8 +272,8 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
                       <div style={{ flex: 1 }}>
                         <p style={{ margin:"0 0 4px", fontSize:12, color:"#c0c0c0", lineHeight:1.5 }}>
                           {n.status === "ACCEPTED"
-                            ? (t("notifications.accepted_message")?.replace("{title}", n.jobTitle) || `Your application for "${n.jobTitle}" was accepted!`)
-                            : (t("notifications.rejected_message")?.replace("{title}", n.jobTitle) || `Your application for "${n.jobTitle}" was not selected.`)}
+                            ? t("notifications.accepted_message", { title: n.jobTitle })
+                            : t("notifications.rejected_message", { title: n.jobTitle })}
                         </p>
                         {n.note && <p style={{ margin:"0 0 8px", fontSize:11, color:"#888", fontStyle:"italic", background:"#111", padding:"6px 10px", borderRadius:6, border:"1px solid #1a1a1a" }}>{t("seeker_jobs.note_from_employer") || "Note:"} {n.note}</p>}
                         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>

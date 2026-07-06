@@ -412,7 +412,7 @@ export default function OwnerJobDetail() {
                 {t("seeker_jobs.status_" + job.status.toLowerCase()) || job.status}
               </span>
             </div>
-            <p style={{ margin: 0, fontSize: 12, color: "#444" }}>{t("common.sections." + job.category.toLowerCase()) || job.category} · {job.district} · {job.headcount} {Number(job.headcount) !== 1 ? (t("owner_offers.slots_plural") || "workers") : (t("owner_offers.slots") || "worker")}</p>
+            <p style={{ margin: 0, fontSize: 12, color: "#444" }}>{t("common.categories." + job.category.toLowerCase()) || job.category} · {job.district} · {job.headcount} {Number(job.headcount) !== 1 ? (t("owner_offers.slots_plural") || "workers") : (t("owner_offers.slots") || "worker")}</p>
           </div>
           {/* Action buttons */}
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -461,7 +461,7 @@ export default function OwnerJobDetail() {
           {/* Job details */}
           <div style={{ background: "#111", border: "1px solid #1c1c1c", borderRadius: 14, padding: "16px 18px" }}>
             <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: "0.08em" }}>{t("owner_offers.job_details") || "Job Details"}</p>
-            <InfoRow label={t("owner_offers.category") || "Category"} value={t("common.sections." + job.category.toLowerCase()) || job.category} />
+            <InfoRow label={t("owner_offers.category") || "Category"} value={t("common.categories." + job.category.toLowerCase()) || job.category} />
             <InfoRow label={t("seeker_jobs.label_location") || "Location"} value={`${job.district}${job.province ? `, ${job.province}` : ""}`} />
             {job.locationNotes && <InfoRow label={t("seeker_jobs.location_notes") || "Notes"} value={<RichTextDisplay content={job.locationNotes} />} />}
             <InfoRow label={t("owner_offers.rate") || "Rate"} value={`RWF ${job.ratePerHour?.toLocaleString()} / hr`} />

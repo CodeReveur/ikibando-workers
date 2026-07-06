@@ -36,7 +36,8 @@
       "workers": "Abakozi",
       "help": "Ubufasha",
       "menu": "Ibikubiyemo",
-      "wallet": "Konti"
+      "wallet": "Konti",
+      "notifications": "Imenyesha"
     },
     "footer": {
       "desc": "Guhuza abakozi b'abanyamyuga bashyizweho ikimenyetso i Kigali n'ibigo by'ubucuruzi ndetse n'ingo.",
@@ -1187,7 +1188,7 @@
     "tabs": {
       "profile": "Umwirondoro",
       "security": "Umutekano",
-      "notifications": "Ibimenyetso",
+      "notifications": "Imenyesha",
       "account": "Konti"
     },
     "profile": {
@@ -1248,7 +1249,21 @@
       "push_desc": "Habwa amakuru ako kanya kuri mushakisha cyangwa igikoresho cyawe.",
       "sms": "Ubutumwa bugufi (SMS)",
       "sms_desc": "Habwa ubutumwa bugufi ku busabe bw'akazi bwihuse.",
-      "save_btn": "Bika ibyo uhisemo"
+      "save_btn": "Bika ibyo uhisemo",
+      "job_alerts": "Kumenyesha ku mirimo mishya",
+      "job_alerts_desc": "Nteguza iyo habonetse imirimo ihuye n'ubumenyi bwanjye",
+      "app_updates": "Amakuru y'ubusabe",
+      "app_updates_desc": "Imenyekanisha ryo kuri email iyo ubusabe bwanjye buhindutse (byakiriwe / byanzwe)",
+      "payment": "Imenyekanisha ry'Ubwishyure",
+      "payment_desc": "Emeza inyungu no kohereza amafaranga kuri wallet",
+      "login_alerts": "Kwinjira kuri konti",
+      "login_alerts_desc": "Email y'umutekano iyo indi telefone yinjiye kuri konti yanjye",
+      "new_apps": "Ubusabe bushya",
+      "new_apps_desc": "Kumenyeshwa iyo umukozi yasabye umwe mu mirimo natangaje",
+      "app_status": "Imiterere y'ubusabe",
+      "app_status_desc": "Kumenyeshwa kuri email iyo nemeye cyangwa nyanze abasabye akazi",
+      "payment_employer_desc": "Kuzuza wallet, gufunga no gufungura ubwishyu bw'imirimo",
+      "save_success": "Ibyo uhisemo byabitswe neza"
     },
     "account": {
       "title": "Amakuru ya Konti",
@@ -1335,7 +1350,10 @@
     "jobs_total": "Dosiye zose",
     "loading": "Biratunganywa...",
     "status_pending": "Itegerejwe",
-    "status_refunded": "Yasubijwe"
+    "status_refunded": "Yasubijwe",
+    "status_open": "Funguye",
+    "status_filled": "Yuzuye",
+    "status_cancelled": "Yahagaritswe"
   },
   "seeker_job_detail": {
     "back": "Gusubira inyuma",
@@ -1531,11 +1549,11 @@
     "accepted_message": "Dosiye yawe y'akazi ka \"{title}\" yakiriwe!",
     "rejected_message": "Dosiye yawe y'akazi ka \"{title}\" ntiyatoranyijwe.",
     "pending_message": "Ufite dosiye {count} zitegereje gusuzumwa.",
-    "review_now": "Kagua ubu →",
-    "no_pending": "Nta dosiye zitegereje gukagurwa",
-    "no_new": "Nta notification nshya ufite",
-    "manage_apps": "Gucunga dosiye",
-    "view_all": "Reba dosiye zose"
+    "review_now": "Fungura ubu →",
+    "no_pending": "Nta menyesha zitegereje",
+    "no_new": "Nta menyesha nshya ufite",
+    "manage_apps": "Gucunga imenyesha",
+    "view_all": "Reba imenyesha zose"
   },
   "transaction_detail": {
     "title": "Ibiranga Igikorwa",
@@ -1678,7 +1696,7 @@
     "no_hired_desc": "Nta mukozi uremezwa ubu ngubu.",
     "no_apps_desc": "Nta busabe bw'abakozi bwabonetse.",
     "wait_apps_desc": "Abakozi baragaragara hano nibatangira gusaba akazi tangaje.",
-    "completed": "Kwarangiye",
+    "completed": "Karangiye",
     "release_complete": "Kora Payout",
     "waiting_worker": "Gutegereza umukozi",
     "wait_worker_verify_alert": "Gutegereza ko umukozi yemeza ko akazi karangiye",
@@ -1707,7 +1725,7 @@
     "pending_review": "Gusuzumwa",
     "weekly_spending": "Ayakoreshejwe mu cyumweru",
     "spending_category": "Ayakoreshejwe ku kiciro",
-    "offer_breakdown": "Imiterere y'ibyifuzo",
+    "offer_breakdown": "Imiterere y'imirimo",
     "avg_rate": "Igiciro cya rugereko: {rate} ku isaha",
     "no_spending": "Nta makuru y'amafaranga yakoreshejwe mu minsi 7 ishize",
     "no_category": "Nta makuru y'ibihe by'akazi arboneka"
@@ -1729,7 +1747,17 @@
     "faq4_q": "Abakozi bagenzurwa bate?",
     "faq4_a": "Abakozi bose kuri MpahMapu banyura mu kugenzura ibyangombwa no gusuzuma inyandiko zabo mbere yo kwakirwa kuri platform. Badge yemeza ko bagenzuwe neza.",
     "faq5_q": "Ni ubuhe buryo bwo kwishyura bwemewe?",
-    "faq5_a": "Ubu twemera MTN MoMo na Airtel Money. Kohereza kuri banki biraza vuba cyane."
+    "faq5_a": "Ubu twemera MTN MoMo na Airtel Money. Kohereza kuri banki biraza vuba cyane.",
+    "bot_title": "Umufasha kuri Bot",
+    "bot_greeting": "Muraho {name}! Ndi umufasha wawe muri MpahMapu. Nagufasha iki uyu munsi?",
+    "bot_escrow": "Amafaranga yose afungirwa muri escrow. Reba ko akazi karangiye neza mbere yo kuyarekura.",
+    "bot_refund": "Ushobora gusaba gusubizwa amafaranga yafunzwe. Jya kuri Payments maze ukande 'Request refund'.",
+    "bot_verify": "Abakozi bose bagenzurwa ibyangombwa (ID) n'amateka yabo mbere yo guhabwa akazi.",
+    "bot_fallback": "Murakoze kutwandikira. Niba ushaka ubufasha bwisumbuyeho, kanda kuri WhatsApp uduhamagare ako kanya!",
+    "chip_escrow": "Nigute escrow ikora?",
+    "chip_refund": "Nasaba nte gusubizwa?",
+    "chip_verify": "Ese abakozi bagenzuwe?",
+    "input_placeholder": "Baza ikibazo..."
   },
   "owner_jobs": {
     "back_to_jobs": "Subira ku kazi zanjye",

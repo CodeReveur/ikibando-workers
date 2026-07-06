@@ -36,7 +36,8 @@
       "workers": "Wafanyakazi",
       "help": "Msaada",
       "menu": "Menyu",
-      "wallet": "Mkoba"
+      "wallet": "Mkoba",
+      "notifications": "Arifa"
     },
     "footer": {
       "desc": "Kuunganisha wafanyakazi wa vibarua waliohakikiwa huko Kigali na biashara na kaya za mitaani.",
@@ -1247,7 +1248,21 @@
       "push_desc": "Pata masasisho ya haraka moja kwa moja kwenye kivinjari au kifaa chako.",
       "sms": "Arifa za SMS",
       "sms_desc": "Pokea ujumbe wa maandishi kwa maombi ya haraka ya kazi na mechi.",
-      "save_btn": "Hifadhi mapendeleo"
+      "save_btn": "Hifadhi mapendeleo",
+      "job_alerts": "Taarifa za Kazi Mpya",
+      "job_alerts_desc": "Nijulishe kazi mpya zinazolingana na ujuzi wangu zinapochapishwa",
+      "app_updates": "Sasisho za Maombi",
+      "app_updates_desc": "Barua pepe wakati hali ya maombi yangu inapobadilika (imekubaliwa / imekataliwa)",
+      "payment": "Taarifa za Malipo",
+      "payment_desc": "Uthibitisho wa mapato na malipo ya wallet",
+      "login_alerts": "Taarifa za Kuingia",
+      "login_alerts_desc": "Barua pepe ya usalama wakati kifaa kipya kinapoingia kwenye akaunti yangu",
+      "new_apps": "Maombi Mpya",
+      "new_apps_desc": "Arifa wakati mfanyakazi anapoomba kwenye moja ya kazi nilizochapisha",
+      "app_status": "Hali ya Maombi",
+      "app_status_desc": "Barua pepe za uthibitisho ninapokubali au kukataa waombaji",
+      "payment_employer_desc": "Kuweka pesa kwenye wallet, kuzuiliwa na kutolewa kwa malipo ya kazi",
+      "save_success": "Mapendeleo yamehifadhiwa kwa mafanikio"
     },
     "account": {
       "title": "Taarifa za Akaunti",
@@ -1334,7 +1349,10 @@
     "jobs_total": "Jumla ya Kazi",
     "loading": "Inapakia...",
     "status_pending": "Inasubiri",
-    "status_refunded": "Imerejeshwa"
+    "status_refunded": "Imerejeshwa",
+    "status_open": "Wazi",
+    "status_filled": "Imejazwa",
+    "status_cancelled": "Imeghairiwa"
   },
   "seeker_job_detail": {
     "back": "Nyuma",
@@ -1728,7 +1746,17 @@
     "faq4_q": "Wafanyakazi wanathibitishwaje?",
     "faq4_a": "Wafanyakazi wote kwenye MpahMapu hupitia uhakiki wa vitambulisho na ukaguzi wa marejeleo kabla ya kuorodheshwa kwenye jukwaa. Beji zilizothibitishwa zinaonyesha ukaguzi uliokamilika.",
     "faq5_q": "Mbinu gani za malipo zinatumika?",
-    "faq5_a": "Kwa sasa tunatumia MTN MoMo na Airtel Money. Uhamisho wa benki unakuja hivi karibuni."
+    "faq5_a": "Kwa sasa tunatumia MTN MoMo na Airtel Money. Uhamisho wa benki unakuja hivi karibuni.",
+    "bot_title": "Msaidizi wa Bot",
+    "bot_greeting": "Jambo {name}! Mimi ni msaidizi wako wa huduma ya MpahMapu. Naweza kukusaidia vipi leo?",
+    "bot_escrow": "Malipo yote yanashikiliwa kwenye escrow. Fedha hutolewa tu baada ya kuashiria kazi imekamilika.",
+    "bot_refund": "Unaweza kuomba kurejeshewa malipo kwenye malipo yaliyoshikiliwa. Nenda kwenye Malipo, bonyeza 'Omba urejeshewe'.",
+    "bot_verify": "Wafanyakazi wote wamethibitishwa vitambulisho vyao na kufanyiwa ukaguzi wa usalama.",
+    "bot_fallback": "Asante kwa ujumbe wako. Kwa msaada zaidi, tafadhali bonyeza kiungo cha WhatsApp hapo juu kuongea nasi!",
+    "chip_escrow": "Escrow inafanyaje kazi?",
+    "chip_refund": "Naombaje kurejeshewa pesa?",
+    "chip_verify": "Wafanyakazi wamethibitishwa?",
+    "input_placeholder": "Uliza swali..."
   },
   "owner_jobs": {
     "back_to_jobs": "Rudi Kwenye Kazi Zangu",

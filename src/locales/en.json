@@ -36,7 +36,8 @@
       "workers": "Workers",
       "help": "Help",
       "menu": "Menu",
-      "wallet": "Wallet"
+      "wallet": "Wallet",
+      "notifications": "Notifications"
     },
     "footer": {
       "desc": "Connecting verified gig workers in Kigali with local businesses and households.",
@@ -1248,7 +1249,21 @@
       "push_desc": "Get instant updates directly in your browser or device.",
       "sms": "SMS Alerts",
       "sms_desc": "Get text messages for urgent job requests and matches.",
-      "save_btn": "Save preferences"
+      "save_btn": "Save preferences",
+      "job_alerts": "New Job Alerts",
+      "job_alerts_desc": "Notify me when new jobs matching my skills are posted",
+      "app_updates": "Application Updates",
+      "app_updates_desc": "Email when my application status changes (accepted / rejected)",
+      "payment": "Payment Notifications",
+      "payment_desc": "Earning confirmations and wallet payouts",
+      "login_alerts": "Login Alerts",
+      "login_alerts_desc": "Security email when a new device signs in to my account",
+      "new_apps": "New Applications",
+      "new_apps_desc": "Alert when a worker applies to one of my job postings",
+      "app_status": "Application Status",
+      "app_status_desc": "Confirmation emails when I accept or reject applicants",
+      "payment_employer_desc": "Wallet top-ups, job payment holds, and releases",
+      "save_success": "Preferences saved successfully"
     },
     "account": {
       "title": "Account Information",
@@ -1335,7 +1350,10 @@
     "jobs_total": "Jobs Total",
     "loading": "Loading...",
     "status_pending": "Pending",
-    "status_refunded": "Refunded"
+    "status_refunded": "Refunded",
+    "status_open": "Open",
+    "status_filled": "Filled",
+    "status_cancelled": "Cancelled"
   },
   "seeker_job_detail": {
     "back": "Back",
@@ -1729,7 +1747,17 @@
     "faq4_q": "How are workers verified?",
     "faq4_a": "All workers on MpahMapu go through ID verification and reference checks before being listed on the platform. Verified badges indicate completed checks.",
     "faq5_q": "What payment methods are supported?",
-    "faq5_a": "We currently support MTN MoMo and Airtel Money. Bank transfers are coming soon."
+    "faq5_a": "We currently support MTN MoMo and Airtel Money. Bank transfers are coming soon.",
+    "bot_title": "AI Support Bot",
+    "bot_greeting": "Hello {name}! I am your MpahMapu support assistant. How can I help you today?",
+    "bot_escrow": "All payments are held securely in escrow. Funds are only released to the worker after you mark the job complete.",
+    "bot_refund": "You can request a refund on HELD payments. Go to My Payments, click 'Request refund', or cancel open bookings up to 2 hours before start.",
+    "bot_verify": "All workers are ID-verified and background-checked by the MpahMapu team before they can take jobs.",
+    "bot_fallback": "Thank you for your query. For detailed personal assistance, please click the Live Chat option above to chat directly with us on WhatsApp!",
+    "chip_escrow": "How does escrow work?",
+    "chip_refund": "How do I request a refund?",
+    "chip_verify": "Are workers verified?",
+    "input_placeholder": "Ask a question..."
   },
   "owner_jobs": {
     "back_to_jobs": "Back to My Jobs",

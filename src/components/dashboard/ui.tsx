@@ -6,7 +6,7 @@ export function StatCard({ label, value, sub, accent }: {
   return (
     <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:14, padding:"20px 22px" }}>
       <p style={{ margin:"0 0 10px", fontSize:10, fontWeight:700, color:"#3a3a3a", textTransform:"uppercase", letterSpacing:"0.08em" }}>{label}</p>
-      <p style={{ margin:"0 0 4px", fontSize:26, fontWeight:900, color:accent, letterSpacing:"-1px", lineHeight:1 }}>{value}</p>
+      <p style={{ margin:"0 0 4px", fontSize:26, fontWeight:900, color:accent,  textTransform:"capitalize", letterSpacing:"-1px", lineHeight:1 }}>{value}</p>
       <p style={{ margin:0, fontSize:11, color:"#2e2e2e" }}>{sub}</p>
     </div>
   );
