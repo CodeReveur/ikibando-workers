@@ -32,7 +32,7 @@
       "earnings": "Inyungu zanjye",
       "bonuses": "Agahimbazamusyi",
       "analytics": "Imibare",
-      "payments": "Kwishura",
+      "payments": "Kwishyura",
       "workers": "Abakozi",
       "help": "Ubufasha",
       "menu": "Ibikubiyemo",
@@ -47,19 +47,19 @@
       "all": "Byose",
       "protocol": "Abakora mu birori",
       "none": "Nta cyo",
-      "waiters": "Abaserveri",
+      "waiters": "Abaseriveri",
       "baristas": "Abategura ikawa",
       "cleaners": "Abasukura",
       "security_guards": "Abarinzi",
       "drivers": "Abashoferi",
-      "delivery_drivers": "Abatwara ibyabitswe",
-      "courier_riders": "Abamotari b'imizigo",
-      "electricians": "Abanyashanyarazi",
+      "delivery_drivers": "Abatwara ibyaguzwe",
+      "courier_riders": "Abatwara imizigo",
+      "electricians": "Abakora amashanyarazi",
       "plumbers": "Abafundi b'amazi",
       "carpenters": "Ababaji",
       "painters": "Abasiga amarangi",
       "construction_workers": "Abafundi b'ubwubatsi",
-      "technicians": "Abakanishi b'ibyuma",
+      "technicians": "Abatekinisiye",
       "mechanics": "Abakanishi",
       "gardeners": "Abakora mu busitani",
       "landscapers": "Abatunganya ubusitani",
@@ -93,7 +93,7 @@
       "laundry_services": "Abamesa imyenda",
       "phone_repair": "Abakora terefone",
       "computer_repair": "Abakora mudasobwa",
-      "network_technicians": "Abakora imiyoboro y'inteti",
+      "network_technicians": "Abakora imiyoboro y'interinete",
       "it_support": "Abafasha mu bya tekinoloji",
       "web_developers": "Abakora imbuga za murandasi",
       "software_developers": "Abakora porogaramu",
@@ -108,18 +108,18 @@
       "marketing_specialists": "Abamamaza ibicuruzwa",
       "financial_advisors": "Abajyanama mu mari",
       "waiter": "Umuservi",
-      "cook": "Umupishi",
-      "chef": "Shefe",
-      "bartender": "Umutuzi",
+      "cook": "Umutetsi",
+      "chef": "Shefu w'igikoni",
+      "bartender": "Umukozi wo mukabari",
       "cashier": "Ugurisha",
-      "receptionist": "Uwakirira inshuti",
-      "cleaner": "Umusukura",
+      "receptionist": "Uwakira abakiriya",
+      "cleaner": "Usukura",
       "housekeeper": "Usukura inzu",
-      "nanny": "Umurera",
+      "nanny": "Urera",
       "caregiver": "Umujyanama",
       "security": "Umurinzi",
       "event_staff": "Akazi k'ibirori",
-      "mc": "MC / Animateri",
+      "mc": "MC / Animateri w'ikirori",
       "musician": "Umunyamuziki",
       "dj": "DJ",
       "driver": "Umushoferi",
@@ -189,7 +189,7 @@
       "financial_advisor": "Abajyanama mu by'imari"
     },
     "buttons": {
-      "more": "Abandi",
+      "more": "Ibindi",
       "post_request": "Saba umukozi",
       "become_worker": "Ba umukozi",
       "back": "Subira inyuma",
@@ -528,7 +528,7 @@
       "role": "Utunganya Ibirori · Kimihurura"
     },
     "slide2": {
-      "tag": "Kwishura neza",
+      "tag": "Kwishyura neza",
       "headline": "Ishura na\nMoMo.",
       "body": "Ishura kandi wishurwe neza ukoresheje Mobile Money. Nta makimbirane y'amafaranga, nta giciro mbanziriza - amafaranga abikwa neza.",
       "quote": "Nta bibazo by'amafaranga y'intoki. MoMo ibyoroshya byose.",
@@ -664,7 +664,7 @@
     "highlights": {
       "hl1": {
         "title": "Ibyo dukusanya",
-        "body": "Izina, numero ya telefone, indangamuntu, aho uherereye n'amateka y'akazi - ibikenewe gusa kugira ngo urubuga rukore."
+        "body": "Izina, numero ya telefone, indangamuntu, aho uherereye n'inshamake y'akazi - ibikenewe gusa kugira ngo urubuga rukore."
       },
       "hl2": {
         "title": "Uko tubirinda",
@@ -672,7 +672,7 @@
       },
       "hl3": {
         "title": "Uwo dusangira na we",
-        "body": "Dusangira gusa n'undi muntu muri mu kumvikana ku kazi, ndetse na MoMo mu gihe cyo kwishura. Ntabwo bihishwa abamamaza na rimwe."
+        "body": "Dusangira gusa n'undi muntu muri mu kumvikana ku kazi, ndetse na MoMo mu gihe cyo kwishyura. Ntabwo bihishwa abamamaza na rimwe."
       },
       "hl4": {
         "title": "Haki ya gusiba",
@@ -681,28 +681,28 @@
     },
     "intro": {
       "summary_prefix": "Incamake yoroshye: ",
-      "summary_body": "Tukoresha izina ryawe, telefone n'indangamuntu kugira ngo tukwemeze kandi dukoreshe urubuga. Kwishura binyura kuri MoMo - ntituzana ku ntoki amafaranga yawe na rimwe. Dusangira amakuru yawe gusa n'uwo mukorana, kandi ibyo akeneye gusa. Urashobora gusiba konti yawe igihe cyose."
+      "summary_body": "Tukoresha izina ryawe, telefone n'indangamuntu kugira ngo tukwemeze kandi dukoreshe urubuga. Kwishyura binyura kuri MoMo - ntituzana ku ntoki amafaranga yawe na rimwe. Dusangira amakuru yawe gusa n'uwo mukorana, kandi ibyo akeneye gusa. Urashobora gusiba konti yawe igihe cyose."
     },
     "sections": {
       "sec1": {
         "title": "Amakuru dukusanya",
-        "body": "Iyo wiyandikishije, dukusanya amazina yawe yose, numero ya telefone, n'indangamuntu y'igihugu. Abakozi kandi batanga ifoto y'indangamuntu yabo kugira ngo bemezwe. Iyo ukoresha urubuga dukusanya amateka y'akazi, amanota uhabwa, n'amakuru rusange y'aho uherereye (urwego rw'akarere) kugira ngo tuguhuze n'akazi cyangwa abakozi bakwegereye. Ntitudukusanya amakuru ya GPS adateguye neza uretse kubyakiriye mu buryo bweruye."
+        "body": "Iyo wiyandikishije, dukusanya amazina yawe yose, numero ya telefone, n'indangamuntu y'igihugu. Abakozi kandi batanga ifoto y'indangamuntu yabo kugira ngo bemezwe. Iyo ukoresha urubuga dukusanya amakuru y'akazi, amanota uhabwa, n'amakuru rusange y'aho uherereye (urwego rw'akarere) kugira ngo tuguhuze n'akazi cyangwa abakozi bakwegereye. Ntitudukusanya amakuru ya GPS adateguye neza uretse kubyakiriye mu buryo bweruye."
       },
       "sec2": {
         "title": "Uko dukoresha amakuru yawe",
-        "body": "Dukoresha amakuru yawe mu gushyira mu bikorwa urubuga: kwemeza abantu, guhuza abakozi n'akazi, gukoresha kwishura rya MoMo, no kwerekana amanota yawe ku bakoresha cyangwa abakozi b'ejo hazaza. Twashobora kandi gukoresha amakuru yakusanyirijwe hamwe adafite amazina kugira ngo tunonosore algorithms zacu zo guhuza no gusobanukirwa uko urubuga rukoreshwa - aya makuru ntabwo yakwerekana wowe ubwawe."
+        "body": "Dukoresha amakuru yawe mu gushyira mu bikorwa urubuga: kwemeza abantu, guhuza abakozi n'akazi, gukoresha kwishyura rya MoMo, no kwerekana amanota yawe ku bakoresha cyangwa abakozi b'ejo hazaza. Twashobora kandi gukoresha amakuru yakusanyirijwe hamwe adafite amazina kugira ngo tunonosore algorithms zacu zo guhuza no gusobanukirwa uko urubuga rukoreshwa - aya makuru ntabwo yakwerekana wowe ubwawe."
       },
       "sec3": {
         "title": "Uwo dusangira na we amakuru yawe",
-        "body": "Iyo akazi kemejwe, umukoresha ashobora kubona izina ry'umukozi, ifoto ye, amanota ye, n'inararibonye rye mu kiciro cy'akazi - ndetse n'umukozi akabona iby'umukoresha. Hanze y'ibyo, dusangira amakuru gusa na MTN MoMo mu gukora kwishura ndetse, niba bisabwa n'amategeko, n'inzego z'umutekano cyangwa zishinzwe kugenzura mu Rwanda. Ntitugurisha, gukodesha cyangwa gucuruza amakuru yawe bwite n'undi muntu uwo ari we wese ku bijyanye no kwamamaza."
+        "body": "Iyo akazi kemejwe, umukoresha ashobora kubona izina ry'umukozi, ifoto ye, amanota ye, n'inararibonye rye mu kiciro cy'akazi - ndetse n'umukozi akabona iby'umukoresha. Hanze y'ibyo, dusangira amakuru gusa na MTN MoMo mu gukora kwishyura ndetse, niba bisabwa n'amategeko, n'inzego z'umutekano cyangwa zishinzwe kugenzura mu Rwanda. Ntitugurisha, gukodesha cyangwa gucuruza amakuru yawe bwite n'undi muntu uwo ari we wese ku bijyanye no kwamamaza."
       },
       "sec4": {
         "title": "Kwemeza indangamuntu",
         "body": "Abakozi batanga indangamuntu y'igihugu mu gihe cyo kwiyandikisha. Iyi ndangamuntu isuzumwa n'itsinda ryacu rishinzwe kwemeza hanyuma ikabikwa mu buryo bufite umutekano kandi bufunguye gusa ku bemerewe. Abakozi ba MpahMapu bafite uburenganzira gusa nibo bashobora kureba indangamuntu, kandi gusa ku bw'intego yo gukemura impaka cyangwa kubahiriza amategeko. Uwemewe yerekana icyemezo (badge); indangamuntu ubwayo ntisangirwa n'abakoresha na rimwe."
       },
       "sec5": {
-        "title": "MoMo n'amakuru yo kwishura",
-        "body": "Tubika gusa numero ya telefone ya MoMo ifitanye isano na konti yawe. Amateka yose y'itumanaho ry'amafaranga abitse na MTN MoMo hashingiwe ku mabwiriza yabo bwite. MpahMapu ibika amateka yo kwishura (agaciro, itariki, inyemezabwishyu y'akazi) kugeza ku myaka 7 nk'uko bisabwa n'amategeko y'imisoro mu Rwanda."
+        "title": "MoMo n'amakuru yo kwishyura",
+        "body": "Tubika gusa numero ya telefone ya MoMo ifitanye isano na konti yawe. Amakuru yose y'itumanaho ry'amafaranga abitse na MTN MoMo hashingiwe ku mabwiriza yabo bwite. MpahMapu ibika amakuru yo kwishyura (agaciro, itariki, inyemezabwishyu y'akazi) kugeza ku myaka 7 nk'uko bisabwa n'amategeko y'imisoro mu Rwanda."
       },
       "sec6": {
         "title": "Kuki (Cookies) n'isesengura ry'urubuga",
@@ -710,7 +710,7 @@
       },
       "sec7": {
         "title": "Kubika amakuru",
-        "body": "Konti zikora: amakuru abikwa mu gihe cyose konti yawe igifunguye. Konti zasibwe: amakuru bwite akurwaho mu minsi 30 isibwe, uretse amateka yo kwishura (imyaka 7, itegeko) n'amakuru ajyanye n'impaka zitarakemuka. Amakuru adafite amazina ashobora kubikwa igihe kitazaza."
+        "body": "Konti zikora: amakuru abikwa mu gihe cyose konti yawe igifunguye. Konti zasibwe: amakuru bwite akurwaho mu minsi 30 isabwe, uretse amakuru yo kwishyura (imyaka 7, itegeko) n'amakuru ajyanye n'impaka zitarakemuka. Amakuru adafite amazina ashobora kubikwa igihe kitazaza."
       },
       "sec8": {
         "title": "Uburenganzira bwawe",
@@ -752,7 +752,7 @@
     },
     "intro": {
       "summary_prefix": "Incamake yihuse: ",
-      "summary_body": "MpahMapu ihuza abakozi n'abakoresha mu Rwanda. Ufite uburenganzira bwose ku kazi kawe n'inyungu zawe. Turengera ubutabera, kwemeza, no kwishura binyuze kuri MoMo. Ba inyangamugayo, wubahe abandi, kandi ugere ku gihe."
+      "summary_body": "MpahMapu ihuza abakozi n'abakoresha mu Rwanda. Ufite uburenganzira bwose ku kazi kawe n'inyungu zawe. Turengera ubutabera, kwemeza, no kwishyura binyuze kuri MoMo. Ba inyangamugayo, wubahe abandi, kandi ugere ku gihe."
     },
     "sections": {
       "sec1": {
@@ -768,8 +768,8 @@
         "body": "Abakoresha ni bo bafite inshingano zo kwemeza ko amakuru y'akazi bashyizeho ari yo - harimo aho akazi kari, igiciro, ikiciro, n'igihe kizakora. Abakozi bemera akazi hashingiwe kuri ayo makuru; gutanga amakuru atari yo bishobora gutuma konti ihagarikwa. Abakozi bagomba kurangiza akazi bemeye cyangwa bakagasesa batanga integuza ihagije. Gukomeza gusiba akazi bidafite impamvu bishobora gutuma ukurwa ku rubuga."
       },
       "sec4": {
-        "title": "Kwishura binyuze kuri MoMo",
-        "body": "Kwishura kose gukorwa binyuze kuri MTN Mobile Money (MoMo). Abakoresha bishyura igiciro bumvikanyeho wongeyeho ikiguzi cya MpahMapu mu gihe cyo kwemeza akazi. Amafaranga ahabwa abakozi iyo akazi karangiye. MpahMapu ntibika amafaranga igihe kirekire kirenze igikenewe kandi ntabwo ibazwa ibyerekeye gutinda kwishura bitewe na serivisi za MoMo ubwazo."
+        "title": "Kwishyura binyuze kuri MoMo",
+        "body": "Kwishyura kose gukorwa binyuze kuri MTN Mobile Money (MoMo). Abakoresha bishyura igiciro bumvikanyeho wongeyeho ikiguzi cya MpahMapu mu gihe cyo kwemeza akazi. Amafaranga ahabwa abakozi iyo akazi karangiye. MpahMapu ntibika amafaranga igihe kirekire kirenze igikenewe kandi ntabwo ibazwa ibyerekeye gutinda kwishyura bitewe na serivisi za MoMo ubwazo."
       },
       "sec5": {
         "title": "Amanota n'imyitwarire",
@@ -781,7 +781,7 @@
       },
       "sec7": {
         "title": "Ibibujijwe gukorwa",
-        "body": "Ntabwo wemerewe gukoresha MpahMapu ushaka abakozi bo gukorera inyuma y'urubuga kugira ngo wirinde kwishura ikiguzi, gushyiraho akazi kanyuranyije n'amategeko cyangwa gateza akaga, gukusanya amakuru bwite y'abandi bakoresha batabiguhereye uburenganzira, cyangwa kugerageza kwiba, gusuzuma cyangwa kwivanga mu mikorere y'urubuga. Kurenga kuri ibi bishobora gutuma konti yawe ihagarikwa ako kanya ndetse no kugezwa mu mategeko."
+        "body": "Ntabwo wemerewe gukoresha MpahMapu ushaka abakozi bo gukorera inyuma y'urubuga kugira ngo wirinde kwishyura ikiguzi, gushyiraho akazi kanyuranyije n'amategeko cyangwa gateza akaga, gukusanya amakuru bwite y'abandi bakoresha batabiguhereye uburenganzira, cyangwa kugerageza kwiba, gusuzuma cyangwa kwivanga mu mikorere y'urubuga. Kurenga kuri ibi bishobora gutuma konti yawe ihagarikwa ako kanya ndetse no kugezwa mu mategeko."
       },
       "sec8": {
         "title": "Imipaka y'inshingano",
@@ -823,7 +823,7 @@
     },
     "errors": {
       "required": "Birakenewe",
-      "invalid_rate": "Andika ikiguzi cyo kwishura gitunganye",
+      "invalid_rate": "Andika ikiguzi cyo kwishyura gitunganye",
       "incomplete_form": "Nyamuneka wuzuze ahabugenewe hose.",
       "incomplete_form_title": "Ifishi ntiyuzuye",
       "not_signed_in": "Ugomba kwinjira kugira ngo utange akazi.",
@@ -850,7 +850,7 @@
       "category": "Ikiciro cy'akazi *",
       "start_date": "Itariki yo gutangira *",
       "start_time": "Isaha yo gutangira *",
-      "rate_period": "Igihe cyo kwishura",
+      "rate_period": "Igihe cyo kwishyura",
       "duration": "Igihe kizamara",
       "workers_count": "Umubare w'abakozi",
       "province": "Intara",
@@ -882,7 +882,7 @@
     "review": {
       "must_be_signed_in": "Ugomba kuba winjiye nka employer kugira ngo utange akazi.",
       "summary_title": "Incamake y'akazi",
-      "payment_title": "Kwishura",
+      "payment_title": "Kwishyura",
       "gross": "Mbere yo gukuramo ikiguzi ({details})",
       "platform_fee": "Ikiguzi cy'urubuga (25% by'umukozi)",
       "workers_receive": "Abakozi bahabwa",
@@ -920,7 +920,7 @@
       "title": "Izina ry'akazi *",
       "start_date": "Itariki yo gutangira *",
       "start_time": "Igihe cyo gutangira *",
-      "rate_period": "Igihe cyo kwishura",
+      "rate_period": "Igihe cyo kwishyura",
       "duration": "Igihe kizamara *",
       "province": "Intara",
       "district": "Akarere *",
@@ -981,9 +981,10 @@
       "search": "Shakisha akazi cyangwa ibyiciro…"
     },
     "filters": {
-      "location": "Aho giherereye",
+      "categories":"Ibyiciro",
+      "location": "Aho aherereye",
       "min_pay": "Ikiguzi gito (RWF)",
-      "sort_by": "Gukurikiranya nk'uko",
+      "sort_by": "Gukurikiranya",
       "urgent_only": "Ibyihutirwa gusa",
       "urgent": "Ibyihutirwa gusa",
       "min": "Gito",
@@ -1524,7 +1525,7 @@
     "completed_out_of": "{done} zarangiye mu {total}",
     "top_categories": "Ibyiciro biri Imbere",
     "earnings_by_job": "Ayinjijwe ku kazi",
-    "no_history": "Nta mateka y'akazi aragaragara"
+    "no_history": "Nta makuru y'akazi aragaragara"
   },
   "notifications": {
     "accepted_message": "Dosiye yawe y'akazi ka \"{title}\" yakiriwe!",
@@ -1633,10 +1634,10 @@
     "low_balance": "Amafaranga kuri konti ni make",
     "low_balance_desc": "Shyiraho amafaranga kugira ngo ubashe gutangaza akazi. Buri kazi gasaba kubanza gufunga amafaranga yako yose.",
     "top_up_btn": "Shyiraho",
-    "title": "Mateka yo Kwishura",
+    "title": "Inshamake yo Kwishyura",
     "add_funds": "Shyiraho amafaranga",
-    "no_transactions": "Nta mateka yo kwishura araboneka",
-    "no_transactions_desc": "Amateka y'imyishyurire azagaragara hano nutangira gutangaza akazi.",
+    "no_transactions": "Nta makuru yo kwishyura araboneka",
+    "no_transactions_desc": "Amakuru y'imyishyurire azagaragara hano nutangira gutangaza akazi.",
     "wallet_topup": "Gushyira amafaranga kuri konti",
     "withdrawal": "Kubikuza",
     "reason": "Impamvu:",
@@ -1656,6 +1657,9 @@
     "confirm_refund": "Emeza Isubizwa",
     "refund_failed_err": "Gusaba isubizwa byanze",
     "cancel": "Guhagarika",
-    "jobs_unit": "akazi"
+    "jobs_unit": "akazi",
+    "claim_refund_link": "Saba isubizwa ry'amafaranga",
+    "select_escrow_payment": "Hitamo amafaranga afunzwe...",
+    "claim_refund_title": "Saba Isubizwa rya Escrow"
   }
 }

@@ -1656,6 +1656,9 @@
     "confirm_refund": "Thibitisha Urejeshaji Pesa",
     "refund_failed_err": "Ombi la kurejesha pesa limeshindwa",
     "cancel": "Ghairi",
-    "jobs_unit": "kazi"
+    "jobs_unit": "kazi",
+    "claim_refund_link": "Omba urejeshaji wa pesa",
+    "select_escrow_payment": "Chagua amana ya escrow...",
+    "claim_refund_title": "Dai Urejeshaji wa Escrow"
   }
 }

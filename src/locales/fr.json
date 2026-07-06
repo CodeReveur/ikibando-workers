@@ -1656,6 +1656,9 @@
     "confirm_refund": "Confirmer le remboursement",
     "refund_failed_err": "La demande de remboursement a échoué",
     "cancel": "Annuler",
-    "jobs_unit": "offres"
+    "jobs_unit": "offres",
+    "claim_refund_link": "Demander un remboursement",
+    "select_escrow_payment": "Sélectionner un paiement en dépôt...",
+    "claim_refund_title": "Réclamer un remboursement du dépôt"
   }
 }

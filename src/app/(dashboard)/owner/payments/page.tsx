@@ -44,6 +44,8 @@ export default function OwnerPayments() {
   const [refundFor,  setRefundFor]  = useState<PaymentDto | null>(null);
   const [refundNote, setRefundNote] = useState("");
   const [refundBusy, setRefundBusy] = useState(false);
+  const [generalRefundOpen, setGeneralRefundOpen] = useState(false);
+  const [selectedRefundPaymentId, setSelectedRefundPaymentId] = useState("");
 
   const load = useCallback(async () => {
     const token = localStorage.getItem("access_token");
@@ -82,6 +84,20 @@ export default function OwnerPayments() {
       setPayments(prev => prev.map(p => p.id === updated.id ? updated : p));
       const w = await getWallet(token); setWallet(w);
       setRefundFor(null); setRefundNote("");
+    } catch (e: any) {
+      alert(apiError(e, t("owner_payments.refund_failed_err") || "Refund request failed"));
+    } finally { setRefundBusy(false); }
+  };
+
+  const doGeneralRefund = async () => {
+    if (!selectedRefundPaymentId) return;
+    const token = localStorage.getItem("access_token")!;
+    setRefundBusy(true);
+    try {
+      const updated = await requestRefund(selectedRefundPaymentId, refundNote || "Employer requested refund", token);
+      setPayments(prev => prev.map(p => p.id === updated.id ? updated : p));
+      const w = await getWallet(token); setWallet(w);
+      setGeneralRefundOpen(false); setSelectedRefundPaymentId(""); setRefundNote("");
     } catch (e: any) {
       alert(apiError(e, t("owner_payments.refund_failed_err") || "Refund request failed"));
     } finally { setRefundBusy(false); }
@@ -221,11 +237,27 @@ export default function OwnerPayments() {
       )}
 
       {/* Escrow info */}
-      <div style={{ background:"rgba(34,197,94,0.03)", border:"1px solid rgba(34,197,94,0.1)", borderRadius:12, padding:"14px 18px", display:"flex", gap:10 }}>
-        <Shield size={16} color="#22c55e" style={{ flexShrink:0, marginTop:1 }} />
-        <p style={{ margin:0, fontSize:12, color:"#3e3e3e", lineHeight:1.7 }}>
+      <div style={{ background:"rgba(34,197,94,0.03)", border:"1px solid rgba(34,197,94,0.1)", borderRadius:12, padding:"14px 18px", display:"flex", gap:10, marginTop:9, alignItems:"center", flexWrap:"wrap" }}>
+        <Shield size={16} color="#22c55e" style={{ flexShrink:0 }} />
+        <p style={{ margin:0, fontSize:12, color:"#3e3e3e", lineHeight:1.7, flex:1, minWidth:260 }}>
           {t("owner_payments.escrow_info_desc") || "Each job requires a full escrow deposit (rate × hours × workers + 5% fee) deducted from your wallet at posting time. Funds are held securely and released only when you mark the job complete. You can request a refund on any HELD payment."}
         </p>
+        {payments.some(p => p.type === "PAYMENT" && p.status === "HELD") && (
+          <button
+            onClick={() => {
+              setGeneralRefundOpen(true);
+              setRefundNote("");
+              setSelectedRefundPaymentId("");
+            }}
+            style={{
+              background:"rgba(96,165,250,0.08)", border:"1px solid rgba(96,165,250,0.2)",
+              color:"#60a5fa", borderRadius:8, padding:"6px 14px", fontSize:11, fontWeight:700,
+              cursor:"pointer", fontFamily:"inherit", flexShrink:0,
+            }}
+          >
+            {t("owner_payments.claim_refund_link") || "Request a refund"}
+          </button>
+        )}
       </div>
 
       {/* Top-up modal */}
@@ -335,6 +367,48 @@ export default function OwnerPayments() {
                 {refundBusy ? <Loader2 size={14} style={{ animation:"spin 0.7s linear infinite" }} /> : (t("owner_payments.confirm_refund") || "Confirm Refund")}
               </button>
               <button onClick={() => setRefundFor(null)} style={{ flex:1, background:"transparent", color:"#555", border:"1px solid #222", borderRadius:9, padding:"11px", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>
+                {t("owner_payments.cancel") || "Cancel"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* General Refund modal */}
+      {generalRefundOpen && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", zIndex:500, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
+          <div style={{ background:"#111", border:"1px solid #222", borderRadius:18, width:"100%", maxWidth:420, padding:"28px" }}>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
+              <p style={{ margin:0, fontSize:16, fontWeight:800, color:"#fff" }}>{t("owner_payments.claim_refund_title") || "Claim Escrow Refund"}</p>
+              <button onClick={() => { setGeneralRefundOpen(false); setSelectedRefundPaymentId(""); }} style={{ background:"none", border:"none", cursor:"pointer", color:"#555" }}><X size={18} /></button>
+            </div>
+            
+            <p style={{ margin:"0 0 6px", fontSize:11, fontWeight:700, color:"#3a3a3a" }}>{t("seeker_jobs.label_job") || "JOB / OFFER"}</p>
+            <select
+              value={selectedRefundPaymentId}
+              onChange={e => setSelectedRefundPaymentId(e.target.value)}
+              style={{ ...inp, marginBottom:16 }}
+            >
+              <option value="">{t("owner_payments.select_escrow_payment") || "Select an escrow payment..."}</option>
+              {payments.filter(p => p.type === "PAYMENT" && p.status === "HELD").map(p => (
+                <option key={p.id} value={p.id}>
+                  {p.jobTitle} ({fmt(p.amountRwf)})
+                </option>
+              ))}
+            </select>
+
+            <p style={{ margin:"0 0 6px", fontSize:11, fontWeight:700, color:"#3a3a3a" }}>{t("owner_payments.reason_refund") || "REASON FOR REFUND"}</p>
+            <input
+              value={refundNote}
+              onChange={e => setRefundNote(e.target.value)}
+              placeholder="e.g. Job cancelled, worker did not show up"
+              style={{ ...inp, marginBottom:20 }}
+            />
+            <div style={{ display:"flex", gap:10 }}>
+              <button onClick={doGeneralRefund} disabled={refundBusy || !selectedRefundPaymentId} style={{ flex:1, background:"#60a5fa", color:"#fff", border:"none", borderRadius:9, padding:"11px", fontSize:13, fontWeight:700, cursor: refundBusy || !selectedRefundPaymentId ? "not-allowed" : "pointer", fontFamily:"inherit" }}>
+                {refundBusy ? <Loader2 size={14} style={{ animation:"spin 0.7s linear infinite" }} /> : (t("owner_payments.confirm_refund") || "Confirm Refund")}
+              </button>
+              <button onClick={() => { setGeneralRefundOpen(false); setSelectedRefundPaymentId(""); }} style={{ flex:1, background:"transparent", color:"#555", border:"1px solid #222", borderRadius:9, padding:"11px", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>
                 {t("owner_payments.cancel") || "Cancel"}
               </button>
             </div>

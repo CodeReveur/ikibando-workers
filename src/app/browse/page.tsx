@@ -413,7 +413,7 @@ function BrowsePageInner() {
           }}>
             <div className="filter-panel">
               <SelectField
-                label={t("common.sections.categories") || "Category"}
+                label={t("jobs_page.filters.categories") || "Category"}
                 value={filterCategory}
                 onChange={setFilterCategory}
                 options={CATEGORIES.map(c => c.key)}

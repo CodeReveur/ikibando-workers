@@ -1657,6 +1657,9 @@
     "confirm_refund": "Confirm Refund",
     "refund_failed_err": "Refund request failed",
     "cancel": "Cancel",
-    "jobs_unit": "jobs"
+    "jobs_unit": "jobs",
+    "claim_refund_link": "Request a refund",
+    "select_escrow_payment": "Select an escrow payment...",
+    "claim_refund_title": "Claim Escrow Refund"
   }
 }
