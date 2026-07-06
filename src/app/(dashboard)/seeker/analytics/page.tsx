@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getWalletTransactions, getMyApplications, type PaymentDto, type ApplicationDto } from "@/lib/api";
 import { StatCard, BarChart, PageLoader } from "@/components/dashboard/ui";
 import { fmt } from "@/lib/dashboard-data";
+import { useLanguage } from "@/lib/language-context";
 
 interface BarDatum { day: string; v: number; }
 
@@ -33,6 +34,7 @@ function buildCategoryBreakdown(apps: ApplicationDto[]) {
 }
 
 export default function SeekerAnalytics() {
+  const { t } = useLanguage();
   const [txns,    setTxns]    = useState<PaymentDto[]>([]);
   const [apps,    setApps]    = useState<ApplicationDto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -75,40 +77,56 @@ export default function SeekerAnalytics() {
 
   return (
     <div>
+      <style>{`
+        .seeker-stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:14px; }
+        .analytics-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+        .donut-row { display:flex; align-items:center; gap:20px; }
+        @media (max-width: 900px) {
+          .seeker-stats-grid { grid-template-columns:1fr; }
+          .analytics-grid { grid-template-columns:1fr; }
+        }
+        @media (max-width: 340px) {
+          .seeker-stats-grid { gap:6px; }
+          .donut-row { flex-direction:column; text-align:center; }
+        }
+      `}</style>
+
       {/* Top stats */}
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:12, marginBottom:14 }}>
-        <StatCard label="This Week"    value={fmt(weekTotal)}   sub="Released earnings"  accent="#f97316" />
-        <StatCard label="Total Earned" value={fmt(totalEarned)} sub="All-time released"  accent="#22c55e" />
-        <StatCard label="Jobs Done"    value={String(jobsDone)} sub="Completed & paid"   accent="#60a5fa" />
+      <div className="seeker-stats-grid">
+        <StatCard label={t("seeker_analytics.this_week") || "This Week"}    value={fmt(weekTotal)}   sub={t("seeker_earnings.paid_to_wallet") || "Released earnings"}  accent="#f97316" />
+        <StatCard label={t("seeker_analytics.total_earned") || "Total Earned"} value={fmt(totalEarned)} sub={t("seeker_analytics.all_time_released") || "All-time released"}  accent="#22c55e" />
+        <StatCard label={t("seeker_analytics.jobs_done") || "Jobs Done"}    value={String(jobsDone)} sub={t("seeker_analytics.completed_paid") || "Completed & paid"}   accent="#60a5fa" />
       </div>
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:12, marginBottom:28 }}>
-        <StatCard label="In Escrow"    value={fmt(inEscrow)}        sub="Awaiting release"   accent="#f59e0b" />
-        <StatCard label="Active Jobs"  value={String(accepted)}      sub="Currently hired"    accent="#a78bfa" />
-        <StatCard label="Applications" value={String(apps.length)}   sub="All time"           accent="#60a5fa" />
+      <div className="seeker-stats-grid" style={{ marginBottom: 28 }}>
+        <StatCard label={t("seeker_analytics.in_escrow") || "In Escrow"}    value={fmt(inEscrow)}        sub={t("seeker_analytics.awaiting_release") || "Awaiting release"}   accent="#f59e0b" />
+        <StatCard label={t("seeker_analytics.active_jobs") || "Active Jobs"}  value={String(accepted)}      sub={t("seeker_analytics.currently_hired") || "Currently hired"}    accent="#a78bfa" />
+        <StatCard label={t("seeker_analytics.applications") || "Applications"} value={String(apps.length)}   sub={t("seeker_analytics.all_time") || "All time"}           accent="#60a5fa" />
       </div>
 
       {/* Weekly earnings chart */}
       <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:14, padding:"22px 24px", marginBottom:14 }}>
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20 }}>
-          <p style={{ margin:0, fontWeight:700, fontSize:14, color:"#e0e0e0" }}>Weekly Earnings</p>
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20, flexWrap:"wrap", gap: 10 }}>
+          <p style={{ margin:0, fontWeight:700, fontSize:14, color:"#e0e0e0" }}>{t("seeker_analytics.weekly_earnings") || "Weekly Earnings"}</p>
           <span style={{ fontSize:11, color:"#333" }}>
-            {activeDays > 0 ? `Avg ${fmt(Math.round(weekTotal / activeDays))}/active day` : "Last 7 days"}
+            {activeDays > 0
+              ? (t("seeker_analytics.avg_per_active")?.replace("{avg}", fmt(Math.round(weekTotal / activeDays))) || `Avg ${fmt(Math.round(weekTotal / activeDays))}/active day`)
+              : (t("seeker_analytics.last_7_days") || "Last 7 days")}
           </span>
         </div>
         {weekTotal === 0 ? (
           <p style={{ margin:0, fontSize:12, color:"#333", textAlign:"center", padding:"30px 0" }}>
-            No released payments this week yet.
+            {t("seeker_analytics.no_payments_week")}
           </p>
         ) : (
           <BarChart bars={bars} maxVal={maxV} color="#f97316" />
         )}
       </div>
 
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>
+      <div className="analytics-grid">
         {/* Completion rate donut */}
         <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:14, padding:"20px 22px" }}>
-          <p style={{ margin:"0 0 18px", fontWeight:700, fontSize:14, color:"#e0e0e0" }}>Completion Rate</p>
-          <div style={{ display:"flex", alignItems:"center", gap:20 }}>
+          <p style={{ margin:"0 0 18px", fontWeight:700, fontSize:14, color:"#e0e0e0" }}>{t("seeker_analytics.completion_rate")}</p>
+          <div className="donut-row">
             <div style={{ position:"relative", width:80, height:80, flexShrink:0 }}>
               <svg width="80" height="80" viewBox="0 0 80 80">
                 <circle cx="40" cy="40" r="32" fill="none" stroke="#1a1a1a" strokeWidth="9"/>
@@ -124,18 +142,22 @@ export default function SeekerAnalytics() {
             </div>
             <div>
               <p style={{ margin:"0 0 6px", fontSize:24, fontWeight:900, color:"#e0e0e0" }}>{completionRate}%</p>
-              <p style={{ margin:0, fontSize:11, color:"#444" }}>Based on {responded} resolved</p>
-              <p style={{ margin:"4px 0 0", fontSize:11, color:"#333" }}>{jobsDone} completed out of {responded}</p>
+              <p style={{ margin:0, fontSize:11, color:"#444" }}>{t("seeker_analytics.based_on_resolved")?.replace("{count}", String(responded)) || `Based on ${responded} resolved`}</p>
+              <p style={{ margin:"4px 0 0", fontSize:11, color:"#333" }}>
+                {t("seeker_analytics.completed_out_of")
+                  ?.replace("{done}", String(jobsDone))
+                  ?.replace("{total}", String(responded)) || `${jobsDone} completed out of ${responded}`}
+              </p>
             </div>
           </div>
 
           {/* Application breakdown */}
           <div style={{ marginTop:18, borderTop:"1px solid #191919", paddingTop:14 }}>
             {[
-              { label:"Accepted",  count:apps.filter(a => a.status === "ACCEPTED").length,  color:"#22c55e" },
-              { label:"Pending",   count:apps.filter(a => a.status === "PENDING").length,   color:"#f59e0b" },
-              { label:"Rejected",  count:apps.filter(a => a.status === "REJECTED").length,  color:"#ef4444" },
-              { label:"Withdrawn", count:apps.filter(a => a.status === "WITHDRAWN").length, color:"#555" },
+              { label: t("settings_page.account.verified") || "Accepted",  count:apps.filter(a => a.status === "ACCEPTED").length,  color:"#22c55e" },
+              { label: t("seeker_jobs.status_pending") || "Pending",   count:apps.filter(a => a.status === "PENDING").length,   color:"#f59e0b" },
+              { label: t("common.general.rejected") || "Rejected",  count:apps.filter(a => a.status === "REJECTED").length,  color:"#ef4444" },
+              { label: t("seeker_job_detail.app_withdrawn") || "Withdrawn", count:apps.filter(a => a.status === "WITHDRAWN").length, color:"#555" },
             ].map(({ label, count, color }) => (
               <div key={label} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"6px 0", borderBottom:"1px solid #191919" }}>
                 <div style={{ display:"flex", alignItems:"center", gap:8 }}>
@@ -152,9 +174,9 @@ export default function SeekerAnalytics() {
         <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
           {/* By job category applied */}
           <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:14, padding:"20px 22px" }}>
-            <p style={{ margin:"0 0 16px", fontWeight:700, fontSize:14, color:"#e0e0e0" }}>Top Categories</p>
+            <p style={{ margin:"0 0 16px", fontWeight:700, fontSize:14, color:"#e0e0e0" }}>{t("seeker_analytics.top_categories")}</p>
             {categories.length === 0 ? (
-              <p style={{ margin:0, fontSize:12, color:"#333" }}>No job history yet</p>
+              <p style={{ margin:0, fontSize:12, color:"#333" }}>{t("seeker_analytics.no_history")}</p>
             ) : categories.map(({ cat, pct, color }) => (
               <div key={cat} style={{ marginBottom:10 }}>
                 <div style={{ display:"flex", justifyContent:"space-between", marginBottom:5 }}>
@@ -171,7 +193,7 @@ export default function SeekerAnalytics() {
           {/* Earnings by job */}
           {catEntries.length > 0 && (
             <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:14, padding:"20px 22px" }}>
-              <p style={{ margin:"0 0 16px", fontWeight:700, fontSize:14, color:"#e0e0e0" }}>Earnings by Job</p>
+              <p style={{ margin:"0 0 16px", fontWeight:700, fontSize:14, color:"#e0e0e0" }}>{t("seeker_analytics.earnings_by_job")}</p>
               {catEntries.map(([name, amt], i) => {
                 const pct = Math.round((amt / catMax) * 100);
                 return (
