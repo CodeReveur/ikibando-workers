@@ -85,15 +85,16 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
   const getPageTitle = (path: string) => {
     let key = "dashboard";
     if (path === "/seeker/applications") key = "applications";
-    else if (path === "/seeker/jobs") key = "jobs";
-    else if (path === "/seeker/earnings") key = "earnings";
+    else if (path === "/seeker/jobs" || path.startsWith("/seeker/jobs/")) key = "jobs";
+    else if (path === "/seeker/earnings" || path.startsWith("/seeker/earnings/")) key = "earnings";
     else if (path === "/seeker/bonuses") key = "bonuses";
     else if (path === "/seeker/analytics" || path === "/owner/analytics") key = "analytics";
     else if (path === "/seeker/settings" || path === "/owner/settings") key = "settings";
-    else if (path === "/owner/offers") key = "offers";
+    else if (path === "/owner/offers" || path.startsWith("/owner/offers/")) key = "offers";
     else if (path === "/owner/payments") key = "payments";
-    else if (path === "/owner/workers") key = "workers";
+    else if (path === "/owner/workers" || path.startsWith("/owner/workers/")) key = "workers";
     else if (path === "/owner/help") key = "help";
+    else if (path.startsWith("/owner/jobs/")) key = "jobs";
     else if (path === "/seeker" || path === "/owner") key = "dashboard";
     
     return t("common.nav." + key);
