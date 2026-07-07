@@ -510,6 +510,35 @@ export async function getTopupStatus(id: string, token: string): Promise<Transfe
   return data.data;
 }
 
+// ── Notifications ───────────────────────────────────────────────────────────────
+export interface NotificationDto {
+  id: string;
+  type: string;
+  title: string;
+  body: string;
+  data: Record<string, string> | null;
+  read: boolean;
+  createdAt: string;
+}
+
+export async function getNotifications(token: string, page = 0, size = 20): Promise<Page<NotificationDto>> {
+  const { data } = await http.get("/api/notifications", { params: { page, size }, headers: authHeader(token) });
+  return data.data;
+}
+
+export async function getUnreadNotificationCount(token: string): Promise<number> {
+  const { data } = await http.get("/api/notifications/unread-count", { headers: authHeader(token) });
+  return data.data.count;
+}
+
+export async function markNotificationRead(id: string, token: string): Promise<void> {
+  await http.post(`/api/notifications/${id}/read`, {}, { headers: authHeader(token) });
+}
+
+export async function markAllNotificationsRead(token: string): Promise<void> {
+  await http.post("/api/notifications/read-all", {}, { headers: authHeader(token) });
+}
+
 export async function requestRefund(paymentId: string, reason: string, token: string): Promise<PaymentDto> {
   const { data } = await http.post(`/api/wallet/transactions/${paymentId}/refund`, { reason }, { headers: authHeader(token) });
   return data.data;
@@ -571,29 +600,26 @@ export async function getJob(id: string): Promise<JobDto> {
   return data.data;
 }
 
-export async function postJob(payload: {
+export interface JobPayload {
   category: string; title?: string; description?: string;
   province?: string; district: string;
+  sector?: string; cell?: string; village?: string;
   latitude?: number; longitude?: number;
   ratePerHour: number; headcount: number;
   urgency: "IMMEDIATE" | "SAME_DAY" | "SCHEDULED";
   startTime: string; durationHours: number;
   rateType?: string; locationNotes?: string;
-}, token: string): Promise<JobDto> {
+  /** True for Hire Now / direct Offer: don't broadcast to all workers, only the picked one. */
+  direct?: boolean;
+}
+
+export async function postJob(payload: JobPayload, token: string): Promise<JobDto> {
   const { data } = await http.post("/api/jobs", payload, { headers: authHeader(token) });
   return data.data;
 }
 
 export interface GuestJobPayload {
-  job: {
-    category: string; title?: string; description?: string;
-    province?: string; district: string;
-    latitude?: number; longitude?: number;
-    ratePerHour: number; headcount: number;
-    urgency: "IMMEDIATE" | "SAME_DAY" | "SCHEDULED";
-    startTime: string; durationHours: number;
-    rateType?: string; locationNotes?: string;
-  };
+  job: JobPayload;
   guestName: string; guestEmail: string; guestPhone: string;
   paymentMethod: "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD";
   paymentPhone?: string;

@@ -8,7 +8,7 @@ import {
   AlarmClock, Search, Navigation, Loader2, Star,
 } from "lucide-react";
 import { JOB_CATEGORIES, RWANDA_PROVINCES } from "@/lib/constants";
-import { getWorkers, postJob, postGuestJob, applyForJob, updateApplicationStatus, getWallet, type WorkerProfileDto } from "@/lib/api";
+import { getWorkers, postJob, postGuestJob, applyForJob, getWallet, type WorkerProfileDto } from "@/lib/api";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { ratingInfo } from "@/lib/rating";
 import { useToast } from "@/components/ui/toast";
@@ -244,6 +244,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
         urgency: "IMMEDIATE" as const,
         startTime, durationHours: parseInt(form.durationHours) || 1,
         rateType,
+        direct: true, // Hire Now: private offer to the picked worker(s), not a broadcast.
       };
 
       // payMethod is one of the 4 gateway methods (default MTN_MOMO); WALLET is never selected.
@@ -311,10 +312,11 @@ export function HireModal({ onClose }: { onClose: () => void }) {
       setPayNote("");
       const job = await postJob(jobPayload, activeToken);
 
-      await Promise.all(selected.map(async w => {
-        const app = await applyForJob(job.id as unknown as string, { bestFit: "Hire Now selection", appliedVia: "HIRE_NOW", workerId: w.id as unknown as string }, activeToken!);
-        await updateApplicationStatus(app.id as unknown as string, { status: "ACCEPTED" }, activeToken!);
-      }));
+      // Send each picked worker a pending offer — they accept or decline. The server notifies them;
+      // if a worker declines, it opens the job to other nearby workers in the same category.
+      await Promise.all(selected.map(w =>
+        applyForJob(job.id as unknown as string, { bestFit: "Hire Now selection", appliedVia: "HIRE_NOW", workerId: w.id as unknown as string }, activeToken!)
+      ));
 
       try { localStorage.removeItem(DRAFT_KEY); } catch {}
       setDone(true);

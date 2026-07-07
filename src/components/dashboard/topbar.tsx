@@ -6,7 +6,7 @@ import { Bell, X, Wallet, Plus, Globe } from "lucide-react";
 import { useSession } from "./session-ctx";
 import { useLanguage } from "@/lib/language-context";
 import { Pip } from "./ui";
-import { getWallet, getPendingApplicationCount, getMyApplications, type WalletDto } from "@/lib/api";
+import { getWallet, getNotifications, getUnreadNotificationCount, markAllNotificationsRead, type WalletDto, type NotificationDto } from "@/lib/api";
 import { fmt } from "@/lib/dashboard-data";
 
 export const TB_HEIGHT = 64;
@@ -18,7 +18,8 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
   const [notifOpen,    setNotifOpen]    = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [wallet,       setWallet]       = useState<WalletDto | null>(null);
-  const [pendingCount, setPendingCount] = useState(0);
+  const [notifs,       setNotifs]       = useState<NotificationDto[]>([]);
+  const [unread,       setUnread]       = useState(0);
 
   const dateLocaleMap: Record<string, string> = {
     rw: "rw-RW",
@@ -29,7 +30,6 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
   };
   const currentLocale = dateLocaleMap[language] || "en-RW";
 
-  const [seekerNotifs, setSeekerNotifs] = useState<{ id: string; jobId: string; jobTitle: string; status: string; time: string; note?: string | null }[]>([]);
   const ref = useRef<HTMLElement>(null);
   const langDropdownRef = useRef<HTMLDivElement>(null);
   const [dateMounted, setDateMounted] = useState(false);
@@ -42,31 +42,30 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
     
     const fetchAll = () => {
       getWallet(token).then(setWallet).catch(() => {});
-
-      if (isOwner) {
-        getPendingApplicationCount(token).then(setPendingCount).catch(() => {});
-      } else {
-        getMyApplications(token).then(apps => {
-          const notifs = apps
-            .filter(a => a.status === "ACCEPTED" || a.status === "REJECTED")
-            .slice(0, 10)
-            .map(a => ({
-              id: String(a.id),
-              jobId: String(a.jobId ?? ""),
-              jobTitle: a.jobTitle || "Job",
-              status: a.status,
-              note: a.responseNote,
-              time: a.respondedAt ? new Date(a.respondedAt).toLocaleDateString(currentLocale) : "Recently",
-            }));
-          setSeekerNotifs(notifs);
-        }).catch(() => {});
-      }
+      getNotifications(token, 0, 15).then(p => setNotifs(p.content)).catch(() => {});
+      getUnreadNotificationCount(token).then(setUnread).catch(() => {});
     };
 
     fetchAll();
     const interval = setInterval(fetchAll, 5000);
     return () => clearInterval(interval);
   }, [isOwner, currentLocale]);
+
+  // Opening the bell marks everything read.
+  function openNotifs() {
+    setNotifOpen(v => {
+      const next = !v;
+      if (next && unread > 0) {
+        const token = localStorage.getItem("access_token");
+        if (token) {
+          markAllNotificationsRead(token).catch(() => {});
+          setUnread(0);
+          setNotifs(ns => ns.map(n => ({ ...n, read: true })));
+        }
+      }
+      return next;
+    });
+  }
 
   useEffect(() => {
     setDateMounted(true);
@@ -101,7 +100,7 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
   };
 
   const title   = getPageTitle(pathname);
-  const unreadN = isOwner ? pendingCount : seekerNotifs.length;
+  const unreadN = unread;
   const dateLocale = language === "fr" ? "fr-FR" : language === "sw" ? "sw" : language === "kinyy" ? "rw-RW" : "en-GB";
 
   return (
@@ -236,7 +235,7 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
 
         <div style={{ position:"relative" }}>
           <button
-            onClick={() => setNotifOpen(p => !p)}
+            onClick={openNotifs}
             className="topbar-icon-btn"
             style={{ color: notifOpen ? "#f97316" : "#555" }}
           >
@@ -247,53 +246,28 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
           {notifOpen && (
             <DropPanel title={t("common.nav.notifications") || "Notifications"} onClose={() => setNotifOpen(false)}>
               <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
-                {isOwner ? (
-                  pendingCount > 0 ? (
-                    <div style={{ padding:"14px 16px", borderBottom:"1px solid #141414", display:"flex", gap:10 }}>
-                      <div style={{ width:6, height:6, borderRadius:99, marginTop:5, flexShrink:0, background:"#f97316" }} />
-                      <div>
-                        <p style={{ margin:"0 0 6px", fontSize:12, color:"#c0c0c0", lineHeight:1.6 }}>
-                          {t("notifications.pending_message", { count: pendingCount }) || `You have ${pendingCount} pending applications waiting for review.`}
-                        </p>
-                        <a href="/owner/workers" style={{ fontSize:11, color:"#f97316", fontWeight:700, textDecoration:"none" }}>
-                          {t("notifications.review_now") || "Review now →"}
-                        </a>
-                      </div>
-                    </div>
-                  ) : (
-                    <div style={{ padding:"24px 16px", textAlign:"center" }}>
-                      <p style={{ margin:0, fontSize:12, color:"#3a3a3a" }}>{t("notifications.no_pending") || "No pending applications"}</p>
-                    </div>
-                  )
-                ) : (
-                  seekerNotifs.length > 0 ? seekerNotifs.map((n, i) => (
-                    <div key={i} style={{ padding:"14px 16px", borderBottom:"1px solid #141414", display:"flex", gap:10 }}>
-                      <div style={{ width:6, height:6, borderRadius:99, marginTop:5, flexShrink:0, background:"#f97316" }} />
-                      <div style={{ flex: 1 }}>
-                        <p style={{ margin:"0 0 4px", fontSize:12, color:"#c0c0c0", lineHeight:1.5 }}>
-                          {n.status === "ACCEPTED"
-                            ? t("notifications.accepted_message", { title: n.jobTitle })
-                            : t("notifications.rejected_message", { title: n.jobTitle })}
-                        </p>
-                        {n.note && <p style={{ margin:"0 0 8px", fontSize:11, color:"#888", fontStyle:"italic", background:"#111", padding:"6px 10px", borderRadius:6, border:"1px solid #1a1a1a" }}>{t("seeker_jobs.note_from_employer") || "Note:"} {n.note}</p>}
+                {notifs.length > 0 ? notifs.map((n) => {
+                  const jobId = n.data?.jobId;
+                  const link = jobId ? (isOwner ? `/owner/jobs/${jobId}` : `/seeker/jobs/${jobId}`) : undefined;
+                  const time = n.createdAt ? new Date(n.createdAt).toLocaleDateString(currentLocale) : "";
+                  return (
+                    <div key={n.id} style={{ padding:"14px 16px", borderBottom:"1px solid #141414", display:"flex", gap:10, background: n.read ? "transparent" : "rgba(249,115,22,0.04)" }}>
+                      <div style={{ width:6, height:6, borderRadius:99, marginTop:5, flexShrink:0, background: n.read ? "#333" : "#f97316" }} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ margin:"0 0 3px", fontSize:12, fontWeight:700, color:"#e0e0e0", lineHeight:1.4 }}>{n.title}</p>
+                        <p style={{ margin:"0 0 6px", fontSize:12, color:"#a0a0a0", lineHeight:1.5 }}>{n.body}</p>
                         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                          <p style={{ margin:0, fontSize:10, color:"#444" }}>{n.time}</p>
-                          <a href={n.status === "ACCEPTED" ? `/seeker/jobs/${n.jobId}` : `/seeker/applications`} style={{ fontSize:10, color:"#f97316", textDecoration:"none", fontWeight:600 }}>{t("seeker_jobs.track_link") || "Track"} →</a>
+                          <p style={{ margin:0, fontSize:10, color:"#444" }}>{time}</p>
+                          {link && <a href={link} style={{ fontSize:10, color:"#f97316", textDecoration:"none", fontWeight:600 }}>{t("seeker_jobs.track_link") || "View"} →</a>}
                         </div>
                       </div>
                     </div>
-                  )) : (
-                    <div style={{ padding:"24px 16px", textAlign:"center" }}>
-                      <p style={{ margin:0, fontSize:12, color:"#3a3a3a" }}>{t("notifications.no_new") || "No new notifications"}</p>
-                    </div>
-                  )
+                  );
+                }) : (
+                  <div style={{ padding:"24px 16px", textAlign:"center" }}>
+                    <p style={{ margin:0, fontSize:12, color:"#3a3a3a" }}>{t("notifications.no_new") || "No new notifications"}</p>
+                  </div>
                 )}
-              </div>
-              <div style={{ padding:"10px 16px", borderTop: "1px solid #1a1a1a" }}>
-                <a href={isOwner ? "/owner/workers" : "/seeker/applications"}
-                  style={{ display:"block", textAlign:"center", fontSize:12, color:"#f97316", fontWeight:600, textDecoration:"none" }}>
-                  {isOwner ? (t("notifications.manage_apps") || "Manage applications") : (t("notifications.view_all") || "View all applications")}
-                </a>
               </div>
             </DropPanel>
           )}

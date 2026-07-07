@@ -73,6 +73,9 @@ interface JobForm {
   durationHours: string;
   province: string;
   district: string;
+  sector: string;
+  cell: string;
+  village: string;
   latitude:  number | null;
   longitude: number | null;
   ratePerHour: string;
@@ -150,6 +153,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
   const [job, setJob] = useState<JobForm>({
     category: "", headcount: "1", date: "", time: "",
     durationHours: "4", province: "", district: "",
+    sector: "", cell: "", village: "",
     latitude: null, longitude: null,
     ratePerHour: "", rateType: "hr", notes: "",
   });
@@ -283,6 +287,9 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
         category:      job.category,
         province:      job.province || undefined,
         district:      job.district,
+        sector:        job.sector  || undefined,
+        cell:          job.cell    || undefined,
+        village:       job.village || undefined,
         latitude:      job.latitude  ?? undefined,
         longitude:     job.longitude ?? undefined,
         ratePerHour:   parseInt(job.ratePerHour),
@@ -583,6 +590,34 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                       onChange={v => setJob(f => ({ ...f, district: v }))}
                       placeholder={t("post_job.placeholders.district") || "District…"}
                       icon={<MapPin size={13} color="#444" style={iconL} />}
+                    />
+                  </FField>
+                </div>
+
+                {/* Sector / Cell / Village — optional; lets us alert the nearest workers first */}
+                <div className="pj-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+                  <FField label={t("post_job.labels.sector") || "Sector"}>
+                    <input type="text" placeholder={t("post_job.placeholders.sector") || "Sector…"}
+                      value={job.sector} onChange={e => setJob(f => ({ ...f, sector: e.target.value }))}
+                      style={inp}
+                      onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
+                      onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                    />
+                  </FField>
+                  <FField label={t("post_job.labels.cell") || "Cell"}>
+                    <input type="text" placeholder={t("post_job.placeholders.cell") || "Cell…"}
+                      value={job.cell} onChange={e => setJob(f => ({ ...f, cell: e.target.value }))}
+                      style={inp}
+                      onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
+                      onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                    />
+                  </FField>
+                  <FField label={t("post_job.labels.village") || "Village"}>
+                    <input type="text" placeholder={t("post_job.placeholders.village") || "Village…"}
+                      value={job.village} onChange={e => setJob(f => ({ ...f, village: e.target.value }))}
+                      style={inp}
+                      onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
+                      onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
                     />
                   </FField>
                 </div>

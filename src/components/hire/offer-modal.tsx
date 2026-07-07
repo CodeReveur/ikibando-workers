@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { X, Calendar, Clock, CheckCircle, Bell, MapPin, Navigation, Loader2 } from "lucide-react";
 import { RWANDA_PROVINCES } from "@/lib/constants";
-import { postJob, postGuestJob, applyForJob, updateApplicationStatus, getWallet, type WorkerProfileDto } from "@/lib/api";
+import { postJob, postGuestJob, applyForJob, getWallet, type WorkerProfileDto } from "@/lib/api";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { useToast } from "@/components/ui/toast";
 import { useLanguage } from "@/lib/language-context";
@@ -251,6 +251,7 @@ export function OfferModal({ worker, onClose }: Props) {
         urgency: "IMMEDIATE" as const,
         startTime, durationHours: Math.round(hours),
         rateType: rt,
+        direct: true, // Direct offer to this one worker, not a broadcast.
       };
 
       // payMethod is one of the 4 gateway methods (default MTN_MOMO); WALLET is never selected.
@@ -316,12 +317,10 @@ export function OfferModal({ worker, onClose }: Props) {
       }
 
       setPayNote("");
-      // Create a direct private job for this worker
+      // Create a private job and send this worker a pending offer to accept or decline. The server
+      // notifies them; if they decline, the job opens to other nearby workers in the same category.
       const job = await postJob(jobPayload, activeToken);
-
-      // Apply worker to this job and accept
-      const app = await applyForJob(job.id as unknown as string, { bestFit: "Direct Offer selection", appliedVia: "HIRE_NOW", workerId: worker.id as unknown as string }, activeToken);
-      await updateApplicationStatus(app.id as unknown as string, { status: "ACCEPTED" }, activeToken);
+      await applyForJob(job.id as unknown as string, { bestFit: "Direct Offer selection", appliedVia: "HIRE_NOW", workerId: worker.id as unknown as string }, activeToken);
 
       try { localStorage.removeItem(DRAFT_KEY); } catch {}
       setDone(true);
