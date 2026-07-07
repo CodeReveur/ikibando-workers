@@ -11,7 +11,7 @@ import { postJob, postGuestJob, getWallet, apiError, topupWallet } from "@/lib/a
 import { saveRedirect } from "@/lib/auth-redirect";
 import { useToast } from "@/components/ui/toast";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
-import { useSession } from "@/components/dashboard/session-ctx";
+import { useSession, type Session } from "@/components/dashboard/session-ctx";
 
 // Leaflet must render client-side only
 const MapPicker = dynamic(
@@ -123,7 +123,15 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
   const [walletBal, setWalletBal] = useState<number | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  const session = useSession();
+  const ctxSession = useSession();
+  // These modals also open on public pages where SessionProvider isn't mounted, so the
+  // context is null there. Fall back to the persisted "user" in localStorage — the same
+  // source the navbar uses to detect a logged-in user.
+  const [lsUser] = useState<Session | null>(() => {
+    if (typeof window === "undefined") return null;
+    try { return JSON.parse(localStorage.getItem("user") || "null"); } catch { return null; }
+  });
+  const session = ctxSession ?? lsUser;
   const hasSession = !!(session && session.role === "EMPLOYER");
 
   // Anonymous user fields
