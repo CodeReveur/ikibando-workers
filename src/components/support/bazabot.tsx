@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Bot, User as UserIcon, Send, X } from "lucide-react";
 import { useLanguage } from "@/lib/language-context";
+import { analyze, respond, type Lang } from "./bazabot-brain";
 import {
   submitContact, getContactThread, sendContactTyping,
   getContactTypingStatus, getContactStatus,
@@ -50,42 +51,6 @@ function avatarColor(seed: string): string {
   let h = 0;
   for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
   return colors[h % colors.length];
-}
-
-/** Role-independent keyword → BazaBot topic resolver. Returns a topic or "fallback". */
-function resolveTopic(cleaned: string): string {
-  const has = (...ks: string[]) => ks.some(k => cleaned.includes(k));
-  if (has("hello", "hi ", "hey", "jambo", "habari", "muraho", "bite", "bonjour", "salut") || cleaned === "hi") return "greetings";
-  if (has("how are you", "how's it going", "how do you feel", "are you okay", "comment ça va", "ça va", "amakuru", "mambo", "happy", "fine")) return "feeling";
-  if (has("quote", "motivation", "inspire", "wisdom", "citation", "umugani", "methali")) return "quotes";
-  if (has("escrow", "deposit", "depot", "dépôt", "amafaranga", "malipo", "payout", "faranga", "get paid", "how do i pay")) return "escrow";
-  if (has("fee", "percent", "commission", "deduction", "cut", "frais", "ada")) return "fee";
-  if (has("cancel", "refund", "remboursement", "annuler", "ghairi", "guhagarika")) return "refund";
-  if (has("verify", "verified", "verification", "id ", "national id", "vérifier", "abakozi", "badge", "check")) return "verify";
-  if (has("complete", "completion", "qr", "kugenzura", "confirm job")) return "complete";
-  if (has("dispute", "problem", "issue", "litige", "mzozo", "impaka", "complain")) return "dispute";
-  if (has("job", "jobs", "hire", "hired", "work", "akazi", "kazi", "emploi", "career", "employ")) return "job";
-  if (has("money", "earn", "income", "business", "company", "boss")) return "business";
-  return "fallback";
-}
-
-function generateResponse(topic: string, t: (k: string, v?: Record<string, string | number>) => string, userName: string): string {
-  if (topic === "greetings" || topic === "feeling" || topic === "quotes" || topic === "business") {
-    return t(`bazabot.${topic}`) || "I'm here to help — ask me anything about the platform.";
-  }
-  if (topic === "fallback") {
-    const overview = t("bazabot.fallback.overview") || "Your query needs our support team. BazaBot has logged this conversation and created a priority ticket for you.";
-    const process = t("bazabot.fallback.process") || "A live agent will reply directly here in real time.";
-    const guidelines = t("bazabot.fallback.guidelines") || "We typically reply within 5 minutes. Please keep this tab open.";
-    return `${overview}\n\n${process}\n\n${guidelines}`;
-  }
-  const starterKeys = ["starter1", "starter2", "starter3", "starter4", "starter5"];
-  const starter = t(`bazabot.${starterKeys[Math.floor(Math.random() * starterKeys.length)]}`) || "Regarding your query,";
-  const vars = { name: userName, time: new Date().toLocaleTimeString(), fee: topic === "fee" ? "25%" : "5%" };
-  const overview = t(`bazabot.${topic}.overview`, vars) || "";
-  const process = t(`bazabot.${topic}.process`, vars) || "";
-  const guidelines = t(`bazabot.${topic}.guidelines`, vars) || "";
-  return `${starter}\n\n${overview}\n\n${process}\n\n${guidelines}`.trim();
 }
 
 function chipsFor(role: BazaBotRole, t: (k: string) => string): { label: string; query: string }[] {
@@ -269,8 +234,10 @@ export function BazaBotChat({ role = "public", onClose, style }: {
     }
 
     setTimeout(() => {
-      const topic = resolveTopic(msg.toLowerCase());
-      const reply = generateResponse(topic, t, userName);
+      // Detect BOTH the topic to answer and the language to answer in from the
+      // visitor's own words; fall back to the app language when unsure.
+      const { topic, lang } = analyze(msg, language as Lang);
+      const reply = respond(topic, lang, userName);
       setMessages(prev => [...prev, { sender: "bot", text: reply }]);
       if (topic === "fallback") {
         forwardToAgent(msg);          // server marks the conversation ESCALATED
