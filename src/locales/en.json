@@ -1824,6 +1824,10 @@
   },
   "bazabot": {
     "welcome": "Hello {userName}! I am BazaBot, your MpahMapu support assistant. How can I help you today?",
+    "status_online": "Online",
+    "status_agent": "Connected to a support agent",
+    "placeholder_agent": "Message the support agent…",
+    "resumed": "This conversation has been closed. I'm here again to help — feel free to ask me anything! 🤖",
     "greetings": "Hello! I am BazaBot, your helper. Hope you are having a wonderful day! How can I assist you with MpahMapu today?",
     "feeling": "As an AI assistant, I don't have feelings, but I'm always energized and ready to help you navigate MpahMapu!",
     "quotes": "\"Success is not final, failure is not fatal: it is the courage to continue that counts.\" - Winston Churchill. Keep pushing your limits!",

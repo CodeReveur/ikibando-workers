@@ -698,4 +698,10 @@ export async function getContactTypingStatus(email: string): Promise<{ userTypin
   return data.data;
 }
 
+/** Conversation status so the bot knows when a human agent has taken over (ESCALATED). */
+export async function getContactStatus(email: string): Promise<{ status: "OPEN" | "ESCALATED" | "CLOSED"; escalated: boolean }> {
+  const { data } = await http.get(`/api/contact/status?email=${encodeURIComponent(email)}`);
+  return data.data;
+}
+
 export { daysAgo };

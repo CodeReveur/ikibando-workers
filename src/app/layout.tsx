@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/layout/navbar";
 import { ContentWrapper } from "@/components/layout/content-wrapper";
 import { Providers } from "@/components/providers";
+import { BazaBotWidget } from "@/components/support/bazabot-widget";
 import {
   OrganizationSchema,
   WebSiteSchema,
@@ -103,6 +104,7 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           <ContentWrapper>{children}</ContentWrapper>
+          <BazaBotWidget />
         </Providers>
       </body>
     </html>
