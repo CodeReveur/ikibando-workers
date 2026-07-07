@@ -999,7 +999,7 @@
     "loading": "Birimo gushaka…",
     "found_count": "Akazi {count} kabonetse",
     "badges": {
-      "urgent": "Kbwihutirwa"
+      "urgent": "Karihutirwa"
     },
     "cards": {
       "slots_open": "Imyanya {count} isigaye",
@@ -1584,7 +1584,7 @@
     "active": "Bikora ubu",
     "all_time": "Ibihe byose",
     "accepting_apps": "Kwemeza ubusabe",
-    "positions_hired": "Abakozi bishyuwe",
+    "positions_hired": "Abakozi bahawe akazi",
     "live_now": "Bikora ubu",
     "title": "Imirimo yanjye",
     "post_new": "Tangaza akazi gashya",
@@ -1683,7 +1683,7 @@
   "owner_workers": {
     "total_applied": "Abasabye bose",
     "pending_review": "Gusuzumwa",
-    "hired": "Abakozi bishyuwe",
+    "hired": "Abakozi bahawe akazi",
     "via_hire_now": "Koresha ubu",
     "all_apps": "Ubusabe bwose",
     "need_action": "Bitegereje gusuzumwa",
@@ -1719,7 +1719,7 @@
   "owner_analytics": {
     "spent_week": "Ayakoreshejwe iyi nama",
     "total_deposited": "Ayo wohereje yose",
-    "workers_hired": "Abakozi bishyuwe",
+    "workers_hired": "Abakozi bahawe akazi",
     "in_escrow": "Ayafunzwe (Escrow)",
     "jobs_completed": "Akazi karangiye",
     "pending_review": "Gusuzumwa",
@@ -1785,7 +1785,7 @@
     "payment_status": "Imiterere yo kwishyura",
     "released": "Ayatanzwe",
     "refunded": "Ayasubijwe",
-    "hired_workers": "Abakozi bishyuwe",
+    "hired_workers": "Abakozi bahawe akazi",
     "edit_job": "Harura akazi",
     "rate_locked_at": "Igiciro gifunzwe kuri RWF {rate}/isaha",
     "start_date": "Itariki yo gutangira",

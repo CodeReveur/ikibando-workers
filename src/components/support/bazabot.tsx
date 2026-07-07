@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Bot, User as UserIcon, Send, X } from "lucide-react";
 import { useLanguage } from "@/lib/language-context";
 import { analyze, respond, type Lang } from "./bazabot-brain";
+import { matchKnowledge } from "./bazabot-knowledge";
 import {
   submitContact, getContactThread, sendContactTyping,
   getContactTypingStatus, getContactStatus,
@@ -234,16 +235,24 @@ export function BazaBotChat({ role = "public", onClose, style }: {
     }
 
     setTimeout(() => {
-      // Detect BOTH the topic to answer and the language to answer in from the
-      // visitor's own words; fall back to the app language when unsure.
+      // 1) Core intents: detect BOTH the topic and the language from the visitor's
+      //    own words and answer in that language.
       const { topic, lang } = analyze(msg, language as Lang);
-      const reply = respond(topic, lang, userName);
-      setMessages(prev => [...prev, { sender: "bot", text: reply }]);
-      if (topic === "fallback") {
-        forwardToAgent(msg);          // server marks the conversation ESCALATED
-        setEscalated(true);           // optimistic: silence the bot immediately
-        wasEscalated.current = true;
+      if (topic !== "fallback") {
+        setMessages(prev => [...prev, { sender: "bot", text: respond(topic, lang, userName) }]);
+        return;
       }
+      // 2) Long-tail FAQ: try the knowledge base before bothering a human.
+      const kb = matchKnowledge(msg);
+      if (kb) {
+        setMessages(prev => [...prev, { sender: "bot", text: kb }]);
+        return;
+      }
+      // 3) Nothing matched — hand off to a live agent and go silent.
+      setMessages(prev => [...prev, { sender: "bot", text: respond("fallback", lang, userName) }]);
+      forwardToAgent(msg);          // server marks the conversation ESCALATED
+      setEscalated(true);           // optimistic: silence the bot immediately
+      wasEscalated.current = true;
     }, 400);
   };
 
