@@ -65,7 +65,7 @@
       "gardeners": "Abakora mu busitani",
       "landscapers": "Abatunganya ubusitani",
       "housekeepers": "Abakora mu rugo",
-      "hotel_staff": "Abakozi bo muri hoteri",
+      "hotel_staff": "Abakozi ba hoteli",
       "shop_attendants": "Abacuruzi bo mu maduka",
       "cashiers": "Abakiragafaranga",
       "warehouse_staff": "Abakozi bo mu bubiko",
@@ -73,14 +73,14 @@
       "supervisors": "Abagenzuzi",
       "receptionists": "Abakira abantu",
       "call_center_agents": "Abasubiza terefone",
-      "customer_support": "Abafasha abakiriya",
+      "customer_support": "Inkunga z'abakiriya",
       "office_assistants": "Abafasha mu biro",
       "tutors": "Abarimu bigisha mu rugo",
       "teachers": "Abarimu",
       "caregivers": "Abarezi b'abarwayi cyangwa abasaza",
       "nurses": "Abaforomo",
       "babysitters": "Abarezi b'abana",
-      "pet_care": "Abatunganya inyamaswa",
+      "pet_care": "Abita ku matungo",
       "photographers": "Abafotora",
       "videographers": "Abafata amashusho",
       "djs": "Aba-DJs",
@@ -95,7 +95,7 @@
       "phone_repair": "Abakora terefone",
       "computer_repair": "Abakora mudasobwa",
       "network_technicians": "Abakora imiyoboro y'interinete",
-      "it_support": "Abafasha mu bya tekinoloji",
+      "it_support": "Umu-IT",
       "web_developers": "Abakora imbuga za murandasi",
       "software_developers": "Abakora porogaramu",
       "graphic_designers": "Abashushanya kuri mudasobwa",
@@ -151,8 +151,6 @@
       "marketing_agent": "Ubuguzi",
       "office_assistant": "Umufasha w'ibiro",
       "data_entry": "Umusakuza amakuru",
-      "customer_support": "Inkunga z'abakiriya",
-      "it_support": "Umu-IT",
       "web_developer": "Umuhanga wa interineti",
       "mobile_developer": "Umuhanga wa aplike",
       "software_engineer": "Injiniya ya sofutiware",
@@ -163,22 +161,18 @@
       "courier_rider": "Abamotari b'imizigo",
       "technician": "Abafundi",
       "landscaper": "Abatunganya ubusitani",
-      "hotel_staff": "Abakozi ba hoteli",
       "shop_attendant": "Abacuruzi bo mu duka",
       "supervisor": "Abagenzuzi",
       "call_center_agent": "Abakira terefone",
       "teacher": "Abarimu",
       "nurse": "Abaforomo",
       "babysitter": "Ababyeyi b'abana",
-      "pet_care": "Abita ku matungo",
       "event_planner": "Abategura ibirori",
       "florist": "Abacuruzi b'indabyo",
       "barber": "Abogoshi",
       "hair_stylist": "Abasuka misatsi",
       "makeup_artist": "Abasiga ibirungo",
       "laundry_service": "Abamesa",
-      "phone_repair": "Abakora terefone",
-      "computer_repair": "Abakora mudasobwa",
       "network_technician": "Abafundi b'imiyoboro",
       "content_writer": "Abanditsi b'ibirimo",
       "legal_advisor": "Abajyanama mu mategeko",
@@ -210,7 +204,15 @@
       "on": "ku itariki",
       "rejected": "Yahakanywe",
       "failed": "Byaranze",
-      "success": "Byakunze ✅"
+      "success": "Byakunze ✅",
+      "edit": "Hindura"
+    },
+    "provinces": {
+      "city_of_kigali": "Umujyi wa Kigali",
+      "northern_province": "Intara y'Amajyaruguru",
+      "southern_province": "Intara y'Amajyepfo",
+      "eastern_province": "Intara y'Iburasirazuba",
+      "western_province": "Intara y'Iburengerazuba"
     }
   },
   "home": {
@@ -583,10 +585,22 @@
       "resend_fail_title": "Kohereza bundi bushya byanze"
     },
     "account_types": {
-      "individual": { "label": "Ku giti cye", "desc": "Njyewe ubwanjye, nkorera njyenyine" },
-      "team": { "label": "Itsinda", "desc": "Itsinda ry'abakozi" },
-      "company": { "label": "Ikigo", "desc": "Ikigo cyiyandikishije" },
-      "crew": { "label": "Abakozi badasanzwe", "desc": "Abahemberwa hamwe bakorana" }
+      "individual": {
+        "label": "Ku giti cye",
+        "desc": "Njyewe ubwanjye, nkorera njyenyine"
+      },
+      "team": {
+        "label": "Itsinda",
+        "desc": "Itsinda ry'abakozi"
+      },
+      "company": {
+        "label": "Ikigo",
+        "desc": "Ikigo cyiyandikishije"
+      },
+      "crew": {
+        "label": "Abakozi badasanzwe",
+        "desc": "Abahemberwa hamwe bakorana"
+      }
     },
     "group_fields": {
       "member_emails_label": "Imeri z'abagize itsinda",
@@ -942,6 +956,10 @@
     },
     "buttons": {
       "send": "Ohereza ubusabe"
+    },
+    "steps": {
+      "details": "Amakuru y'igitangwa",
+      "review": "Isuzuma no kwishyura"
     }
   },
   "apply": {
@@ -982,7 +1000,7 @@
       "search": "Shakisha akazi cyangwa ibyiciro…"
     },
     "filters": {
-      "categories":"Ibyiciro",
+      "categories": "Ibyiciro",
       "location": "Aho aherereye",
       "min_pay": "Ikiguzi gito (RWF)",
       "sort_by": "Gukurikiranya",
@@ -1353,7 +1371,11 @@
     "status_refunded": "Yasubijwe",
     "status_open": "Funguye",
     "status_filled": "Yuzuye",
-    "status_cancelled": "Yahagaritswe"
+    "status_cancelled": "Yahagaritswe",
+    "status_accepted": "Byemewe",
+    "urgency_immediate": "Ako kanya",
+    "urgency_same_day": "Kuri uyu munsi",
+    "urgency_scheduled": "Byateganijwe"
   },
   "seeker_job_detail": {
     "back": "Gusubira inyuma",

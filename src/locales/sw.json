@@ -80,7 +80,7 @@
       "caregivers": "Walezi",
       "nurses": "Wauguzi",
       "babysitters": "Walezi wa watoto",
-      "pet_care": "Watunza wanyama wa nyumbani",
+      "pet_care": "Mlezi wa wanyama",
       "photographers": "Wapiga picha",
       "videographers": "Wapiga picha za video",
       "djs": "Madijei",
@@ -92,8 +92,8 @@
       "makeup_artists": "Wataalamu wa vipodozi",
       "tailors": "Washonaji",
       "laundry_services": "Wahudumu wa dobi",
-      "phone_repair": "Matengenezo ya simu",
-      "computer_repair": "Matengenezo ya kompyuta",
+      "phone_repair": "Ukarabati wa simu",
+      "computer_repair": "Ukarabati wa kompyuta",
       "network_technicians": "Mafundi wa mtandao",
       "it_support": "Msaada wa IT",
       "web_developers": "Waendelezaji wa tovuti",
@@ -151,8 +151,6 @@
       "marketing_agent": "Wakala wa masoko",
       "office_assistant": "Msaidizi wa ofisi",
       "data_entry": "Mwingiza data",
-      "customer_support": "Huduma kwa wateja",
-      "it_support": "Msaada wa IT",
       "web_developer": "Msanidi programu wa wavuti",
       "mobile_developer": "Msanidi programu wa simu",
       "software_engineer": "Mhandisi wa programu",
@@ -163,22 +161,18 @@
       "courier_rider": "Mjumbe wa pikipiki",
       "technician": "Fundi",
       "landscaper": "Msanifu majengo wa ardhi",
-      "hotel_staff": "Wafanyakazi wa hoteli",
       "shop_attendant": "Mhudumu wa duka",
       "supervisor": "Msimamizi",
       "call_center_agent": "Mhudumu wa kituo cha simu",
       "teacher": "Mwalimu",
       "nurse": "Muuguzi",
       "babysitter": "Mlezi wa watoto",
-      "pet_care": "Mlezi wa wanyama",
       "event_planner": "Mratibu wa hafla",
       "florist": "Muuzaji maua",
       "barber": "Kinyozi",
       "hair_stylist": "Kinyozi wa kike",
       "makeup_artist": "Mtaalamu wa vipodozi",
       "laundry_service": "Huduma ya kuosha nguo",
-      "phone_repair": "Ukarabati wa simu",
-      "computer_repair": "Ukarabati wa kompyuta",
       "network_technician": "Fundi wa mtandao",
       "content_writer": "Mwandishi wa maudhui",
       "legal_advisor": "Mshauri wa sheria",
@@ -210,7 +204,15 @@
       "on": "mnamo",
       "rejected": "Imekataliwa",
       "failed": "Imeshindwa",
-      "success": "Imefanikiwa"
+      "success": "Imefanikiwa",
+      "edit": "Hariri"
+    },
+    "provinces": {
+      "city_of_kigali": "Jiji la Kigali",
+      "northern_province": "Mkoa wa Kaskazini",
+      "southern_province": "Mkoa wa Kusini",
+      "eastern_province": "Mkoa wa Mashariki",
+      "western_province": "Mkoa wa Magharibi"
     }
   },
   "home": {
@@ -583,10 +585,22 @@
       "resend_fail_title": "Kutuma Upya Kumeshindwa"
     },
     "account_types": {
-      "individual": { "label": "Mtu Binafsi", "desc": "Mimi mwenyewe, nikifanya kazi peke yangu" },
-      "team": { "label": "Timu", "desc": "Kikundi cha wafanyakazi" },
-      "company": { "label": "Kampuni", "desc": "Kampuni iliyosajiliwa" },
-      "crew": { "label": "Wafanyakazi", "desc": "Wafanyakazi wanaofanya kazi" }
+      "individual": {
+        "label": "Mtu Binafsi",
+        "desc": "Mimi mwenyewe, nikifanya kazi peke yangu"
+      },
+      "team": {
+        "label": "Timu",
+        "desc": "Kikundi cha wafanyakazi"
+      },
+      "company": {
+        "label": "Kampuni",
+        "desc": "Kampuni iliyosajiliwa"
+      },
+      "crew": {
+        "label": "Wafanyakazi",
+        "desc": "Wafanyakazi wanaofanya kazi"
+      }
     },
     "group_fields": {
       "member_emails_label": "Barua pepe za wanachama",
@@ -942,6 +956,10 @@
     },
     "buttons": {
       "send": "Tuma ofa"
+    },
+    "steps": {
+      "details": "Maelezo ya ofa",
+      "review": "Kagua na ulipe"
     }
   },
   "apply": {
@@ -1352,7 +1370,11 @@
     "status_refunded": "Imerejeshwa",
     "status_open": "Wazi",
     "status_filled": "Imejazwa",
-    "status_cancelled": "Imeghairiwa"
+    "status_cancelled": "Imeghairiwa",
+    "status_accepted": "Imekubaliwa",
+    "urgency_immediate": "Mara moja",
+    "urgency_same_day": "Siku hiyo hiyo",
+    "urgency_scheduled": "Iliyopangwa"
   },
   "seeker_job_detail": {
     "back": "Nyuma",

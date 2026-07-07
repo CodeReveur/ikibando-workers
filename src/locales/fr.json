@@ -65,7 +65,7 @@
       "gardeners": "Jardiniers",
       "landscapers": "Paysagistes",
       "housekeepers": "Gouvernantes",
-      "hotel_staff": "Personnel d'hôtel",
+      "hotel_staff": "Personnel de l'hôtel",
       "shop_attendants": "Vendeurs en magasin",
       "cashiers": "Caissiers",
       "warehouse_staff": "Personnel d'entrepôt",
@@ -73,7 +73,7 @@
       "supervisors": "Superviseurs",
       "receptionists": "Réceptionnistes",
       "call_center_agents": "Agents de centre d'appels",
-      "customer_support": "Service client",
+      "customer_support": "Support client",
       "office_assistants": "Adjoints administratifs",
       "tutors": "Tuteurs",
       "teachers": "Enseignants",
@@ -151,8 +151,6 @@
       "marketing_agent": "Agent de marketing",
       "office_assistant": "Assistant de bureau",
       "data_entry": "Opérateur de saisie",
-      "customer_support": "Support client",
-      "it_support": "Support informatique",
       "web_developer": "Développeur web",
       "mobile_developer": "Développeur mobile",
       "software_engineer": "Ingénieur logiciel",
@@ -163,22 +161,18 @@
       "courier_rider": "Coursier",
       "technician": "Technicien",
       "landscaper": "Paysagiste",
-      "hotel_staff": "Personnel de l'hôtel",
       "shop_attendant": "Vendeur en magasin",
       "supervisor": "Superviseur",
       "call_center_agent": "Téléconseiller",
       "teacher": "Enseignant",
       "nurse": "Infirmier / Infirmière",
       "babysitter": "Babysitter",
-      "pet_care": "Garde d'animaux",
       "event_planner": "Organisateur d'événements",
       "florist": "Fleuriste",
       "barber": "Barbier",
       "hair_stylist": "Coiffeur / Coiffeuse",
       "makeup_artist": "Maquilleur / Maquilleuse",
       "laundry_service": "Service de blanchisserie",
-      "phone_repair": "Réparation de téléphones",
-      "computer_repair": "Réparation d'ordinateurs",
       "network_technician": "Technicien réseau",
       "content_writer": "Rédacteur de contenu",
       "legal_advisor": "Conseiller juridique",
@@ -210,7 +204,15 @@
       "on": "le",
       "rejected": "Refusé",
       "failed": "Échoué",
-      "success": "Succès"
+      "success": "Succès",
+      "edit": "Modifier"
+    },
+    "provinces": {
+      "city_of_kigali": "Ville de Kigali",
+      "northern_province": "Province du Nord",
+      "southern_province": "Province du Sud",
+      "eastern_province": "Province de l'Est",
+      "western_province": "Province de l'Ouest"
     }
   },
   "home": {
@@ -583,10 +585,22 @@
       "resend_fail_title": "Échec de l'envoi"
     },
     "account_types": {
-      "individual": { "label": "Particulier", "desc": "Juste moi, travaillant seul" },
-      "team": { "label": "Équipe", "desc": "Un groupe de travailleurs" },
-      "company": { "label": "Entreprise", "desc": "Une entreprise enregistrée" },
-      "crew": { "label": "Équipe technique", "desc": "Une équipe de travail" }
+      "individual": {
+        "label": "Particulier",
+        "desc": "Juste moi, travaillant seul"
+      },
+      "team": {
+        "label": "Équipe",
+        "desc": "Un groupe de travailleurs"
+      },
+      "company": {
+        "label": "Entreprise",
+        "desc": "Une entreprise enregistrée"
+      },
+      "crew": {
+        "label": "Équipe technique",
+        "desc": "Une équipe de travail"
+      }
     },
     "group_fields": {
       "member_emails_label": "E-mails des membres",
@@ -942,6 +956,10 @@
     },
     "buttons": {
       "send": "Envoyer l'offre"
+    },
+    "steps": {
+      "details": "Détails de l'offre",
+      "review": "Vérifier et payer"
     }
   },
   "apply": {
@@ -1352,7 +1370,11 @@
     "status_refunded": "Remboursé",
     "status_open": "Ouvert",
     "status_filled": "Pourvu",
-    "status_cancelled": "Annulé"
+    "status_cancelled": "Annulé",
+    "status_accepted": "Accepté",
+    "urgency_immediate": "Immédiat",
+    "urgency_same_day": "Le jour même",
+    "urgency_scheduled": "Planifié"
   },
   "seeker_job_detail": {
     "back": "Retour",

@@ -152,8 +152,6 @@
       "marketing_agent": "Marketing Agent",
       "office_assistant": "Office Assistant",
       "data_entry": "Data Entry Clerk",
-      "customer_support": "Customer Support",
-      "it_support": "IT Support",
       "web_developer": "Web Developer",
       "mobile_developer": "Mobile Developer",
       "software_engineer": "Software Engineer",
@@ -164,22 +162,18 @@
       "courier_rider": "Courier Rider",
       "technician": "Technician",
       "landscaper": "Landscaper",
-      "hotel_staff": "Hotel Staff",
       "shop_attendant": "Shop Attendant",
       "supervisor": "Supervisor",
       "call_center_agent": "Call Center Agent",
       "teacher": "Teacher",
       "nurse": "Nurse",
       "babysitter": "Babysitter",
-      "pet_care": "Pet Care",
       "event_planner": "Event Planner",
       "florist": "Florist",
       "barber": "Barber",
       "hair_stylist": "Hair Stylist",
       "makeup_artist": "Makeup Artist",
       "laundry_service": "Laundry Service",
-      "phone_repair": "Phone Repair",
-      "computer_repair": "Computer Repair",
       "network_technician": "Network Technician",
       "content_writer": "Content Writer",
       "legal_advisor": "Legal Advisor",
@@ -211,7 +205,15 @@
       "on": "on",
       "rejected": "Rejected",
       "failed": "Failed",
-      "success": "Success"
+      "success": "Success",
+      "edit": "Edit"
+    },
+    "provinces": {
+      "city_of_kigali": "City of Kigali",
+      "northern_province": "Northern Province",
+      "southern_province": "Southern Province",
+      "eastern_province": "Eastern Province",
+      "western_province": "Western Province"
     }
   },
   "home": {
@@ -584,10 +586,22 @@
       "resend_fail_title": "Resend Failed"
     },
     "account_types": {
-      "individual": { "label": "Individual", "desc": "Just me, working solo" },
-      "team": { "label": "Team", "desc": "A group of workers" },
-      "company": { "label": "Company", "desc": "A registered company" },
-      "crew": { "label": "Crew", "desc": "A working crew" }
+      "individual": {
+        "label": "Individual",
+        "desc": "Just me, working solo"
+      },
+      "team": {
+        "label": "Team",
+        "desc": "A group of workers"
+      },
+      "company": {
+        "label": "Company",
+        "desc": "A registered company"
+      },
+      "crew": {
+        "label": "Crew",
+        "desc": "A working crew"
+      }
     },
     "group_fields": {
       "member_emails_label": "Member emails",
@@ -943,6 +957,10 @@
     },
     "buttons": {
       "send": "Send offer"
+    },
+    "steps": {
+      "details": "Offer details",
+      "review": "Review & Pay"
     }
   },
   "apply": {
@@ -1353,7 +1371,11 @@
     "status_refunded": "Refunded",
     "status_open": "Open",
     "status_filled": "Filled",
-    "status_cancelled": "Cancelled"
+    "status_cancelled": "Cancelled",
+    "status_accepted": "Accepted",
+    "urgency_immediate": "Immediate",
+    "urgency_same_day": "Same day",
+    "urgency_scheduled": "Scheduled"
   },
   "seeker_job_detail": {
     "back": "Back",
