@@ -7,7 +7,7 @@ import {
   CheckCircle, AlarmClock, Loader2, Navigation, Search, MapPin,
 } from "lucide-react";
 import { JOB_CATEGORIES, RWANDA_PROVINCES, CURRENCY } from "@/lib/constants";
-import { postJob, getWallet, apiError, registerWithEmail, loginWithEmail, topupWallet } from "@/lib/api";
+import { postJob, postGuestJob, getWallet, apiError, topupWallet } from "@/lib/api";
 import { saveRedirect } from "@/lib/auth-redirect";
 import { useToast } from "@/components/ui/toast";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
@@ -262,77 +262,65 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
 
   async function handlePost() {
     setSubmitting(true);
-    let activeToken = token;
     try {
+      const startTime = job.date && job.time
+        ? `${job.date}T${job.time}:00Z`
+        : new Date().toISOString();
+
+      const rateType = job.rateType === "hr" ? "PER_HOUR"
+        : job.rateType === "day" ? "PER_DAY"
+        : job.rateType === "week" ? "PER_WEEK"
+        : job.rateType === "month" ? "PER_MONTH" : "PER_YEAR";
+
+      const jobPayload = {
+        category:      job.category,
+        province:      job.province || undefined,
+        district:      job.district,
+        latitude:      job.latitude  ?? undefined,
+        longitude:     job.longitude ?? undefined,
+        ratePerHour:   parseInt(job.ratePerHour),
+        headcount:     parseInt(job.headcount) || 1,
+        urgency:       "SAME_DAY" as const,
+        startTime,
+        durationHours: parseInt(job.durationHours) || 1,
+        rateType,
+        locationNotes: job.notes || undefined,
+      };
+
       if (!hasSession) {
-        // Auto register and login anon user as employer
-        try {
-          await registerWithEmail({
-            name: anonName,
-            email: anonEmail,
-            phone: anonPhone,
-            password: "EmployerPassword2026!",
-            role: "EMPLOYER"
-          });
-        } catch (regErr: any) {
-          // If already registered, alert the user or try logging in
-          if (regErr?.response?.data?.message?.toLowerCase().includes("email already")) {
-            throw new Error("This email is already registered. Please sign in to your account first.");
-          }
-          throw regErr;
-        }
-
-        const loginRes = await loginWithEmail({
-          email: anonEmail,
-          password: "EmployerPassword2026!"
+        // Guest posting — no sign-in required. The owner account is found-or-created by
+        // email server-side (passwordless if new) and the escrow is funded from the payment.
+        await postGuestJob({
+          job: jobPayload,
+          guestName:  anonName,
+          guestEmail: anonEmail,
+          guestPhone: anonPhone,
+          paymentMethod: payMethod === "WALLET" ? "MTN_MOMO" : payMethod,
+          paymentPhone: paymentPhone || anonPhone || undefined,
         });
-
-        activeToken = loginRes.accessToken;
-        setToken(activeToken);
-
-        localStorage.setItem("user", JSON.stringify(loginRes.user));
-        localStorage.setItem("access_token", loginRes.accessToken);
-        localStorage.setItem("refresh_token", loginRes.refreshToken);
+        try { localStorage.removeItem(DRAFT_KEY); } catch {}
+        setDone(true);
+        return;
       }
 
-      if (!activeToken) {
-        throw new Error("Failed to authenticate session");
-      }
+      const activeToken = token || localStorage.getItem("access_token");
+      if (!activeToken) throw new Error("Failed to authenticate session");
 
       // Compute escrow + 5%
       const baseCostVal = rate * hours * heads;
-      const escrowFeeVal = Math.round(baseCostVal * 0.05);
-      const total = baseCostVal + escrowFeeVal;
+      const total = baseCostVal + Math.round(baseCostVal * 0.05);
 
-      // Handle direct topup if not WALLET
+      // Top up from momo/card when paying without wallet balance.
       if (payMethod !== "WALLET") {
         await topupWallet({
           amount: total,
-          phoneNumber: paymentPhone || anonPhone || session?.phone || "0780000000",
+          phoneNumber: paymentPhone || session?.phone || "0780000000",
           paymentMethod: payMethod,
           notes: "direct payment"
         }, activeToken);
       }
 
-      // Post job
-      const startTime = job.date && job.time
-        ? `${job.date}T${job.time}:00Z`
-        : new Date().toISOString();
-
-      await postJob({
-        category:     job.category,
-        province:     job.province || undefined,
-        district:     job.district,
-        latitude:     job.latitude  ?? undefined,
-        longitude:    job.longitude ?? undefined,
-        ratePerHour:  parseInt(job.ratePerHour),
-        headcount:    parseInt(job.headcount) || 1,
-        urgency:      "SAME_DAY",
-        startTime,
-        durationHours: parseInt(job.durationHours) || 1,
-        rateType:     job.rateType === "hr" ? "PER_HOUR" : job.rateType === "day" ? "PER_DAY" : job.rateType === "week" ? "PER_WEEK" : job.rateType === "month" ? "PER_MONTH" : "PER_YEAR",
-        locationNotes: job.notes || undefined,
-      }, activeToken);
+      await postJob(jobPayload, activeToken);
 
       try { localStorage.removeItem(DRAFT_KEY); } catch {}
       setDone(true);

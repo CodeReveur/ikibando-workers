@@ -8,7 +8,7 @@ import {
   AlarmClock, Search, Navigation, Loader2, Star,
 } from "lucide-react";
 import { JOB_CATEGORIES, RWANDA_PROVINCES } from "@/lib/constants";
-import { getWorkers, postJob, applyForJob, updateApplicationStatus, getWallet, registerWithEmail, loginWithEmail, topupWallet, type WorkerProfileDto } from "@/lib/api";
+import { getWorkers, postJob, postGuestJob, applyForJob, updateApplicationStatus, getWallet, topupWallet, type WorkerProfileDto } from "@/lib/api";
 import { ratingInfo } from "@/lib/rating";
 import { useToast } from "@/components/ui/toast";
 import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
@@ -218,65 +218,58 @@ export function HireModal({ onClose }: { onClose: () => void }) {
 
   async function handleConfirmHire() {
     setSub(true);
-    let activeToken = localStorage.getItem("access_token") || token;
     try {
-      if (!hasSession) {
-        // Register & login anonymous user
-        try {
-          await registerWithEmail({
-            name: anonName,
-            email: anonEmail,
-            phone: anonPhone,
-            password: "EmployerPassword2026!",
-            role: "EMPLOYER"
-          });
-        } catch (regErr: any) {
-          if (regErr?.response?.data?.message?.toLowerCase().includes("email already")) {
-            throw new Error("This email is already registered. Please sign in to your account first.");
-          }
-          throw regErr;
-        }
-
-        const loginRes = await loginWithEmail({
-          email: anonEmail,
-          password: "EmployerPassword2026!"
-        });
-
-        activeToken = loginRes.accessToken;
-        setToken(activeToken);
-        localStorage.setItem("user", JSON.stringify(loginRes.user));
-        localStorage.setItem("access_token", loginRes.accessToken);
-        localStorage.setItem("refresh_token", loginRes.refreshToken);
-      }
-
-      if (!activeToken) {
-        throw new Error("Failed to authenticate session");
-      }
-
-      // Handle direct topup if not WALLET
-      if (payMethod !== "WALLET") {
-        await topupWallet({
-          amount: total,
-          phoneNumber: paymentPhone || anonPhone || session?.phone || "0780000000",
-          paymentMethod: payMethod,
-          notes: "direct payment"
-        }, activeToken);
-      }
-
       const startTime = form.date && form.time
         ? `${form.date}T${form.time}:00Z`
         : new Date().toISOString();
 
-      const job = await postJob({
+      const rateType = form.rateType === "hr" ? "PER_HOUR"
+        : form.rateType === "day" ? "PER_DAY"
+        : form.rateType === "week" ? "PER_WEEK"
+        : form.rateType === "month" ? "PER_MONTH" : "PER_YEAR";
+
+      const jobPayload = {
         category: form.category, district: form.district,
         province: form.province || undefined,
         latitude: form.latitude ?? undefined, longitude: form.longitude ?? undefined,
         ratePerHour: parseInt(form.budget) || 0,
         headcount: selected.length || 1,
-        urgency: "IMMEDIATE",
+        urgency: "IMMEDIATE" as const,
         startTime, durationHours: parseInt(form.durationHours) || 1,
-        rateType: form.rateType === "hr" ? "PER_HOUR" : form.rateType === "day" ? "PER_DAY" : form.rateType === "week" ? "PER_WEEK" : form.rateType === "month" ? "PER_MONTH" : "PER_YEAR",
-      }, activeToken);
+        rateType,
+      };
+
+      if (!hasSession) {
+        // Guest hire — post the job and assign the selected workers server-side, no sign-in.
+        await postGuestJob({
+          job: jobPayload,
+          guestName: anonName,
+          guestEmail: anonEmail,
+          guestPhone: anonPhone,
+          paymentMethod: payMethod === "WALLET" ? "MTN_MOMO" : payMethod,
+          paymentPhone: paymentPhone || anonPhone || undefined,
+          workerIds: selected.map(w => w.id as unknown as string),
+          appliedVia: "HIRE_NOW",
+        });
+        try { localStorage.removeItem(DRAFT_KEY); } catch {}
+        setDone(true);
+        return;
+      }
+
+      const activeToken = localStorage.getItem("access_token") || token;
+      if (!activeToken) throw new Error("Failed to authenticate session");
+
+      // Top up from momo/card when paying without wallet balance.
+      if (payMethod !== "WALLET") {
+        await topupWallet({
+          amount: total,
+          phoneNumber: paymentPhone || session?.phone || "0780000000",
+          paymentMethod: payMethod,
+          notes: "direct payment"
+        }, activeToken);
+      }
+
+      const job = await postJob(jobPayload, activeToken);
 
       await Promise.all(selected.map(async w => {
         const app = await applyForJob(job.id as unknown as string, { bestFit: "Hire Now selection", appliedVia: "HIRE_NOW", workerId: w.id as unknown as string }, activeToken!);

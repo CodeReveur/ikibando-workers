@@ -569,6 +569,31 @@ export async function postJob(payload: {
   return data.data;
 }
 
+/**
+ * Post a job as a guest (no sign-in). The owner account is found-or-created by email
+ * server-side (passwordless if new), the escrow is funded from the chosen momo/card
+ * payment, and any directly-hired workers are attached as accepted applications.
+ */
+export async function postGuestJob(payload: {
+  job: {
+    category: string; title?: string; description?: string;
+    province?: string; district: string;
+    latitude?: number; longitude?: number;
+    ratePerHour: number; headcount: number;
+    urgency: "IMMEDIATE" | "SAME_DAY" | "SCHEDULED";
+    startTime: string; durationHours: number;
+    rateType?: string; locationNotes?: string;
+  };
+  guestName: string; guestEmail: string; guestPhone: string;
+  paymentMethod: "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD";
+  paymentPhone?: string;
+  workerIds?: string[];
+  appliedVia?: string;
+}): Promise<JobDto> {
+  const { data } = await http.post("/api/jobs/guest", payload);
+  return data.data;
+}
+
 export async function getMyJobs(token: string): Promise<JobDto[]> {
   const { data } = await http.get("/api/jobs/mine", { headers: authHeader(token) });
   return data.data;
