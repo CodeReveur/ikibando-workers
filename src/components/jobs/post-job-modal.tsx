@@ -172,12 +172,10 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
     ? [t("post_job.steps.details") || "Job details", t("post_job.steps.review") || "Review & Payment"]
     : [t("post_job.steps.details") || "Job details", "Account details", t("post_job.steps.review") || "Review & Payment"];
 
+  // Wallet is the implicit money source for logged-in employers; MoMo/Airtel/Card
+  // are only used to top up a short wallet (or as direct payment for guests).
   useEffect(() => {
-    if (hasSession) {
-      setPayMethod("WALLET");
-    } else {
-      setPayMethod("MTN_MOMO");
-    }
+    setPayMethod("MTN_MOMO");
   }, [hasSession]);
 
   // Restore draft on open
@@ -306,18 +304,20 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
       const activeToken = token || localStorage.getItem("access_token");
       if (!activeToken) throw new Error("Failed to authenticate session");
 
-      // Compute escrow + 5%
-      const baseCostVal = rate * hours * heads;
-      const total = baseCostVal + Math.round(baseCostVal * 0.05);
-
-      // Top up from momo/card when paying without wallet balance.
-      if (payMethod !== "WALLET") {
-        await topupWallet({
-          amount: total,
-          phoneNumber: paymentPhone || session?.phone || "0780000000",
-          paymentMethod: payMethod,
-          notes: "direct payment"
-        }, activeToken);
+      // The wallet is the money source. When it can't cover the escrow, top up only the
+      // shortfall via MoMo/Airtel/Card — that money lands in the wallet, then postJob
+      // freezes the full escrow from the wallet (never a direct-to-job payment). The
+      // top-up is recorded as a direct deposit so a low-balance posting reads that way.
+      if (walletBal === null || walletBal < escrow) {
+        const topupAmount = walletBal === null ? escrow : Math.max(0, escrow - walletBal);
+        if (topupAmount > 0) {
+          await topupWallet({
+            amount: topupAmount,
+            phoneNumber: paymentPhone || session?.phone || "0780000000",
+            paymentMethod: payMethod === "WALLET" ? "MTN_MOMO" : payMethod,
+            notes: "Direct deposit for job escrow",
+          }, activeToken);
+        }
       }
 
       await postJob(jobPayload, activeToken);
@@ -385,8 +385,15 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
   );
 
   const isReviewStep = hasSession ? (step === 1) : (step === 2);
-  const isPaymentDetailsValid = payMethod === "WALLET"
-    ? (walletBal !== null && walletBal >= escrow)
+
+  // Logged-in employer pays from wallet; only top up (or, for guests, pay directly)
+  // via MoMo/Airtel/Card when the wallet can't cover the escrow.
+  const needsTopup    = walletBal === null || walletBal < escrow;
+  const topupAmount   = walletBal === null ? escrow : Math.max(0, escrow - walletBal);
+  const showPayMethods = !hasSession || needsTopup;
+
+  const isPaymentDetailsValid = hasSession && !needsTopup
+    ? true
     : (payMethod === "MTN_MOMO" || payMethod === "AIRTEL_MONEY"
        ? !!(paymentPhone || anonPhone || session?.phone)
        : !!(cardNumber && cardExpiry && cardCvv));
@@ -678,21 +685,33 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                     </div>
                   )}
 
-                  {/* Payment methods selector */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
-                    <p style={{ margin: "0 0 4px", fontSize: 11, fontWeight: 700, color: "#666", textTransform: "uppercase" }}>Select Payment Method</p>
-                    
-                    {hasSession && (
-                      <label style={{ display: "flex", alignItems: "center", gap: 8, background: "#141414", border: payMethod === "WALLET" ? "1px solid #f97316" : "1px solid #2a2a2a", borderRadius: 10, padding: "10px 14px", cursor: "pointer" }}>
-                        <input type="radio" name="payMethod" value="WALLET" checked={payMethod === "WALLET"} onChange={() => setPayMethod("WALLET")} style={{ accentColor: "#f97316" }} />
+                  {/* Wallet is the money source for logged-in employers */}
+                  {hasSession && (
+                    <div style={{ background: "#141414", border: needsTopup ? "1px solid rgba(239,68,68,0.3)" : "1px solid #2a2a2a", borderRadius: 10, padding: "12px 14px", marginBottom: 12 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <div style={{ display: "flex", flexDirection: "column" }}>
-                          <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>Pay from Wallet Balance</span>
-                          <span style={{ fontSize: 11, color: walletBal !== null && walletBal < escrow ? "#ef4444" : "#22c55e" }}>
-                            Available balance: {walletBal !== null ? fmt(walletBal) : "—"}
+                          <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>Wallet balance</span>
+                          <span style={{ fontSize: 11, color: needsTopup ? "#ef4444" : "#22c55e" }}>
+                            {walletBal !== null ? fmt(walletBal) : "—"}{needsTopup ? " · not enough to cover this job" : " · covers this job"}
                           </span>
                         </div>
-                      </label>
-                    )}
+                        {!needsTopup && <CheckCircle size={18} color="#22c55e" />}
+                      </div>
+                      {needsTopup && (
+                        <p style={{ margin: "8px 0 0", fontSize: 12, color: "#aaa", lineHeight: 1.5 }}>
+                          Pay <strong style={{ color: "#f97316" }}>{fmt(topupAmount)}</strong> below to fund this job. It's added to your wallet and the full {fmt(escrow)} is held in escrow — it appears on your posting as a direct deposit.
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Payment methods — only shown for guests, or to top up a short wallet */}
+                  {showPayMethods && (
+                  <>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
+                    <p style={{ margin: "0 0 4px", fontSize: 11, fontWeight: 700, color: "#666", textTransform: "uppercase" }}>
+                      {hasSession ? `Top up ${fmt(topupAmount)} via` : "Select Payment Method"}
+                    </p>
 
                     <label style={{ display: "flex", alignItems: "center", gap: 8, background: "#141414", border: payMethod === "MTN_MOMO" ? "1px solid #f97316" : "1px solid #2a2a2a", borderRadius: 10, padding: "10px 14px", cursor: "pointer" }}>
                       <input type="radio" name="payMethod" value="MTN_MOMO" checked={payMethod === "MTN_MOMO"} onChange={() => setPayMethod("MTN_MOMO")} style={{ accentColor: "#f97316" }} />
@@ -736,16 +755,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                       </div>
                     </div>
                   )}
-
-                  {payMethod === "WALLET" && walletBal !== null && walletBal < escrow && (
-                    <div style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 10, padding: "10px 14px", marginTop: 10 }}>
-                      <p style={{ margin: 0, fontSize: 12, color: "#ef4444", lineHeight: 1.5 }}>
-                        {t("post_job.review.insufficient_funds_msg", { amount: fmt(escrow - walletBal) })}{" "}
-                        <span style={{ color: "#f97316", fontWeight: 700, cursor: "pointer", textDecoration: "underline" }} onClick={() => setPayMethod("MTN_MOMO")}>
-                          Use direct deposit payment instead
-                        </span>
-                      </p>
-                    </div>
+                  </>
                   )}
                 </div>
 
@@ -780,9 +790,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                   {submitting && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
                   {submitting
                     ? (t("post_job.review.posting_btn") || "Processing…")
-                    : !isPaymentDetailsValid && payMethod === "WALLET"
-                      ? (t("post_job.review.insufficient_balance_btn") || "Insufficient balance")
-                      : (t("post_job.review.submit_btn") || "Pay & post job")}
+                    : (t("post_job.review.submit_btn") || "Pay & post job")}
                 </button>
               )}
             </div>

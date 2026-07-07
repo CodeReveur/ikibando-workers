@@ -142,12 +142,10 @@ export function HireModal({ onClose }: { onClose: () => void }) {
 
   const DRAFT_KEY = "MpahMapu_draft_hire";
 
+  // Wallet is the implicit money source for logged-in employers; MoMo/Airtel/Card
+  // are only used to top up a short wallet (or as direct payment for guests).
   useEffect(() => {
-    if (hasSession) {
-      setPayMethod("WALLET");
-    } else {
-      setPayMethod("MTN_MOMO");
-    }
+    setPayMethod("MTN_MOMO");
   }, [hasSession]);
 
   // Restore draft on open
@@ -259,14 +257,20 @@ export function HireModal({ onClose }: { onClose: () => void }) {
       const activeToken = localStorage.getItem("access_token") || token;
       if (!activeToken) throw new Error("Failed to authenticate session");
 
-      // Top up from momo/card when paying without wallet balance.
-      if (payMethod !== "WALLET") {
-        await topupWallet({
-          amount: total,
-          phoneNumber: paymentPhone || session?.phone || "0780000000",
-          paymentMethod: payMethod,
-          notes: "direct payment"
-        }, activeToken);
+      // The wallet is the money source. When it can't cover the escrow, top up only the
+      // shortfall via MoMo/Airtel/Card — that money lands in the wallet, then postJob
+      // freezes the full escrow from the wallet (never a direct-to-job payment). The
+      // top-up is recorded as a direct deposit so a low-balance hire reads that way.
+      if (walletBal === null || walletBal < total) {
+        const topupAmount = walletBal === null ? total : Math.max(0, total - walletBal);
+        if (topupAmount > 0) {
+          await topupWallet({
+            amount: topupAmount,
+            phoneNumber: paymentPhone || session?.phone || "0780000000",
+            paymentMethod: payMethod === "WALLET" ? "MTN_MOMO" : payMethod,
+            notes: "Direct deposit for job escrow",
+          }, activeToken);
+        }
       }
 
       const job = await postJob(jobPayload, activeToken);
@@ -319,8 +323,15 @@ export function HireModal({ onClose }: { onClose: () => void }) {
     : "-";
 
   const isReviewStep = hasSession ? (step === 2) : (step === 3);
-  const isPaymentDetailsValid = payMethod === "WALLET"
-    ? (walletBal !== null && walletBal >= total)
+
+  // Logged-in employer pays from wallet; only top up (or, for guests, pay directly)
+  // via MoMo/Airtel/Card when the wallet can't cover the escrow.
+  const needsTopup    = walletBal === null || walletBal < total;
+  const topupAmount   = walletBal === null ? total : Math.max(0, total - walletBal);
+  const showPayMethods = !hasSession || needsTopup;
+
+  const isPaymentDetailsValid = hasSession && !needsTopup
+    ? true
     : (payMethod === "MTN_MOMO" || payMethod === "AIRTEL_MONEY"
        ? !!(paymentPhone || anonPhone || session?.phone)
        : !!(cardNumber && cardExpiry && cardCvv));
@@ -752,21 +763,33 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                     </div>
                   )}
 
-                  {/* Payment methods selector */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
-                    <p style={{ margin: "0 0 4px", fontSize: 11, fontWeight: 700, color: "#666", textTransform: "uppercase" }}>Select Payment Method</p>
-                    
-                    {hasSession && (
-                      <label style={{ display: "flex", alignItems: "center", gap: 8, background: "#141414", border: payMethod === "WALLET" ? "1px solid #f97316" : "1px solid #2a2a2a", borderRadius: 10, padding: "10px 14px", cursor: "pointer" }}>
-                        <input type="radio" name="payMethod" value="WALLET" checked={payMethod === "WALLET"} onChange={() => setPayMethod("WALLET")} style={{ accentColor: "#f97316" }} />
+                  {/* Wallet is the money source for logged-in employers */}
+                  {hasSession && (
+                    <div style={{ background: "#141414", border: needsTopup ? "1px solid rgba(239,68,68,0.3)" : "1px solid #2a2a2a", borderRadius: 10, padding: "12px 14px", marginBottom: 12 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <div style={{ display: "flex", flexDirection: "column" }}>
-                          <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>Pay from Wallet Balance</span>
-                          <span style={{ fontSize: 11, color: walletBal !== null && walletBal < total ? "#ef4444" : "#22c55e" }}>
-                            Available balance: {walletBal !== null ? fmt(walletBal) : "—"}
+                          <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>Wallet balance</span>
+                          <span style={{ fontSize: 11, color: needsTopup ? "#ef4444" : "#22c55e" }}>
+                            {walletBal !== null ? fmt(walletBal) : "—"}{needsTopup ? " · not enough to cover this hire" : " · covers this hire"}
                           </span>
                         </div>
-                      </label>
-                    )}
+                        {!needsTopup && <CheckCircle size={18} color="#22c55e" />}
+                      </div>
+                      {needsTopup && (
+                        <p style={{ margin: "8px 0 0", fontSize: 12, color: "#aaa", lineHeight: 1.5 }}>
+                          Pay <strong style={{ color: "#f97316" }}>{fmt(topupAmount)}</strong> below to fund this hire. It's added to your wallet and the full {fmt(total)} is held in escrow — it appears on your posting as a direct deposit.
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Payment methods — only shown for guests, or to top up a short wallet */}
+                  {showPayMethods && (
+                  <>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
+                    <p style={{ margin: "0 0 4px", fontSize: 11, fontWeight: 700, color: "#666", textTransform: "uppercase" }}>
+                      {hasSession ? `Top up ${fmt(topupAmount)} via` : "Select Payment Method"}
+                    </p>
 
                     <label style={{ display: "flex", alignItems: "center", gap: 8, background: "#141414", border: payMethod === "MTN_MOMO" ? "1px solid #f97316" : "1px solid #2a2a2a", borderRadius: 10, padding: "10px 14px", cursor: "pointer" }}>
                       <input type="radio" name="payMethod" value="MTN_MOMO" checked={payMethod === "MTN_MOMO"} onChange={() => setPayMethod("MTN_MOMO")} style={{ accentColor: "#f97316" }} />
@@ -810,16 +833,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                       </div>
                     </div>
                   )}
-
-                  {payMethod === "WALLET" && walletBal !== null && walletBal < total && (
-                    <div style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 10, padding: "10px 14px", marginTop: 10 }}>
-                      <p style={{ margin: 0, fontSize: 12, color: "#ef4444", lineHeight: 1.5 }}>
-                        {t("hire_modal.summary.topup_warning", { amount: fmt(total - walletBal) })}{" "}
-                        <span style={{ color: "#f97316", fontWeight: 700, cursor: "pointer", textDecoration: "underline" }} onClick={() => setPayMethod("MTN_MOMO")}>
-                          Use direct deposit payment instead
-                        </span>
-                      </p>
-                    </div>
+                  </>
                   )}
                 </div>
 
@@ -854,9 +868,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
               >
                 {submitting
                   ? t("hire_modal.summary.processing_btn") || "Processing…"
-                  : !isPaymentDetailsValid && payMethod === "WALLET"
-                    ? t("hire_modal.summary.insufficient_btn") || "Insufficient balance"
-                    : t("hire_modal.summary.confirm_btn") || "Pay & hire now"}
+                  : t("hire_modal.summary.confirm_btn") || "Pay & hire now"}
               </button>
             )}
           </div>
