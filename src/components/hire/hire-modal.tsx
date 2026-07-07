@@ -8,7 +8,8 @@ import {
   AlarmClock, Search, Navigation, Loader2, Star,
 } from "lucide-react";
 import { JOB_CATEGORIES, RWANDA_PROVINCES } from "@/lib/constants";
-import { getWorkers, postJob, postGuestJob, applyForJob, updateApplicationStatus, getWallet, topupWallet, type WorkerProfileDto } from "@/lib/api";
+import { getWorkers, postJob, postGuestJob, applyForJob, updateApplicationStatus, getWallet, type WorkerProfileDto } from "@/lib/api";
+import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { ratingInfo } from "@/lib/rating";
 import { useToast } from "@/components/ui/toast";
 import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
@@ -142,12 +143,11 @@ export function HireModal({ onClose }: { onClose: () => void }) {
   const [anonEmail, setAnonEmail] = useState("");
   const [anonPhone, setAnonPhone] = useState("");
 
-  // Payment method fields
+  // Payment method fields. Card details are collected on XentriPay's secure page (redirect),
+  // so we only keep the selected method + the mobile-money phone here.
   const [payMethod, setPayMethod] = useState<"WALLET" | "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD">("MTN_MOMO");
   const [paymentPhone, setPaymentPhone] = useState("");
-  const [cardNumber, setCardNumber] = useState("");
-  const [cardExpiry, setCardExpiry] = useState("");
-  const [cardCvv, setCardCvv] = useState("");
+  const [payNote, setPayNote] = useState("");
 
   const DRAFT_KEY = "MpahMapu_draft_hire";
 
@@ -246,18 +246,35 @@ export function HireModal({ onClose }: { onClose: () => void }) {
         rateType,
       };
 
+      // payMethod is one of the 4 gateway methods (default MTN_MOMO); WALLET is never selected.
+      const method = (payMethod === "WALLET" ? "MTN_MOMO" : payMethod) as PayMethod;
+      const card = isCardMethod(method);
+      const awaitingNote = card
+        ? "Opening the secure card page… complete your payment there."
+        : "Sent a prompt to your phone — approve it to continue.";
+
       if (!hasSession) {
-        // Guest hire — post the job and assign the selected workers server-side, no sign-in.
-        await postGuestJob({
+        // Guest: take the real payment first (phase 1), then create the job + assign workers.
+        const guestPayload = {
           job: jobPayload,
           guestName: anonName,
           guestEmail: anonEmail,
           guestPhone: anonPhone,
-          paymentMethod: payMethod === "WALLET" ? "MTN_MOMO" : payMethod,
+          paymentMethod: method,
           paymentPhone: paymentPhone || anonPhone || undefined,
           workerIds: selected.map(w => w.id as unknown as string),
           appliedVia: "HIRE_NOW",
-        });
+        };
+        setPayNote(awaitingNote);
+        const outcome = await runGuestPayment(guestPayload);
+        if (outcome !== "success") {
+          setPayNote("");
+          toastError(outcome === "pending"
+            ? "Payment not confirmed yet. If you were charged, it will reflect shortly — please try again."
+            : "The payment was not completed. Please try again.", { title: "Payment not completed" });
+          return;
+        }
+        await postGuestJob(guestPayload);
         try { localStorage.removeItem(DRAFT_KEY); } catch {}
         setDone(true);
         return;
@@ -267,21 +284,31 @@ export function HireModal({ onClose }: { onClose: () => void }) {
       if (!activeToken) throw new Error("Failed to authenticate session");
 
       // The wallet is the money source. When it can't cover the escrow, top up only the
-      // shortfall via MoMo/Airtel/Card — that money lands in the wallet, then postJob
-      // freezes the full escrow from the wallet (never a direct-to-job payment). The
-      // top-up is recorded as a direct deposit so a low-balance hire reads that way.
+      // shortfall via MoMo/Airtel/Card and wait for it to settle — that money lands in the
+      // wallet, then postJob freezes the full escrow from the wallet (never a direct-to-job
+      // payment). A low-balance hire therefore reads as a direct deposit.
       if (walletBal === null || walletBal < total) {
         const topupAmount = walletBal === null ? total : Math.max(0, total - walletBal);
         if (topupAmount > 0) {
-          await topupWallet({
+          setPayNote(awaitingNote);
+          const outcome = await runWalletTopup({
             amount: topupAmount,
-            phoneNumber: paymentPhone || session?.phone || "0780000000",
-            paymentMethod: payMethod === "WALLET" ? "MTN_MOMO" : payMethod,
+            method,
+            phone: paymentPhone || session?.phone,
             notes: "Direct deposit for job escrow",
-          }, activeToken);
+            token: activeToken,
+          });
+          if (outcome !== "success") {
+            setPayNote("");
+            toastError(outcome === "pending"
+              ? "Payment not confirmed yet. If you were charged, it will reflect shortly — please try again."
+              : "The payment was not completed. Please try again.", { title: "Payment not completed" });
+            return;
+          }
         }
       }
 
+      setPayNote("");
       const job = await postJob(jobPayload, activeToken);
 
       await Promise.all(selected.map(async w => {
@@ -341,9 +368,11 @@ export function HireModal({ onClose }: { onClose: () => void }) {
 
   const isPaymentDetailsValid = hasSession && !needsTopup
     ? true
-    : (payMethod === "MTN_MOMO" || payMethod === "AIRTEL_MONEY"
-       ? !!(paymentPhone || anonPhone || session?.phone)
-       : !!(cardNumber && cardExpiry && cardCvv));
+    // Card is entered on the gateway's secure page, so it needs no in-modal fields;
+    // mobile money just needs a phone number.
+    : (payMethod === "VISA" || payMethod === "MASTERCARD"
+       ? true
+       : !!(paymentPhone || anonPhone || session?.phone));
 
   const canNext = hasSession
     ? [
@@ -827,25 +856,21 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                   )}
 
                   {(payMethod === "VISA" || payMethod === "MASTERCARD") && (
-                    <div style={{ display: "flex", flexDirection: "column", gap: 10, background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10, padding: 12 }}>
-                      <div style={{ display: "flex", gap: 8, marginBottom: 4 }}>
-                        <button type="button" onClick={() => setPayMethod("VISA")} style={{ flex: 1, padding: "6px", fontSize: 11, fontWeight: 700, borderRadius: 6, border: payMethod === "VISA" ? "1px solid #f97316" : "1px solid #222", background: payMethod === "VISA" ? "rgba(249,115,22,0.06)" : "#0a0a0a", color: "#fff" }}>Visa</button>
-                        <button type="button" onClick={() => setPayMethod("MASTERCARD")} style={{ flex: 1, padding: "6px", fontSize: 11, fontWeight: 700, borderRadius: 6, border: payMethod === "MASTERCARD" ? "1px solid #f97316" : "1px solid #222", background: payMethod === "MASTERCARD" ? "rgba(249,115,22,0.06)" : "#0a0a0a", color: "#fff" }}>Mastercard</button>
-                      </div>
-                      <FField label="Card Number">
-                        <input type="text" placeholder="4111 2222 3333 4444" value={cardNumber} onChange={e => setCardNumber(e.target.value)} style={inp} />
-                      </FField>
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                        <FField label="Expiry Date">
-                          <input type="text" placeholder="MM/YY" value={cardExpiry} onChange={e => setCardExpiry(e.target.value)} style={inp} />
-                        </FField>
-                        <FField label="CVV">
-                          <input type="password" placeholder="123" value={cardCvv} onChange={e => setCardCvv(e.target.value)} style={inp} />
-                        </FField>
-                      </div>
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: 8, background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 10, padding: "10px 14px" }}>
+                      <CheckCircle size={14} color="#3b82f6" style={{ flexShrink: 0, marginTop: 1 }} />
+                      <span style={{ fontSize: 12, color: "#9ab", lineHeight: 1.5 }}>
+                        You'll enter your card details on a secure page after you tap pay. We never see your full card number.
+                      </span>
                     </div>
                   )}
                   </>
+                  )}
+
+                  {payNote && (
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12, background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10, padding: "10px 14px" }}>
+                      <Loader2 size={14} color="#f97316" style={{ animation: "spin 1s linear infinite", flexShrink: 0 }} />
+                      <span style={{ fontSize: 12, color: "#d0d0d0", lineHeight: 1.5 }}>{payNote}</span>
+                    </div>
                   )}
                 </div>
 

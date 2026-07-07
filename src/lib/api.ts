@@ -483,15 +483,30 @@ export interface TransferDto {
   phoneNumber: string;
   status: "PENDING" | "SUCCESS" | "FAILED";
   providerRef: string | null;
+  /** Hosted card-checkout URL to redirect to (card top-ups only; null for mobile money). */
+  redirectUrl: string | null;
   message: string | null;
   createdAt: string;
 }
 
 export async function topupWallet(
-  payload: { amount: number; phoneNumber: string; paymentMethod: "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD"; notes?: string },
+  payload: {
+    amount: number;
+    phoneNumber?: string;
+    paymentMethod: "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD";
+    notes?: string;
+    /** Where XentriPay returns the browser after a hosted card payment. */
+    redirectUrl?: string;
+  },
   token: string,
 ): Promise<TransferDto> {
   const { data } = await http.post("/api/wallet/topup", payload, { headers: authHeader(token) });
+  return data.data;
+}
+
+/** Poll the status of a top-up the current user initiated. */
+export async function getTopupStatus(id: string, token: string): Promise<TransferDto> {
+  const { data } = await http.get(`/api/wallet/topups/${id}`, { headers: authHeader(token) });
   return data.data;
 }
 
@@ -569,12 +584,7 @@ export async function postJob(payload: {
   return data.data;
 }
 
-/**
- * Post a job as a guest (no sign-in). The owner account is found-or-created by email
- * server-side (passwordless if new), the escrow is funded from the chosen momo/card
- * payment, and any directly-hired workers are attached as accepted applications.
- */
-export async function postGuestJob(payload: {
+export interface GuestJobPayload {
   job: {
     category: string; title?: string; description?: string;
     province?: string; district: string;
@@ -589,7 +599,32 @@ export async function postGuestJob(payload: {
   paymentPhone?: string;
   workerIds?: string[];
   appliedVia?: string;
-}): Promise<JobDto> {
+  /** Where XentriPay returns the browser after a hosted card payment. */
+  redirectUrl?: string;
+}
+
+/**
+ * Guest flow, phase 1: start a real XentriPay collection for the escrow total. Mobile money
+ * pushes a USSD prompt; card returns a hosted-checkout redirectUrl. Poll getGuestPaymentStatus
+ * with the returned id and, once SUCCESS, call postGuestJob to create the job.
+ */
+export async function initiateGuestJobPayment(payload: GuestJobPayload): Promise<TransferDto> {
+  const { data } = await http.post("/api/jobs/guest/initiate", payload);
+  return data.data;
+}
+
+/** Guest flow, phase 1: poll the guest payment status (public). */
+export async function getGuestPaymentStatus(topupId: string): Promise<TransferDto> {
+  const { data } = await http.get(`/api/jobs/guest/payment-status/${topupId}`);
+  return data.data;
+}
+
+/**
+ * Guest flow, phase 2: create the job once the payment has settled. The owner account is
+ * found-or-created by email server-side and the escrow is frozen from the now-funded wallet;
+ * any directly-hired workers are attached as accepted applications.
+ */
+export async function postGuestJob(payload: GuestJobPayload): Promise<JobDto> {
   const { data } = await http.post("/api/jobs/guest", payload);
   return data.data;
 }
