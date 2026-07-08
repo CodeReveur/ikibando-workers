@@ -285,7 +285,7 @@
       "val4_body": "Yubatswe i Kigali, ku banyarwanda. Twemera ko buri mukozi akwiriye agaciro kandi buri mukoresha akwiriye uwo kwizerwa."
     },
     "location": {
-      "title": "Dukorera mu Rwanda, Rwanda",
+      "title": "Dukorera mu Rwanda",
       "desc": "Kuri ubu dukorera mu turere tw'u Rwanda - ndetse turateganya kwagurira muri Afurika y'Iburasirazuba vuba."
     },
     "cta": {
@@ -872,14 +872,20 @@
       "district": "Akarere *",
       "precise_location": "Aho kari neza (kanda ku ikarita cyangwa koresha GPS)",
       "rate_label": "Ikiguzi kuri buri mukozi {period} (RWF) *",
-      "notes": "Ibindi bisobanuro (si ngombwa)"
+      "notes": "Ibindi bisobanuro (si ngombwa)",
+      "sector": "Umurenge",
+      "cell": "Akagari",
+      "village": "Umudugudu"
     },
     "placeholders": {
       "search_category": "Shakisha ikiciro…",
       "province": "Intara…",
       "district": "Akarere…",
       "rate": "urugero 3000",
-      "notes": "urugero imyambaro ya kure, ibikoresho birahari, ibirori byo hanze…"
+      "notes": "urugero imyambaro ya kure, ibikoresho birahari, ibirori byo hanze…",
+      "sector": "Hitamo umurenge…",
+      "cell": "Hitamo akagari…",
+      "village": "Hitamo umudugudu…"
     },
     "gps": {
       "detecting": "Gushakisha…",
@@ -1375,7 +1381,8 @@
     "status_accepted": "Byemewe",
     "urgency_immediate": "Ako kanya",
     "urgency_same_day": "Kuri uyu munsi",
-    "urgency_scheduled": "Byateganijwe"
+    "urgency_scheduled": "Byateganijwe",
+    "label_location": "Aho biherereye"
   },
   "seeker_job_detail": {
     "back": "Gusubira inyuma",
@@ -1660,7 +1667,10 @@
     "save_changes": "Hifashishijwe ibyagezweho",
     "saving": "Biri kubikwa...",
     "select_default": "Hitamo...",
-    "error_save": "Guhindura akazi byanze"
+    "error_save": "Guhindura akazi byanze",
+    "job_details": "Ibisobanuro by'akazi",
+    "category": "Icyiciro",
+    "rate": "Igipimo"
   },
   "owner_payments": {
     "wallet_balance": "Amafaranga ufite ubu",

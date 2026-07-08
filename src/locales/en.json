@@ -873,14 +873,20 @@
       "district": "District *",
       "precise_location": "Precise location (click map or use GPS)",
       "rate_label": "Rate per worker {period} (RWF) *",
-      "notes": "Additional notes (optional)"
+      "notes": "Additional notes (optional)",
+      "sector": "Sector",
+      "cell": "Cell",
+      "village": "Village"
     },
     "placeholders": {
       "search_category": "Search category…",
       "province": "Province…",
       "district": "District…",
       "rate": "e.g. 3000",
-      "notes": "e.g. formal attire required, tools provided, outdoor event…"
+      "notes": "e.g. formal attire required, tools provided, outdoor event…",
+      "sector": "Select sector…",
+      "cell": "Select cell…",
+      "village": "Select village…"
     },
     "gps": {
       "detecting": "Detecting…",
@@ -1375,7 +1381,8 @@
     "status_accepted": "Accepted",
     "urgency_immediate": "Immediate",
     "urgency_same_day": "Same day",
-    "urgency_scheduled": "Scheduled"
+    "urgency_scheduled": "Scheduled",
+    "label_location": "Location"
   },
   "seeker_job_detail": {
     "back": "Back",
@@ -1660,7 +1667,10 @@
     "save_changes": "Save changes",
     "saving": "Saving...",
     "select_default": "Select...",
-    "error_save": "Failed to update job"
+    "error_save": "Failed to update job",
+    "job_details": "Job Details",
+    "category": "Category",
+    "rate": "Rate"
   },
   "owner_payments": {
     "wallet_balance": "Wallet Balance",

@@ -872,14 +872,20 @@
       "district": "Wilaya *",
       "precise_location": "Eneo sahihi (bofya ramani au tumia GPS)",
       "rate_label": "Kiwango kwa kila mfanyakazi {period} (RWF) *",
-      "notes": "Maelezo ya ziada (hiari)"
+      "notes": "Maelezo ya ziada (hiari)",
+      "sector": "Sekta",
+      "cell": "Kata",
+      "village": "Kijiji"
     },
     "placeholders": {
       "search_category": "Tafuta kategoria…",
       "province": "Mkoa…",
       "district": "Wilaya…",
       "rate": "mfano 3000",
-      "notes": "mfano nguo rasmi zinahitajika, zana zinatolewa, hafla ya nje…"
+      "notes": "mfano nguo rasmi zinahitajika, zana zinatolewa, hafla ya nje…",
+      "sector": "Chagua sekta…",
+      "cell": "Chagua kata…",
+      "village": "Chagua kijiji…"
     },
     "gps": {
       "detecting": "Inatafuta…",
@@ -1374,7 +1380,8 @@
     "status_accepted": "Imekubaliwa",
     "urgency_immediate": "Mara moja",
     "urgency_same_day": "Siku hiyo hiyo",
-    "urgency_scheduled": "Iliyopangwa"
+    "urgency_scheduled": "Iliyopangwa",
+    "label_location": "Mahali"
   },
   "seeker_job_detail": {
     "back": "Nyuma",
@@ -1659,7 +1666,10 @@
     "save_changes": "Hifadhi mabadiliko",
     "saving": "Inahifadhi...",
     "select_default": "Chagua...",
-    "error_save": "Imeshindwa kusasisha kazi"
+    "error_save": "Imeshindwa kusasisha kazi",
+    "job_details": "Maelezo ya Kazi",
+    "category": "Aina",
+    "rate": "Kiwango"
   },
   "owner_payments": {
     "wallet_balance": "Salio la Wallet",

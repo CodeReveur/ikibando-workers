@@ -872,14 +872,20 @@
       "district": "District *",
       "precise_location": "Emplacement précis (cliquez sur la carte ou utilisez le GPS)",
       "rate_label": "Tarif par travailleur {period} (RWF) *",
-      "notes": "Notes supplémentaires (optionnel)"
+      "notes": "Notes supplémentaires (optionnel)",
+      "sector": "Secteur",
+      "cell": "Cellule",
+      "village": "Village"
     },
     "placeholders": {
       "search_category": "Rechercher une catégorie…",
       "province": "Province…",
       "district": "District…",
       "rate": "ex. 3000",
-      "notes": "ex. tenue correcte exigée, outils fournis, événement en plein air…"
+      "notes": "ex. tenue correcte exigée, outils fournis, événement en plein air…",
+      "sector": "Choisir le secteur…",
+      "cell": "Choisir la cellule…",
+      "village": "Choisir le village…"
     },
     "gps": {
       "detecting": "Détection…",
@@ -1374,7 +1380,8 @@
     "status_accepted": "Accepté",
     "urgency_immediate": "Immédiat",
     "urgency_same_day": "Le jour même",
-    "urgency_scheduled": "Planifié"
+    "urgency_scheduled": "Planifié",
+    "label_location": "Lieu"
   },
   "seeker_job_detail": {
     "back": "Retour",
@@ -1659,7 +1666,10 @@
     "save_changes": "Enregistrer les modifications",
     "saving": "Enregistrement...",
     "select_default": "Sélectionner...",
-    "error_save": "Échec de la mise à jour de l'emploi"
+    "error_save": "Échec de la mise à jour de l'emploi",
+    "job_details": "Détails du poste",
+    "category": "Catégorie",
+    "rate": "Tarif"
   },
   "owner_payments": {
     "wallet_balance": "Solde du portefeuille",

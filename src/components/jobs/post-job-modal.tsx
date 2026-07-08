@@ -7,11 +7,12 @@ import {
   CheckCircle, AlarmClock, Loader2, Navigation, Search, MapPin,
 } from "lucide-react";
 import { JOB_CATEGORIES, RWANDA_PROVINCES, CURRENCY } from "@/lib/constants";
+import { Sectors, Cells, Villages } from "rwanda";
 import { postJob, postGuestJob, getWallet, apiError } from "@/lib/api";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { saveRedirect } from "@/lib/auth-redirect";
 import { useToast } from "@/components/ui/toast";
-import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
 import { useSession, type Session } from "@/components/dashboard/session-ctx";
 import { MtnLogo, AirtelLogo, CardLogos } from "@/components/ui/pay-logos";
 
@@ -63,6 +64,16 @@ function districtsFor(province: string): string[] {
   const p = RWANDA_PROVINCES.find(p => p.label === province);
   return p ? [...p.districts] : allDistricts();
 }
+
+// Map our province labels to the `rwanda` dataset's short names so we can look up the
+// sector/cell/village hierarchy (same constant dataset the registration wizard uses).
+const PKG_PROVINCE: Record<string, string> = {
+  "City of Kigali": "Kigali",
+  "Northern Province": "North",
+  "Southern Province": "South",
+  "Eastern Province": "East",
+  "Western Province": "West",
+};
 
 // ── types ────────────────────────────────────────────────────────────────────
 interface JobForm {
@@ -388,6 +399,12 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
     : "-";
   const locationLabel = [getLocalizedProvinceLabel(job.province), job.district].filter(Boolean).join(" › ");
 
+  // Cascading Rwanda location options (constant geographic names, same in every language).
+  const pkgProvince   = PKG_PROVINCE[job.province] ?? job.province;
+  const sectorOpts    = (job.province && job.district) ? (Sectors({ province: pkgProvince, district: job.district }) ?? []) : [];
+  const cellOpts      = (job.sector) ? (Cells({ province: pkgProvince, district: job.district, sector: job.sector }) ?? []) : [];
+  const villageOpts   = (job.cell) ? (Villages({ province: pkgProvince, district: job.district, sector: job.sector, cell: job.cell }) ?? []) : [];
+
   // ── SUCCESS ────────────────────────────────────────────────────────────────
   if (done) return (
     <>
@@ -578,7 +595,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                     <SearchSelect
                       options={RWANDA_PROVINCES.map(p => ({ value: p.label, label: getLocalizedProvinceLabel(p.label) }))}
                       value={job.province}
-                      onChange={v => setJob(f => ({ ...f, province: v, district: "" }))}
+                      onChange={v => setJob(f => ({ ...f, province: v, district: "", sector: "", cell: "", village: "" }))}
                       placeholder={t("post_job.placeholders.province") || "Province…"}
                       icon={<MapPin size={13} color="#444" style={iconL} />}
                     />
@@ -587,37 +604,41 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                     <SearchSelect
                       options={districtsFor(job.province).map(d => ({ value: d, label: d }))}
                       value={job.district}
-                      onChange={v => setJob(f => ({ ...f, district: v }))}
+                      onChange={v => setJob(f => ({ ...f, district: v, sector: "", cell: "", village: "" }))}
                       placeholder={t("post_job.placeholders.district") || "District…"}
                       icon={<MapPin size={13} color="#444" style={iconL} />}
                     />
                   </FField>
                 </div>
 
-                {/* Sector / Cell / Village — optional; lets us alert the nearest workers first */}
+                {/* Sector → Cell → Village — cascading, from the same Rwanda dataset as sign-up.
+                    Geographic names are constant (not translated), so they match worker locations. */}
                 <div className="pj-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
                   <FField label={t("post_job.labels.sector") || "Sector"}>
-                    <input type="text" placeholder={t("post_job.placeholders.sector") || "Sector…"}
-                      value={job.sector} onChange={e => setJob(f => ({ ...f, sector: e.target.value }))}
-                      style={inp}
-                      onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-                      onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                    <LocationSelect
+                      options={sectorOpts}
+                      value={job.sector}
+                      disabled={!job.district}
+                      placeholder={t("post_job.placeholders.sector") || "Select sector…"}
+                      onChange={v => setJob(f => ({ ...f, sector: v, cell: "", village: "" }))}
                     />
                   </FField>
                   <FField label={t("post_job.labels.cell") || "Cell"}>
-                    <input type="text" placeholder={t("post_job.placeholders.cell") || "Cell…"}
-                      value={job.cell} onChange={e => setJob(f => ({ ...f, cell: e.target.value }))}
-                      style={inp}
-                      onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-                      onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                    <LocationSelect
+                      options={cellOpts}
+                      value={job.cell}
+                      disabled={!job.sector}
+                      placeholder={t("post_job.placeholders.cell") || "Select cell…"}
+                      onChange={v => setJob(f => ({ ...f, cell: v, village: "" }))}
                     />
                   </FField>
                   <FField label={t("post_job.labels.village") || "Village"}>
-                    <input type="text" placeholder={t("post_job.placeholders.village") || "Village…"}
-                      value={job.village} onChange={e => setJob(f => ({ ...f, village: e.target.value }))}
-                      style={inp}
-                      onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-                      onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                    <LocationSelect
+                      options={villageOpts}
+                      value={job.village}
+                      disabled={!job.cell}
+                      placeholder={t("post_job.placeholders.village") || "Select village…"}
+                      onChange={v => setJob(f => ({ ...f, village: v }))}
                     />
                   </FField>
                 </div>
@@ -729,11 +750,21 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                     [t("post_job.fields.workers") || "Workers",   `${heads} worker${heads !== 1 ? "s" : ""}`],
                     [t("post_job.labels.province") || "Province",  getLocalizedProvinceLabel(job.province) || "-"],
                     [t("post_job.labels.district") || "District",  job.district],
+                    ...(job.sector  ? [[t("post_job.labels.sector") || "Sector", job.sector]] : []),
+                    ...(job.cell    ? [[t("post_job.labels.cell") || "Cell", job.cell]] : []),
+                    ...(job.village ? [[t("post_job.labels.village") || "Village", job.village]] : []),
                     ...(job.latitude != null ? [["GPS", `${job.latitude.toFixed(5)}, ${job.longitude!.toFixed(5)}`]] : []),
                     [t("post_job.fields.rate") || "Rate",      fmt(rate) + " " + RATE_LABEL[job.rateType]],
                     ...(escrow > 0 ? [[t("post_job.fields.escrowed") || "Total Deposition", fmt(escrow)]] : []),
-                    ...(job.notes ? [[t("post_job.labels.notes") || "Notes", job.notes]] : []),
                   ] as [string, string][]).map(([k, v]) => <SRow key={k} k={k} v={v} />)}
+                  {job.notes && (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingTop: 8, marginTop: 4, borderTop: "1px solid #1a1a1a" }}>
+                      <span style={{ fontSize: 12, color: "#555" }}>{t("post_job.labels.notes") || "Additional notes"}</span>
+                      <div style={{ fontSize: 12, color: "#d0d0d0", lineHeight: 1.6 }}>
+                        <RichTextDisplay content={job.notes} />
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* ESCROW / WALLET BLOCK */}
@@ -950,6 +981,34 @@ function SearchSelect({
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+// ── LocationSelect ────────────────────────────────────────────────────────────
+// A plain dependent dropdown for the Rwanda sector/cell/village hierarchy.
+function LocationSelect({ options, value, onChange, placeholder, disabled }: {
+  options: string[];
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+  disabled?: boolean;
+}) {
+  return (
+    <div style={{ position: "relative" }}>
+      <select
+        value={value}
+        disabled={disabled}
+        onChange={e => onChange(e.target.value)}
+        style={{ ...inp, appearance: "none", paddingRight: 28, color: value ? "#f0f0f0" : "#555",
+          cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.5 : 1 }}
+        onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
+        onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+      >
+        <option value="">{placeholder}</option>
+        {options.map(o => <option key={o} value={o}>{o}</option>)}
+      </select>
+      <ChevronDown size={13} color="#555" style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
     </div>
   );
 }
