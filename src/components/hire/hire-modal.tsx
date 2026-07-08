@@ -7,15 +7,15 @@ import {
   Calendar, Clock, CheckCircle, Users,
   AlarmClock, Search, Navigation, Loader2, Star,
 } from "lucide-react";
-import { JOB_CATEGORIES, RWANDA_PROVINCES } from "@/lib/constants";
-import { getWorkers, postJob, postGuestJob, applyForJob, getWallet, type WorkerProfileDto } from "@/lib/api";
+import { JOB_CATEGORIES, RWANDA_PROVINCES, MIN_RATE_BY_PERIOD } from "@/lib/constants";
+import { getWorkers, postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, type WorkerProfileDto } from "@/lib/api";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { ratingInfo } from "@/lib/rating";
 import { useToast } from "@/components/ui/toast";
 import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
 import { useLanguage } from "@/lib/language-context";
 import { useSession, type Session } from "@/components/dashboard/session-ctx";
-import { MtnLogo, AirtelLogo, CardLogos } from "@/components/ui/pay-logos";
+import { PayMethodSelector, type PayMethodValue } from "@/components/ui/pay-logos";
 
 // Leaflet must render client-side only
 const MapPicker = dynamic(
@@ -75,6 +75,10 @@ const getUnit = (rt: RateType, n: number) => {
 const fmt       = (n: number) => `RWF ${n.toLocaleString()}`;
 const todayStr  = () => new Date().toISOString().split("T")[0];
 const RATE_LABEL: Record<RateType, string> = { hr:"/hr", day:"/day", week:"/wk", month:"/mo", year:"/yr" };
+
+// Shown when a guest's contact details already belong to a worker (seeker) account.
+const WORKER_ACCOUNT_MSG =
+  "These details match a worker account, so you can't hire as an employer with this email. Please use a new email, or an existing employer email.";
 
 // ── styles ───────────────────────────────────────────────────────────────────
 const CSS = `
@@ -142,6 +146,8 @@ export function HireModal({ onClose }: { onClose: () => void }) {
   const [anonName, setAnonName] = useState("");
   const [anonEmail, setAnonEmail] = useState("");
   const [anonPhone, setAnonPhone] = useState("");
+  // Guard: guest contact details must not match a worker (seeker) account.
+  const [acctCheck, setAcctCheck] = useState<"idle" | "checking" | "ok" | "worker">("idle");
 
   // Payment method fields. Card details are collected on XentriPay's secure page (redirect),
   // so we only keep the selected method + the mobile-money phone here.
@@ -205,6 +211,22 @@ export function HireModal({ onClose }: { onClose: () => void }) {
     window.addEventListener("keydown", fn);
     return () => window.removeEventListener("keydown", fn);
   }, [onClose]);
+
+  // Run the worker-account check shortly after the guest finishes entering email + phone,
+  // so the result is ready before they try to advance to the summary.
+  useEffect(() => {
+    if (hasSession) { setAcctCheck("idle"); return; }
+    const email = anonEmail.trim();
+    const phone = anonPhone.trim();
+    if (!email || !phone) { setAcctCheck("idle"); return; }
+    setAcctCheck("checking");
+    const id = setTimeout(() => {
+      checkGuestAccount({ email, phone })
+        .then(r => setAcctCheck(r.isWorker ? "worker" : "ok"))
+        .catch(() => setAcctCheck("ok")); // network hiccup: the server-side guard still blocks it
+    }, 500);
+    return () => clearTimeout(id);
+  }, [anonEmail, anonPhone, hasSession]);
 
   function detectGps() {
     if (!navigator.geolocation) { setGps("error"); return; }
@@ -351,6 +373,8 @@ export function HireModal({ onClose }: { onClose: () => void }) {
   const jobAmount   = budget * headcountNum * durationNum;
   const fee         = Math.round(jobAmount * 0.05);
   const total       = jobAmount + fee;
+  const minRate     = MIN_RATE_BY_PERIOD[form.rateType];
+  const rateOk      = budget >= minRate;
 
   const selectionValid = isMulti ? selected.length === headcountNum : selected.length === 1;
 
@@ -378,14 +402,14 @@ export function HireModal({ onClose }: { onClose: () => void }) {
 
   const canNext = hasSession
     ? [
-        !!(form.category && form.budget && form.date && form.time && form.district),
+        !!(form.category && rateOk && form.date && form.time && form.district),
         selectionValid,
         isPaymentDetailsValid
       ]
     : [
-        !!(form.category && form.budget && form.date && form.time && form.district),
+        !!(form.category && rateOk && form.date && form.time && form.district),
         selectionValid,
-        !!(anonName && anonEmail && anonPhone),
+        !!(anonName && anonEmail && anonPhone) && acctCheck === "ok",
         isPaymentDetailsValid
       ];
 
@@ -509,13 +533,18 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                     </div>
                   </FField>
                   <FField label={t("hire_modal.details.rate_label")}>
-                    <input type="number" min="0" placeholder="e.g. 8000"
+                    <input type="number" min="0" placeholder={`e.g. ${minRate.toLocaleString()}`}
                       value={form.budget}
                       onChange={e => setForm(f => ({ ...f, budget: e.target.value }))}
                       style={inp}
                       onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                       onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
                     />
+                    {budget > 0 && !rateOk && (
+                      <p style={{ margin: "2px 0 0", fontSize: 11, color: "#ef4444" }}>
+                        Minimum is {fmt(minRate)} {RATE_LABEL[form.rateType]}
+                      </p>
+                    )}
                   </FField>
                 </div>
 
@@ -730,6 +759,14 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                 <FField label="Phone Number *">
                   <input type="text" placeholder="0781234567" value={anonPhone} onChange={e => setAnonPhone(e.target.value)} style={inp} />
                 </FField>
+                {acctCheck === "checking" && (
+                  <p style={{ margin: 0, fontSize: 12, color: "#888", display: "flex", alignItems: "center", gap: 6 }}>
+                    <Loader2 size={12} style={{ animation: "spin 1s linear infinite" }} /> Verifying your details…
+                  </p>
+                )}
+                {acctCheck === "worker" && (
+                  <p style={{ margin: 0, fontSize: 12, color: "#ef4444", lineHeight: 1.5 }}>{WORKER_ACCOUNT_MSG}</p>
+                )}
               </div>
             )}
 
@@ -831,23 +868,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                       {hasSession ? `Top up ${fmt(topupAmount)} via` : "Select Payment Method"}
                     </p>
 
-                    <label style={{ display: "flex", alignItems: "center", gap: 8, background: "#141414", border: payMethod === "MTN_MOMO" ? "1px solid #f97316" : "1px solid #2a2a2a", borderRadius: 10, padding: "10px 14px", cursor: "pointer" }}>
-                      <input type="radio" name="payMethod" value="MTN_MOMO" checked={payMethod === "MTN_MOMO"} onChange={() => setPayMethod("MTN_MOMO")} style={{ accentColor: "#f97316" }} />
-                      <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>MTN Mobile Money</span>
-                      <MtnLogo />
-                    </label>
-
-                    <label style={{ display: "flex", alignItems: "center", gap: 8, background: "#141414", border: payMethod === "AIRTEL_MONEY" ? "1px solid #f97316" : "1px solid #2a2a2a", borderRadius: 10, padding: "10px 14px", cursor: "pointer" }}>
-                      <input type="radio" name="payMethod" value="AIRTEL_MONEY" checked={payMethod === "AIRTEL_MONEY"} onChange={() => setPayMethod("AIRTEL_MONEY")} style={{ accentColor: "#f97316" }} />
-                      <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>Airtel Money</span>
-                      <AirtelLogo />
-                    </label>
-
-                    <label style={{ display: "flex", alignItems: "center", gap: 8, background: "#141414", border: (payMethod === "VISA" || payMethod === "MASTERCARD") ? "1px solid #f97316" : "1px solid #2a2a2a", borderRadius: 10, padding: "10px 14px", cursor: "pointer" }}>
-                      <input type="radio" name="payMethod" value="VISA" checked={payMethod === "VISA" || payMethod === "MASTERCARD"} onChange={() => setPayMethod("VISA")} style={{ accentColor: "#f97316" }} />
-                      <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>Visa / Mastercard</span>
-                      <CardLogos />
-                    </label>
+                    <PayMethodSelector value={payMethod as PayMethodValue} onChange={setPayMethod} />
                   </div>
 
                   {/* Payment method fields */}

@@ -62,6 +62,15 @@ export const JOB_CATEGORIES = [
 
 export const PLATFORM_COMMISSION = 0.10; // 10%
 export const CURRENCY = "RWF";
+
+/** Minimum rate an employer may offer, in RWF, per rate period. */
+export const MIN_RATE_BY_PERIOD = {
+  hr: 100,
+  day: 800,
+  week: 5000,
+  month: 15000,
+  year: 120000,
+} as const;
 export const DEFAULT_CITY = "Kigali";
 
 export const RWANDA_PROVINCES = [

@@ -237,6 +237,22 @@ export async function resetPassword(token: string, newPassword: string): Promise
   await http.post("/api/auth/reset-password", { token, newPassword });
 }
 
+export interface GuestAccountCheck {
+  emailIsWorker: boolean;
+  phoneIsWorker: boolean;
+  /** True when the email or phone already belongs to a worker (seeker) account. */
+  isWorker: boolean;
+}
+
+/**
+ * Check whether guest contact details already belong to a worker account. The guest post-job /
+ * hire flows call this after the details are entered and block the summary step when isWorker.
+ */
+export async function checkGuestAccount(payload: { email: string; phone?: string }): Promise<GuestAccountCheck> {
+  const { data } = await http.post("/api/auth/account-check", payload);
+  return data.data;
+}
+
 export async function getProfile(token: string): Promise<AuthResult["user"]> {
   const { data } = await http.get("/api/users/me", { headers: authHeader(token) });
   return data.data;

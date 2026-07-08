@@ -6,15 +6,15 @@ import {
   X, Calendar, Clock, Users, ChevronDown,
   CheckCircle, AlarmClock, Loader2, Navigation, Search, MapPin,
 } from "lucide-react";
-import { JOB_CATEGORIES, RWANDA_PROVINCES, CURRENCY } from "@/lib/constants";
+import { JOB_CATEGORIES, RWANDA_PROVINCES, CURRENCY, MIN_RATE_BY_PERIOD } from "@/lib/constants";
 import { Sectors, Cells, Villages } from "rwanda";
-import { postJob, postGuestJob, getWallet, apiError } from "@/lib/api";
+import { postJob, postGuestJob, getWallet, apiError, checkGuestAccount } from "@/lib/api";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { saveRedirect } from "@/lib/auth-redirect";
 import { useToast } from "@/components/ui/toast";
 import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
 import { useSession, type Session } from "@/components/dashboard/session-ctx";
-import { MtnLogo, AirtelLogo, CardLogos } from "@/components/ui/pay-logos";
+import { PayMethodSelector, type PayMethodValue } from "@/components/ui/pay-logos";
 
 // Leaflet must render client-side only
 const MapPicker = dynamic(
@@ -96,6 +96,10 @@ interface JobForm {
 
 const STEPS = ["Job details", "Review & post"];
 
+// Shown when a guest's contact details already belong to a worker (seeker) account.
+const WORKER_ACCOUNT_MSG =
+  "These details match a worker account, so you can't post as an employer with this email. Please use a new email, or an existing employer email.";
+
 // ── styles ───────────────────────────────────────────────────────────────────
 const CSS = `
   .pj-ta { resize: vertical; }
@@ -154,6 +158,8 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
   const [anonName, setAnonName] = useState("");
   const [anonEmail, setAnonEmail] = useState("");
   const [anonPhone, setAnonPhone] = useState("");
+  // Guard: guest contact details must not match a worker (seeker) account.
+  const [acctCheck, setAcctCheck] = useState<"idle" | "checking" | "ok" | "worker">("idle");
 
   // Payment method fields. Card details are collected on XentriPay's secure page (redirect),
   // so we only keep the selected method + the mobile-money phone here.
@@ -237,6 +243,22 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
     return () => window.removeEventListener("keydown", fn);
   }, [onClose]);
 
+  // Run the worker-account check shortly after the guest finishes entering email + phone,
+  // so the result is ready before they try to advance to the summary.
+  useEffect(() => {
+    if (hasSession) { setAcctCheck("idle"); return; }
+    const email = anonEmail.trim();
+    const phone = anonPhone.trim();
+    if (!email || !phone) { setAcctCheck("idle"); return; }
+    setAcctCheck("checking");
+    const id = setTimeout(() => {
+      checkGuestAccount({ email, phone })
+        .then(r => setAcctCheck(r.isWorker ? "worker" : "ok"))
+        .catch(() => setAcctCheck("ok")); // network hiccup: the server-side guard still blocks it
+    }, 500);
+    return () => clearTimeout(id);
+  }, [anonEmail, anonPhone, hasSession]);
+
   function detectGps() {
     if (!navigator.geolocation) { setGpsStatus("error"); return; }
     setGpsStatus("loading");
@@ -260,12 +282,15 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
     if (!job.date)         errs.date      = t("post_job.errors.required") || "Required";
     if (!job.time)         errs.time      = t("post_job.errors.required") || "Required";
     if (!job.district)     errs.district  = t("post_job.errors.required") || "Required";
-    if (!job.ratePerHour || parseInt(job.ratePerHour) < 1) errs.ratePerHour = t("post_job.errors.invalid_rate") || "Enter a valid rate";
+    const minRate = MIN_RATE_BY_PERIOD[job.rateType];
+    if (!job.ratePerHour || parseInt(job.ratePerHour) < minRate) {
+      errs.ratePerHour = `Minimum is ${fmt(minRate)} ${RATE_LABEL[job.rateType]}`;
+    }
     setErrors(errs);
     return Object.keys(errs).length === 0;
   }
 
-  function handleNext() {
+  async function handleNext() {
     if (step === 0) {
       if (validateStep0()) {
         setErrors({});
@@ -277,6 +302,19 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
       if (!anonName || !anonEmail || !anonPhone) {
         toastError("Please fill in all account fields.", { title: "Incomplete Form" });
         return;
+      }
+      if (acctCheck === "worker") {
+        toastError(WORKER_ACCOUNT_MSG, { title: "Worker account" });
+        return;
+      }
+      // Don't advance to the summary until the worker-account check has finished.
+      if (acctCheck !== "ok") {
+        setAcctCheck("checking");
+        try {
+          const r = await checkGuestAccount({ email: anonEmail.trim(), phone: anonPhone.trim() });
+          if (r.isWorker) { setAcctCheck("worker"); toastError(WORKER_ACCOUNT_MSG, { title: "Worker account" }); return; }
+          setAcctCheck("ok");
+        } catch { setAcctCheck("ok"); }
       }
       setStep(2);
     }
@@ -732,6 +770,14 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                 <FField label="Phone Number *">
                   <input type="text" placeholder="0781234567" value={anonPhone} onChange={e => setAnonPhone(e.target.value)} style={inp} />
                 </FField>
+                {acctCheck === "checking" && (
+                  <p style={{ margin: 0, fontSize: 12, color: "#888", display: "flex", alignItems: "center", gap: 6 }}>
+                    <Loader2 size={12} style={{ animation: "spin 1s linear infinite" }} /> Verifying your details…
+                  </p>
+                )}
+                {acctCheck === "worker" && (
+                  <p style={{ margin: 0, fontSize: 12, color: "#ef4444", lineHeight: 1.5 }}>{WORKER_ACCOUNT_MSG}</p>
+                )}
               </div>
             )}
 
@@ -817,23 +863,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                       {hasSession ? `Top up ${fmt(topupAmount)} via` : "Select Payment Method"}
                     </p>
 
-                    <label style={{ display: "flex", alignItems: "center", gap: 8, background: "#141414", border: payMethod === "MTN_MOMO" ? "1px solid #f97316" : "1px solid #2a2a2a", borderRadius: 10, padding: "10px 14px", cursor: "pointer" }}>
-                      <input type="radio" name="payMethod" value="MTN_MOMO" checked={payMethod === "MTN_MOMO"} onChange={() => setPayMethod("MTN_MOMO")} style={{ accentColor: "#f97316" }} />
-                      <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>MTN Mobile Money</span>
-                      <MtnLogo />
-                    </label>
-
-                    <label style={{ display: "flex", alignItems: "center", gap: 8, background: "#141414", border: payMethod === "AIRTEL_MONEY" ? "1px solid #f97316" : "1px solid #2a2a2a", borderRadius: 10, padding: "10px 14px", cursor: "pointer" }}>
-                      <input type="radio" name="payMethod" value="AIRTEL_MONEY" checked={payMethod === "AIRTEL_MONEY"} onChange={() => setPayMethod("AIRTEL_MONEY")} style={{ accentColor: "#f97316" }} />
-                      <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>Airtel Money</span>
-                      <AirtelLogo />
-                    </label>
-
-                    <label style={{ display: "flex", alignItems: "center", gap: 8, background: "#141414", border: (payMethod === "VISA" || payMethod === "MASTERCARD") ? "1px solid #f97316" : "1px solid #2a2a2a", borderRadius: 10, padding: "10px 14px", cursor: "pointer" }}>
-                      <input type="radio" name="payMethod" value="VISA" checked={payMethod === "VISA" || payMethod === "MASTERCARD"} onChange={() => setPayMethod("VISA")} style={{ accentColor: "#f97316" }} />
-                      <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>Visa / Mastercard</span>
-                      <CardLogos />
-                    </label>
+                    <PayMethodSelector value={payMethod as PayMethodValue} onChange={setPayMethod} />
                   </div>
 
                   {/* Payment method fields */}
