@@ -17,6 +17,7 @@ import { fmt } from "@/lib/dashboard-data";
 import { ratingLabel } from "@/lib/rating";
 import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
 import { useLanguage } from "@/lib/language-context";
+import { useToast } from "@/components/ui/toast";
 
 const dateLocaleMap: Record<string, string> = {
   rw: "rw-RW",
@@ -93,6 +94,7 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
 
 export default function OwnerJobDetail() {
   const { t, language } = useLanguage();
+  const { error: toastError } = useToast();
   const currentLocale = dateLocaleMap[language] || "en-RW";
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
@@ -137,6 +139,8 @@ export default function OwnerJobDetail() {
     try {
       const updated = await acceptAllApplications(id, token);
       setApps(prev => prev.map(a => updated.find(u => u.id === a.id) ?? a));
+    } catch (e: any) {
+      toastError(apiError(e, t("owner_jobs.accept_failed") || "Could not accept applicants."));
     } finally { setBusy(null); }
   };
 
@@ -146,6 +150,8 @@ export default function OwnerJobDetail() {
     try {
       const updated = await updateApplicationStatus(appId, { status, responseNote: note }, token);
       setApps(prev => prev.map(a => a.id === appId ? updated : a));
+    } catch (e: any) {
+      toastError(apiError(e, t("owner_jobs.accept_failed") || "Could not update the application."));
     } finally { setBusy(null); setNoteFor(null); setNoteText(""); }
   };
 
@@ -202,6 +208,9 @@ export default function OwnerJobDetail() {
   const isCompleted = job.status === "COMPLETED";
   const isCancelled = job.status === "CANCELLED";
   const hasAccepted = accepted.length > 0;
+  const headcount   = Number(job.headcount) || 1;
+  const slotsLeft   = Math.max(0, headcount - accepted.length);
+  const isFull      = slotsLeft <= 0;
   const startPast   = job.startTime ? new Date(job.startTime) <= new Date() : false;
 
   const workerPayout = txn?.workerPayoutRwf ?? null;
@@ -281,8 +290,10 @@ export default function OwnerJobDetail() {
                     </div>
                   ) : (
                     <>
-                      <button disabled={!!busy} onClick={() => setNoteFor({ appId: app.id, action: "ACCEPTED" })}
-                        style={{ background: "rgba(34,197,94,0.08)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 6, padding: "4px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+                      <button disabled={!!busy || isFull}
+                        title={isFull ? (t("owner_jobs.job_full") || "All requested workers have been hired") : undefined}
+                        onClick={() => setNoteFor({ appId: app.id, action: "ACCEPTED" })}
+                        style={{ background: "rgba(34,197,94,0.08)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 6, padding: "4px 10px", fontSize: 11, fontWeight: 700, cursor: isFull ? "not-allowed" : "pointer", opacity: isFull ? 0.4 : 1, fontFamily: "inherit" }}>
                         {t("owner_offers.accept") || "Accept"}
                       </button>
                       <button disabled={!!busy} onClick={() => setNoteFor({ appId: app.id, action: "REJECTED" })}
@@ -412,16 +423,21 @@ export default function OwnerJobDetail() {
                 {t("seeker_jobs.status_" + job.status.toLowerCase()) || job.status}
               </span>
             </div>
-            <p style={{ margin: 0, fontSize: 12, color: "#444" }}>{t("common.categories." + job.category.toLowerCase()) || job.category} · {job.district} · {job.headcount} {Number(job.headcount) !== 1 ? (t("owner_offers.slots_plural") || "workers") : (t("owner_offers.slots") || "worker")}</p>
+            <p style={{ margin: 0, fontSize: 12, color: "#444" }}>{t("common.categories." + job.category.toLowerCase()) || job.category} · {job.district} · {accepted.length}/{job.headcount} {Number(job.headcount) !== 1 ? (t("owner_offers.slots_plural") || "workers") : (t("owner_offers.slots") || "worker")} {t("settings_page.account.verified") || "hired"}</p>
           </div>
           {/* Action buttons */}
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            {isOpen && pending.length > 0 && (
+            {isOpen && pending.length > 0 && !isFull && (
               <button disabled={busy === "accept-all"} onClick={doAcceptAll}
                 style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(34,197,94,0.08)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
                 {busy === "accept-all" ? <Loader2 size={12} style={{ animation: "spin 0.8s linear infinite" }} /> : <Users size={12} />}
-                {t("owner_jobs.accept_all") || "Accept All"} ({pending.length})
+                {t("owner_jobs.accept_all") || "Accept All"} ({Math.min(pending.length, slotsLeft)})
               </button>
+            )}
+            {isOpen && isFull && pending.length > 0 && (
+              <span style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(100,100,100,0.08)", color: "#888", border: "1px solid #222", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700 }}>
+                {t("owner_jobs.job_full") || "All workers hired"}
+              </span>
             )}
             {isOpen && hasAccepted && (
               <button disabled={busy === "complete" || !job.workerVerified} onClick={() => job.workerVerified ? setShowComplete(true) : alert(t("owner_workers.wait_worker_verify_alert") || "Waiting for worker to verify completion")}
