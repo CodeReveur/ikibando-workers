@@ -1867,32 +1867,82 @@
     "escrow": {
       "overview": "Chez MpahMapu, nous gérons un système de dépôt fiduciaire (escrow) entièrement automatisé et sécurisé. Pour chaque mission réservée, les fonds correspondants sont immédiatement bloqués depuis le portefeuille de l'employeur. Cela garantit au travailleur indépendant que son temps et son effort sont financièrement garantis avant même qu'il ne se déplace sur le lieu de travail. Le tarif est calculé selon la formule : tarif par heure × heures × nombre de travailleurs plus 5% de frais de gestion.",
       "process": "Dès que vous cliquez sur 'Réserver', le système traite la demande à {time} et gèle le montant total. Les fonds restent dans cet état de dépôt bloqué pendant toute la durée de la mission. Une fois la tâche accomplie, le travailleur présente son badge QR à l'employeur. Le scan du badge ou le clic sur 'Marquer comme terminé' libère instantanément le paiement.",
-      "guidelines": "Tous les fonds du dépôt fiduciaire sont soumis à notre politique de vérification stricte. Les employeurs ont jusqu'à 24 heures après la fin des travaux pour inspecter la qualité du service. Si un litige est ouvert, les fonds resteront bloqués jusqu'à ce que notre équipe d'administration examine les preuves et prenne une décision finale."
+      "guidelines": "Tous les fonds du dépôt fiduciaire sont soumis à notre politique de vérification stricte. Les employeurs ont jusqu'à 24 heures après la fin des travaux pour inspecter la qualité du service. Si un litige est ouvert, les fonds resteront bloqués jusqu'à ce que notre équipe d'administration examine les preuves et prenne une décision finale.",
+      "seeker": {
+        "overview": "En tant que travailleur, votre paiement est bloqué en toute sécurité dès qu'un employeur vous réserve — vos gains sont donc garantis avant même que vous ne vous déplaciez. Vous ne courez jamais après un employeur pour être payé.",
+        "process": "Les fonds restent bloqués pendant toute la mission. Une fois terminée, l'employeur scanne votre badge QR ou clique sur 'Marquer comme terminé', et le paiement est versé directement dans votre portefeuille MpahMapu, prêt à être retiré."
+      },
+      "public": {
+        "overview": "Le dépôt fiduciaire protège les deux parties. Lorsqu'un employeur réserve un travailleur, le montant total est bloqué sur un compte séquestre sécurisé : le travailleur sait que l'argent est garanti et l'employeur sait qu'il n'est débloqué que pour un travail accompli.",
+        "process": "Les fonds restent gelés pendant la mission. Une fois le travail confirmé comme terminé — en scannant le badge QR du travailleur ou en cliquant sur 'Marquer comme terminé' — le paiement est immédiatement versé dans le portefeuille du travailleur."
+      }
+    },
+    "payout": {
+      "overview": "Vous pouvez retirer le solde disponible de votre portefeuille MpahMapu vers Mobile Money à tout moment.",
+      "process": "Ouvrez votre Portefeuille, cliquez sur 'Retrait', saisissez le montant et votre numéro MTN MoMo ou Airtel Money, puis confirmez. Les fonds sont envoyés sur votre compte mobile money, généralement en quelques minutes.",
+      "guidelines": "Vérifiez bien le montant et le numéro de téléphone avant de confirmer. Si un retrait n'arrive pas, consultez son statut dans les transactions de votre portefeuille ou contactez le support et nous le suivrons.",
+      "seeker": {
+        "overview": "Vos gains arrivent dans votre portefeuille MpahMapu après chaque mission terminée — vous conservez 75% une fois les frais de service de 25% appliqués. De là, vous pouvez encaisser vers Mobile Money quand vous le souhaitez."
+      },
+      "owner": {
+        "overview": "Tout solde restant dans votre portefeuille employeur — par exemple un remboursement après l'annulation d'une mission ou une recharge non utilisée — peut être retiré vers votre compte Mobile Money."
+      }
     },
     "refund": {
       "overview": "Nous comprenons que les plans peuvent changer, c'est pourquoi MpahMapu propose une procédure de remboursement claire et transparente. Si un travail est annulé selon des conditions valables, le solde bloqué du dépôt est immédiatement recrédité sur le portefeuille de l'employeur. Les remboursements sont traités en temps réel pour assurer la fluidité de votre trésorerie.",
       "process": "Pour demander un remboursement, accédez à votre onglet Paiements, sélectionnez la transaction bloquée (HELD) et cliquez sur 'Demander un remboursement'. Pour les réservations en cours, les annulations effectuées plus de 2 heures avant l'heure de début sont intégralement remboursées. Les annulations effectuées moins de 2 heures avant entraînent des frais de 10% pour dédommager le travailleur.",
-      "guidelines": "Toute demande de remboursement déposée après le début des travaux fait l'objet d'un audit par notre support client. Notre équipe évalue l'historique du chat, les rapports de travail et les signalements. Une fois approuvés, les fonds apparaissent sur votre solde de portefeuille, que vous pouvez retirer via MTN MoMo ou Airtel Money."
+      "guidelines": "Toute demande de remboursement déposée après le début des travaux fait l'objet d'un audit par notre support client. Notre équipe évalue l'historique du chat, les rapports de travail et les signalements. Une fois approuvés, les fonds apparaissent sur votre solde de portefeuille, que vous pouvez retirer via MTN MoMo ou Airtel Money.",
+      "seeker": {
+        "overview": "En tant que travailleur, vous ne demandez pas de remboursement — votre paiement est protégé par le dépôt fiduciaire. Mieux : si un employeur annule tardivement (moins de 2 heures avant le début), vous recevez une indemnité de 10% pour le court préavis.",
+        "process": "Si une réservation est annulée tardivement ou qu'un litige est tranché en votre faveur, toute indemnité est créditée sur votre portefeuille MpahMapu, et vous pouvez la retirer via MTN MoMo ou Airtel Money."
+      },
+      "public": {
+        "overview": "Les remboursements protègent les deux parties. Si une réservation est annulée dans les délais, le dépôt de l'employeur est renvoyé sur son portefeuille ; si elle est annulée à la dernière minute, le travailleur est indemnisé pour le court préavis."
+      }
     },
     "verify": {
       "overview": "La sécurité et la fiabilité sont nos priorités absolues. Chaque chercheur de services et travailleur sur MpahMapu passe par un processus de vérification d'identité rigoureux avant de pouvoir interagir sur la plateforme. Cela permet de bâtir une communauté de confiance de professionnels vérifiés à Kigali.",
       "process": "Lors de l'inscription, les travailleurs téléchargent leur carte nationale d'identité, soumettent des extraits de casier judiciaire et fournissent des références d'anciens employeurs. Notre équipe examine chaque dossier sous 24 heures. Les utilisateurs vérifiés reçoivent un badge de coche verte sur leur profil.",
-      "guidelines": "Nous surveillons en permanence les évaluations. Si un travailleur reçoit des notes inférieures à 3,5 étoiles, sa konti est mise sous surveillance. Les antécédents sont revérifiés deux fois par an. Tout manquement à nos normes communautaires entraîne la suspension immédiate du badge."
+      "guidelines": "Nous surveillons en permanence les évaluations. Si un travailleur reçoit des notes inférieures à 3,5 étoiles, son compte est mis sous surveillance. Les antécédents sont revérifiés deux fois par an. Tout manquement à nos normes communautaires entraîne la suspension immédiate du badge.",
+      "owner": {
+        "overview": "Chaque travailleur sur MpahMapu est vérifié (pièce d'identité) avant de pouvoir être engagé, vous pouvez donc avoir confiance en qui vous invitez. Repérez le badge vérifié sur le profil d'un travailleur.",
+        "process": "Pour confirmer un travailleur précis, scannez le code QR de son badge ou saisissez son identifiant de badge sur la page de vérification. Vous verrez instantanément s'il s'agit d'un travailleur authentique et actif."
+      },
+      "public": {
+        "overview": "La sécurité est notre priorité absolue : chaque travailleur passe une vérification d'identité et un contrôle de références avant de rejoindre la plateforme, et chacun porte un badge vérifié scannable pour que les employeurs sachent exactement qui ils engagent."
+      }
     },
     "fee": {
       "overview": "Pour maintenir notre infrastructure de transaction ultra-rapide et nos systèmes de contrôle de sécurité, MpahMapu applique des frais de service. Ces frais nous permettent de proposer des profils vérifiés, de traiter instantanément les transferts MTN MoMo et de fournir un support client de médiation.",
       "process": "Les travailleurs paient des frais de service de {fee} sur leurs gains bruts. Par exemple, si une mission rapporte 10 000 RWF, 2 500 RWF sont automatiquement déduits lors de la libération du paiement, et 7 500 RWF sont versés dans votre portefeuille. Les employeurs ne paient qu'un frais mineur de 5% lors du dépôt.",
-      "guidelines": "Toutes les déductions de frais de plateforme figurent clairement sur la facture disponible dans votre onglet Mes Gains. Les frais de service ne sont pas remboursables car ils couvrent les coûts de paiement mobile et la gestion des serveurs. Des reçus détaillés vous sont envoyés par e-mail."
+      "guidelines": "Toutes les déductions de frais de plateforme figurent clairement sur la facture disponible dans votre onglet Mes Gains. Les frais de service ne sont pas remboursables car ils couvrent les coûts de paiement mobile et la gestion des serveurs. Des reçus détaillés vous sont envoyés par e-mail.",
+      "owner": {
+        "process": "En tant qu'employeur, vous ne payez que 5% de frais de gestion en plus du montant convenu pour les travailleurs, affichés clairement avant confirmation. Par exemple, pour une mission de 10 000 RWF, vous payez 10 500 RWF au total. Aucun autre frais pour embaucher."
+      },
+      "seeker": {
+        "process": "En tant que travailleur, des frais de service de {fee} sont déduits de vos gains, vous recevez donc 75%. Par exemple, si une mission rapporte 10 000 RWF, 2 500 RWF sont déduits et 7 500 RWF arrivent dans votre portefeuille."
+      }
     },
     "job": {
       "overview": "MpahMapu met en relation des centaines de travailleurs qualifiés avec des entreprises et des ménages locaux à Kigali. Décrocher des missions est simple lorsque votre profil est attractif. Pensez à actualiser vos spécialités, vos tarifs horaires et vos disponibilités pour correspondre aux recherches.",
       "process": "Lorsque les employeurs ont besoin de personnel, ils peuvent publier un emploi dans le catalogue ou parcourir les profils vérifiés. Vous pouvez explorer les offres, vérifier le tarif horaire et postuler. Dès que l'employeur valide votre demande, le travail commence à la date prévue.",
-      "guidelines": "Les travailleurs doivent postuler uniquement aux missions qu'ils sont pleinement qualifiés pour accomplir. Arriver en retard ou ne pas se présenter sans prévenir 24 heures à l'avance nuira à votre note globale et pourra entraîner une suspension. Communiquez toujours via le chat interne."
+      "guidelines": "Les travailleurs doivent postuler uniquement aux missions qu'ils sont pleinement qualifiés pour accomplir. Arriver en retard ou ne pas se présenter sans prévenir 24 heures à l'avance nuira à votre note globale et pourra entraîner une suspension. Communiquez toujours via le chat interne.",
+      "owner": {
+        "overview": "Besoin d'embaucher ? Publier un emploi sur MpahMapu ne prend que quelques clics. Choisissez une catégorie, définissez la date, le lieu, le nombre de travailleurs et le tarif, et les travailleurs vérifiés à proximité sont notifiés immédiatement.",
+        "process": "Cliquez sur 'Publier un emploi', remplissez les détails et financez le dépôt avec votre portefeuille, MTN MoMo, Airtel Money ou carte. Les travailleurs vérifiés à proximité peuvent postuler, ou vous pouvez en inviter un directement avec 'Embaucher maintenant' et examiner les candidatures avant d'accepter."
+      },
+      "public": {
+        "overview": "MpahMapu met en relation les personnes qui ont besoin de main-d'œuvre avec des travailleurs locaux vérifiés partout au Rwanda. Inscrivez-vous comme Travailleur pour être engagé, ou comme Employeur pour publier des offres et embaucher — vous pouvez même publier une première offre en tant qu'invité."
+      }
     },
     "complete": {
       "overview": "Valider la fin d'un travail est l'étape finale du processus MpahMapu. Cette action signale aux systèmes intelligents que le travail convenu a été correctement réalisé et qu'il est temps de débloquer et transférer les fonds correspondants vers le travailleur.",
       "process": "Une fois votre shift terminé, présentez votre badge de code QR travailleur à l'employeur. Il le scannera avec son appareil photo, ou cliquera sur 'Marquer comme terminé' depuis sa dashboard. Le versement est traité instantanément et s'affiche dans vos gains.",
-      "guidelines": "Assurez-vous toujours que l'employeur valide le travail sur place. S'il oublie, envoyez-lui un message poli via le chat. Si l'employeur refuse de valider la fin des travaux alors que le service a été rendu, contactez le support BazaBot pour soumettre vos preuves."
+      "guidelines": "Assurez-vous toujours que l'employeur valide le travail sur place. S'il oublie, envoyez-lui un message poli via le chat. Si l'employeur refuse de valider la fin des travaux alors que le service a été rendu, contactez le support BazaBot pour soumettre vos preuves.",
+      "owner": {
+        "overview": "Marquer un travail comme terminé, c'est ainsi que vous débloquez le paiement vers le travailleur. C'est l'étape finale, effectuée une fois que vous êtes satisfait du travail convenu.",
+        "process": "Après que le travailleur a validé la fin avec son badge QR, ouvrez le projet sur votre tableau de bord et cliquez sur 'Marquer comme terminé' — ou scannez son badge. Le paiement est versé immédiatement au travailleur, et vous pouvez ensuite laisser une évaluation."
+      }
     },
     "dispute": {
       "overview": "Bien que nous fassions tout pour offrir d'excellentes expériences, des désaccords peuvent parfois survenir. MpahMapu dispose d'un service de médiation dédié pour traiter les conflits liés à la qualité du travail, aux heures effectuées ou au blocage des paiements.",

@@ -241,7 +241,7 @@ export function BazaBotChat({ role = "public", onClose, style }: {
       // 1) Small talk answers immediately, in the visitor's own language.
       const CONVERSATIONAL: Topic[] = ["greetings", "feeling", "quotes", "business"];
       if (CONVERSATIONAL.includes(topic)) {
-        setMessages(prev => [...prev, { sender: "bot", text: respond(topic, lang, userName) }]);
+        setMessages(prev => [...prev, { sender: "bot", text: respond(topic, lang, userName, role) }]);
         return;
       }
       // 2) Precise, role-aware knowledge base — so a specific question gets a
@@ -252,13 +252,13 @@ export function BazaBotChat({ role = "public", onClose, style }: {
         setMessages(prev => [...prev, { sender: "bot", text: kb }]);
         return;
       }
-      // 3) Coarse multilingual intent as a fallback (mainly for non-English visitors).
+      // 3) Coarse role-aware multilingual intent as a fallback (mainly for non-English visitors).
       if (topic !== "fallback") {
-        setMessages(prev => [...prev, { sender: "bot", text: respond(topic, lang, userName) }]);
+        setMessages(prev => [...prev, { sender: "bot", text: respond(topic, lang, userName, role) }]);
         return;
       }
       // 4) Nothing matched — hand off to a live agent and go silent.
-      setMessages(prev => [...prev, { sender: "bot", text: respond("fallback", lang, userName) }]);
+      setMessages(prev => [...prev, { sender: "bot", text: respond("fallback", lang, userName, role) }]);
       forwardToAgent(msg);          // server marks the conversation ESCALATED
       setEscalated(true);           // optimistic: silence the bot immediately
       wasEscalated.current = true;

@@ -1872,32 +1872,82 @@
     "escrow": {
       "overview": "Here at MpahMapu, we operate a fully automated secure escrow framework. For every gig booked, the funds are instantly reserved from the employer's wallet balance. This guarantees to the gig worker that their time and effort are financially secured before they even travel to the job site. The rate is calculated as rate times hours times number of workers plus a 5% escrow handling charge.",
       "process": "Once you click 'Book Now', the system processes the request at {time} and freezes the total value. The funds remain in a pending escrow state during the entire shift. After the worker completes the task, they present their QR badge to the employer. Scanning the badge or clicking 'Mark Complete' triggers the instant payout release.",
-      "guidelines": "All escrow funds are subject to our strict verification policy. Employers have up to 24 hours after completion to inspect the quality of work. If a dispute is raised, the funds will remain frozen until our admin support team verifies the case evidence and makes a final decision."
+      "guidelines": "All escrow funds are subject to our strict verification policy. Employers have up to 24 hours after completion to inspect the quality of work. If a dispute is raised, the funds will remain frozen until our admin support team verifies the case evidence and makes a final decision.",
+      "seeker": {
+        "overview": "As a worker, your pay is locked safely in escrow the moment an employer books you — so your earnings are guaranteed before you even travel to the job. You never chase an employer for money.",
+        "process": "The funds stay held for the whole shift. When you finish, the employer scans your QR badge or taps 'Mark Complete', and the payment is released straight to your MpahMapu wallet, ready to withdraw."
+      },
+      "public": {
+        "overview": "Escrow protects both sides. When an employer books a worker, the full amount is locked in a secure holding account so the worker knows the money is guaranteed and the employer knows it's only released for completed work.",
+        "process": "The funds stay frozen during the job. Once the work is confirmed complete — by scanning the worker's QR badge or tapping 'Mark Complete' — the payment is released to the worker's wallet instantly."
+      }
+    },
+    "payout": {
+      "overview": "You can withdraw your available MpahMapu wallet balance to Mobile Money at any time.",
+      "process": "Open your Wallet, tap 'Withdraw', enter the amount and your MTN MoMo or Airtel Money number, then confirm. The funds are sent to your mobile money account, usually within minutes.",
+      "guidelines": "Double-check the amount and the phone number before confirming. If a withdrawal doesn't arrive, check its status in your wallet transactions or contact support and we'll trace it.",
+      "seeker": {
+        "overview": "Your earnings land in your MpahMapu wallet after each completed job — you keep 75% once the 25% platform fee is applied. From there you can cash out to Mobile Money whenever you like."
+      },
+      "owner": {
+        "overview": "Any spare balance in your employer wallet — for example a refund from a cancelled job or a top-up you didn't use — can be withdrawn back to your Mobile Money account."
+      }
     },
     "refund": {
       "overview": "We understand that plans can change, which is why MpahMapu provides a transparent refund procedure. If a job is canceled under valid terms, the frozen escrow balance is immediately credited back to the employer's wallet. Refunds are handled in real-time, ensuring your cash flow remains fluid.",
       "process": "To request a refund, navigate to your Payments tab, select the HELD transaction, and click 'Request Refund'. For open bookings, cancellations made more than 2 hours before the start time are fully refunded. Cancellations within the 2-hour window incur a small 10% worker compensation fee.",
-      "guidelines": "Any refund requests filed after the work has commenced are audited by support. Our team evaluates the chat timeline, work logs, and user reports. Once approved, the funds show up in your wallet balance, which you can withdraw via MTN MoMo or Airtel Money."
+      "guidelines": "Any refund requests filed after the work has commenced are audited by support. Our team evaluates the chat timeline, work logs, and user reports. Once approved, the funds show up in your wallet balance, which you can withdraw via MTN MoMo or Airtel Money.",
+      "seeker": {
+        "overview": "As a worker you don't request refunds — your pay is protected in escrow. In fact, if an employer cancels late (within 2 hours of the start), you receive a 10% compensation fee for the short notice.",
+        "process": "If a booking is cancelled late or a dispute is decided in your favour, any compensation is credited to your MpahMapu wallet, and you can withdraw it via MTN MoMo or Airtel Money."
+      },
+      "public": {
+        "overview": "Refunds protect both sides. If a booking is cancelled within policy, the employer's escrow is returned to their wallet; if it's cancelled at the last minute, the worker is compensated for the short notice."
+      }
     },
     "verify": {
       "overview": "Safety and reliability are our highest priorities. Every service seeker and worker on MpahMapu undergoes a rigorous identity verification process before they can interact on the platform. This builds a high-trust community of verified professionals in Kigali.",
       "process": "During registration, workers upload their National ID card, submit police clearance reports, and provide references from past employers. Our admin team reviews each application within 24 hours. Verified users receive a checkmark badge on their profile.",
-      "guidelines": "We continuously monitor user ratings. If a worker receives reviews below 3.5 stars, their account is put under review. Background checks are re-audited biannually. Any violation of our community standards results in immediate badge suspension."
+      "guidelines": "We continuously monitor user ratings. If a worker receives reviews below 3.5 stars, their account is put under review. Background checks are re-audited biannually. Any violation of our community standards results in immediate badge suspension.",
+      "owner": {
+        "overview": "Every worker on MpahMapu is ID-verified before they can be hired, so you can trust who you invite. Look for the verified badge on a worker's profile.",
+        "process": "To confirm a specific worker, scan the QR code on their badge or enter their badge ID on the verify page. You'll instantly see whether they're a genuine, active worker."
+      },
+      "public": {
+        "overview": "Safety is our top priority: every worker passes ID verification and reference checks before joining, and each one carries a scannable verified badge so employers know exactly who they're hiring."
+      }
     },
     "fee": {
       "overview": "To sustain our high-speed transaction infrastructure and safety check systems, MpahMapu charges a service fee. This fee allows us to provide verified profiles, process MTN MoMo transactions instantly, and offer live support mediation.",
       "process": "Workers are charged a {fee} service fee on their gross earnings. For example, if a job pays RWF 10,000, RWF 2,500 is automatically deducted at payout time, and RWF 7,500 is sent to your wallet. Employers only pay a minor 5% escrow transaction fee at booking.",
-      "guidelines": "All platform fee deductions are displayed clearly on the invoice under your My Earnings tab. The service fee is non-refundable as it covers payment processor costs and system overhead. Detailed fee receipts are emailed for accounting."
+      "guidelines": "All platform fee deductions are displayed clearly on the invoice under your My Earnings tab. The service fee is non-refundable as it covers payment processor costs and system overhead. Detailed fee receipts are emailed for accounting.",
+      "owner": {
+        "process": "As an employer you pay only a 5% escrow handling fee on top of the workers' agreed amount, shown clearly before you confirm. For example, on a 10,000 RWF job you pay 10,500 RWF total. There are no other charges to hire."
+      },
+      "seeker": {
+        "process": "As a worker, a {fee} service fee is deducted from your earnings, so you receive 75%. For example, if a job pays 10,000 RWF, 2,500 RWF is deducted and 7,500 RWF reaches your wallet."
+      }
     },
     "job": {
       "overview": "MpahMapu connects hundreds of skilled gig workers with local businesses and households in Kigali. Getting jobs is simple when your profile stands out. Keep your specialties, hourly rates, and working hours updated to match employer requests.",
       "process": "When employers need workers, they can post a job in the marketplace or browse verified profiles. You can search the marketplace, view hourly rates, and apply. Once an employer accepts your application, the job starts on the selected date.",
-      "guidelines": "Workers should only apply to jobs they are fully qualified to perform. Arriving late or failing to show up without 24 hours notice will negatively impact your rating and may lead to temporary account suspension. Always communicate via chat."
+      "guidelines": "Workers should only apply to jobs they are fully qualified to perform. Arriving late or failing to show up without 24 hours notice will negatively impact your rating and may lead to temporary account suspension. Always communicate via chat.",
+      "owner": {
+        "overview": "Need to hire? Posting a job on MpahMapu takes just a few taps. Pick a category, set the date, location, number of workers and the rate, and verified workers nearby are notified right away.",
+        "process": "Tap 'Post a Job', fill in the details, and fund the escrow with your wallet, MTN MoMo, Airtel Money or card. Nearby verified workers can apply, or you can invite one directly with 'Hire Now' and review applicants before accepting."
+      },
+      "public": {
+        "overview": "MpahMapu connects people who need work done with verified local workers across Rwanda. Sign up as a Worker to get hired for gigs, or as an Employer to post jobs and hire — you can even post a first job as a guest."
+      }
     },
     "complete": {
       "overview": "Marking a job complete is the final step in the MpahMapu workflow. This action tells the smart contract systems that the agreed work has been finished successfully and it is time to release the funds to the worker.",
       "process": "Upon finishing your shift, present your worker QR code badge to the employer. They will scan it using their phone camera, or they can click 'Mark Complete' on their dashboard. Payout is processed instantly and reflects in your earnings.",
-      "guidelines": "Always ensure the employer completes the job on-site. If they forget, send a polite message via chat. If the employer refuses to mark completion despite work being done, do not worry; contact BazaBot support to submit work proof."
+      "guidelines": "Always ensure the employer completes the job on-site. If they forget, send a polite message via chat. If the employer refuses to mark completion despite work being done, do not worry; contact BazaBot support to submit work proof.",
+      "owner": {
+        "overview": "Marking a job complete is how you release the escrowed payment to the worker. It's the final step, done once you're satisfied the agreed work is finished.",
+        "process": "After the worker verifies completion with their QR badge, open the job on your dashboard and tap 'Mark Complete' — or scan their badge. The payment is released to the worker instantly, and you can then leave a rating."
+      }
     },
     "dispute": {
       "overview": "While we strive for perfect gig experiences, disagreements can sometimes happen. MpahMapu has a dedicated dispute mediation department to handle conflicts regarding quality of work, hours completed, or payment releases.",

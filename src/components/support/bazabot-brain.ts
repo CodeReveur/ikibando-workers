@@ -15,14 +15,17 @@ export type Lang = "en" | "fr" | "sw" | "kinyy";
 const LOCALES: Record<Lang, any> = { en, fr, sw, kinyy };
 const LANGS: Lang[] = ["en", "fr", "sw", "kinyy"];
 
+/** Who is asking. owner = employer, seeker = worker, public = guest/unknown. */
+export type Role = "owner" | "seeker" | "public";
+
 export type Topic =
   | "greetings" | "feeling" | "quotes" | "business"
-  | "escrow" | "fee" | "refund" | "verify" | "job" | "complete" | "dispute"
+  | "escrow" | "fee" | "refund" | "payout" | "verify" | "job" | "complete" | "dispute"
   | "fallback";
 
 /** Answer priority when several topics match — substantive topics beat small talk. */
 const TOPIC_PRIORITY: Topic[] = [
-  "escrow", "fee", "refund", "verify", "complete", "dispute", "job",
+  "escrow", "payout", "fee", "refund", "verify", "complete", "dispute", "job",
   "business", "quotes", "feeling", "greetings",
 ];
 
@@ -53,10 +56,16 @@ const KEYWORDS: Record<Exclude<Topic, "fallback">, Record<Lang, string[]>> = {
     kinyy: ["ubucuruzi", "isosiyete", "umukoresha", "isoko", "ishoramari", "inyungu"],
   },
   escrow: {
-    en: ["escrow", "deposit", "payment", "pay ", "paid", "paying", "money", "wallet", "balance", "transfer", "withdraw", "cash out"],
-    fr: ["dépôt", "depot", "paiement", "payer", "argent", "portefeuille", "solde", "virement", "retrait"],
-    sw: ["malipo", "amana", "pesa", "fedha", "mkoba", "salio", "lipa", "hela", "toa pesa"],
-    kinyy: ["ubwishyu", "amafaranga", "kwishyura", "kwishyurwa", "konti", "kohereza", "faranga", "kubikuza"],
+    en: ["escrow", "deposit", "payment", "pay ", "paid", "paying", "money", "wallet", "balance", "transfer"],
+    fr: ["dépôt", "depot", "paiement", "payer", "argent", "portefeuille", "solde", "virement"],
+    sw: ["malipo", "amana", "pesa", "fedha", "mkoba", "salio", "lipa", "hela"],
+    kinyy: ["ubwishyu", "amafaranga", "kwishyura", "kwishyurwa", "konti", "kohereza", "faranga"],
+  },
+  payout: {
+    en: ["withdraw", "withdrawal", "cash out", "cashout", "payout", "pay out", "money to momo"],
+    fr: ["retrait", "retirer", "retirez", "encaisser"],
+    sw: ["toa pesa", "kutoa pesa", "ondoa pesa", "chukua pesa"],
+    kinyy: ["kubikuza", "bikuza", "gukura amafaranga", "kwaka amafaranga"],
   },
   fee: {
     en: ["fee", "commission", "percent", "percentage", "deduction", "charge", "cut ", "rate"],
@@ -148,8 +157,8 @@ export function analyze(raw: string, fallbackLang: Lang): { topic: Topic; lang: 
   return { topic, lang };
 }
 
-/** Look up a bazabot string in a specific language, falling back to English. */
-function tr(lang: Lang, key: string, vars?: Record<string, string | number>): string {
+/** Look up a bazabot string in a specific language, falling back to English. Returns null if absent. */
+function trOrNull(lang: Lang, key: string, vars?: Record<string, string | number>): string | null {
   const read = (L: Lang) => {
     let cur: any = LOCALES[L]?.bazabot;
     for (const p of key.split(".")) {
@@ -158,13 +167,31 @@ function tr(lang: Lang, key: string, vars?: Record<string, string | number>): st
     return typeof cur === "string" ? cur : null;
   };
   let text = read(lang) ?? read("en");
-  if (text == null) return "";
+  if (text == null) return null;
   if (vars) for (const [k, v] of Object.entries(vars)) text = text!.replace(new RegExp(`{${k}}`, "g"), String(v));
   return text;
 }
 
-/** Build the reply for a topic in the chosen language. */
-export function respond(topic: Topic, lang: Lang, userName: string): string {
+function tr(lang: Lang, key: string, vars?: Record<string, string | number>): string {
+  return trOrNull(lang, key, vars) ?? "";
+}
+
+/** First of several candidate keys that resolves — used for role → shared fallback. */
+function pick(lang: Lang, keys: string[], vars?: Record<string, string | number>): string {
+  for (const k of keys) {
+    const v = trOrNull(lang, k, vars);
+    if (v != null) return v;
+  }
+  return "";
+}
+
+/**
+ * Build the reply for a topic in the chosen language, tailored to the asker's
+ * role. Each part resolves the role-specific text (`<topic>.<role>.<part>`) and
+ * falls back to the shared text (`<topic>.<part>`), so every role — including a
+ * guest — always gets a complete answer in the visitor's language.
+ */
+export function respond(topic: Topic, lang: Lang, userName: string, role: Role = "public"): string {
   if (topic === "greetings" || topic === "feeling" || topic === "quotes" || topic === "business") {
     return tr(lang, topic);
   }
@@ -174,7 +201,8 @@ export function respond(topic: Topic, lang: Lang, userName: string): string {
   }
   const starter = tr(lang, `starter${1 + Math.floor(Math.random() * 5)}`);
   const vars = { name: userName, time: new Date().toLocaleTimeString(), fee: topic === "fee" ? "25%" : "5%" };
-  const body = [tr(lang, `${topic}.overview`, vars), tr(lang, `${topic}.process`, vars), tr(lang, `${topic}.guidelines`, vars)]
+  const body = ["overview", "process", "guidelines"]
+    .map(p => pick(lang, [`${topic}.${role}.${p}`, `${topic}.${p}`], vars))
     .filter(Boolean).join("\n\n");
   return [starter, body].filter(Boolean).join("\n\n").trim();
 }

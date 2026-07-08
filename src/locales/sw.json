@@ -1867,32 +1867,82 @@
     "escrow": {
       "overview": "Hapa MpahMapu, tunaendesha mfumo salama na wa kiotomatiki wa escrow. Kwa kila kazi inayowekwa nafasi, fedha huhifadhiwa papo hapo kutoka kwenye akaunti ya mkoba ya mwajiri. Hii inamhakikishia mfanyakazi kuwa muda na juhudi zake zinalindwa kifedha hata kabla hajaanza safari ya kwenda eneo la kazi. Kiwango kinapigiwa hesabu kama kiwango cha saa × saa za kazi × idadi ya wafanyakazi pamoja na 5% ya ada ya usimamizi.",
       "process": "Mara tu unapobofya 'Weka Sasa', mfumo unashughulikia ombi hilo saa {time} na kuzuia thamani yote. Fedha hizo hubaki katika hali ya escrow inayosubiri katika zamu nzima. Baada ya mfanyakazi kukamilisha jukumu, anamwonyesha mwajiri beji yake ya QR. Kusoma beji hiyo au kubofya 'Weka alama ya Kukamilika' kunaanzisha uhamisho wa malipo ya papo hapo.",
-      "guidelines": "Fedha zote za escrow ziko chini ya sera yetu thabiti ya uhakiki. Waajiri wana hadi saa 24 baada ya kukamilika ili kukagua ubora wa kazi iliyofanyika. Ikiwa mzozo utawasilishwa, fedha hizo zitabaki zimezuiliwa hadi timu yetu ya usaidizi wa kiutawala itakapokagua ushahidi na kutoa uamuzi wa mwisho."
+      "guidelines": "Fedha zote za escrow ziko chini ya sera yetu thabiti ya uhakiki. Waajiri wana hadi saa 24 baada ya kukamilika ili kukagua ubora wa kazi iliyofanyika. Ikiwa mzozo utawasilishwa, fedha hizo zitabaki zimezuiliwa hadi timu yetu ya usaidizi wa kiutawala itakapokagua ushahidi na kutoa uamuzi wa mwisho.",
+      "seeker": {
+        "overview": "Kama mfanyakazi, malipo yako yanazuiliwa salama kwenye escrow mara tu mwajiri anapokuweka nafasi — hivyo mapato yako yanahakikishwa hata kabla hujaanza safari ya kwenda kazini. Huhitaji kamwe kumfukuza mwajiri kwa ajili ya pesa zako.",
+        "process": "Fedha hubaki zimezuiliwa kwa zamu nzima. Unapomaliza, mwajiri anachanganua beji yako ya QR au anabofya 'Weka alama ya Kukamilika', na malipo yanatumwa moja kwa moja kwenye mkoba wako wa MpahMapu, tayari kutolewa."
+      },
+      "public": {
+        "overview": "Escrow inalinda pande zote mbili. Mwajiri anapomweka nafasi mfanyakazi, kiasi chote kinazuiliwa kwenye akaunti salama ya kuhifadhi: mfanyakazi anajua pesa zimehakikishwa na mwajiri anajua zinatolewa tu kwa kazi iliyokamilika.",
+        "process": "Fedha hubaki zimegandishwa wakati wa kazi. Mara kazi inapothibitishwa kuwa imekamilika — kwa kuchanganua beji ya QR ya mfanyakazi au kubofya 'Weka alama ya Kukamilika' — malipo yanatumwa papo hapo kwenye mkoba wa mfanyakazi."
+      }
+    },
+    "payout": {
+      "overview": "Unaweza kutoa salio linalopatikana kwenye mkoba wako wa MpahMapu kwenda Mobile Money wakati wowote.",
+      "process": "Fungua Mkoba wako, bofya 'Toa', weka kiasi na nambari yako ya MTN MoMo au Airtel Money, kisha thibitisha. Fedha zinatumwa kwenye akaunti yako ya mobile money, kwa kawaida ndani ya dakika chache.",
+      "guidelines": "Hakiki mara mbili kiasi na nambari ya simu kabla ya kuthibitisha. Ikiwa utoaji hautafika, angalia hali yake kwenye miamala ya mkoba wako au wasiliana na usaidizi na tutaufuatilia.",
+      "seeker": {
+        "overview": "Mapato yako yanaingia kwenye mkoba wako wa MpahMapu baada ya kila kazi iliyokamilika — unabaki na 75% baada ya ada ya jukwaa ya 25% kukatwa. Kutoka hapo unaweza kutoa kwenda Mobile Money wakati wowote."
+      },
+      "owner": {
+        "overview": "Salio lolote lililobaki kwenye mkoba wako wa mwajiri — kwa mfano urejeshaji kutoka kazi iliyoghairiwa au ongezeko usilotumia — linaweza kutolewa kurudi kwenye akaunti yako ya Mobile Money."
+      }
     },
     "refund": {
       "overview": "Tunaelewa kuwa mipango inaweza kubadilika, ndiyo maana MpahMapu inatoa utaratibu wazi wa urejeshaji wa malipo. Ikiwa kazi itafutwa chini ya masharti halali, salio la escrow lililozuiliwa linarejeshwa mara moja kwenye mkoba wa mwajiri. Urejeshaji huu unashughulikiwa katika muda halisi ili kuhakikisha mtiririko wako wa pesa unabaki thabiti.",
       "process": "Ili kuomba urejeshaji wa pesa, nenda kwenye tab ya Malipo yako, chagua muamala uliozuiliwa (HELD), na ubofye 'Omba Urejeshaji'. Kwa kazi zilizoorodheshwa, kughairi kufanywa zaidi ya saa 2 kabla ya kuanza kunarejesha pesa kikamilifu. Kughairi ndani ya saa 2 kunatoza ada ya 10% kama fidia kwa mfanyakazi.",
-      "guidelines": "Maombi yote ya urejeshaji yaliyowasilishwa baada ya kazi kuanza yanakaguliwa na usaidizi wetu. Timu yetu inatathmini historia ya gumzo, magogo ya kazi na ripoti za watumiaji. Yakishaidhinishwa, fedha hizo zinaonekana kwenye salio la mkoba wako, ambalo unaweza kutoa kupitia MTN MoMo au Airtel Money."
+      "guidelines": "Maombi yote ya urejeshaji yaliyowasilishwa baada ya kazi kuanza yanakaguliwa na usaidizi wetu. Timu yetu inatathmini historia ya gumzo, magogo ya kazi na ripoti za watumiaji. Yakishaidhinishwa, fedha hizo zinaonekana kwenye salio la mkoba wako, ambalo unaweza kutoa kupitia MTN MoMo au Airtel Money.",
+      "seeker": {
+        "overview": "Kama mfanyakazi hauombi urejeshaji wa pesa — malipo yako yanalindwa kwenye escrow. Zaidi ya hayo, ikiwa mwajiri anaghairi kwa kuchelewa (ndani ya saa 2 kabla ya kuanza), unapokea ada ya fidia ya 10% kwa taarifa ya muda mfupi.",
+        "process": "Ikiwa kazi imeghairiwa kwa kuchelewa au mzozo umeamuliwa kwa upande wako, fidia yoyote inawekwa kwenye mkoba wako wa MpahMapu, na unaweza kuitoa kupitia MTN MoMo au Airtel Money."
+      },
+      "public": {
+        "overview": "Urejeshaji unalinda pande zote mbili. Ikiwa kazi imeghairiwa ndani ya masharti, escrow ya mwajiri inarejeshwa kwenye mkoba wake; ikighairiwa dakika ya mwisho, mfanyakazi analipwa fidia kwa taarifa ya muda mfupi."
+      }
     },
     "verify": {
       "overview": "Usalama na uaminifu ni vipaumbele vyetu vikuu. Kila mtafuta huduma na mfanyakazi kwenye MpahMapu anapitia utaratibu mgumu wa uhakiki wa utambulisho kabla hawajaingiliana kwenye jukwaa hili. Hii inajenga jamii yenye uaminifu mkubwa ya wataalamu waliothibitishwa Kigali.",
       "process": "Wakati wa usajili, wafanyakazi wanapakia Vitambulisho vyao vya Kitaifa, kuwasilisha ripoti za tabia njema kutoka polisi, na kutoa marejeleo kutoka kwa waajiri wao vya zamani. Timu yetu inahakiki maombi yote ndani ya saa 24. Watumiaji waliothibitishwa wanapata beji ya kijani kwenye wasifu wao.",
-      "guidelines": "Tunafuatilia mara kwa mara ukadiriaji wa watumiaji wetu. Mfanyakazi akipata wastani wa chini ya nyota 3.5, wasifu wake huwekwa chini ya uangalizi maalum. Ukaguzi wa usalama hufanywa kila baada ya miezi sita. Ukiukaji wowote wa maadili ya jamii yetu unasababisha kusimamishwa mara moja kwa beji yao."
+      "guidelines": "Tunafuatilia mara kwa mara ukadiriaji wa watumiaji wetu. Mfanyakazi akipata wastani wa chini ya nyota 3.5, wasifu wake huwekwa chini ya uangalizi maalum. Ukaguzi wa usalama hufanywa kila baada ya miezi sita. Ukiukaji wowote wa maadili ya jamii yetu unasababisha kusimamishwa mara moja kwa beji yao.",
+      "owner": {
+        "overview": "Kila mfanyakazi kwenye MpahMapu amethibitishwa utambulisho kabla ya kuweza kuajiriwa, hivyo unaweza kuamini unayemwalika. Tafuta beji iliyothibitishwa kwenye wasifu wa mfanyakazi.",
+        "process": "Ili kuthibitisha mfanyakazi maalum, changanua nambari ya QR kwenye beji yake au weka kitambulisho cha beji kwenye ukurasa wa uhakiki. Utaona papo hapo kama ni mfanyakazi halisi na anayefanya kazi."
+      },
+      "public": {
+        "overview": "Usalama ni kipaumbele chetu cha juu: kila mfanyakazi anapitia uhakiki wa utambulisho na ukaguzi wa marejeleo kabla ya kujiunga, na kila mmoja ana beji iliyothibitishwa inayoweza kuchanganuliwa ili waajiri wajue hasa wanayemwajiri."
+      }
     },
     "fee": {
       "overview": "Ili kudumisha miundombinu yetu ya miamala ya kasi ya juu na mifumo ya ukaguzi wa usalama, MpahMapu inatoza ada ya huduma. Ada hii inatuwezesha kutoa wasifu uliothibitishwa, kushughulikia miamala ya MTN MoMo papo hapo, na kutoa usaidizi wa usuluhishi wa migogoro.",
       "process": "Wafanyakazi wanatozwa ada ya huduma ya {fee} kwenye mapato yao ghafi. Kwa mfano, ikiwa kazi inalipa RWF 10,000, RWF 2,500 inakatwa kiotomatiki wakati wa malipo, na RWF 7,500 inatumwa kwenye mkoba wako. Waajiri wanalipa ada ndogo ya 5% ya muamala wa escrow wanapoweka nafasi ya kazi.",
-      "guidelines": "Makato yote ya ada ya jukwaa yanaonyeshwa wazi kwenye ankara chini ya tab ya Mapato Yangu. Ada hii hairejeshwi kwa kuwa inagharamia wasindikaji wa malipo na usimamizi vya mfumo wetu. Risiti za kina za ada hiyo zinatumwa kwa barua pepe kwa ajili ya kumbukumbu."
+      "guidelines": "Makato yote ya ada ya jukwaa yanaonyeshwa wazi kwenye ankara chini ya tab ya Mapato Yangu. Ada hii hairejeshwi kwa kuwa inagharamia wasindikaji wa malipo na usimamizi vya mfumo wetu. Risiti za kina za ada hiyo zinatumwa kwa barua pepe kwa ajili ya kumbukumbu.",
+      "owner": {
+        "process": "Kama mwajiri unalipa tu ada ya usimamizi ya 5% juu ya kiasi kilichokubaliwa cha wafanyakazi, kinachoonyeshwa wazi kabla ya kuthibitisha. Kwa mfano, kwa kazi ya RWF 10,000 unalipa jumla ya RWF 10,500. Hakuna gharama nyingine za kuajiri."
+      },
+      "seeker": {
+        "process": "Kama mfanyakazi, ada ya huduma ya {fee} inakatwa kwenye mapato yako, hivyo unapokea 75%. Kwa mfano, ikiwa kazi inalipa RWF 10,000, RWF 2,500 inakatwa na RWF 7,500 inafika kwenye mkoba wako."
+      }
     },
     "job": {
       "overview": "MpahMapu inaunganisha mamia ya wafanyakazi wa vibarua wenye ujuzi na biashara za mitaani na kaya huko Kigali. Kupata kazi ni rahisi wasifu wako unapojipambanua vyema. Weka ujuzi wako, viwango vya malipo kwa saa, na masaa ya kufanya kazi yakiwa yamesasishwa ili kulingana na mahitaji ya waajiri.",
       "process": "Waajiri wanapohitaji wafanyakazi, wanaweza kuchapisha kazi kwenye soko au kuvinjari wasifu uliothibitishwa. Unaweza kutafuta sokoni, kuona viwango vya malipo, na kuomba kazi. Mara tu mwajiri anapokubali maombi yako, kazi inaanza kwenye tarehe iliyochaguliwa.",
-      "guidelines": "Wafanyakazi wanapaswa kuomba kazi ambazo wana sifa nazo kikamilifu. Kuchelewa kufika au kukosa kufika bila kutoa taarifa ya saa 24 kabla kutaathiri vibaya ukadiriaji wako na kunaweza kusababisha kusimamishwa kwa akaunti yako. Daima wasiliana kupitia gumzo."
+      "guidelines": "Wafanyakazi wanapaswa kuomba kazi ambazo wana sifa nazo kikamilifu. Kuchelewa kufika au kukosa kufika bila kutoa taarifa ya saa 24 kabla kutaathiri vibaya ukadiriaji wako na kunaweza kusababisha kusimamishwa kwa akaunti yako. Daima wasiliana kupitia gumzo.",
+      "owner": {
+        "overview": "Unahitaji kuajiri? Kuchapisha kazi kwenye MpahMapu kunachukua mibofyo michache tu. Chagua kategoria, weka tarehe, eneo, idadi ya wafanyakazi na kiwango, na wafanyakazi waliothibitishwa walio karibu wanaarifiwa mara moja.",
+        "process": "Bofya 'Chapisha Kazi', jaza maelezo, na ulipe escrow kwa mkoba wako, MTN MoMo, Airtel Money au kadi. Wafanyakazi waliothibitishwa walio karibu wanaweza kuomba, au unaweza kumwalika mmoja moja kwa moja kwa 'Ajiri Sasa' na kukagua waombaji kabla ya kukubali."
+      },
+      "public": {
+        "overview": "MpahMapu inaunganisha watu wanaohitaji kazi ifanyike na wafanyakazi wa ndani waliothibitishwa kote Rwanda. Jisajili kama Mfanyakazi ili kuajiriwa, au kama Mwajiri ili kuchapisha kazi na kuajiri — unaweza hata kuchapisha kazi ya kwanza kama mgeni."
+      }
     },
     "complete": {
       "overview": "Kuweka alama ya kazi imekamilika ni hatua ya mwisho katika mchakato wa kazi wa MpahMapu. Hatua hii inaambia mifumo yetu kwamba kazi iliyokubaliwa imekamilishwa kwa mafanikio na ni wakati wa kutoa malipo kwa mfanyakazi husika.",
       "process": "Baada ya kumaliza zamu yako, mwonyeshe mwajiri beji yako yenye nambari ya QR. Ataichanganua kwa kamera ya simu yake, au anaweza kubofya 'Weka alama ya Kukamilika' kwenye dashibodi yake. Malipo yanatumwa papo hapo na yanaonekana kwenye mapato yako.",
-      "guidelines": "Daima hakikisha kuwa mwajiri anakamilisha kazi ukiwa bado hapo eneo la kazi. Akisahau, mtumie ujumbe wa adabu kupitia gumzo. Ikiwa mwajiri akijitenga na kuweka alama ya kukamilika licha ya kazi kufanyika, wasiliana na usaidizi wa BazaBot ili kuwasilisha ushahidi."
+      "guidelines": "Daima hakikisha kuwa mwajiri anakamilisha kazi ukiwa bado hapo eneo la kazi. Akisahau, mtumie ujumbe wa adabu kupitia gumzo. Ikiwa mwajiri akijitenga na kuweka alama ya kukamilika licha ya kazi kufanyika, wasiliana na usaidizi wa BazaBot ili kuwasilisha ushahidi.",
+      "owner": {
+        "overview": "Kuweka alama ya kazi imekamilika ndiyo jinsi unavyotoa malipo yaliyozuiliwa kwa mfanyakazi. Ni hatua ya mwisho, inayofanywa mara tu unaporidhika kwamba kazi iliyokubaliwa imemalizika.",
+        "process": "Baada ya mfanyakazi kuthibitisha kukamilika kwa beji yake ya QR, fungua kazi kwenye dashibodi yako na ubofye 'Weka alama ya Kukamilika' — au changanua beji yake. Malipo yanatumwa papo hapo kwa mfanyakazi, na kisha unaweza kutoa ukadiriaji."
+      }
     },
     "dispute": {
       "overview": "Ingawa tunajitahidi kutoa uzoefu bora wa kazi, kutokuelewana kunaweza kutokea wakati mwingine. MpahMapu ina idara maalum ya usuluhishi wa migogoro ili kushughulikia migogoro kuhusu ubora wa kazi, masaa yaliyokamilishwa, au makato ya malipo.",
