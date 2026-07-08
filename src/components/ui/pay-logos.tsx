@@ -19,13 +19,20 @@ export function MastercardMark({ size = 22 }: { size?: number }) {
 
 export type PayMethodValue = "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD";
 
-// Each method is its own tile with its real logo — the old combined "Visa / Mastercard"
-// radio is split into separate Visa and Mastercard tiles.
-const METHODS: { value: PayMethodValue; label: string; logo: React.ReactNode }[] = [
-  { value: "MTN_MOMO",     label: "MTN MoMo",   logo: <img src="/mtn.png"    alt="MTN Mobile Money" style={{ height: 20, width: "auto", objectFit: "contain" }} /> },
-  { value: "AIRTEL_MONEY", label: "Airtel",     logo: <img src="/airtel.png" alt="Airtel Money"     style={{ height: 20, width: "auto", objectFit: "contain", borderRadius: 3 }} /> },
-  { value: "VISA",         label: "Visa",       logo: <img src="/visa.png"   alt="Visa"             style={{ height: 13, width: "auto", objectFit: "contain" }} /> },
-  { value: "MASTERCARD",   label: "Mastercard", logo: <MastercardMark size={22} /> },
+// One tile per method. Visa & Mastercard share a single card tile (same gateway flow) — selecting
+// it maps to VISA, and it stays highlighted for either card value.
+const METHODS: { value: PayMethodValue; label: string; logo: React.ReactNode; match?: PayMethodValue[] }[] = [
+  { value: "MTN_MOMO",     label: "MTN Mobile Money", logo: <img src="/mtn.png"    alt="MTN Mobile Money" style={{ height: 26, width: "auto", objectFit: "contain" }} /> },
+  { value: "AIRTEL_MONEY", label: "Airtel Money",     logo: <img src="/airtel.png" alt="Airtel Money"     style={{ height: 26, width: "auto", objectFit: "contain", borderRadius: 4 }} /> },
+  {
+    value: "VISA", label: "Visa / Mastercard", match: ["VISA", "MASTERCARD"],
+    logo: (
+      <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+        <img src="/visa.png" alt="Visa" style={{ height: 15, width: "auto", objectFit: "contain" }} />
+        <MastercardMark size={24} />
+      </span>
+    ),
+  },
 ];
 
 /**
@@ -37,9 +44,9 @@ export function PayMethodSelector({ value, onChange }: {
   onChange: (value: PayMethodValue) => void;
 }) {
   return (
-    <div style={{ display: "flex", gap: 8 }}>
+    <div style={{ display: "flex", gap: 10 }}>
       {METHODS.map(m => {
-        const active = value === m.value;
+        const active = m.match ? m.match.includes(value) : value === m.value;
         return (
           <button
             key={m.value}
@@ -48,21 +55,21 @@ export function PayMethodSelector({ value, onChange }: {
             aria-pressed={active}
             style={{
               flex: 1, minWidth: 0,
-              display: "flex", flexDirection: "column", alignItems: "center", gap: 7,
+              display: "flex", flexDirection: "column", alignItems: "center", gap: 10,
               background: active ? "rgba(249,115,22,0.08)" : "#141414",
               border: active ? "1px solid #f97316" : "1px solid #2a2a2a",
-              borderRadius: 10, padding: "10px 4px", cursor: "pointer",
+              borderRadius: 12, padding: "14px 8px", cursor: "pointer",
               fontFamily: "inherit", transition: "border-color 0.12s, background 0.12s",
             }}
           >
             <span style={{
-              background: "#fff", borderRadius: 6, height: 28, width: "100%",
+              background: "#fff", borderRadius: 10, height: 46, width: "100%", maxWidth: 68,
               display: "flex", alignItems: "center", justifyContent: "center",
-              boxSizing: "border-box", padding: "0 4px",
+              boxSizing: "border-box", padding: "0 8px",
             }}>
               {m.logo}
             </span>
-            <span style={{ fontSize: 10, fontWeight: 700, color: active ? "#f97316" : "#888", whiteSpace: "nowrap" }}>
+            <span style={{ fontSize: 11, fontWeight: 700, lineHeight: 1.25, textAlign: "center", color: active ? "#f97316" : "#aaa" }}>
               {m.label}
             </span>
           </button>
