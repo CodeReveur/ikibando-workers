@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Bot, User as UserIcon, Send, X } from "lucide-react";
 import { useLanguage } from "@/lib/language-context";
-import { analyze, respond, type Lang } from "./bazabot-brain";
+import { analyze, respond, type Lang, type Topic } from "./bazabot-brain";
 import { matchKnowledge } from "./bazabot-knowledge";
 import {
   submitContact, getContactThread, sendContactTyping,
@@ -235,20 +235,29 @@ export function BazaBotChat({ role = "public", onClose, style }: {
     }
 
     setTimeout(() => {
-      // 1) Core intents: detect BOTH the topic and the language from the visitor's
-      //    own words and answer in that language.
+      // Detect the language the visitor wrote in (and a coarse topic guess).
       const { topic, lang } = analyze(msg, language as Lang);
-      if (topic !== "fallback") {
+
+      // 1) Small talk answers immediately, in the visitor's own language.
+      const CONVERSATIONAL: Topic[] = ["greetings", "feeling", "quotes", "business"];
+      if (CONVERSATIONAL.includes(topic)) {
         setMessages(prev => [...prev, { sender: "bot", text: respond(topic, lang, userName) }]);
         return;
       }
-      // 2) Long-tail FAQ: try the knowledge base before bothering a human.
-      const kb = matchKnowledge(msg);
+      // 2) Precise, role-aware knowledge base — so a specific question gets a
+      //    specific answer (e.g. an employer asking "how do I withdraw" gets the
+      //    wallet-withdrawal steps, not a generic escrow explanation).
+      const kb = matchKnowledge(msg, role);
       if (kb) {
         setMessages(prev => [...prev, { sender: "bot", text: kb }]);
         return;
       }
-      // 3) Nothing matched — hand off to a live agent and go silent.
+      // 3) Coarse multilingual intent as a fallback (mainly for non-English visitors).
+      if (topic !== "fallback") {
+        setMessages(prev => [...prev, { sender: "bot", text: respond(topic, lang, userName) }]);
+        return;
+      }
+      // 4) Nothing matched — hand off to a live agent and go silent.
       setMessages(prev => [...prev, { sender: "bot", text: respond("fallback", lang, userName) }]);
       forwardToAgent(msg);          // server marks the conversation ESCALATED
       setEscalated(true);           // optimistic: silence the bot immediately

@@ -35,6 +35,31 @@ function tokens(s: string): string[] {
   return normalize(s).split(" ").filter(w => w.length > 2 && !STOP.has(w)).map(stem);
 }
 
+/** Who is asking. Mirrors BazaBotRole in bazabot.tsx (owner = employer, seeker = worker). */
+export type Audience = "owner" | "seeker" | "public";
+
+// Unambiguous, action-oriented phrases that reveal whether a question is asked
+// from the worker's or the employer's point of view. Used only to break ties
+// between equally-scoring answers, so the visitor's role decides which one wins.
+const WORKER_SIGNALS = [
+  "get paid", "payout", "earn", "earnings", "apply", "applying", "application",
+  "get hired", "find jobs", "get jobs", "start earning", "my badge",
+  "withdraw a job application",
+];
+const EMPLOYER_SIGNALS = [
+  "post a job", "posting", "hire", "hiring", "applicant", "applicants",
+  "headcount", "refund", "top up", "review applicants", "how many workers",
+];
+
+/** Classify a canned question as worker-, employer- or role-neutral. */
+function leanOf(q: string): "worker" | "employer" | null {
+  const h = ` ${normalize(q)} `;
+  let w = 0, e = 0;
+  for (const s of WORKER_SIGNALS) if (h.includes(` ${s} `)) w++;
+  for (const s of EMPLOYER_SIGNALS) if (h.includes(` ${s} `)) e++;
+  return w > e ? "worker" : e > w ? "employer" : null;
+}
+
 /** The FAQ corpus. */
 export const KNOWLEDGE: QA[] = [
   // ── Getting started & accounts ───────────────────────────────────────────
@@ -409,7 +434,7 @@ export const KNOWLEDGE: QA[] = [
 // Precomputed question token sets + inverse-document-frequency weights so that
 // distinctive words (e.g. "refund", "escrow") count far more than common ones
 // (e.g. "work", "job") when scoring a match.
-const INDEX = KNOWLEDGE.map(e => ({ a: e.a, qlen: e.q.length, qt: new Set(tokens(e.q)) }));
+const INDEX = KNOWLEDGE.map(e => ({ a: e.a, qlen: e.q.length, qt: new Set(tokens(e.q)), lean: leanOf(e.q) }));
 const DF = new Map<string, number>();
 for (const e of INDEX) for (const t of e.qt) DF.set(t, (DF.get(t) ?? 0) + 1);
 const N = INDEX.length;
@@ -422,27 +447,38 @@ function idf(t: string): number {
  * confident enough. Scores by the IDF-weighted overlap between the message and
  * each question, and only accepts a match that covers most of the message's
  * distinctive words — so vague or unknown messages fall through to an agent.
+ *
+ * When two answers are equally relevant (e.g. "how do I withdraw" matches both
+ * "withdraw money from wallet" and "withdraw a job application"), the visitor's
+ * role breaks the tie: an employer prefers employer/neutral answers, a worker
+ * prefers worker/neutral ones, so everyone gets the answer meant for them.
  */
-export function matchKnowledge(message: string): string | null {
+export function matchKnowledge(message: string, role: Audience = "public"): string | null {
   const seen = new Set(tokens(message));
   if (seen.size === 0) return null;
 
   let queryWeight = 0;
   seen.forEach(w => { queryWeight += idf(w); });
 
-  let best: { a: string; qlen: number } | null = null;
-  let bestScore = 0;
+  const wanted = role === "owner" ? "employer" : role === "seeker" ? "worker" : null;
+  // 2 = written for this visitor's role, 1 = role-neutral, 0 = the other role.
+  const roleScore = (lean: "worker" | "employer" | null) =>
+    wanted === null ? (lean === null ? 1 : 0) : lean === wanted ? 2 : lean === null ? 1 : 0;
+
+  let best: { a: string; qlen: number; score: number; rs: number } | null = null;
   for (const e of INDEX) {
     let score = 0;
     seen.forEach(w => { if (e.qt.has(w)) score += idf(w); });
-    if (score > bestScore || (score === bestScore && score > 0 && best && e.qlen < best.qlen)) {
-      bestScore = score;
-      best = { a: e.a, qlen: e.qlen };
+    if (score <= 0) continue;
+    const rs = roleScore(e.lean);
+    if (!best || score > best.score ||
+        (score === best.score && (rs > best.rs || (rs === best.rs && e.qlen < best.qlen)))) {
+      best = { a: e.a, qlen: e.qlen, score, rs };
     }
   }
 
   // Accept only if the match covers at least half the message's information.
-  return best && bestScore >= 0.5 * queryWeight ? best.a : null;
+  return best && best.score >= 0.5 * queryWeight ? best.a : null;
 }
 
 export const KNOWLEDGE_COUNT = KNOWLEDGE.length;
