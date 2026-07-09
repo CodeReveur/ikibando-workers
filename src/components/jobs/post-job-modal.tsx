@@ -174,7 +174,10 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
   const [paymentPhone, setPaymentPhone] = useState("");
   const [payNote, setPayNote] = useState("");
   // When on, a worker's per-period payment request pays out immediately (no manual approval).
-  const [directRelease, setDirectRelease] = useState(false);
+  const [directRelease, setDirectRelease] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try { return !!JSON.parse(localStorage.getItem("user") || "null")?.defaultAutoRelease; } catch { return false; }
+  });  // defaults OFF; respects the employer account default
 
   const [job, setJob] = useState<JobForm>({
     category: "", headcount: "1", date: "", time: "",
