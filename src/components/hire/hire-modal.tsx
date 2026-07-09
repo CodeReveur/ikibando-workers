@@ -642,9 +642,9 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                     onChange={e => setDirectRelease(e.target.checked)}
                     style={{ marginTop: 2, accentColor: "#f97316", width: 16, height: 16, cursor: "pointer" }} />
                   <span style={{ fontSize: 12.5, color: "#ccc", lineHeight: 1.5 }}>
-                    <strong style={{ color: "#f0f0f0" }}>Auto-release each period</strong><br />
-                    The worker can request payment after each {getUnit(form.rateType, 1)} completes. On = instant
-                    release; off = you approve each request (auto-approves in 2h).
+                    <strong style={{ color: "#f0f0f0" }}>{t("post_job.direct_release.title") || "Auto-release each period"}</strong><br />
+                    {t("post_job.direct_release.desc", { unit: getUnit(form.rateType, 1) })
+                      || `The worker can request payment after each ${getUnit(form.rateType, 1)} is completed. With this on, approved amounts release instantly; with it off, you approve each request (auto-approves in 2h).`}
                   </span>
                 </label>
 

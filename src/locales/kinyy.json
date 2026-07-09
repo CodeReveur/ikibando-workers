@@ -930,7 +930,11 @@
       "yearly": "Buri mwaka"
     },
     "every": "buri",
-    "schedule_summary": "Umukozi yishyurwa buri {interval} {unit}, inshuro {count} — byose {total} {totalUnit}."
+    "schedule_summary": "Umukozi yishyurwa buri {interval} {unit}, inshuro {count} — byose {total} {totalUnit}.",
+    "direct_release": {
+      "title": "Kwishyura ako kanya kuri buri gice",
+      "desc": "Umukozi ashobora gusaba ubwishyu nyuma ya buri {unit} irangiye. Iyo iki gikora, amafaranga yemejwe yishyurwa ako kanya; iyo bidakora, wemeza buri busabe (byiyemeza mu masaha 2)."
+    }
   },
   "offer": {
     "loading_map": "Gushakisha ikarita…",
@@ -1992,5 +1996,44 @@
     "summary": "Yishyurwa buri {interval} {unit} · ubwishyu {count}",
     "instant_release": "Yishyurwa ako kanya kuri buri gice",
     "approval_release": "Umukoresha yemeza buri bwishyu"
+  },
+  "payments": {
+    "loading": "Turimo gushaka ubwishyu…",
+    "title": "Ubwishyu bw'ibice",
+    "auto_release_on": "Kwishyura ako kanya birakora",
+    "summary": "{count} × {unit} · {released} / {total} byishyuwe",
+    "period": "Igice {index}",
+    "unlocks": "Bifungura {when}",
+    "completed": "Byarangiye {when}",
+    "auto_approves_in": "byiyemeza mu",
+    "request_btn": "Saba ubwishyu",
+    "complaint_btn": "Ikirego",
+    "approve_btn": "Emeza",
+    "decline_btn": "Anga",
+    "activity_title": "Amateka y'ibikorwa",
+    "decline_prompt": "Impamvu yo kwanga (si ngombwa):",
+    "complaint_prompt": "Sobanura ikirego cyawe. Amafaranga azahagarikwa kugeza umukozi abisuzumye:",
+    "approvals_title": "Kwemeza ubwishyu",
+    "none_waiting": "Nta busabe bw'ubwishyu butegereje.",
+    "req_meta": "{worker} · igice {index}/{total} · {job}",
+    "toast_requested": "Ubwishyu bwasabwe",
+    "toast_approved": "Ubwishyu bwemejwe kandi bwarekuwe",
+    "toast_declined": "Ubwishyu bwanzwe",
+    "toast_complaint": "Ikirego cyatanzwe — ubwishyu bwahagaritswe",
+    "err_request": "Ntibishoboye gusaba ubwishyu",
+    "err_approve": "Ntibishoboye kwemeza",
+    "err_decline": "Ntibishoboye kwanga",
+    "err_complaint": "Ntibishoboye gutanga ikirego",
+    "rel_in": "mu {v}",
+    "rel_ago": "hashize {v}",
+    "state_LOCKED": "Bifunze",
+    "state_AVAILABLE": "Birahari",
+    "state_PENDING": "Bitegereje",
+    "state_PAID": "Byishyuwe",
+    "state_DISPUTED": "Bifite ikibazo",
+    "state_DECLINED": "Byanzwe",
+    "state_CANCELLED": "Byahagaritswe",
+    "state_APPROVED": "Byemejwe",
+    "state_AUTO_APPROVED": "Byemejwe ako kanya"
   }
 }

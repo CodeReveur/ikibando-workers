@@ -930,7 +930,11 @@
       "yearly": "Par an"
     },
     "every": "tous les",
-    "schedule_summary": "Le travailleur est payé tous les {interval} {unit}, {count} fois — {total} {totalUnit} au total."
+    "schedule_summary": "Le travailleur est payé tous les {interval} {unit}, {count} fois — {total} {totalUnit} au total.",
+    "direct_release": {
+      "title": "Versement automatique à chaque période",
+      "desc": "Le travailleur peut demander un paiement après chaque {unit} terminé. Si activé, les montants approuvés sont versés instantanément ; sinon, vous approuvez chaque demande (approbation automatique en 2h)."
+    }
   },
   "offer": {
     "loading_map": "Chargement de la carte…",
@@ -1991,5 +1995,44 @@
     "summary": "Payé tous les {interval} {unit} · {count} paiement(s)",
     "instant_release": "Versé instantanément à chaque période",
     "approval_release": "L'employeur approuve chaque paiement"
+  },
+  "payments": {
+    "loading": "Chargement des paiements…",
+    "title": "Paiements échelonnés",
+    "auto_release_on": "Versement auto activé",
+    "summary": "{count} × {unit} · {released} / {total} versé",
+    "period": "Période {index}",
+    "unlocks": "Débloqué {when}",
+    "completed": "Terminé {when}",
+    "auto_approves_in": "approbation auto dans",
+    "request_btn": "Demander le paiement",
+    "complaint_btn": "Réclamation",
+    "approve_btn": "Approuver",
+    "decline_btn": "Refuser",
+    "activity_title": "Historique d'activité",
+    "decline_prompt": "Raison du refus (facultatif) :",
+    "complaint_prompt": "Décrivez votre réclamation. L'argent sera gelé jusqu'à examen par un agent :",
+    "approvals_title": "Approbations de paiement",
+    "none_waiting": "Aucune demande de paiement en attente.",
+    "req_meta": "{worker} · période {index}/{total} · {job}",
+    "toast_requested": "Paiement demandé",
+    "toast_approved": "Paiement approuvé et versé",
+    "toast_declined": "Paiement refusé",
+    "toast_complaint": "Réclamation envoyée — paiement gelé",
+    "err_request": "Impossible de demander le paiement",
+    "err_approve": "Impossible d'approuver",
+    "err_decline": "Impossible de refuser",
+    "err_complaint": "Impossible d'envoyer la réclamation",
+    "rel_in": "dans {v}",
+    "rel_ago": "il y a {v}",
+    "state_LOCKED": "Verrouillé",
+    "state_AVAILABLE": "Disponible",
+    "state_PENDING": "En attente",
+    "state_PAID": "Payé",
+    "state_DISPUTED": "Litige",
+    "state_DECLINED": "Refusé",
+    "state_CANCELLED": "Annulé",
+    "state_APPROVED": "Approuvé",
+    "state_AUTO_APPROVED": "Approuvé auto"
   }
 }

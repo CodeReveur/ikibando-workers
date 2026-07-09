@@ -7,6 +7,7 @@ import {
   apiError, type PaymentRequestDto,
 } from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
+import { useLanguage } from "@/lib/language-context";
 import { Countdown } from "./countdown";
 
 const fmt = (n: number) => `RWF ${Number(n || 0).toLocaleString()}`;
@@ -18,6 +19,7 @@ const fmt = (n: number) => `RWF ${Number(n || 0).toLocaleString()}`;
  */
 export function PaymentApprovalModal() {
   const { success, error: toastError } = useToast();
+  const { t } = useLanguage();
   const [reqs, setReqs] = useState<PaymentRequestDto[]>([]);
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
@@ -54,7 +56,7 @@ export function PaymentApprovalModal() {
   return (
     <>
       <button className="topbar-icon-btn" onClick={() => setOpen(true)}
-        aria-label="Payment approvals" style={{ position: "relative", color: count > 0 ? "#f97316" : "#555" }}>
+        aria-label={t("payments.approvals_title") || "Payment approvals"} style={{ position: "relative", color: count > 0 ? "#f97316" : "#555" }}>
         <CircleDollarSign size={15} />
         {count > 0 && (
           <span style={{
@@ -77,7 +79,7 @@ export function PaymentApprovalModal() {
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 18px", borderBottom: "1px solid #1c1c1c", position: "sticky", top: 0, background: "#141414" }}>
               <p style={{ margin: 0, fontWeight: 800, fontSize: 15, color: "#f0f0f0" }}>
-                Payment approvals {count > 0 && <span style={{ color: "#f97316" }}>({count})</span>}
+                {t("payments.approvals_title") || "Payment approvals"} {count > 0 && <span style={{ color: "#f97316" }}>({count})</span>}
               </p>
               <button onClick={() => setOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "#666" }}><X size={16} /></button>
             </div>
@@ -85,7 +87,7 @@ export function PaymentApprovalModal() {
             <div style={{ padding: 12 }}>
               {count === 0 && (
                 <p style={{ textAlign: "center", color: "#555", fontSize: 13, padding: "28px 0" }}>
-                  No payment requests waiting on you.
+                  {t("payments.none_waiting") || "No payment requests waiting on you."}
                 </p>
               )}
               {reqs.map(r => (
@@ -94,30 +96,33 @@ export function PaymentApprovalModal() {
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: 13.5, fontWeight: 700, color: "#f0f0f0" }}>{fmt(r.amountRwf)}</div>
                       <div style={{ fontSize: 12, color: "#999", marginTop: 2 }}>
-                        {r.workerName} · period {r.periodIndex}/{r.totalPeriods} · “{r.jobTitle}”
+                        {t("payments.req_meta", {
+                          worker: r.workerName, index: String(r.periodIndex),
+                          total: String(r.totalPeriods), job: r.jobTitle,
+                        }) || `${r.workerName} · period ${r.periodIndex}/${r.totalPeriods} · ${r.jobTitle}`}
                       </div>
                       {r.expiresAt && (
                         <div style={{ fontSize: 11.5, color: "#eab308", marginTop: 4 }}>
-                          Auto-approves in <Countdown to={r.expiresAt} onElapsed={load} />
+                          {t("payments.auto_approves_in") || "auto-approves in"} <Countdown to={r.expiresAt} onElapsed={load} />
                         </div>
                       )}
                     </div>
                   </div>
                   <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-                    <button disabled={busy === r.id} onClick={() => act(() => approvePaymentRequest(r.id, token()), r.id, "Approved & released")}
+                    <button disabled={busy === r.id} onClick={() => act(() => approvePaymentRequest(r.id, token()), r.id, t("payments.toast_approved") || "Approved & released")}
                       style={{ flex: 1, background: "#22c55e", color: "#000", border: "none", borderRadius: 8, padding: "9px 0", fontSize: 12.5, fontWeight: 800, cursor: "pointer" }}>
-                      Approve
+                      {t("payments.approve_btn") || "Approve"}
                     </button>
-                    <button disabled={busy === r.id} onClick={() => act(() => declinePaymentRequest(r.id, window.prompt("Reason (optional):") ?? "", token()), r.id, "Declined")}
+                    <button disabled={busy === r.id} onClick={() => act(() => declinePaymentRequest(r.id, window.prompt(t("payments.decline_prompt") || "Reason (optional):") ?? "", token()), r.id, t("payments.toast_declined") || "Declined")}
                       style={{ flex: 1, background: "#1a1a1a", color: "#ef4444", border: "1px solid #2a2a2a", borderRadius: 8, padding: "9px 0", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>
-                      Decline
+                      {t("payments.decline_btn") || "Decline"}
                     </button>
                     <button disabled={busy === r.id} onClick={() => {
-                        const reason = window.prompt("Complaint — the money will be frozen until an agent reviews it:");
-                        if (reason !== null) act(() => disputePaymentRequest(r.id, reason, token()), r.id, "Complaint submitted");
+                        const reason = window.prompt(t("payments.complaint_prompt") || "Complaint — the money will be frozen until an agent reviews it:");
+                        if (reason !== null) act(() => disputePaymentRequest(r.id, reason, token()), r.id, t("payments.toast_complaint") || "Complaint submitted");
                       }}
                       style={{ background: "#1a1a1a", color: "#aaa", border: "1px solid #2a2a2a", borderRadius: 8, padding: "9px 12px", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>
-                      Complaint
+                      {t("payments.complaint_btn") || "Complaint"}
                     </button>
                   </div>
                 </div>

@@ -931,7 +931,11 @@
       "yearly": "Yearly"
     },
     "every": "every",
-    "schedule_summary": "Worker is paid every {interval} {unit}, {count} time(s) — {total} {totalUnit} total."
+    "schedule_summary": "Worker is paid every {interval} {unit}, {count} time(s) — {total} {totalUnit} total.",
+    "direct_release": {
+      "title": "Auto-release each period",
+      "desc": "The worker can request payment after each {unit} is completed. With this on, approved amounts release instantly; with it off, you approve each request (auto-approves in 2h)."
+    }
   },
   "offer": {
     "loading_map": "Loading map…",
@@ -1996,5 +2000,44 @@
     "summary": "Paid every {interval} {unit} · {count} payment(s)",
     "instant_release": "Released instantly on each period",
     "approval_release": "Employer approves each payment"
+  },
+  "payments": {
+    "loading": "Loading payments…",
+    "title": "Installment payments",
+    "auto_release_on": "Auto-release on",
+    "summary": "{count} × {unit} · {released} / {total} released",
+    "period": "Period {index}",
+    "unlocks": "Unlocks {when}",
+    "completed": "Completed {when}",
+    "auto_approves_in": "auto-approves in",
+    "request_btn": "Request payment",
+    "complaint_btn": "Complaint",
+    "approve_btn": "Approve",
+    "decline_btn": "Decline",
+    "activity_title": "Activity history",
+    "decline_prompt": "Reason for declining (optional):",
+    "complaint_prompt": "Describe your complaint. The money will be frozen until an agent reviews it:",
+    "approvals_title": "Payment approvals",
+    "none_waiting": "No payment requests waiting on you.",
+    "req_meta": "{worker} · period {index}/{total} · {job}",
+    "toast_requested": "Payment requested",
+    "toast_approved": "Payment approved & released",
+    "toast_declined": "Payment declined",
+    "toast_complaint": "Complaint submitted — payment frozen",
+    "err_request": "Couldn't request payment",
+    "err_approve": "Couldn't approve",
+    "err_decline": "Couldn't decline",
+    "err_complaint": "Couldn't submit complaint",
+    "rel_in": "in {v}",
+    "rel_ago": "{v} ago",
+    "state_LOCKED": "Locked",
+    "state_AVAILABLE": "Available",
+    "state_PENDING": "Pending",
+    "state_PAID": "Paid",
+    "state_DISPUTED": "Disputed",
+    "state_DECLINED": "Declined",
+    "state_CANCELLED": "Cancelled",
+    "state_APPROVED": "Approved",
+    "state_AUTO_APPROVED": "Auto-approved"
   }
 }

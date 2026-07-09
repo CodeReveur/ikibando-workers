@@ -930,7 +930,11 @@
       "yearly": "Kwa mwaka"
     },
     "every": "kila",
-    "schedule_summary": "Mfanyakazi hulipwa kila {interval} {unit}, mara {count} — jumla {total} {totalUnit}."
+    "schedule_summary": "Mfanyakazi hulipwa kila {interval} {unit}, mara {count} — jumla {total} {totalUnit}.",
+    "direct_release": {
+      "title": "Toa malipo kiotomatiki kila kipindi",
+      "desc": "Mfanyakazi anaweza kuomba malipo baada ya kila {unit} kukamilika. Ikiwashwa, kiasi kilichoidhinishwa hutolewa papo hapo; vinginevyo, unaidhinisha kila ombi (huidhinishwa kiotomatiki baada ya saa 2)."
+    }
   },
   "offer": {
     "loading_map": "Inapakia ramani…",
@@ -1991,5 +1995,44 @@
     "summary": "Hulipwa kila {interval} {unit} · malipo {count}",
     "instant_release": "Hutolewa papo hapo kila kipindi",
     "approval_release": "Mwajiri huidhinisha kila malipo"
+  },
+  "payments": {
+    "loading": "Inapakia malipo…",
+    "title": "Malipo ya awamu",
+    "auto_release_on": "Utoaji wa moja kwa moja umewashwa",
+    "summary": "{count} × {unit} · {released} / {total} yametolewa",
+    "period": "Kipindi {index}",
+    "unlocks": "Hufunguliwa {when}",
+    "completed": "Imekamilika {when}",
+    "auto_approves_in": "huidhinishwa baada ya",
+    "request_btn": "Omba malipo",
+    "complaint_btn": "Malalamiko",
+    "approve_btn": "Idhinisha",
+    "decline_btn": "Kataa",
+    "activity_title": "Historia ya shughuli",
+    "decline_prompt": "Sababu ya kukataa (hiari):",
+    "complaint_prompt": "Eleza malalamiko yako. Fedha zitagandishwa hadi wakala akague:",
+    "approvals_title": "Uidhinishaji wa malipo",
+    "none_waiting": "Hakuna maombi ya malipo yanayokusubiri.",
+    "req_meta": "{worker} · kipindi {index}/{total} · {job}",
+    "toast_requested": "Malipo yameombwa",
+    "toast_approved": "Malipo yameidhinishwa na kutolewa",
+    "toast_declined": "Malipo yamekataliwa",
+    "toast_complaint": "Malalamiko yamewasilishwa — malipo yamegandishwa",
+    "err_request": "Imeshindwa kuomba malipo",
+    "err_approve": "Imeshindwa kuidhinisha",
+    "err_decline": "Imeshindwa kukataa",
+    "err_complaint": "Imeshindwa kuwasilisha malalamiko",
+    "rel_in": "baada ya {v}",
+    "rel_ago": "{v} zilizopita",
+    "state_LOCKED": "Imefungwa",
+    "state_AVAILABLE": "Inapatikana",
+    "state_PENDING": "Inasubiri",
+    "state_PAID": "Imelipwa",
+    "state_DISPUTED": "Mgogoro",
+    "state_DECLINED": "Imekataliwa",
+    "state_CANCELLED": "Imeghairiwa",
+    "state_APPROVED": "Imeidhinishwa",
+    "state_AUTO_APPROVED": "Imeidhinishwa kiotomatiki"
   }
 }
