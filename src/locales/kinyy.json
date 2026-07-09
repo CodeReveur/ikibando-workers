@@ -930,7 +930,7 @@
       "yearly": "Buri mwaka"
     },
     "every": "buri",
-    "schedule_summary": "Umukozi yishyurwa buri {interval} {unit}, inshuro {count} — byose {total} {totalUnit}.",
+    "schedule_summary": "Umukozi yishyurwa buri {interval} {unit}, inshuro {count} mu {total} {totalUnit}.",
     "direct_release": {
       "title": "Kwishyura ako kanya kuri buri gice",
       "desc": "Umukozi ashobora gusaba ubwishyu nyuma ya buri {unit} irangiye. Iyo iki gikora, amafaranga yemejwe yishyurwa ako kanya; iyo bidakora, wemeza buri busabe (byiyemeza mu masaha 2)."
@@ -1995,7 +1995,8 @@
     "label": "Ubwishyu",
     "summary": "Yishyurwa buri {interval} {unit} · ubwishyu {count}",
     "instant_release": "Yishyurwa ako kanya kuri buri gice",
-    "approval_release": "Umukoresha yemeza buri bwishyu"
+    "approval_release": "Umukoresha yemeza buri bwishyu",
+    "over": "mu {duration} {unit}"
   },
   "payments": {
     "loading": "Turimo gushaka ubwishyu…",

@@ -475,6 +475,7 @@ export default function SeekerJobDetail() {
                 paymentMode={job.paymentMode}
                 paymentPeriods={job.paymentPeriods}
                 paymentInterval={job.paymentInterval}
+                durationUnits={job.durationHours}
                 directRelease={job.directRelease}
               />
             </div>

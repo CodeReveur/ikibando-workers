@@ -232,11 +232,12 @@ export function OfferModal({ worker, onClose }: Props) {
   }, [anonEmail, anonPhone, hasSession]);
 
   const rate        = parseFloat(bid) || 0;
-  // duration dropdown = number of payments (periods); custom modes add an "every N" interval.
-  const periodsNum  = parseFloat(duration) || 0;
-  const isCustom    = paymentMode.startsWith("CUSTOM_");
-  const interval    = isCustom ? Math.max(1, parseInt(offerInterval, 10) || 1) : 1;
-  const hours       = periodsNum * interval;   // total base units, for pricing
+  // Duration = how long the work takes (total units); Threshold = pay every N units.
+  // Payments are parts OF the duration → periods = ceil(duration / threshold). No multiplication.
+  const durationNum = parseFloat(duration) || 0;
+  const interval    = Math.max(1, parseInt(offerInterval, 10) || 1);
+  const periodsNum  = Math.max(1, Math.ceil(durationNum / interval));
+  const hours       = durationNum;   // pricing uses total duration
   const baseCost    = rate * hours;
   const escrowFee   = Math.round(baseCost * 0.05);
   const total       = baseCost + escrowFee;
@@ -525,35 +526,33 @@ export function OfferModal({ worker, onClose }: Props) {
                     <svg style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
                   </div>
                 </FField>
-                <FField label={isCustom ? (t("post_job.labels.num_payments") || "Number of payments") : (t("offer.labels.duration") || "Duration *")}>
+                <FField label={t("post_job.labels.duration") || t("offer.labels.duration") || "Duration *"}>
                   <div style={{ position: "relative" }}>
                     <select value={duration} onChange={e => setDuration(e.target.value)}
                       style={{ ...inp, appearance: "none", WebkitAppearance: "none", cursor: "pointer", color: duration ? "#f0f0f0" : "#555", paddingRight: 28 }}
                       onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                       onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
                     >
-                      {getDurations(rateType).map(h => <option key={h} value={String(h)}>{isCustom ? `${h}×` : `${h} ${getUnit(rateType, h)}`}</option>)}
+                      {getDurations(rateType).map(h => <option key={h} value={String(h)}>{h} {getUnit(rateType, h)}</option>)}
                     </select>
                     <svg style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
                   </div>
                 </FField>
               </div>
 
-              {isCustom && (
-                <FField label={t("post_job.labels.pay_every") || "Pay every"}>
-                  <div style={{ position: "relative", maxWidth: 220 }}>
-                    <input type="number" min="1" max="365" value={offerInterval}
-                      onChange={e => setOfferInterval(e.target.value)}
-                      style={{ ...inp, paddingRight: 60 }}
-                      onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-                      onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
-                    />
-                    <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#777", pointerEvents: "none" }}>
-                      {getUnit(rateType, interval)}
-                    </span>
-                  </div>
-                </FField>
-              )}
+              <FField label={t("post_job.labels.pay_every") || "Pay every"}>
+                <div style={{ position: "relative", maxWidth: 220 }}>
+                  <input type="number" min="1" max="365" value={offerInterval}
+                    onChange={e => setOfferInterval(e.target.value)}
+                    style={{ ...inp, paddingRight: 60 }}
+                    onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
+                    onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                  />
+                  <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#777", pointerEvents: "none" }}>
+                    {getUnit(rateType, interval)}
+                  </span>
+                </div>
+              </FField>
 
               {periodsNum > 0 && (
                 <p style={{ margin: "6px 0 0", fontSize: 12, color: "#8a8a8a", lineHeight: 1.6 }}>

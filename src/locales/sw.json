@@ -930,7 +930,7 @@
       "yearly": "Kwa mwaka"
     },
     "every": "kila",
-    "schedule_summary": "Mfanyakazi hulipwa kila {interval} {unit}, mara {count} — jumla {total} {totalUnit}.",
+    "schedule_summary": "Mfanyakazi hulipwa kila {interval} {unit}, mara {count} kwa muda wa {total} {totalUnit}.",
     "direct_release": {
       "title": "Toa malipo kiotomatiki kila kipindi",
       "desc": "Mfanyakazi anaweza kuomba malipo baada ya kila {unit} kukamilika. Ikiwashwa, kiasi kilichoidhinishwa hutolewa papo hapo; vinginevyo, unaidhinisha kila ombi (huidhinishwa kiotomatiki baada ya saa 2)."
@@ -1994,7 +1994,8 @@
     "label": "Malipo",
     "summary": "Hulipwa kila {interval} {unit} · malipo {count}",
     "instant_release": "Hutolewa papo hapo kila kipindi",
-    "approval_release": "Mwajiri huidhinisha kila malipo"
+    "approval_release": "Mwajiri huidhinisha kila malipo",
+    "over": "kwa muda wa {duration} {unit}"
   },
   "payments": {
     "loading": "Inapakia malipo…",

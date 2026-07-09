@@ -121,7 +121,13 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
             <p style={{ margin: 0, fontSize: 30, fontWeight: 900, color: "#f97316", letterSpacing: "-1px", lineHeight: 1 }}>
               {fmt(job.ratePerHour)}
             </p>
-            <p style={{ margin: "4px 0 0", fontSize: 12, color: "#555" }}>per hour · {job.durationHours}h duration</p>
+            <p style={{ margin: "4px 0 0", fontSize: 12, color: "#555" }}>
+              {(() => {
+                const u = ({ HOURLY:"hour", CUSTOM_HOURS:"hour", DAILY:"day", CUSTOM_DAYS:"day", WEEKLY:"week", MONTHLY:"month", CUSTOM_MONTHS:"month", YEARLY:"year" } as Record<string,string>)[job.paymentMode] || "hour";
+                const d = job.durationHours;
+                return `per ${u} · ${d} ${u}${d !== 1 ? "s" : ""} duration`;
+              })()}
+            </p>
           </div>
           {job.headcount > 1 && (
             <div style={{ textAlign: "right" }}>
@@ -141,6 +147,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
             paymentMode={job.paymentMode}
             paymentPeriods={job.paymentPeriods}
             paymentInterval={job.paymentInterval}
+            durationUnits={job.durationHours}
             directRelease={job.directRelease}
           />
         </div>

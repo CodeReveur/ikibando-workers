@@ -15,11 +15,12 @@ const UNIT_OF: Record<PaymentMode, "hour" | "day" | "week" | "month" | "year"> =
  * 2 days · 4 payments". Safe to render for any job.
  */
 export function PaymentModeInfo({
-  paymentMode, paymentPeriods, paymentInterval, directRelease, style,
+  paymentMode, paymentPeriods, paymentInterval, durationUnits, directRelease, style,
 }: {
   paymentMode?: PaymentMode | null;
   paymentPeriods?: number | null;
   paymentInterval?: number | null;
+  durationUnits?: number | null;
   directRelease?: boolean | null;
   style?: React.CSSProperties;
 }) {
@@ -29,12 +30,18 @@ export function PaymentModeInfo({
   const periods = Math.max(1, paymentPeriods || 1);
   const interval = Math.max(1, paymentInterval || 1);
   const unitKey = UNIT_OF[paymentMode] || "day";
-  const unit = t("post_job.units." + (interval !== 1 ? unitKey + "s" : unitKey))
-            || `${unitKey}${interval !== 1 ? "s" : ""}`;
+  const unitPl = (n: number) => t("post_job.units." + (n !== 1 ? unitKey + "s" : unitKey))
+            || `${unitKey}${n !== 1 ? "s" : ""}`;
+  const unit = unitPl(interval);
 
   const summary = t("job_payment.summary", {
     interval: String(interval), unit, count: String(periods),
   }) || `Paid every ${interval} ${unit} · ${periods} payment${periods !== 1 ? "s" : ""}`;
+
+  const durationText = durationUnits && durationUnits > 0
+    ? (t("job_payment.over", { duration: String(durationUnits), unit: unitPl(durationUnits) })
+        || `over ${durationUnits} ${unitPl(durationUnits)}`)
+    : null;
 
   const releaseNote = directRelease
     ? (t("job_payment.instant_release") || "Released instantly on each period")
@@ -46,7 +53,7 @@ export function PaymentModeInfo({
       fontSize: 12.5, color: "#9a9a9a", ...style,
     }}>
       <span style={{ fontWeight: 700, color: "#c9c9c9" }}>{t("job_payment.label") || "Payment"}:</span>
-      <span>{summary}</span>
+      <span>{summary}{durationText ? ` · ${durationText}` : ""}</span>
       <span style={{
         fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "2px 9px",
         color: directRelease ? "#22c55e" : "#eab308",

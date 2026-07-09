@@ -930,7 +930,7 @@
       "yearly": "Par an"
     },
     "every": "tous les",
-    "schedule_summary": "Le travailleur est payé tous les {interval} {unit}, {count} fois — {total} {totalUnit} au total.",
+    "schedule_summary": "Le travailleur est payé tous les {interval} {unit}, {count} fois sur {total} {totalUnit}.",
     "direct_release": {
       "title": "Versement automatique à chaque période",
       "desc": "Le travailleur peut demander un paiement après chaque {unit} terminé. Si activé, les montants approuvés sont versés instantanément ; sinon, vous approuvez chaque demande (approbation automatique en 2h)."
@@ -1994,7 +1994,8 @@
     "label": "Paiement",
     "summary": "Payé tous les {interval} {unit} · {count} paiement(s)",
     "instant_release": "Versé instantanément à chaque période",
-    "approval_release": "L'employeur approuve chaque paiement"
+    "approval_release": "L'employeur approuve chaque paiement",
+    "over": "sur {duration} {unit}"
   },
   "payments": {
     "loading": "Chargement des paiements…",

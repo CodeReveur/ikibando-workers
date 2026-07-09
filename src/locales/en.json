@@ -931,7 +931,7 @@
       "yearly": "Yearly"
     },
     "every": "every",
-    "schedule_summary": "Worker is paid every {interval} {unit}, {count} time(s) — {total} {totalUnit} total.",
+    "schedule_summary": "Worker is paid every {interval} {unit}, {count} time(s) over {total} {totalUnit}.",
     "direct_release": {
       "title": "Auto-release each period",
       "desc": "The worker can request payment after each {unit} is completed. With this on, approved amounts release instantly; with it off, you approve each request (auto-approves in 2h)."
@@ -1999,7 +1999,8 @@
     "label": "Payment",
     "summary": "Paid every {interval} {unit} · {count} payment(s)",
     "instant_release": "Released instantly on each period",
-    "approval_release": "Employer approves each payment"
+    "approval_release": "Employer approves each payment",
+    "over": "over {duration} {unit}"
   },
   "payments": {
     "loading": "Loading payments…",
