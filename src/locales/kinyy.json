@@ -729,7 +729,7 @@
       },
       "sec8": {
         "title": "Uburenganzira bwawe",
-        "body": "Hashingiwe ku mategeko y'u Rwanda no mu mwuka wo gukoresha neza amakuru, ufite uburenganzira bwo kubona kopi y'amakuru yawe bwite, gukosora amakuru atari yo, gusaba gusiba konti n'amakuru yawe, ndetse no kwanga bimwe mu bikorwa by'ikoranabuhanga. Kugira ngo ukoreshe ubwo burenganzira, andikira privacy@MpahMapu.rw cyangwa ukoreshe ifishi y'ubufasha muri porogaramu. Tuzagusubiza mu minsi 10 y'akazi."
+        "body": "Hashingiwe ku mategeko y'u Rwanda no mu mwuka wo gukoresha neza amakuru, ufite uburenganzira bwo kubona kopi y'amakuru yawe bwite, gukosora amakuru atari yo, gusaba gusiba konti n'amakuru yawe, ndetse no kwanga bimwe mu bikorwa by'ikoranabuhanga. Kugira ngo ukoreshe ubwo burenganzira, andikira privacy@mpahmapu.com cyangwa ukoreshe ifishi y'ubufasha muri porogaramu. Tuzagusubiza mu minsi 10 y'akazi."
       },
       "sec9": {
         "title": "Umutekano",
@@ -741,7 +741,7 @@
       },
       "sec11": {
         "title": "Tuvugishe",
-        "body": "Kuri bibazo by'umutekano w'amakuru, gusaba amakuru, cyangwa gutanga ikibazo, andikira privacy@MpahMapu.rw. Kuri bibazo rusange andikira legal@MpahMapu.rw cyangwa ukoreshe ifishi yo kutuvugisha ku rubuga rwacu."
+        "body": "Kuri bibazo by'umutekano w'amakuru, gusaba amakuru, cyangwa gutanga ikibazo, andikira privacy@mpahmapu.com. Kuri bibazo rusange andikira legal@mpahmapu.com cyangwa ukoreshe ifishi yo kutuvugisha ku rubuga rwacu."
       }
     },
     "contact_banner": {
@@ -808,7 +808,7 @@
       },
       "sec10": {
         "title": "Tuvugishe",
-        "body": "Ufite ibibazo kuri aya mategeko? Twandikire kuri legal@MpahMapu.rw cyangwa ukoreshe ifishi yo kutuvugisha ku rubuga rwacu. Tugamije kugusubiza mu minsi 2 y'akazi."
+        "body": "Ufite ibibazo kuri aya mategeko? Twandikire kuri legal@mpahmapu.com cyangwa ukoreshe ifishi yo kutuvugisha ku rubuga rwacu. Tugamije kugusubiza mu minsi 2 y'akazi."
       }
     },
     "cta": {
@@ -876,7 +876,9 @@
       "sector": "Umurenge",
       "cell": "Akagari",
       "village": "Umudugudu",
-      "payment_mode": "Uburyo bwo kwishyura"
+      "payment_mode": "Uburyo bwo kwishyura",
+      "pay_every": "Kwishyura buri",
+      "num_payments": "Umubare w'ubwishyu"
     },
     "placeholders": {
       "search_category": "Shakisha ikiciro…",
@@ -926,7 +928,9 @@
       "monthly": "Buri kwezi",
       "custom_months": "Amezi wihitiyemo",
       "yearly": "Buri mwaka"
-    }
+    },
+    "every": "buri",
+    "schedule_summary": "Umukozi yishyurwa buri {interval} {unit}, inshuro {count} — byose {total} {totalUnit}."
   },
   "offer": {
     "loading_map": "Gushakisha ikarita…",
@@ -1321,7 +1325,7 @@
       "danger_zone": "Aho Hari Akaga",
       "delete_account": "Gusiba Konti",
       "delete_account_desc": "Bisiba burundu konti yawe n'amakuru yose ajyanye na yo. Ibi ntibishobora gusubizwa inyuma.",
-      "delete_account_hint": "Kugira ngo usibe konti yawe, wandikire ubufasha kuri support@MpahMapu.rw"
+      "delete_account_hint": "Kugira ngo usibe konti yawe, wandikire ubufasha kuri info@mpahmapu.com"
     }
   },
   "dashboard_home": {
@@ -1982,5 +1986,11 @@
   },
   "owner_guide": {
     "user_guide_sub": "Soma inyandiko zuzuye"
+  },
+  "job_payment": {
+    "label": "Ubwishyu",
+    "summary": "Yishyurwa buri {interval} {unit} · ubwishyu {count}",
+    "instant_release": "Yishyurwa ako kanya kuri buri gice",
+    "approval_release": "Umukoresha yemeza buri bwishyu"
   }
 }

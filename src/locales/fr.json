@@ -729,7 +729,7 @@
       },
       "sec8": {
         "title": "Vos droits",
-        "body": "Conformément à la législation rwandaise et dans un esprit de pratiques équitables en matière de données, vous avez le droit d'accéder à une copie de vos données personnelles, de corriger les informations inexactes, de demander la suppression de votre compte et de vos données, et de vous opposer à certains traitements. Pour exercer l'un de ces droits, contactez privacy@MpahMapu.rw ou utilisez le formulaire de contact sur notre site. Nous vous répondrons sous 10 jours ouvrables."
+        "body": "Conformément à la législation rwandaise et dans un esprit de pratiques équitables en matière de données, vous avez le droit d'accéder à une copie de vos données personnelles, de corriger les informations inexactes, de demander la suppression de votre compte et de vos données, et de vous opposer à certains traitements. Pour exercer l'un de ces droits, contactez privacy@mpahmapu.com ou utilisez le formulaire de contact sur notre site. Nous vous répondrons sous 10 jours ouvrables."
       },
       "sec9": {
         "title": "Sécurité",
@@ -741,7 +741,7 @@
       },
       "sec11": {
         "title": "Nous contacter",
-        "body": "Pour les questions de confidentialité, les demandes de données ou pour signaler une préoccupation, contactez notre équipe chargée des données à l'adresse privacy@MpahMapu.rw. Pour les questions générales, utilisez legal@MpahMapu.rw ou le formulaire de contact sur notre site web."
+        "body": "Pour les questions de confidentialité, les demandes de données ou pour signaler une préoccupation, contactez notre équipe chargée des données à l'adresse privacy@mpahmapu.com. Pour les questions générales, utilisez legal@mpahmapu.com ou le formulaire de contact sur notre site web."
       }
     },
     "contact_banner": {
@@ -808,7 +808,7 @@
       },
       "sec10": {
         "title": "Contact",
-        "body": "Des questions sur ces conditions ? Contactez-nous à legal@MpahMapu.rw ou via le formulaire de contact sur notre site web. Nous nous efforçons de répondre sous 2 jours ouvrables."
+        "body": "Des questions sur ces conditions ? Contactez-nous à legal@mpahmapu.com ou via le formulaire de contact sur notre site web. Nous nous efforçons de répondre sous 2 jours ouvrables."
       }
     },
     "cta": {
@@ -876,7 +876,9 @@
       "sector": "Secteur",
       "cell": "Cellule",
       "village": "Village",
-      "payment_mode": "Mode de paiement"
+      "payment_mode": "Mode de paiement",
+      "pay_every": "Payer tous les",
+      "num_payments": "Nombre de paiements"
     },
     "placeholders": {
       "search_category": "Rechercher une catégorie…",
@@ -926,7 +928,9 @@
       "monthly": "Par mois",
       "custom_months": "Mois personnalisés",
       "yearly": "Par an"
-    }
+    },
+    "every": "tous les",
+    "schedule_summary": "Le travailleur est payé tous les {interval} {unit}, {count} fois — {total} {totalUnit} au total."
   },
   "offer": {
     "loading_map": "Chargement de la carte…",
@@ -1320,7 +1324,7 @@
       "danger_zone": "Zone de danger",
       "delete_account": "Supprimer le compte",
       "delete_account_desc": "Supprime définitivement votre compte et toutes les données associées. Cette action est irréversible.",
-      "delete_account_hint": "Pour supprimer votre compte, veuillez contacter le support à support@MpahMapu.rw"
+      "delete_account_hint": "Pour supprimer votre compte, veuillez contacter le support à info@mpahmapu.com"
     }
   },
   "dashboard_home": {
@@ -1981,5 +1985,11 @@
   },
   "owner_guide": {
     "user_guide_sub": "Lire la documentation complète"
+  },
+  "job_payment": {
+    "label": "Paiement",
+    "summary": "Payé tous les {interval} {unit} · {count} paiement(s)",
+    "instant_release": "Versé instantanément à chaque période",
+    "approval_release": "L'employeur approuve chaque paiement"
   }
 }

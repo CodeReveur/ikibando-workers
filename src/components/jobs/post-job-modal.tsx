@@ -105,6 +105,7 @@ interface JobForm {
   ratePerHour: string;
   rateType: RateType;
   paymentMode: PaymentMode;
+  paymentInterval: string;
   notes: string;
 }
 
@@ -188,7 +189,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
     durationHours: "4", province: "", district: "",
     sector: "", cell: "", village: "",
     latitude: null, longitude: null,
-    ratePerHour: "", rateType: "hr", paymentMode: "HOURLY", notes: "",
+    ratePerHour: "", rateType: "hr", paymentMode: "HOURLY", paymentInterval: "1", notes: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof JobForm, string>>>({});
 
@@ -352,6 +353,10 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
       // billable periods the worker can request payment for, one at a time.
       const paymentMode = job.paymentMode;
       const paymentPeriods = parseInt(job.durationHours) || 1;
+      const isCustomMode = job.paymentMode.startsWith("CUSTOM_");
+      const paymentInterval = isCustomMode ? Math.max(1, parseInt(job.paymentInterval) || 1) : 1;
+      // Total base units billed = number of payments × units per payment (interval).
+      const totalUnits = paymentPeriods * paymentInterval;
 
       const jobPayload = {
         category:      job.category,
@@ -366,10 +371,11 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
         headcount:     parseInt(job.headcount) || 1,
         urgency:       "SAME_DAY" as const,
         startTime,
-        durationHours: parseInt(job.durationHours) || 1,
+        durationHours: totalUnits,
         rateType,
         paymentMode: paymentMode as import("@/lib/api").PaymentMode,
         paymentPeriods,
+        paymentInterval,
         directRelease,
         locationNotes: job.notes || undefined,
       };
@@ -448,7 +454,11 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
   }
 
   const rate        = parseInt(job.ratePerHour) || 0;
-  const hours       = parseInt(job.durationHours) || 0;
+  // durationHours dropdown = number of payments (periods); custom modes add an "every N" interval.
+  const periods     = parseInt(job.durationHours) || 0;
+  const isCustom    = job.paymentMode.startsWith("CUSTOM_");
+  const interval    = isCustom ? Math.max(1, parseInt(job.paymentInterval) || 1) : 1;
+  const hours       = periods * interval;   // total base units, for pricing/escrow
   const heads       = parseInt(job.headcount) || 1;
   const baseCost    = rate * hours * heads;
   const escrowFee   = Math.round(baseCost * 0.05);
@@ -492,7 +502,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                 [t("post_job.fields.category") || "Category",  catLabel],
                 [t("post_job.fields.date") || "Date",      dateLabel],
                 [t("post_job.fields.time") || "Time",      job.time || "-"],
-                [t("post_job.fields.duration") || "Duration",  `${job.durationHours} ${getUnit(job.rateType, hours)}`],
+                [t("post_job.fields.duration") || "Duration",  `${hours} ${getUnit(job.rateType, hours)}${isCustom ? ` (${t("post_job.every") || "every"} ${interval} ${getUnit(job.rateType, interval)})` : ""}`],
                 [t("post_job.fields.workers") || "Workers",   `${heads}`],
                 [t("post_job.fields.location") || "Location",  locationLabel || job.district],
                 [t("post_job.fields.rate") || "Rate",      fmt(rate) + " " + RATE_LABEL[job.rateType]],
@@ -626,7 +636,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                       <ChevronDown size={13} color="#555" style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
                     </div>
                   </FField>
-                  <FField label={t("post_job.labels.duration") || "Duration"}>
+                  <FField label={isCustom ? (t("post_job.labels.num_payments") || "Number of payments") : (t("post_job.labels.duration") || "Duration")}>
                     <div style={{ position: "relative" }}>
                       <AlarmClock size={13} color="#444" style={iconL} />
                       <select value={job.durationHours} onChange={e => setJob(f => ({ ...f, durationHours: e.target.value }))}
@@ -634,13 +644,47 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                         onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                         onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
                       >
-                        {getDurations(job.rateType).map(h => <option key={h} value={String(h)}>{h} {getUnit(job.rateType, h)}</option>)}
+                        {getDurations(job.rateType).map(h => (
+                          <option key={h} value={String(h)}>
+                            {isCustom ? `${h}×` : `${h} ${getUnit(job.rateType, h)}`}
+                          </option>
+                        ))}
                       </select>
                       <ChevronDown size={13} color="#555" style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
                     </div>
                   </FField>
                 </div>
-                
+
+                {/* Custom modes: how many units make up each payment (e.g. pay every 3 days). */}
+                {isCustom && (
+                  <FField label={t("post_job.labels.pay_every") || "Pay every"}>
+                    <div style={{ position: "relative", maxWidth: 220 }}>
+                      <input type="number" min="1" max="365" value={job.paymentInterval}
+                        onChange={e => setJob(f => ({ ...f, paymentInterval: e.target.value }))}
+                        style={{ ...inp, paddingRight: 60 }}
+                        onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
+                        onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                      />
+                      <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#777", pointerEvents: "none" }}>
+                        {getUnit(job.rateType, interval)}
+                      </span>
+                    </div>
+                  </FField>
+                )}
+
+                {/* Plain-language schedule summary so the employer sees exactly what the worker gets. */}
+                {periods > 0 && (
+                  <p style={{ margin: "-4px 0 4px", fontSize: 12, color: "#8a8a8a", lineHeight: 1.6 }}>
+                    {(t("post_job.schedule_summary", {
+                      interval: String(interval),
+                      unit: getUnit(job.rateType, interval),
+                      count: String(periods),
+                      total: String(hours),
+                      totalUnit: getUnit(job.rateType, hours),
+                    }) || `Worker is paid every ${interval} ${getUnit(job.rateType, interval)}, ${periods} time(s) — ${hours} ${getUnit(job.rateType, hours)} total.`)}
+                  </p>
+                )}
+
                 <div className="pj-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                   <FField label={t("post_job.labels.workers_count") || "No. of workers"}>
                     <div style={{ position: "relative" }}>
@@ -837,7 +881,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                     [t("post_job.fields.category") || "Category",  catLabel],
                     [t("post_job.fields.date") || "Date",      dateLabel],
                     [t("post_job.fields.time") || "Time",      job.time || "-"],
-                    [t("post_job.fields.duration") || "Duration",  `${job.durationHours} ${getUnit(job.rateType, hours)}`],
+                    [t("post_job.fields.duration") || "Duration",  `${hours} ${getUnit(job.rateType, hours)}${isCustom ? ` (${t("post_job.every") || "every"} ${interval} ${getUnit(job.rateType, interval)})` : ""}`],
                     [t("post_job.fields.workers") || "Workers",   `${heads} worker${heads !== 1 ? "s" : ""}`],
                     [t("post_job.labels.province") || "Province",  getLocalizedProvinceLabel(job.province) || "-"],
                     [t("post_job.labels.district") || "District",  job.district],

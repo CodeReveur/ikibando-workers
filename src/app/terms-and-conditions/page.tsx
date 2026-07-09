@@ -57,7 +57,7 @@ export default function TermsPage() {
     {
       id: "10",
       title: t("terms.sections.sec10.title") || "Contact",
-      body: t("terms.sections.sec10.body") || `Questions about these terms? Reach us at legal@MpahMapu.rw or through the contact form on our website. We aim to respond within 2 business days.`,
+      body: t("terms.sections.sec10.body") || `Questions about these terms? Reach us at legal@mpahmapu.com or through the contact form on our website. We aim to respond within 2 business days.`,
     },
   ];
   return (

@@ -1556,7 +1556,7 @@ function AccountTab({
             </button>
           </div>
           <p style={{ margin: "12px 0 0", fontSize: 11, color: "#3a3a3a" }}>
-            {t("settings_page.account.delete_account_hint") || "To delete your account, please contact support at support@MpahMapu.rw"}
+            {t("settings_page.account.delete_account_hint") || "To delete your account, please contact support at info@mpahmapu.com"}
           </p>
         </div>
       </div>

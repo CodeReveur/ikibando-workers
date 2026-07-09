@@ -729,7 +729,7 @@
       },
       "sec8": {
         "title": "Haki zako",
-        "body": "Chini ya sheria ya Rwanda na kwa mujibu wa mazoea ya haki ya data, una haki ya kupata nakala ya data yako ya kibinafsi, kusahihisha taarifa zisizo sahihi, kuomba kufutwa kwa akaunti na data yako, na kupinga usindikaji fulani. Ili kutumia haki yoyote kati ya hizi, wasiliana na privacy@MpahMapu.rw au utumie fomu ya usaidizi iliyo kwenye programu. Tutajibu ndani ya siku 10 za kazi."
+        "body": "Chini ya sheria ya Rwanda na kwa mujibu wa mazoea ya haki ya data, una haki ya kupata nakala ya data yako ya kibinafsi, kusahihisha taarifa zisizo sahihi, kuomba kufutwa kwa akaunti na data yako, na kupinga usindikaji fulani. Ili kutumia haki yoyote kati ya hizi, wasiliana na privacy@mpahmapu.com au utumie fomu ya usaidizi iliyo kwenye programu. Tutajibu ndani ya siku 10 za kazi."
       },
       "sec9": {
         "title": "Usalama",
@@ -741,7 +741,7 @@
       },
       "sec11": {
         "title": "Wasiliana nasi",
-        "body": "Kwa maswali ya faragha, maombi ya data, au kuripoti wasiwasi wowote, wasiliana na timu yetu ya data kwa privacy@MpahMapu.rw. Kwa maswali ya jumla tumia legal@MpahMapu.rw au fomu ya mawasiliano kwenye wavuti yetu."
+        "body": "Kwa maswali ya faragha, maombi ya data, au kuripoti wasiwasi wowote, wasiliana na timu yetu ya data kwa privacy@mpahmapu.com. Kwa maswali ya jumla tumia legal@mpahmapu.com au fomu ya mawasiliano kwenye wavuti yetu."
       }
     },
     "contact_banner": {
@@ -808,7 +808,7 @@
       },
       "sec10": {
         "title": "Wasiliana",
-        "body": "Maswali kuhusu masharti haya? Wasiliana nasi kwa legal@MpahMapu.rw au kupitia fomu ya mawasiliano kwenye wavuti yetu. Lengo letu ni kujibu ndani ya siku 2 za kazi."
+        "body": "Maswali kuhusu masharti haya? Wasiliana nasi kwa legal@mpahmapu.com au kupitia fomu ya mawasiliano kwenye wavuti yetu. Lengo letu ni kujibu ndani ya siku 2 za kazi."
       }
     },
     "cta": {
@@ -876,7 +876,9 @@
       "sector": "Sekta",
       "cell": "Kata",
       "village": "Kijiji",
-      "payment_mode": "Njia ya malipo"
+      "payment_mode": "Njia ya malipo",
+      "pay_every": "Lipa kila",
+      "num_payments": "Idadi ya malipo"
     },
     "placeholders": {
       "search_category": "Tafuta kategoria…",
@@ -926,7 +928,9 @@
       "monthly": "Kwa mwezi",
       "custom_months": "Miezi maalum",
       "yearly": "Kwa mwaka"
-    }
+    },
+    "every": "kila",
+    "schedule_summary": "Mfanyakazi hulipwa kila {interval} {unit}, mara {count} — jumla {total} {totalUnit}."
   },
   "offer": {
     "loading_map": "Inapakia ramani…",
@@ -1320,7 +1324,7 @@
       "danger_zone": "Eneo la Hatari",
       "delete_account": "Futa Akaunti",
       "delete_account_desc": "Inafuta kabisa akaunti yako na data zote zinazohusiana. Hatua hii haiwezi kutenduliwa.",
-      "delete_account_hint": "Ili kufuta akaunti yako, tafadhali wasiliana na msaada kupitia support@MpahMapu.rw"
+      "delete_account_hint": "Ili kufuta akaunti yako, tafadhali wasiliana na msaada kupitia info@mpahmapu.com"
     }
   },
   "dashboard_home": {
@@ -1981,5 +1985,11 @@
   },
   "owner_guide": {
     "user_guide_sub": "Soma nyaraka kamili"
+  },
+  "job_payment": {
+    "label": "Malipo",
+    "summary": "Hulipwa kila {interval} {unit} · malipo {count}",
+    "instant_release": "Hutolewa papo hapo kila kipindi",
+    "approval_release": "Mwajiri huidhinisha kila malipo"
   }
 }

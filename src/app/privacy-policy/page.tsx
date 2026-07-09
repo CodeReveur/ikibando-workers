@@ -70,7 +70,7 @@ export default function PrivacyPage() {
     {
       id: "08",
       title: t("privacy.sections.sec8.title") || "Your rights",
-      body: t("privacy.sections.sec8.body") || `Under Rwandan law and in the spirit of fair data practice, you have the right to access a copy of your personal data, correct inaccurate information, request deletion of your account and data, and object to certain processing. To exercise any of these rights, contact privacy@MpahMapu.rw or use the in-app support form. We will respond within 10 business days.`,
+      body: t("privacy.sections.sec8.body") || `Under Rwandan law and in the spirit of fair data practice, you have the right to access a copy of your personal data, correct inaccurate information, request deletion of your account and data, and object to certain processing. To exercise any of these rights, contact privacy@mpahmapu.com or use the in-app support form. We will respond within 10 business days.`,
     },
     {
       id: "09",
@@ -85,7 +85,7 @@ export default function PrivacyPage() {
     {
       id: "11",
       title: t("privacy.sections.sec11.title") || "Contact us",
-      body: t("privacy.sections.sec11.body") || `For privacy questions, data requests, or to report a concern, contact our data team at privacy@MpahMapu.rw. For general queries use legal@MpahMapu.rw or the contact form on our website.`,
+      body: t("privacy.sections.sec11.body") || `For privacy questions, data requests, or to report a concern, contact our data team at privacy@mpahmapu.com. For general queries use legal@mpahmapu.com or the contact form on our website.`,
     },
   ];
 
@@ -309,10 +309,10 @@ export default function PrivacyPage() {
             <p style={{ margin: 0, fontSize: 12, color: "#555" }}>
               {t("privacy.contact_banner.email_prefix") || "Email"}{" "}
               <a
-                href="mailto:privacy@MpahMapu.rw"
+                href="mailto:privacy@mpahmapu.com"
                 style={{ color: "#f97316", textDecoration: "none", fontWeight: 600 }}
               >
-                privacy@MpahMapu.rw
+                privacy@mpahmapu.com
               </a>{" "}
               {t("privacy.contact_banner.email_suffix") || "- we respond within 10 business days."}
             </p>

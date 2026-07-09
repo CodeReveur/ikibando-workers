@@ -49,7 +49,7 @@ type RateType  = "hr" | "day" | "week" | "month" | "year";
 
 interface Form {
   category: string; budget: string;
-  headcount: string; rateType: RateType; paymentMode: PaymentMode; durationHours: string;
+  headcount: string; rateType: RateType; paymentMode: PaymentMode; paymentInterval: string; durationHours: string;
   date: string; time: string;
   province: string; district: string;
   latitude: number | null; longitude: number | null;
@@ -131,7 +131,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
   const { error: toastError } = useToast();
   const [step, setStep]     = useState(0);
   const [form, setForm]     = useState<Form>({
-    category:"", budget:"", headcount:"1", rateType:"day", paymentMode:"DAILY",
+    category:"", budget:"", headcount:"1", rateType:"day", paymentMode:"DAILY", paymentInterval:"1",
     durationHours:"4", date:"", time:"",
     province:"", district:"", latitude:null, longitude:null,
     requirements:"",
@@ -279,10 +279,11 @@ export function HireModal({ onClose }: { onClose: () => void }) {
         ratePerHour: parseInt(form.budget) || 0,
         headcount: selected.length || 1,
         urgency: "IMMEDIATE" as const,
-        startTime, durationHours: parseInt(form.durationHours) || 1,
+        startTime, durationHours: (parseInt(form.durationHours) || 1) * (form.paymentMode.startsWith("CUSTOM_") ? Math.max(1, parseInt(form.paymentInterval) || 1) : 1),
         rateType,
         paymentMode: paymentMode as import("@/lib/api").PaymentMode,
         paymentPeriods: parseInt(form.durationHours) || 1,
+        paymentInterval: form.paymentMode.startsWith("CUSTOM_") ? Math.max(1, parseInt(form.paymentInterval) || 1) : 1,
         directRelease,
         direct: true, // Hire Now: private offer to the picked worker(s), not a broadcast.
       };
@@ -387,7 +388,11 @@ export function HireModal({ onClose }: { onClose: () => void }) {
   };
 
   const budget      = parseInt(form.budget, 10) || 0;
-  const durationNum = parseInt(form.durationHours, 10) || 1;
+  // durationHours dropdown = number of payments (periods); custom modes add an "every N" interval.
+  const periodsNum  = parseInt(form.durationHours, 10) || 1;
+  const isCustom    = form.paymentMode.startsWith("CUSTOM_");
+  const interval    = isCustom ? Math.max(1, parseInt(form.paymentInterval, 10) || 1) : 1;
+  const durationNum = periodsNum * interval;   // total base units, for pricing
   const jobAmount   = budget * headcountNum * durationNum;
   const fee         = Math.round(jobAmount * 0.05);
   const total       = jobAmount + fee;
@@ -587,7 +592,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                       <ChevronDown size={13} color="#555" style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
                     </div>
                   </FField>
-                  <FField label={t("hire_modal.details.duration_label")}>
+                  <FField label={isCustom ? (t("post_job.labels.num_payments") || "Number of payments") : t("hire_modal.details.duration_label")}>
                     <div style={{ position: "relative" }}>
                       <AlarmClock size={13} color="#444" style={iconL} />
                       <select value={form.durationHours} onChange={e => setForm(f => ({ ...f, durationHours: e.target.value }))}
@@ -595,12 +600,39 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                         onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                         onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
                       >
-                        {getDurations(form.rateType).map(h => <option key={h} value={String(h)}>{h} {getUnit(form.rateType, h)}</option>)}
+                        {getDurations(form.rateType).map(h => (
+                          <option key={h} value={String(h)}>{isCustom ? `${h}×` : `${h} ${getUnit(form.rateType, h)}`}</option>
+                        ))}
                       </select>
                       <ChevronDown size={13} color="#555" style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
                     </div>
                   </FField>
                 </div>
+
+                {isCustom && (
+                  <FField label={t("post_job.labels.pay_every") || "Pay every"}>
+                    <div style={{ position: "relative", maxWidth: 220 }}>
+                      <input type="number" min="1" max="365" value={form.paymentInterval}
+                        onChange={e => setForm(f => ({ ...f, paymentInterval: e.target.value }))}
+                        style={{ ...inp, paddingRight: 60 }}
+                        onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
+                        onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                      />
+                      <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#777", pointerEvents: "none" }}>
+                        {getUnit(form.rateType, interval)}
+                      </span>
+                    </div>
+                  </FField>
+                )}
+
+                {periodsNum > 0 && (
+                  <p style={{ margin: "-2px 0 4px", fontSize: 12, color: "#8a8a8a", lineHeight: 1.6 }}>
+                    {t("post_job.schedule_summary", {
+                      interval: String(interval), unit: getUnit(form.rateType, interval),
+                      count: String(periodsNum), total: String(durationNum), totalUnit: getUnit(form.rateType, durationNum),
+                    }) || `Worker is paid every ${interval} ${getUnit(form.rateType, interval)}, ${periodsNum} time(s) — ${durationNum} ${getUnit(form.rateType, durationNum)} total.`}
+                  </p>
+                )}
 
                 <label style={{
                   background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10,

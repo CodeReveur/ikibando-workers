@@ -17,6 +17,7 @@ import { RichTextDisplay } from "@/components/ui/rich-text-editor";
 import { useLanguage } from "@/lib/language-context";
 import { useToast } from "@/components/ui/toast";
 import { PaymentPanel } from "@/components/payments/payment-panel";
+import { PaymentModeInfo } from "@/components/payments/payment-mode-info";
 
 type Stage = { done: boolean; active: boolean; label: string; date?: string | null; content: React.ReactNode };
 
@@ -469,6 +470,14 @@ export default function SeekerJobDetail() {
             <InfoRow label={t("seeker_job_detail.urgency")} value={job.urgency?.replace("_", " ")} />
             {job.startTime && <InfoRow label={t("seeker_job_detail.start_time")} value={dt(job.startTime) ?? "—"} />}
             {job.requirements && <InfoRow label={t("seeker_job_detail.requirements")} value={<RichTextDisplay content={job.requirements} />} />}
+            <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #1a1a1a" }}>
+              <PaymentModeInfo
+                paymentMode={job.paymentMode}
+                paymentPeriods={job.paymentPeriods}
+                paymentInterval={job.paymentInterval}
+                directRelease={job.directRelease}
+              />
+            </div>
           </div>
 
           {/* Earnings */}

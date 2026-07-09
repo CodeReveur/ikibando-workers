@@ -11,6 +11,7 @@ import {
   CheckCircle, Briefcase, AlertCircle, ArrowRight, Star,
 } from "lucide-react";
 import { RichTextDisplay } from "@/components/ui/rich-text-editor";
+import { PaymentModeInfo } from "@/components/payments/payment-mode-info";
 
 const fmt = (n: number) => `RWF ${n.toLocaleString()}`;
 
@@ -129,6 +130,19 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
               <p style={{ margin: "2px 0 0", fontSize: 11, color: "#444" }}>positions available</p>
             </div>
           )}
+        </div>
+
+        {/* PAYMENT SCHEDULE — how the worker gets paid over the job */}
+        <div style={{
+          background: "#141414", border: "1px solid #222", borderRadius: 12,
+          padding: "12px 16px", marginBottom: 24,
+        }}>
+          <PaymentModeInfo
+            paymentMode={job.paymentMode}
+            paymentPeriods={job.paymentPeriods}
+            paymentInterval={job.paymentInterval}
+            directRelease={job.directRelease}
+          />
         </div>
 
         {/* DESCRIPTION */}

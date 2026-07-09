@@ -360,6 +360,7 @@ export interface PaymentScheduleDto {
   jobId: string;
   paymentMode: PaymentMode;
   paymentPeriods: number;
+  paymentInterval: number;
   directRelease: boolean;
   startTime: string | null;
   workerPayoutTotal: number;
@@ -474,6 +475,7 @@ export interface JobDto {
   rateType: string;
   paymentMode: PaymentMode;
   paymentPeriods: number;
+  paymentInterval: number;
   directRelease: boolean;
   headcount: number;
   urgency: "IMMEDIATE" | "SAME_DAY" | "SCHEDULED";
@@ -736,7 +738,7 @@ export interface JobPayload {
   startTime: string; durationHours: number;
   rateType?: string; locationNotes?: string;
   /** How the escrow is paid out over time, and over how many periods. */
-  paymentMode?: PaymentMode; paymentPeriods?: number;
+  paymentMode?: PaymentMode; paymentPeriods?: number; paymentInterval?: number;
   /** When true, per-period payment requests pay out immediately without manual approval. */
   directRelease?: boolean;
   /** True for Hire Now / direct Offer: don't broadcast to all workers, only the picked one. */

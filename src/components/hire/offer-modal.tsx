@@ -128,6 +128,7 @@ export function OfferModal({ worker, onClose }: Props) {
   const [time,     setTime]     = useState("");
   const [rateType, setRateType] = useState<RateType>("hr");
   const [paymentMode, setPaymentMode] = useState<PaymentMode>("HOURLY");
+  const [offerInterval, setOfferInterval] = useState("1");
   const [duration, setDuration] = useState("4");
   const [province, setProvince] = useState("");
   const [district, setDistrict] = useState("");
@@ -172,6 +173,7 @@ export function OfferModal({ worker, onClose }: Props) {
         if (d.rateType) setRateType(d.rateType);
         if (d.paymentMode) setPaymentMode(d.paymentMode);
         else if (d.rateType) setPaymentMode((PAYMENT_MODES.find(m => m.rt === d.rateType) ?? PAYMENT_MODES[0]).value);
+        if (d.offerInterval) setOfferInterval(d.offerInterval);
         if (d.duration) setDuration(d.duration);
         if (d.province) setProvince(d.province);
         if (d.district) setDistrict(d.district);
@@ -191,10 +193,10 @@ export function OfferModal({ worker, onClose }: Props) {
   useEffect(() => {
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify({
-        title, date, time, rateType, paymentMode, duration, province, district, latitude, longitude, bid,
+        title, date, time, rateType, paymentMode, offerInterval, duration, province, district, latitude, longitude, bid,
       }));
     } catch {}
-  }, [title, date, time, rateType, paymentMode, duration, province, district, latitude, longitude, bid]);
+  }, [title, date, time, rateType, paymentMode, offerInterval, duration, province, district, latitude, longitude, bid]);
 
   const bidNum  = parseFloat(bid) || 0;
   const minRate = MIN_RATE_BY_PERIOD[rateType];
@@ -217,7 +219,11 @@ export function OfferModal({ worker, onClose }: Props) {
   }, [anonEmail, anonPhone, hasSession]);
 
   const rate        = parseFloat(bid) || 0;
-  const hours       = parseFloat(duration) || 0;
+  // duration dropdown = number of payments (periods); custom modes add an "every N" interval.
+  const periodsNum  = parseFloat(duration) || 0;
+  const isCustom    = paymentMode.startsWith("CUSTOM_");
+  const interval    = isCustom ? Math.max(1, parseInt(offerInterval, 10) || 1) : 1;
+  const hours       = periodsNum * interval;   // total base units, for pricing
   const baseCost    = rate * hours;
   const escrowFee   = Math.round(baseCost * 0.05);
   const total       = baseCost + escrowFee;
@@ -291,7 +297,8 @@ export function OfferModal({ worker, onClose }: Props) {
         startTime, durationHours: Math.round(hours),
         rateType: rt,
         paymentMode: paymentMode as import("@/lib/api").PaymentMode,
-        paymentPeriods: Math.round(hours) || 1,
+        paymentPeriods: Math.round(periodsNum) || 1,
+        paymentInterval: interval,
         directRelease,
         direct: true, // Direct offer to this one worker, not a broadcast.
       };
@@ -505,19 +512,44 @@ export function OfferModal({ worker, onClose }: Props) {
                     <svg style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
                   </div>
                 </FField>
-                <FField label={t("offer.labels.duration") || "Duration *"}>
+                <FField label={isCustom ? (t("post_job.labels.num_payments") || "Number of payments") : (t("offer.labels.duration") || "Duration *")}>
                   <div style={{ position: "relative" }}>
                     <select value={duration} onChange={e => setDuration(e.target.value)}
                       style={{ ...inp, appearance: "none", WebkitAppearance: "none", cursor: "pointer", color: duration ? "#f0f0f0" : "#555", paddingRight: 28 }}
                       onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                       onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
                     >
-                      {getDurations(rateType).map(h => <option key={h} value={String(h)}>{h} {getUnit(rateType, h)}</option>)}
+                      {getDurations(rateType).map(h => <option key={h} value={String(h)}>{isCustom ? `${h}×` : `${h} ${getUnit(rateType, h)}`}</option>)}
                     </select>
                     <svg style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
                   </div>
                 </FField>
               </div>
+
+              {isCustom && (
+                <FField label={t("post_job.labels.pay_every") || "Pay every"}>
+                  <div style={{ position: "relative", maxWidth: 220 }}>
+                    <input type="number" min="1" max="365" value={offerInterval}
+                      onChange={e => setOfferInterval(e.target.value)}
+                      style={{ ...inp, paddingRight: 60 }}
+                      onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
+                      onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                    />
+                    <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#777", pointerEvents: "none" }}>
+                      {getUnit(rateType, interval)}
+                    </span>
+                  </div>
+                </FField>
+              )}
+
+              {periodsNum > 0 && (
+                <p style={{ margin: "6px 0 0", fontSize: 12, color: "#8a8a8a", lineHeight: 1.6 }}>
+                  {t("post_job.schedule_summary", {
+                    interval: String(interval), unit: getUnit(rateType, interval),
+                    count: String(periodsNum), total: String(hours), totalUnit: getUnit(rateType, hours),
+                  }) || `Worker is paid every ${interval} ${getUnit(rateType, interval)}, ${periodsNum} time(s) — ${hours} ${getUnit(rateType, hours)} total.`}
+                </p>
+              )}
 
               <label style={{
                 background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10,
