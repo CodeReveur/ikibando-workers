@@ -135,7 +135,7 @@ export default function OwnerAnalytics() {
             return (
               <div key={cat} style={{ marginBottom:12 }}>
                 <div style={{ display:"flex", justifyContent:"space-between", marginBottom:5 }}>
-                  <span style={{ fontSize:12, color:"#555" }}>{t("common.categories." + cat.toLowerCase()) || cat}</span>
+                  <span style={{ fontSize:12, color:"#555" }}>{t("common.categories." + cat.toLowerCase().replace(/\s+/g,"_")) || cat}</span>
                   <span style={{ fontSize:12, fontWeight:700, color:COLORS[i] }}>{fmt(amount)}</span>
                 </div>
                 <div style={{ height:5, background:"#1a1a1a", borderRadius:99 }}>

@@ -875,7 +875,8 @@
       "notes": "Notes supplémentaires (optionnel)",
       "sector": "Secteur",
       "cell": "Cellule",
-      "village": "Village"
+      "village": "Village",
+      "payment_mode": "Mode de paiement"
     },
     "placeholders": {
       "search_category": "Rechercher une catégorie…",
@@ -915,6 +916,16 @@
       "posting_btn": "Publication…",
       "insufficient_balance_btn": "Solde insuffisant",
       "submit_btn": "Publier & geler les fonds"
+    },
+    "payment_modes": {
+      "hourly": "Par heure",
+      "custom_hours": "Heures personnalisées",
+      "daily": "Par jour",
+      "custom_days": "Jours personnalisés",
+      "weekly": "Par semaine",
+      "monthly": "Par mois",
+      "custom_months": "Mois personnalisés",
+      "yearly": "Par an"
     }
   },
   "offer": {
@@ -1261,7 +1272,11 @@
       "totp_verify_btn": "Vérifier & Activer",
       "active_sessions_title": "Sessions actives",
       "logout_devices_btn": "Déconnecter les autres appareils",
-      "current_session": "Session actuelle"
+      "current_session": "Session actuelle",
+      "totp_cant_scan": "IMPOSSIBLE DE SCANNER ? SAISISSEZ CETTE CLÉ MANUELLEMENT :",
+      "totp_code_label": "Code de vérification",
+      "cancel": "Annuler",
+      "active_sessions_desc": "Chaque fois que vous vous connectez, une alerte de sécurité est envoyée à votre adresse e-mail enregistrée. Cela vous aide à détecter tout accès non autorisé à votre compte."
     },
     "notifications": {
       "title": "Préférences de notification",
@@ -1299,7 +1314,13 @@
       "not_verified": "Non vérifié",
       "request_badge_btn": "Demander le badge de travailleur",
       "verification_badge_title": "Badge de vérification",
-      "verification_badge_desc": "Montrez aux clients que vous êtes vérifié et digne de confiance. La demande de badge génère une carte de badge de profil unique."
+      "verification_badge_desc": "Montrez aux clients que vous êtes vérifié et digne de confiance. La demande de badge génère une carte de badge de profil unique.",
+      "badge_verified_id_prefix": "Votre identifiant de badge de travailleur vérifié est ",
+      "badge_verified_hint": "Vous pouvez utiliser ce badge pour vous identifier auprès des employeurs.",
+      "danger_zone": "Zone de danger",
+      "delete_account": "Supprimer le compte",
+      "delete_account_desc": "Supprime définitivement votre compte et toutes les données associées. Cette action est irréversible.",
+      "delete_account_hint": "Pour supprimer votre compte, veuillez contacter le support à support@MpahMapu.rw"
     }
   },
   "dashboard_home": {
@@ -1709,7 +1730,10 @@
     "jobs_unit": "offres",
     "claim_refund_link": "Demander un remboursement",
     "select_escrow_payment": "Sélectionner un paiement en dépôt...",
-    "claim_refund_title": "Réclamer un remboursement du dépôt"
+    "claim_refund_title": "Réclamer un remboursement du dépôt",
+    "pay_method": "MODE DE PAIEMENT",
+    "topup_card_hint": "Vous serez redirigé vers une page de paiement par carte sécurisée dans un nouvel onglet. Les fonds apparaîtront automatiquement dans votre portefeuille une fois le paiement confirmé.",
+    "topup_pending_err": "Paiement pas encore confirmé. Si vous avez été débité, cela apparaîtra bientôt."
   },
   "owner_workers": {
     "total_applied": "Total des postulants",
@@ -1954,5 +1978,8 @@
       "process": "Notre support a généré un ticket d'incident à {time} et envoyé un e-mail d'alerte urgent aux adresses des administrateurs. Un responsable de la médiation analyse vos messages et vous recontactera directement sur votre adresse e-mail enregistrée.",
       "guidelines": "Pour obtenir de l'aide encore plus rapidement, vous pouvez cliquer sur le bouton vert 'Appel WhatsApp' ou 'Live Chat' dans l'en-tête. Cela vous mettra en relation immédiate sur WhatsApp avec un membre de notre équipe d'assistance pour échanger en direct."
     }
+  },
+  "owner_guide": {
+    "user_guide_sub": "Lire la documentation complète"
   }
 }

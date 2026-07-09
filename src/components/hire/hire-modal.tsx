@@ -8,7 +8,7 @@ import {
   AlarmClock, Search, Navigation, Loader2, Star,
 } from "lucide-react";
 import { JOB_CATEGORIES, RWANDA_PROVINCES, MIN_RATE_BY_PERIOD } from "@/lib/constants";
-import { getWorkers, postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, type WorkerProfileDto } from "@/lib/api";
+import { getWorkers, postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, type WorkerProfileDto, type PaymentMode } from "@/lib/api";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { ratingInfo } from "@/lib/rating";
 import { useToast } from "@/components/ui/toast";
@@ -49,7 +49,7 @@ type RateType  = "hr" | "day" | "week" | "month" | "year";
 
 interface Form {
   category: string; budget: string;
-  headcount: string; rateType: RateType; durationHours: string;
+  headcount: string; rateType: RateType; paymentMode: PaymentMode; durationHours: string;
   date: string; time: string;
   province: string; district: string;
   latitude: number | null; longitude: number | null;
@@ -75,6 +75,18 @@ const getUnit = (rt: RateType, n: number) => {
 const fmt       = (n: number) => `RWF ${n.toLocaleString()}`;
 const todayStr  = () => new Date().toISOString().split("T")[0];
 const RATE_LABEL: Record<RateType, string> = { hr:"/hr", day:"/day", week:"/wk", month:"/mo", year:"/yr" };
+
+// The 8 installment payment modes and the pricing/threshold unit each maps to.
+const PAYMENT_MODES: { value: PaymentMode; label: string; rt: RateType }[] = [
+  { value: "HOURLY",        label: "Hourly",        rt: "hr" },
+  { value: "CUSTOM_HOURS",  label: "Custom Hours",  rt: "hr" },
+  { value: "DAILY",         label: "Daily",         rt: "day" },
+  { value: "CUSTOM_DAYS",   label: "Custom Days",   rt: "day" },
+  { value: "WEEKLY",        label: "Weekly",        rt: "week" },
+  { value: "MONTHLY",       label: "Monthly",       rt: "month" },
+  { value: "CUSTOM_MONTHS", label: "Custom Months", rt: "month" },
+  { value: "YEARLY",        label: "Yearly",        rt: "year" },
+];
 
 // Shown when a guest's contact details already belong to a worker (seeker) account.
 const WORKER_ACCOUNT_MSG =
@@ -119,7 +131,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
   const { error: toastError } = useToast();
   const [step, setStep]     = useState(0);
   const [form, setForm]     = useState<Form>({
-    category:"", budget:"", headcount:"1", rateType:"day",
+    category:"", budget:"", headcount:"1", rateType:"day", paymentMode:"DAILY",
     durationHours:"4", date:"", time:"",
     province:"", district:"", latitude:null, longitude:null,
     requirements:"",
@@ -258,10 +270,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
         : form.rateType === "day" ? "PER_DAY"
         : form.rateType === "week" ? "PER_WEEK"
         : form.rateType === "month" ? "PER_MONTH" : "PER_YEAR";
-      const paymentMode = form.rateType === "hr" ? "HOURLY"
-        : form.rateType === "day" ? "DAILY"
-        : form.rateType === "week" ? "WEEKLY"
-        : form.rateType === "month" ? "MONTHLY" : "YEARLY";
+      const paymentMode = form.paymentMode;
 
       const jobPayload = {
         category: form.category, district: form.district,
@@ -558,18 +567,22 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                 </div>
 
                 <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  <FField label={t("hire_modal.details.period_label")}>
+                  <FField label={t("post_job.labels.payment_mode") || "Payment mode"}>
                     <div style={{ position: "relative" }}>
-                      <select value={form.rateType} onChange={e => setForm(f => ({ ...f, rateType: e.target.value as RateType }))}
+                      <select value={form.paymentMode}
+                        onChange={e => {
+                          const mode = PAYMENT_MODES.find(m => m.value === e.target.value) ?? PAYMENT_MODES[0];
+                          setForm(f => ({ ...f, paymentMode: mode.value, rateType: mode.rt }));
+                        }}
                         style={{ ...inp, appearance: "none", paddingRight: 28, color: "#f0f0f0" }}
                         onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                         onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
                       >
-                        <option value="hr">{t("hire_modal.details.period_options.hr")}</option>
-                        <option value="day">{t("hire_modal.details.period_options.day")}</option>
-                        <option value="week">{t("hire_modal.details.period_options.week")}</option>
-                        <option value="month">{t("hire_modal.details.period_options.month")}</option>
-                        <option value="year">{t("hire_modal.details.period_options.year")}</option>
+                        {PAYMENT_MODES.map(m => (
+                          <option key={m.value} value={m.value}>
+                            {t("post_job.payment_modes." + m.value.toLowerCase()) || m.label}
+                          </option>
+                        ))}
                       </select>
                       <ChevronDown size={13} color="#555" style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
                     </div>

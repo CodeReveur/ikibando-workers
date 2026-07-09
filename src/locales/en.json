@@ -876,7 +876,8 @@
       "notes": "Additional notes (optional)",
       "sector": "Sector",
       "cell": "Cell",
-      "village": "Village"
+      "village": "Village",
+      "payment_mode": "Payment mode"
     },
     "placeholders": {
       "search_category": "Search category…",
@@ -916,6 +917,16 @@
       "posting_btn": "Posting…",
       "insufficient_balance_btn": "Insufficient balance",
       "submit_btn": "Post & freeze funds"
+    },
+    "payment_modes": {
+      "hourly": "Hourly",
+      "custom_hours": "Custom Hours",
+      "daily": "Daily",
+      "custom_days": "Custom Days",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "custom_months": "Custom Months",
+      "yearly": "Yearly"
     }
   },
   "offer": {
@@ -1262,7 +1273,11 @@
       "totp_verify_btn": "Verify & Enable",
       "active_sessions_title": "Active Sessions",
       "logout_devices_btn": "Log out other devices",
-      "current_session": "Current Session"
+      "current_session": "Current Session",
+      "totp_cant_scan": "CAN'T SCAN? ENTER THIS KEY MANUALLY:",
+      "totp_code_label": "Verification Code",
+      "cancel": "Cancel",
+      "active_sessions_desc": "Every time you sign in, a security alert is sent to your registered email address. This helps you detect unauthorized access to your account."
     },
     "notifications": {
       "title": "Notification Preferences",
@@ -1300,7 +1315,13 @@
       "not_verified": "Not Verified",
       "request_badge_btn": "Request Worker Badge",
       "verification_badge_title": "Verification Badge",
-      "verification_badge_desc": "Show clients you are verified and trustworthy. Requesting a badge generates a unique profile badge card."
+      "verification_badge_desc": "Show clients you are verified and trustworthy. Requesting a badge generates a unique profile badge card.",
+      "badge_verified_id_prefix": "Your verified worker badge ID is ",
+      "badge_verified_hint": "You can use this badge to identify yourself to employers.",
+      "danger_zone": "Danger Zone",
+      "delete_account": "Delete Account",
+      "delete_account_desc": "Permanently deletes your account and all associated data. This cannot be undone.",
+      "delete_account_hint": "To delete your account, please contact support at support@MpahMapu.rw"
     }
   },
   "dashboard_home": {
@@ -1710,7 +1731,10 @@
     "jobs_unit": "jobs",
     "claim_refund_link": "Request a refund",
     "select_escrow_payment": "Select an escrow payment...",
-    "claim_refund_title": "Claim Escrow Refund"
+    "claim_refund_title": "Claim Escrow Refund",
+    "pay_method": "PAYMENT METHOD",
+    "topup_card_hint": "You'll be taken to a secure card payment page in a new tab. Funds appear in your wallet automatically once the payment is confirmed.",
+    "topup_pending_err": "Payment not confirmed yet. If you were charged, it will reflect shortly."
   },
   "owner_workers": {
     "total_applied": "Total Applied",
@@ -1959,5 +1983,8 @@
       "process": "Our support system has generated a ticket at {time} and sent an urgent notification email to all admin accounts. A live support manager is reviewing the chat logs and will contact you directly on your registered email address.",
       "guidelines": "To get help even faster, you can click the green 'WhatsApp Call' or 'Live Chat' button in the header. This will open a direct line to our support team on WhatsApp where you can chat with a real person immediately."
     }
+  },
+  "owner_guide": {
+    "user_guide_sub": "Read the full docs"
   }
 }

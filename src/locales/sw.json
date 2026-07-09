@@ -875,7 +875,8 @@
       "notes": "Maelezo ya ziada (hiari)",
       "sector": "Sekta",
       "cell": "Kata",
-      "village": "Kijiji"
+      "village": "Kijiji",
+      "payment_mode": "Njia ya malipo"
     },
     "placeholders": {
       "search_category": "Tafuta kategoria…",
@@ -915,6 +916,16 @@
       "posting_btn": "Inachapisha…",
       "insufficient_balance_btn": "Salio halitoshi",
       "submit_btn": "Chapisha & zuia fedha"
+    },
+    "payment_modes": {
+      "hourly": "Kwa saa",
+      "custom_hours": "Saa maalum",
+      "daily": "Kwa siku",
+      "custom_days": "Siku maalum",
+      "weekly": "Kwa wiki",
+      "monthly": "Kwa mwezi",
+      "custom_months": "Miezi maalum",
+      "yearly": "Kwa mwaka"
     }
   },
   "offer": {
@@ -1261,7 +1272,11 @@
       "totp_verify_btn": "Thibitisha & Wezesha",
       "active_sessions_title": "Vikao Vinavyotumika",
       "logout_devices_btn": "Ondoka kwenye vifaa vingine vyote",
-      "current_session": "Kikao cha Sasa"
+      "current_session": "Kikao cha Sasa",
+      "totp_cant_scan": "HUWEZI KUSKANI? WEKA UFUNGUO HUU KWA MKONO:",
+      "totp_code_label": "Msimbo wa Uthibitisho",
+      "cancel": "Ghairi",
+      "active_sessions_desc": "Kila unapoingia, arifa ya usalama hutumwa kwa anwani yako ya barua pepe iliyosajiliwa. Hii hukusaidia kugundua ufikiaji usioidhinishwa wa akaunti yako."
     },
     "notifications": {
       "title": "Mapendeleo ya Arifa",
@@ -1299,7 +1314,13 @@
       "not_verified": "Haijathibitishwa",
       "request_badge_btn": "Omba Beji ya Mfanyakazi",
       "verification_badge_title": "Beji ya Uthibitishaji",
-      "verification_badge_desc": "Waonyeshe wateja kuwa umethibitishwa na unaaminika. Kuomba beji hutengeneza kadi ya beji ya wasifu wa kipekee."
+      "verification_badge_desc": "Waonyeshe wateja kuwa umethibitishwa na unaaminika. Kuomba beji hutengeneza kadi ya beji ya wasifu wa kipekee.",
+      "badge_verified_id_prefix": "Kitambulisho chako cha beji ya mfanyakazi kilichothibitishwa ni ",
+      "badge_verified_hint": "Unaweza kutumia beji hii kujitambulisha kwa waajiri.",
+      "danger_zone": "Eneo la Hatari",
+      "delete_account": "Futa Akaunti",
+      "delete_account_desc": "Inafuta kabisa akaunti yako na data zote zinazohusiana. Hatua hii haiwezi kutenduliwa.",
+      "delete_account_hint": "Ili kufuta akaunti yako, tafadhali wasiliana na msaada kupitia support@MpahMapu.rw"
     }
   },
   "dashboard_home": {
@@ -1709,7 +1730,10 @@
     "jobs_unit": "kazi",
     "claim_refund_link": "Omba urejeshaji wa pesa",
     "select_escrow_payment": "Chagua amana ya escrow...",
-    "claim_refund_title": "Dai Urejeshaji wa Escrow"
+    "claim_refund_title": "Dai Urejeshaji wa Escrow",
+    "pay_method": "NJIA YA MALIPO",
+    "topup_card_hint": "Utapelekwa kwenye ukurasa salama wa malipo ya kadi katika kichupo kipya. Fedha zitaonekana kwenye pochi yako kiotomatiki mara malipo yatakapothibitishwa.",
+    "topup_pending_err": "Malipo hayajathibitishwa bado. Ikiwa umetozwa, yataonekana hivi karibuni."
   },
   "owner_workers": {
     "total_applied": "Jumla ya Waombaji",
@@ -1954,5 +1978,8 @@
       "process": "Mfumo wetu wa usaidizi umezalisha tiketi saa {time} na kutuma barua pepe ya dharura kwa akaunti zote za wasimamizi. Meneja wa usaidizi anakagua kumbukumbu hizi za gumzo na atawasiliana nawe moja kwa moja kupitia barua pepe yako iliyosajiliwa.",
       "guidelines": "Ili kupata usaidizi wa haraka zaidi, yanaweza kubofya kitufe cha kijani cha 'Simu ya WhatsApp' au 'Chat ya Live' kwenye kichwa cha ukurasa. Hii itakuunganisha moja kwa moja na timu yetu ya usaidizi kwenye WhatsApp ili kuzungumza na mtu halisi mara moja."
     }
+  },
+  "owner_guide": {
+    "user_guide_sub": "Soma nyaraka kamili"
   }
 }

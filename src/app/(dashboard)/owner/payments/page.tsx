@@ -3,12 +3,14 @@
 import { useEffect, useState, useCallback } from "react";
 import { CreditCard, Shield, Plus, RefreshCw, X, ArrowDownLeft, ArrowUpRight, Loader2, Wallet } from "lucide-react";
 import {
-  getWallet, getWalletTransactions, topupWallet, requestRefund, apiError,
+  getWallet, getWalletTransactions, requestRefund, apiError,
   type WalletDto, type PaymentDto,
 } from "@/lib/api";
 import { StatCard, SectionHead, PageLoader } from "@/components/dashboard/ui";
 import { fmt } from "@/lib/dashboard-data";
 import { useLanguage } from "@/lib/language-context";
+import { PayMethodSelector, type PayMethodValue } from "@/components/ui/pay-logos";
+import { runWalletTopup, isCardMethod } from "@/lib/pay-flow";
 
 const STATUS_STYLE: Record<string, { label: string; color: string; bg: string }> = {
   HELD:     { label:"In Escrow",  color:"#f59e0b", bg:"rgba(245,158,11,0.08)"  },
@@ -37,7 +39,7 @@ export default function OwnerPayments() {
   const [topupOpen,    setTopupOpen]    = useState(false);
   const [topupAmt,     setTopupAmt]     = useState("");
   const [topupPhone,   setTopupPhone]   = useState("");
-  const [topupMethod,  setTopupMethod]  = useState<"MTN_MOMO" | "AIRTEL_MONEY">("MTN_MOMO");
+  const [topupMethod,  setTopupMethod]  = useState<PayMethodValue>("MTN_MOMO");
   const [topupBusy,    setTopupBusy]    = useState(false);
   const [topupErr,     setTopupErr]     = useState("");
 
@@ -63,11 +65,23 @@ export default function OwnerPayments() {
   const doTopup = async () => {
     const token = localStorage.getItem("access_token")!;
     const amount = parseInt(topupAmt, 10);
+    const card = isCardMethod(topupMethod);
     if (!amount || amount < 100) { setTopupErr(t("owner_payments.min_topup_err") || "Minimum top-up is RWF 100"); return; }
-    if (!topupPhone || topupPhone.replace(/\D/g,"").length < 9) { setTopupErr(t("owner_payments.valid_phone_err") || "Enter a valid phone number"); return; }
+    // Card payments are collected on XentriPay's hosted page — no phone needed.
+    if (!card && (!topupPhone || topupPhone.replace(/\D/g,"").length < 9)) {
+      setTopupErr(t("owner_payments.valid_phone_err") || "Enter a valid phone number"); return;
+    }
     setTopupBusy(true); setTopupErr("");
     try {
-      await topupWallet({ amount, phoneNumber: topupPhone.trim(), paymentMethod: topupMethod }, token);
+      const outcome = await runWalletTopup({
+        amount, method: topupMethod, phone: card ? undefined : topupPhone.trim(), token,
+      });
+      if (outcome !== "success") {
+        setTopupErr(outcome === "pending"
+          ? (t("owner_payments.topup_pending_err") || "Payment not confirmed yet. If you were charged, it will reflect shortly.")
+          : (t("owner_payments.topup_failed_err") || "Top-up failed"));
+        return;
+      }
       await load(); // refresh wallet + transactions
       setTopupOpen(false); setTopupAmt(""); setTopupPhone("");
     } catch (e: any) {
@@ -269,64 +283,38 @@ export default function OwnerPayments() {
               <button onClick={() => { setTopupOpen(false); setTopupErr(""); }} style={{ background:"none", border:"none", cursor:"pointer", color:"#555" }}><X size={18} /></button>
             </div>
 
-            {/* Provider selector */}
-            <p style={{ margin:"0 0 8px", fontSize:11, fontWeight:700, color:"#3a3a3a", letterSpacing:"0.06em" }}>{t("owner_payments.momo_provider") || "MOBILE MONEY PROVIDER"}</p>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:18 }}>
-              {/* MTN */}
-              <button onClick={() => setTopupMethod("MTN_MOMO")} style={{
-                background: topupMethod === "MTN_MOMO" ? "rgba(255,204,0,0.08)" : "#141414",
-                border:`1px solid ${topupMethod === "MTN_MOMO" ? "#ffcc00" : "#222"}`,
-                borderRadius:12, padding:"14px 12px", cursor:"pointer",
-                display:"flex", alignItems:"center", gap:12, transition:"all 0.15s",
-              }}>
-                {/* MTN logo mark */}
-                <div style={{ width:38, height:38, borderRadius:8, background:"#ffcc00", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                  <svg width="24" height="14" viewBox="0 0 60 34" fill="none">
-                    <path d="M0 0h12l18 22L48 0h12v34H48V14L30 34 12 14v20H0V0z" fill="#000"/>
-                  </svg>
-                </div>
-                <div style={{ textAlign:"left" }}>
-                  <p style={{ margin:0, fontSize:13, fontWeight:800, color: topupMethod === "MTN_MOMO" ? "#ffcc00" : "#d0d0d0" }}>MTN</p>
-                  <p style={{ margin:0, fontSize:10, color:"#555" }}>Mobile Money</p>
-                </div>
-              </button>
-              {/* Airtel */}
-              <button onClick={() => setTopupMethod("AIRTEL_MONEY")} style={{
-                background: topupMethod === "AIRTEL_MONEY" ? "rgba(255,0,0,0.08)" : "#141414",
-                border:`1px solid ${topupMethod === "AIRTEL_MONEY" ? "#ff3333" : "#222"}`,
-                borderRadius:12, padding:"14px 12px", cursor:"pointer",
-                display:"flex", alignItems:"center", gap:12, transition:"all 0.15s",
-              }}>
-                {/* Airtel logo mark */}
-                <div style={{ width:38, height:38, borderRadius:8, background:"#ff0000", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                  <svg width="22" height="22" viewBox="0 0 50 50" fill="none">
-                    <path d="M25 5 C14 5 5 14 5 25 C5 36 14 45 25 45 C36 45 45 36 45 25 C45 14 36 5 25 5Z M25 38 C17 38 12 32 12 25 C12 18 17 12 25 12 C30 12 34 15 36 19 L29 22 C28 20 26 19 25 19 C21 19 19 22 19 25 C19 28 21 31 25 31 C27 31 29 30 30 28 L37 31 C35 35 30 38 25 38Z" fill="#fff"/>
-                  </svg>
-                </div>
-                <div style={{ textAlign:"left" }}>
-                  <p style={{ margin:0, fontSize:13, fontWeight:800, color: topupMethod === "AIRTEL_MONEY" ? "#ff4444" : "#d0d0d0" }}>Airtel</p>
-                  <p style={{ margin:0, fontSize:10, color:"#555" }}>Airtel Money</p>
-                </div>
-              </button>
+            {/* Payment method — mobile money or card */}
+            <p style={{ margin:"0 0 8px", fontSize:11, fontWeight:700, color:"#3a3a3a", letterSpacing:"0.06em" }}>{t("owner_payments.pay_method") || "PAYMENT METHOD"}</p>
+            <div style={{ marginBottom:18 }}>
+              <PayMethodSelector value={topupMethod} onChange={setTopupMethod} />
             </div>
 
             <p style={{ margin:"0 0 6px", fontSize:11, fontWeight:700, color:"#3a3a3a", letterSpacing:"0.06em" }}>{t("owner_payments.amount_rwf") || "AMOUNT (RWF)"}</p>
             <input style={{ ...inp, marginBottom:14 }} type="number" min="100" placeholder="e.g. 50,000" value={topupAmt} onChange={e => setTopupAmt(e.target.value)} />
 
-            <p style={{ margin:"0 0 6px", fontSize:11, fontWeight:700, color:"#3a3a3a", letterSpacing:"0.06em" }}>
-              {t("owner_payments.phone_label", { provider: topupMethod === "MTN_MOMO" ? "MTN" : "AIRTEL" }) || `${topupMethod === "MTN_MOMO" ? "MTN" : "AIRTEL"} PHONE NUMBER`}
-            </p>
-            <input style={{ ...inp, marginBottom:6 }} type="tel"
-              placeholder={topupMethod === "MTN_MOMO" ? "e.g. 0788 123 456" : "e.g. 0738 123 456"}
-              value={topupPhone} onChange={e => setTopupPhone(e.target.value)} />
-            <p style={{ margin:"0 0 18px", fontSize:11, color:"#2a2a2a", lineHeight:1.6 }}>
-              {t("owner_payments.topup_hint") || "A USSD prompt will be sent to your phone. Approve it to complete the top-up. Funds appear in your wallet automatically once confirmed."}
-            </p>
+            {!isCardMethod(topupMethod) ? (
+              <>
+                <p style={{ margin:"0 0 6px", fontSize:11, fontWeight:700, color:"#3a3a3a", letterSpacing:"0.06em" }}>
+                  {t("owner_payments.phone_label", { provider: topupMethod === "MTN_MOMO" ? "MTN" : "AIRTEL" }) || `${topupMethod === "MTN_MOMO" ? "MTN" : "AIRTEL"} PHONE NUMBER`}
+                </p>
+                <input style={{ ...inp, marginBottom:6 }} type="tel"
+                  placeholder={topupMethod === "MTN_MOMO" ? "e.g. 0788 123 456" : "e.g. 0738 123 456"}
+                  value={topupPhone} onChange={e => setTopupPhone(e.target.value)} />
+                <p style={{ margin:"0 0 18px", fontSize:11, color:"#2a2a2a", lineHeight:1.6 }}>
+                  {t("owner_payments.topup_hint") || "A USSD prompt will be sent to your phone. Approve it to complete the top-up. Funds appear in your wallet automatically once confirmed."}
+                </p>
+              </>
+            ) : (
+              <p style={{ margin:"6px 0 18px", fontSize:11, color:"#2a2a2a", lineHeight:1.6 }}>
+                {t("owner_payments.topup_card_hint") || "You'll be taken to a secure card payment page in a new tab. Funds appear in your wallet automatically once the payment is confirmed."}
+              </p>
+            )}
 
             {topupErr && <p style={{ margin:"0 0 12px", fontSize:12, color:"#ef4444", background:"rgba(239,68,68,0.07)", borderRadius:8, padding:"8px 12px" }}>{topupErr}</p>}
             <div style={{ display:"flex", gap:10 }}>
               <button onClick={doTopup} disabled={topupBusy} style={{
-                flex:1, background: topupMethod === "MTN_MOMO" ? "#ffcc00" : "#ff0000",
+                flex:1,
+                background: topupMethod === "MTN_MOMO" ? "#ffcc00" : topupMethod === "AIRTEL_MONEY" ? "#ff0000" : "#f97316",
                 color: topupMethod === "MTN_MOMO" ? "#000" : "#fff",
                 border:"none", borderRadius:9, padding:"12px", fontSize:13, fontWeight:800,
                 cursor: topupBusy ? "not-allowed" : "pointer", fontFamily:"inherit",

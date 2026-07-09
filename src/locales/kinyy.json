@@ -875,7 +875,8 @@
       "notes": "Ibindi bisobanuro (si ngombwa)",
       "sector": "Umurenge",
       "cell": "Akagari",
-      "village": "Umudugudu"
+      "village": "Umudugudu",
+      "payment_mode": "Uburyo bwo kwishyura"
     },
     "placeholders": {
       "search_category": "Shakisha ikiciro…",
@@ -915,6 +916,16 @@
       "posting_btn": "Gushyiraho...",
       "insufficient_balance_btn": "Amafaranga ntahagije",
       "submit_btn": "Gushyiraho akazi & kubika amafaranga"
+    },
+    "payment_modes": {
+      "hourly": "Buri saha",
+      "custom_hours": "Amasaha wihitiyemo",
+      "daily": "Buri munsi",
+      "custom_days": "Iminsi wihitiyemo",
+      "weekly": "Buri cyumweru",
+      "monthly": "Buri kwezi",
+      "custom_months": "Amezi wihitiyemo",
+      "yearly": "Buri mwaka"
     }
   },
   "offer": {
@@ -1262,7 +1273,11 @@
       "totp_verify_btn": "Genzura & Fungura",
       "active_sessions_title": "Ibikoresho Birimo Gukoreshwa",
       "logout_devices_btn": "Sohora ibindi bikoresho byose",
-      "current_session": "Igikoresho kirimo gukoreshwa ubu"
+      "current_session": "Igikoresho kirimo gukoreshwa ubu",
+      "totp_cant_scan": "NTUBASHA GUSIKANA? INJIZA IYI NIMERO N'INTOKI:",
+      "totp_code_label": "Kode yo Kwemeza",
+      "cancel": "Kureka",
+      "active_sessions_desc": "Buri gihe winjiye, ubutumwa bw'umutekano boherezwa kuri email yawe wanditse. Ibi bigufasha kumenya niba hari uwinjiye muri konti yawe atabyemerewe."
     },
     "notifications": {
       "title": "Ibyo Uhitamo Ku Bimenyetso",
@@ -1300,7 +1315,13 @@
       "not_verified": "Konti Ntiyemejwe",
       "request_badge_btn": "Saba Ikirango cy'Umukozi",
       "verification_badge_title": "Ikirango cy'Ubugenzuzi",
-      "verification_badge_desc": "Ereka abakoresha ko wemejwe kandi wizerwa. Gusaba ikirango bituma ukorerwa ikirango cyihariye ku mwirondoro wawe."
+      "verification_badge_desc": "Ereka abakoresha ko wemejwe kandi wizerwa. Gusaba ikirango bituma ukorerwa ikirango cyihariye ku mwirondoro wawe.",
+      "badge_verified_id_prefix": "Nimero y'ikirango cyawe cy'umukozi wemejwe ni ",
+      "badge_verified_hint": "Ushobora gukoresha iki kirango kwimenyekanisha ku bakoresha.",
+      "danger_zone": "Aho Hari Akaga",
+      "delete_account": "Gusiba Konti",
+      "delete_account_desc": "Bisiba burundu konti yawe n'amakuru yose ajyanye na yo. Ibi ntibishobora gusubizwa inyuma.",
+      "delete_account_hint": "Kugira ngo usibe konti yawe, wandikire ubufasha kuri support@MpahMapu.rw"
     }
   },
   "dashboard_home": {
@@ -1710,7 +1731,10 @@
     "jobs_unit": "akazi",
     "claim_refund_link": "Saba isubizwa ry'amafaranga",
     "select_escrow_payment": "Hitamo amafaranga afunzwe...",
-    "claim_refund_title": "Saba Isubizwa rya Escrow"
+    "claim_refund_title": "Saba Isubizwa rya Escrow",
+    "pay_method": "UBURYO BWO KWISHYURA",
+    "topup_card_hint": "Uzajyanwa ku rupapuro rwizewe rwo kwishyura na karita mu gafeni gashya. Amafaranga azagaragara muri wallet yawe iyo kwishyura byemejwe.",
+    "topup_pending_err": "Kwishyura ntibiremezwa. Niba wishyuye, bizagaragara vuba."
   },
   "owner_workers": {
     "total_applied": "Abasabye bose",
@@ -1955,5 +1979,8 @@
       "process": "Sisitemu yacu yafunguye ticket nshya saa {time} maze ihita yoherereza email ya alarm abadmin bose kuri platform. Manager ushinzwe ubufasha agiye gusuzuma ibiganiro maze ahite akwandikira kuri email yawe wiyandikishijeho.",
       "guidelines": "Kugira ngo ubone ubufasha vuba cyane, ushobora gukanda ku gice cy'icyatsi kibara 'WhatsApp Call' cyangwa 'Live Chat' hejuru ku rupapuro. Ibi bikugeza kuri support team yacu kuri WhatsApp maze ukavugana n'umuntu ako kanya."
     }
+  },
+  "owner_guide": {
+    "user_guide_sub": "Soma inyandiko zuzuye"
   }
 }

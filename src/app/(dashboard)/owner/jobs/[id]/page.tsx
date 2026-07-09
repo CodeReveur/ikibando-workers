@@ -310,7 +310,7 @@ export default function OwnerJobDetail() {
                     fontSize: 10, fontWeight: 700, borderRadius: 99, padding: "3px 9px",
                     color: app.status === "ACCEPTED" ? "#22c55e" : app.status === "REJECTED" ? "#ef4444" : "#888",
                     background: app.status === "ACCEPTED" ? "rgba(34,197,94,0.08)" : app.status === "REJECTED" ? "rgba(239,68,68,0.08)" : "rgba(100,100,100,0.08)",
-                  }}>{t("seeker_jobs.status_" + app.status.toLowerCase()) || app.status}</span>
+                  }}>{t("seeker_jobs.status_" + app.status.toLowerCase().replace(/\s+/g,"_")) || app.status}</span>
                 )}
               </div>
             </div>
@@ -423,10 +423,10 @@ export default function OwnerJobDetail() {
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
               <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: "#fff" }}>{job.title}</h1>
               <span style={{ fontSize: 10, fontWeight: 700, borderRadius: 99, padding: "3px 10px", color: STATUS_COLOR[job.status] ?? "#888", background: `${STATUS_COLOR[job.status] ?? "#888"}18` }}>
-                {t("seeker_jobs.status_" + job.status.toLowerCase()) || job.status}
+                {t("seeker_jobs.status_" + job.status.toLowerCase().replace(/\s+/g,"_")) || job.status}
               </span>
             </div>
-            <p style={{ margin: 0, fontSize: 12, color: "#444" }}>{t("common.categories." + job.category.toLowerCase()) || job.category} · {job.district} · {accepted.length}/{job.headcount} {Number(job.headcount) !== 1 ? (t("owner_offers.slots_plural") || "workers") : (t("owner_offers.slots") || "worker")} {t("settings_page.account.verified") || "hired"}</p>
+            <p style={{ margin: 0, fontSize: 12, color: "#444" }}>{t("common.categories." + job.category.toLowerCase().replace(/\s+/g,"_")) || job.category} · {job.district} · {accepted.length}/{job.headcount} {Number(job.headcount) !== 1 ? (t("owner_offers.slots_plural") || "workers") : (t("owner_offers.slots") || "worker")} {t("settings_page.account.verified") || "hired"}</p>
           </div>
           {/* Action buttons */}
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -484,7 +484,7 @@ export default function OwnerJobDetail() {
           {/* Job details */}
           <div style={{ background: "#111", border: "1px solid #1c1c1c", borderRadius: 14, padding: "16px 18px" }}>
             <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: "0.08em" }}>{t("owner_offers.job_details") || "Job Details"}</p>
-            <InfoRow label={t("owner_offers.category") || "Category"} value={t("common.categories." + job.category.toLowerCase()) || job.category} />
+            <InfoRow label={t("owner_offers.category") || "Category"} value={t("common.categories." + job.category.toLowerCase().replace(/\s+/g,"_")) || job.category} />
             <InfoRow label={t("seeker_jobs.label_location") || "Location"} value={`${job.district}${job.province ? `, ${job.province}` : ""}`} />
             {job.locationNotes && <InfoRow label={t("seeker_jobs.location_notes") || "Notes"} value={<RichTextDisplay content={job.locationNotes} />} />}
             <InfoRow label={t("owner_offers.rate") || "Rate"} value={`RWF ${job.ratePerHour?.toLocaleString()} / hr`} />

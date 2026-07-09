@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { JOB_CATEGORIES, RWANDA_PROVINCES, CURRENCY, MIN_RATE_BY_PERIOD } from "@/lib/constants";
 import { Sectors, Cells, Villages } from "rwanda";
-import { postJob, postGuestJob, getWallet, apiError, checkGuestAccount } from "@/lib/api";
+import { postJob, postGuestJob, getWallet, apiError, checkGuestAccount, type PaymentMode } from "@/lib/api";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { saveRedirect } from "@/lib/auth-redirect";
 import { useToast } from "@/components/ui/toast";
@@ -51,6 +51,19 @@ const getUnit = (rt: RateType, n: number) => {
   return "";
 };
 const RATE_LABEL: Record<RateType, string> = { hr:"/hr", day:"/day", week:"/wk", month:"/mo", year:"/yr" };
+
+// The 8 installment payment modes the employer chooses, and the pricing/threshold unit each maps to.
+// The worker can then request payment after each completed period (Duration = number of periods).
+const PAYMENT_MODES: { value: PaymentMode; label: string; rt: RateType }[] = [
+  { value: "HOURLY",        label: "Hourly",        rt: "hr" },
+  { value: "CUSTOM_HOURS",  label: "Custom Hours",  rt: "hr" },
+  { value: "DAILY",         label: "Daily",         rt: "day" },
+  { value: "CUSTOM_DAYS",   label: "Custom Days",   rt: "day" },
+  { value: "WEEKLY",        label: "Weekly",        rt: "week" },
+  { value: "MONTHLY",       label: "Monthly",       rt: "month" },
+  { value: "CUSTOM_MONTHS", label: "Custom Months", rt: "month" },
+  { value: "YEARLY",        label: "Yearly",        rt: "year" },
+];
 const todayStr  = () => new Date().toISOString().split("T")[0];
 const fmt       = (n: number) => `${CURRENCY} ${n.toLocaleString()}`;
 
@@ -91,6 +104,7 @@ interface JobForm {
   longitude: number | null;
   ratePerHour: string;
   rateType: RateType;
+  paymentMode: PaymentMode;
   notes: string;
 }
 
@@ -174,7 +188,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
     durationHours: "4", province: "", district: "",
     sector: "", cell: "", village: "",
     latitude: null, longitude: null,
-    ratePerHour: "", rateType: "hr", notes: "",
+    ratePerHour: "", rateType: "hr", paymentMode: "HOURLY", notes: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof JobForm, string>>>({});
 
@@ -334,12 +348,9 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
         : job.rateType === "week" ? "PER_WEEK"
         : job.rateType === "month" ? "PER_MONTH" : "PER_YEAR";
 
-      // The pricing unit doubles as the installment payment mode; the duration count is the
-      // number of billable periods the worker can request payment for one at a time.
-      const paymentMode = job.rateType === "hr" ? "HOURLY"
-        : job.rateType === "day" ? "DAILY"
-        : job.rateType === "week" ? "WEEKLY"
-        : job.rateType === "month" ? "MONTHLY" : "YEARLY";
+      // The employer picks the payment mode explicitly; the duration count is the number of
+      // billable periods the worker can request payment for, one at a time.
+      const paymentMode = job.paymentMode;
       const paymentPeriods = parseInt(job.durationHours) || 1;
 
       const jobPayload = {
@@ -595,18 +606,22 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
 
                 {/* Duration + Workers */}
                 <div className="pj-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  <FField label={t("post_job.labels.rate_period") || "Rate period"}>
+                  <FField label={t("post_job.labels.payment_mode") || "Payment mode"}>
                     <div style={{ position: "relative" }}>
-                      <select value={job.rateType} onChange={e => setJob(f => ({ ...f, rateType: e.target.value as RateType }))}
+                      <select value={job.paymentMode}
+                        onChange={e => {
+                          const mode = PAYMENT_MODES.find(m => m.value === e.target.value) ?? PAYMENT_MODES[0];
+                          setJob(f => ({ ...f, paymentMode: mode.value, rateType: mode.rt }));
+                        }}
                         style={{ ...inp, appearance: "none", paddingRight: 28, color: "#f0f0f0" }}
                         onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                         onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
                       >
-                        <option value="hr">{t("post_job.options.per_hour") || "Per hour"}</option>
-                        <option value="day">{t("post_job.options.per_day") || "Per day"}</option>
-                        <option value="week">{t("post_job.options.per_week") || "Per week"}</option>
-                        <option value="month">{t("post_job.options.per_month") || "Per month"}</option>
-                        <option value="year">{t("post_job.options.per_year") || "Per year"}</option>
+                        {PAYMENT_MODES.map(m => (
+                          <option key={m.value} value={m.value}>
+                            {t("post_job.payment_modes." + m.value.toLowerCase()) || m.label}
+                          </option>
+                        ))}
                       </select>
                       <ChevronDown size={13} color="#555" style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
                     </div>

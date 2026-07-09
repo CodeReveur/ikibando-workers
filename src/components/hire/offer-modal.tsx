@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { X, Calendar, Clock, CheckCircle, Bell, MapPin, Navigation, Loader2 } from "lucide-react";
 import { RWANDA_PROVINCES, MIN_RATE_BY_PERIOD } from "@/lib/constants";
-import { postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, type WorkerProfileDto } from "@/lib/api";
+import { postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, type WorkerProfileDto, type PaymentMode } from "@/lib/api";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { useToast } from "@/components/ui/toast";
 import { useLanguage } from "@/lib/language-context";
@@ -51,6 +51,18 @@ const getDurations = (rt: RateType) => {
   return [1];
 };
 const RATE_LABEL: Record<RateType, string> = { hr:"/hr", day:"/day", week:"/wk", month:"/mo", year:"/yr" };
+
+// The 8 installment payment modes and the pricing/threshold unit each maps to.
+const PAYMENT_MODES: { value: PaymentMode; label: string; rt: RateType }[] = [
+  { value: "HOURLY",        label: "Hourly",        rt: "hr" },
+  { value: "CUSTOM_HOURS",  label: "Custom Hours",  rt: "hr" },
+  { value: "DAILY",         label: "Daily",         rt: "day" },
+  { value: "CUSTOM_DAYS",   label: "Custom Days",   rt: "day" },
+  { value: "WEEKLY",        label: "Weekly",        rt: "week" },
+  { value: "MONTHLY",       label: "Monthly",       rt: "month" },
+  { value: "CUSTOM_MONTHS", label: "Custom Months", rt: "month" },
+  { value: "YEARLY",        label: "Yearly",        rt: "year" },
+];
 
 // Shown when a guest's contact details already belong to a worker (seeker) account.
 const WORKER_ACCOUNT_MSG =
@@ -115,6 +127,7 @@ export function OfferModal({ worker, onClose }: Props) {
   const [date,     setDate]     = useState("");
   const [time,     setTime]     = useState("");
   const [rateType, setRateType] = useState<RateType>("hr");
+  const [paymentMode, setPaymentMode] = useState<PaymentMode>("HOURLY");
   const [duration, setDuration] = useState("4");
   const [province, setProvince] = useState("");
   const [district, setDistrict] = useState("");
@@ -157,6 +170,8 @@ export function OfferModal({ worker, onClose }: Props) {
         if (d.date)     setDate(d.date);
         if (d.time)     setTime(d.time);
         if (d.rateType) setRateType(d.rateType);
+        if (d.paymentMode) setPaymentMode(d.paymentMode);
+        else if (d.rateType) setPaymentMode((PAYMENT_MODES.find(m => m.rt === d.rateType) ?? PAYMENT_MODES[0]).value);
         if (d.duration) setDuration(d.duration);
         if (d.province) setProvince(d.province);
         if (d.district) setDistrict(d.district);
@@ -176,10 +191,10 @@ export function OfferModal({ worker, onClose }: Props) {
   useEffect(() => {
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify({
-        title, date, time, rateType, duration, province, district, latitude, longitude, bid,
+        title, date, time, rateType, paymentMode, duration, province, district, latitude, longitude, bid,
       }));
     } catch {}
-  }, [title, date, time, rateType, duration, province, district, latitude, longitude, bid]);
+  }, [title, date, time, rateType, paymentMode, duration, province, district, latitude, longitude, bid]);
 
   const bidNum  = parseFloat(bid) || 0;
   const minRate = MIN_RATE_BY_PERIOD[rateType];
@@ -265,11 +280,6 @@ export function OfferModal({ worker, onClose }: Props) {
         : rateType === "day" ? "PER_DAY"
         : rateType === "week" ? "PER_WEEK"
         : rateType === "month" ? "PER_MONTH" : "PER_YEAR";
-      const paymentMode = rateType === "hr" ? "HOURLY"
-        : rateType === "day" ? "DAILY"
-        : rateType === "week" ? "WEEKLY"
-        : rateType === "month" ? "MONTHLY" : "YEARLY";
-
       const jobPayload = {
         category: worker.experienceType || "OTHER",
         district: district,
@@ -475,18 +485,22 @@ export function OfferModal({ worker, onClose }: Props) {
 
               {/* rate period + duration */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                <FField label={t("offer.labels.rate_period") || "Rate period"}>
+                <FField label={t("post_job.labels.payment_mode") || "Payment mode"}>
                   <div style={{ position: "relative" }}>
-                    <select value={rateType} onChange={e => setRateType(e.target.value as RateType)}
+                    <select value={paymentMode}
+                      onChange={e => {
+                        const mode = PAYMENT_MODES.find(m => m.value === e.target.value) ?? PAYMENT_MODES[0];
+                        setPaymentMode(mode.value); setRateType(mode.rt);
+                      }}
                       style={{ ...inp, appearance: "none", paddingRight: 28, color: "#f0f0f0" }}
                       onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                       onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
                     >
-                      <option value="hr">{t("post_job.options.per_hour") || "Per hour"}</option>
-                      <option value="day">{t("post_job.options.per_day") || "Per day"}</option>
-                      <option value="week">{t("post_job.options.per_week") || "Per week"}</option>
-                      <option value="month">{t("post_job.options.per_month") || "Per month"}</option>
-                      <option value="year">{t("post_job.options.per_year") || "Per year"}</option>
+                      {PAYMENT_MODES.map(m => (
+                        <option key={m.value} value={m.value}>
+                          {t("post_job.payment_modes." + m.value.toLowerCase()) || m.label}
+                        </option>
+                      ))}
                     </select>
                     <svg style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
                   </div>
