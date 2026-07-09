@@ -641,7 +641,12 @@ function EditJobModal({ job, saving, onSave, onClose }: {
   const existingDate = job.startTime ? new Date(job.startTime).toISOString().split("T")[0] : "";
   const existingTime = job.startTime ? new Date(job.startTime).toTimeString().slice(0, 5) : "";
 
+  // Once workers have applied/been hired, the sensitive terms (date, hours, headcount, urgency) are
+  // locked — only title, location, description and requirements stay editable.
+  const locked = ((job.acceptedCount ?? 0) + (job.pendingCount ?? 0)) > 0;
+
   const [form, setForm] = useState({
+    title:         job.title ?? "",
     date:          existingDate,
     time:          existingTime,
     durationHours: String(job.durationHours ?? ""),
@@ -675,10 +680,12 @@ function EditJobModal({ job, saving, onSave, onClose }: {
     const startTime = form.date && form.time
       ? new Date(`${form.date}T${form.time}:00`).toISOString() : undefined;
     const payload: JobUpdatePayload = {
-      ...(startTime                        ? { startTime }                              : {}),
-      ...(form.durationHours               ? { durationHours: parseFloat(form.durationHours) } : {}),
-      ...(form.headcount                   ? { headcount: parseInt(form.headcount) }    : {}),
-      ...(form.urgency                     ? { urgency: form.urgency as any }           : {}),
+      ...(form.title                       ? { title: form.title }                      : {}),
+      // Sensitive fields are only sent when the job has no applicants yet.
+      ...(!locked && startTime             ? { startTime }                              : {}),
+      ...(!locked && form.durationHours    ? { durationHours: parseFloat(form.durationHours) } : {}),
+      ...(!locked && form.headcount        ? { headcount: parseInt(form.headcount) }    : {}),
+      ...(!locked && form.urgency          ? { urgency: form.urgency as any }           : {}),
       ...(form.province                    ? { province: form.province }                : {}),
       ...(form.district                    ? { district: form.district }                : {}),
       locationNotes: form.locationNotes,
@@ -698,27 +705,40 @@ function EditJobModal({ job, saving, onSave, onClose }: {
           <p style={{ margin:0, fontSize:16, fontWeight:800, color:"#fff" }}>{t("owner_jobs.edit_job") || "Edit Job"}</p>
           <button onClick={onClose} style={{ background:"none", border:"none", cursor:"pointer", color:"#555" }}><X size={18} /></button>
         </div>
-        <p style={{ margin:"0 0 20px", fontSize:12, color:"#444" }}>
-          {job.title} · {t("owner_jobs.rate_locked_at", { rate: rate.toLocaleString() }) || `Rate locked at RWF ${rate.toLocaleString()}/hour`}
+        <p style={{ margin:"0 0 16px", fontSize:12, color:"#444" }}>
+          {t("owner_jobs.rate_locked_at", { rate: rate.toLocaleString() }) || `Rate locked at RWF ${rate.toLocaleString()}/hour`}
         </p>
 
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:14 }}>
-          <div><label style={lbl}>{t("owner_jobs.start_date") || "Start Date"}</label><input type="date" min={todayStr} value={form.date} onChange={set("date")} style={s} /></div>
-          <div><label style={lbl}>{t("owner_jobs.start_time") || "Start Time"}</label><input type="time" value={form.time} onChange={set("time")} style={s} /></div>
+        {locked && (
+          <div style={{ background:"rgba(245,158,11,0.08)", border:"1px solid rgba(245,158,11,0.25)", borderRadius:10, padding:"10px 14px", marginBottom:16 }}>
+            <p style={{ margin:0, fontSize:12, color:"#eab308", lineHeight:1.5 }}>
+              {t("owner_jobs.edit_locked_notice") || "Workers have already applied, so the date, hours, number of workers and urgency are locked. You can still update the title, location, description and requirements."}
+            </p>
+          </div>
+        )}
+
+        <div style={{ marginBottom:14 }}>
+          <label style={lbl}>{t("owner_jobs.title_label") || "Title"}</label>
+          <input value={form.title} onChange={set("title")} style={s} placeholder={t("owner_jobs.title_ph") || "Job title"} />
         </div>
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:14 }}>
+
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:14, opacity: locked ? 0.5 : 1 }}>
+          <div><label style={lbl}>{t("owner_jobs.start_date") || "Start Date"}</label><input type="date" min={todayStr} value={form.date} onChange={set("date")} style={s} disabled={locked} /></div>
+          <div><label style={lbl}>{t("owner_jobs.start_time") || "Start Time"}</label><input type="time" value={form.time} onChange={set("time")} style={s} disabled={locked} /></div>
+        </div>
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:14, opacity: locked ? 0.5 : 1 }}>
           <div>
             <label style={lbl}>{t("owner_jobs.duration_hours") || "Duration (hours)"}</label>
-            <input type="number" min="0.5" step="0.5" value={form.durationHours} onChange={set("durationHours")} style={s} />
+            <input type="number" min="0.5" step="0.5" value={form.durationHours} onChange={set("durationHours")} style={s} disabled={locked} />
           </div>
           <div>
             <label style={lbl}>{t("owner_jobs.workers_needed") || "Workers needed"}</label>
-            <input type="number" min="1" max="200" value={form.headcount} onChange={set("headcount")} style={s} />
+            <input type="number" min="1" max="200" value={form.headcount} onChange={set("headcount")} style={s} disabled={locked} />
           </div>
         </div>
-        <div style={{ marginBottom:14 }}>
+        <div style={{ marginBottom:14, opacity: locked ? 0.5 : 1 }}>
           <label style={lbl}>{t("owner_jobs.urgency") || "Urgency"}</label>
-          <select value={form.urgency} onChange={set("urgency")} style={s}>
+          <select value={form.urgency} onChange={set("urgency")} style={s} disabled={locked}>
             <option value="SCHEDULED">{t("seeker_jobs.urgency_scheduled") || "Scheduled"}</option>
             <option value="SAME_DAY">{t("seeker_jobs.urgency_same_day") || "Same day"}</option>
             <option value="IMMEDIATE">{t("seeker_jobs.urgency_immediate") || "Immediate"}</option>

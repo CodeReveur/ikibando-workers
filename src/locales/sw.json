@@ -1415,7 +1415,21 @@
     "urgency_immediate": "Mara moja",
     "urgency_same_day": "Siku hiyo hiyo",
     "urgency_scheduled": "Iliyopangwa",
-    "label_location": "Mahali"
+    "label_location": "Mahali",
+    "status_rejected": "Imekataliwa",
+    "status_withdrawn": "Imeondolewa",
+    "status_dispatched": "Imetumwa",
+    "status_expired": "Imeisha muda",
+    "status_draft": "Rasimu",
+    "status_held": "Imehifadhiwa",
+    "status_released": "Imetolewa",
+    "status_success": "Imefaulu",
+    "status_failed": "Imeshindwa",
+    "status_paid": "Imelipwa",
+    "status_verified": "Imethibitishwa",
+    "status_assigned": "Imepangwa",
+    "status_arrived": "Imefika",
+    "status_paused": "Imesimamishwa"
   },
   "seeker_job_detail": {
     "back": "Nyuma",
@@ -1881,7 +1895,10 @@
     "auto_release_on_desc": "Imewashwa — unaweza kuidhinisha maombi ya malipo, lakini usipochukua hatua ndani ya saa 2 yatatolewa kiotomatiki.",
     "auto_release_off_desc": "Imezimwa — lazima uidhinishe kila ombi la malipo. Maombi yasiyoidhinishwa hufungua kesi ya usaidizi baada ya saa 24.",
     "auto_release_failed": "Imeshindwa kusasisha utoaji wa moja kwa moja",
-    "applications_closed": "Maombi yamefungwa"
+    "applications_closed": "Maombi yamefungwa",
+    "title_label": "Kichwa",
+    "title_ph": "Kichwa cha kazi",
+    "edit_locked_notice": "Wafanyakazi tayari wameomba, kwa hivyo tarehe, saa, idadi ya wafanyakazi na dharura zimefungwa. Bado unaweza kusasisha kichwa, mahali, maelezo na mahitaji."
   },
   "seeker_help": {
     "faq1_q": "Je, ninalipwaje?",

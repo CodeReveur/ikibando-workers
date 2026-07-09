@@ -1416,7 +1416,21 @@
     "urgency_immediate": "Immediate",
     "urgency_same_day": "Same day",
     "urgency_scheduled": "Scheduled",
-    "label_location": "Location"
+    "label_location": "Location",
+    "status_rejected": "Rejected",
+    "status_withdrawn": "Withdrawn",
+    "status_dispatched": "Dispatched",
+    "status_expired": "Expired",
+    "status_draft": "Draft",
+    "status_held": "In Escrow",
+    "status_released": "Released",
+    "status_success": "Success",
+    "status_failed": "Failed",
+    "status_paid": "Paid",
+    "status_verified": "Verified",
+    "status_assigned": "Assigned",
+    "status_arrived": "Arrived",
+    "status_paused": "Paused"
   },
   "seeker_job_detail": {
     "back": "Back",
@@ -1882,7 +1896,10 @@
     "auto_release_on_desc": "On — you can approve payment requests, but if you don't act within 2 hours they auto-release.",
     "auto_release_off_desc": "Off — you must approve every payment request. Unapproved requests open a support case after 24 hours.",
     "auto_release_failed": "Couldn't update auto-release",
-    "applications_closed": "Applications closed"
+    "applications_closed": "Applications closed",
+    "title_label": "Title",
+    "title_ph": "Job title",
+    "edit_locked_notice": "Workers have already applied, so the date, hours, number of workers and urgency are locked. You can still update the title, location, description and requirements."
   },
   "seeker_help": {
     "faq1_q": "How do I get paid?",

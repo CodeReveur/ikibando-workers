@@ -1415,7 +1415,21 @@
     "urgency_immediate": "Immédiat",
     "urgency_same_day": "Le jour même",
     "urgency_scheduled": "Planifié",
-    "label_location": "Lieu"
+    "label_location": "Lieu",
+    "status_rejected": "Refusé",
+    "status_withdrawn": "Retiré",
+    "status_dispatched": "Envoyé",
+    "status_expired": "Expiré",
+    "status_draft": "Brouillon",
+    "status_held": "Sous séquestre",
+    "status_released": "Versé",
+    "status_success": "Réussi",
+    "status_failed": "Échoué",
+    "status_paid": "Payé",
+    "status_verified": "Vérifié",
+    "status_assigned": "Assigné",
+    "status_arrived": "Arrivé",
+    "status_paused": "En pause"
   },
   "seeker_job_detail": {
     "back": "Retour",
@@ -1881,7 +1895,10 @@
     "auto_release_on_desc": "Activé — vous pouvez approuver les demandes de paiement, mais si vous n'agissez pas sous 2 heures, elles sont versées automatiquement.",
     "auto_release_off_desc": "Désactivé — vous devez approuver chaque demande de paiement. Les demandes non approuvées ouvrent un dossier support après 24 heures.",
     "auto_release_failed": "Impossible de mettre à jour le versement automatique",
-    "applications_closed": "Candidatures fermées"
+    "applications_closed": "Candidatures fermées",
+    "title_label": "Titre",
+    "title_ph": "Titre de l'emploi",
+    "edit_locked_notice": "Des travailleurs ont déjà postulé : la date, les heures, le nombre de travailleurs et l'urgence sont verrouillés. Vous pouvez encore modifier le titre, le lieu, la description et les exigences."
   },
   "seeker_help": {
     "faq1_q": "Comment suis-je payé ?",

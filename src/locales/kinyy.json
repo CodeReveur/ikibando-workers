@@ -1416,7 +1416,21 @@
     "urgency_immediate": "Ako kanya",
     "urgency_same_day": "Kuri uyu munsi",
     "urgency_scheduled": "Byateganijwe",
-    "label_location": "Aho biherereye"
+    "label_location": "Aho biherereye",
+    "status_rejected": "Byanzwe",
+    "status_withdrawn": "Byakuwe",
+    "status_dispatched": "Byoherejwe",
+    "status_expired": "Byarangije igihe",
+    "status_draft": "Umushinga",
+    "status_held": "Bibitswe",
+    "status_released": "Byarekuwe",
+    "status_success": "Byagenze neza",
+    "status_failed": "Byanze",
+    "status_paid": "Byishyuwe",
+    "status_verified": "Byemejwe",
+    "status_assigned": "Byahawe",
+    "status_arrived": "Byageze",
+    "status_paused": "Byahagaritswe by'agateganyo"
   },
   "seeker_job_detail": {
     "back": "Gusubira inyuma",
@@ -1882,7 +1896,10 @@
     "auto_release_on_desc": "Birakora — ushobora kwemeza ubusabe bw'ubwishyu, ariko nutabikora mu masaha 2 byishyurwa byonyine.",
     "auto_release_off_desc": "Ntibikora — ugomba kwemeza buri busabe bw'ubwishyu. Ubusabe butemejwe bufungura urubanza nyuma y'amasaha 24.",
     "auto_release_failed": "Ntibishoboye guhindura kwishyura ako kanya",
-    "applications_closed": "Ubusabe bwafunzwe"
+    "applications_closed": "Ubusabe bwafunzwe",
+    "title_label": "Umutwe",
+    "title_ph": "Umutwe w'akazi",
+    "edit_locked_notice": "Abakozi bamaze gusaba, bityo itariki, amasaha, umubare w'abakozi n'ihutirwa byafunzwe. Uracyashobora guhindura umutwe, aho biherereye, ibisobanuro n'ibisabwa."
   },
   "seeker_help": {
     "faq1_q": "Nishyurwa nte?",

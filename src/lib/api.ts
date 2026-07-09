@@ -698,6 +698,7 @@ export async function verifyJobCompletion(jobId: string, payload: { badgeId: str
 }
 
 export interface JobUpdatePayload {
+  title?: string;
   description?: string;
   requirements?: string;
   headcount?: number;
