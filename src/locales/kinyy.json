@@ -1330,6 +1330,11 @@
       "delete_account": "Gusiba Konti",
       "delete_account_desc": "Bisiba burundu konti yawe n'amakuru yose ajyanye na yo. Ibi ntibishobora gusubizwa inyuma.",
       "delete_account_hint": "Kugira ngo usibe konti yawe, wandikire ubufasha kuri info@mpahmapu.com"
+    },
+    "payments": {
+      "title": "Ubwishyu",
+      "default_auto_release": "Kwishyura ako kanya ku mirimo mishya",
+      "default_auto_release_desc": "Iyo bikora, imirimo mishya yishyura umukozi nyuma y'amasaha 2 amaze gusaba keretse wanze. Ushobora guhindura kuri buri murimo."
     }
   },
   "dashboard_home": {
@@ -1872,7 +1877,12 @@
     "mark_job_complete": "Emeza ko akazi karangiye",
     "complete_modal_desc": "Ibi birerekana ko akazi karangiye kandi bihe umukozi/abakozi amafaranga yafunzwe. Mbere yo kwishyura, banza uhe umukozi amanota.",
     "complete_and_release": "Emeza & Kora Payout",
-    "confirm_cancel_alert": "Guhagarika aka kazi? Amafaranga yafunzwe azasubizwa kuri wallet yawe."
+    "confirm_cancel_alert": "Guhagarika aka kazi? Amafaranga yafunzwe azasubizwa kuri wallet yawe.",
+    "auto_release_title": "Kwishyura ako kanya",
+    "auto_release_on_desc": "Birakora — ushobora kwemeza ubusabe bw'ubwishyu, ariko nutabikora mu masaha 2 byishyurwa byonyine.",
+    "auto_release_off_desc": "Ntibikora — ugomba kwemeza buri busabe bw'ubwishyu. Ubusabe butemejwe bufungura urubanza nyuma y'amasaha 24.",
+    "auto_release_failed": "Ntibishoboye guhindura kwishyura ako kanya",
+    "applications_closed": "Ubusabe bwafunzwe"
   },
   "seeker_help": {
     "faq1_q": "Nishyurwa nte?",

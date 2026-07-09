@@ -438,6 +438,11 @@ export default function OwnerJobDetail() {
               <span style={{ fontSize: 10, fontWeight: 700, borderRadius: 99, padding: "3px 10px", color: STATUS_COLOR[job.status] ?? "#888", background: `${STATUS_COLOR[job.status] ?? "#888"}18` }}>
                 {t("seeker_jobs.status_" + job.status.toLowerCase().replace(/\s+/g,"_")) || job.status}
               </span>
+              {job.applicationsClosed && (
+                <span style={{ fontSize: 10, fontWeight: 700, borderRadius: 99, padding: "3px 10px", color: "#f59e0b", background: "rgba(245,158,11,0.12)" }}>
+                  {t("owner_jobs.applications_closed") || "Applications closed"}
+                </span>
+              )}
             </div>
             <p style={{ margin: 0, fontSize: 12, color: "#444" }}>{t("common.categories." + job.category.toLowerCase().replace(/\s+/g,"_")) || job.category} · {job.district} · {accepted.length}/{job.headcount} {Number(job.headcount) !== 1 ? (t("owner_offers.slots_plural") || "workers") : (t("owner_offers.slots") || "worker")} {t("settings_page.account.verified") || "hired"}</p>
           </div>

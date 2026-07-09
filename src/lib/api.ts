@@ -488,6 +488,12 @@ export interface JobDto {
   completedAt: string | null;
   cancelledAt: string | null;
   completionNotes: string | null;
+  /** True once all positions are filled — no new applications accepted. */
+  applicationsClosed: boolean;
+  filledAt: string | null;
+  /** Live counts on detail/owner views (null on the public feed list). */
+  acceptedCount: number | null;
+  pendingCount: number | null;
   workerVerified: boolean;
   workerFeedbackOption: string | null;
   workerFeedbackText: string | null;

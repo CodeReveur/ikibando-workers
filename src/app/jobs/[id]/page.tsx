@@ -129,13 +129,21 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
               })()}
             </p>
           </div>
-          {job.headcount > 1 && (
-            <div style={{ textAlign: "right" }}>
-              <p style={{ margin: "0 0 2px", fontSize: 11, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: "0.08em" }}>Total slots</p>
-              <p style={{ margin: 0, fontSize: 24, fontWeight: 900, color: "#fff" }}>{job.headcount}</p>
-              <p style={{ margin: "2px 0 0", fontSize: 11, color: "#444" }}>positions available</p>
-            </div>
-          )}
+          <div style={{ textAlign: "right" }}>
+            {job.applicationsClosed ? (
+              <>
+                <p style={{ margin: "0 0 2px", fontSize: 11, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: "0.08em" }}>Applications</p>
+                <p style={{ margin: 0, fontSize: 20, fontWeight: 900, color: "#f59e0b" }}>Closed</p>
+                <p style={{ margin: "2px 0 0", fontSize: 11, color: "#444" }}>All {job.headcount} position{job.headcount !== 1 ? "s" : ""} filled</p>
+              </>
+            ) : (
+              <>
+                <p style={{ margin: "0 0 2px", fontSize: 11, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: "0.08em" }}>Workers needed</p>
+                <p style={{ margin: 0, fontSize: 24, fontWeight: 900, color: "#fff" }}>{job.acceptedCount ?? 0}/{job.headcount}</p>
+                <p style={{ margin: "2px 0 0", fontSize: 11, color: "#444" }}>{job.pendingCount ?? 0} active application{(job.pendingCount ?? 0) !== 1 ? "s" : ""}</p>
+              </>
+            )}
+          </div>
         </div>
 
         {/* PAYMENT SCHEDULE — how the worker gets paid over the job */}
@@ -242,17 +250,20 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
           {/* Right: CTA */}
           <button
             className="apply-btn-cta"
-            onClick={() => setShowApply(true)}
+            onClick={() => !job.applicationsClosed && setShowApply(true)}
+            disabled={job.applicationsClosed}
             style={{
               display: "flex", alignItems: "center", gap: 7,
-              background: "#f97316", color: "#fff", border: "none",
+              background: job.applicationsClosed ? "#2a2a2a" : "#f97316",
+              color: job.applicationsClosed ? "#777" : "#fff", border: "none",
               borderRadius: 999, padding: "0 20px", height: 40,
               fontSize: 13, fontWeight: 700,
-              cursor: "pointer", fontFamily: "inherit", transition: "background 0.15s",
+              cursor: job.applicationsClosed ? "not-allowed" : "pointer",
+              fontFamily: "inherit", transition: "background 0.15s",
               whiteSpace: "nowrap", flexShrink: 0,
             }}
           >
-            Apply now <ArrowRight size={13} />
+            {job.applicationsClosed ? "Applications closed" : <>Apply now <ArrowRight size={13} /></>}
           </button>
         </div>
       </div>

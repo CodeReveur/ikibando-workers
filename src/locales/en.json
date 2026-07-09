@@ -1330,6 +1330,11 @@
       "delete_account": "Delete Account",
       "delete_account_desc": "Permanently deletes your account and all associated data. This cannot be undone.",
       "delete_account_hint": "To delete your account, please contact support at info@mpahmapu.com"
+    },
+    "payments": {
+      "title": "Payments",
+      "default_auto_release": "Default auto-release for new jobs",
+      "default_auto_release_desc": "When on, new jobs auto-release a worker's payment 2 hours after they request it unless you decline. You can still change this per job."
     }
   },
   "dashboard_home": {
@@ -1872,7 +1877,12 @@
     "mark_job_complete": "Mark Job Complete",
     "complete_modal_desc": "This will release RWF {amount} to the worker(s). This action cannot be undone.",
     "complete_and_release": "Complete & Release Payment",
-    "confirm_cancel_alert": "Cancel this job? The escrowed amount will be refunded to your wallet."
+    "confirm_cancel_alert": "Cancel this job? The escrowed amount will be refunded to your wallet.",
+    "auto_release_title": "Auto-release",
+    "auto_release_on_desc": "On — you can approve payment requests, but if you don't act within 2 hours they auto-release.",
+    "auto_release_off_desc": "Off — you must approve every payment request. Unapproved requests open a support case after 24 hours.",
+    "auto_release_failed": "Couldn't update auto-release",
+    "applications_closed": "Applications closed"
   },
   "seeker_help": {
     "faq1_q": "How do I get paid?",

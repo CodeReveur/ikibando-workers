@@ -1329,6 +1329,11 @@
       "delete_account": "Supprimer le compte",
       "delete_account_desc": "Supprime définitivement votre compte et toutes les données associées. Cette action est irréversible.",
       "delete_account_hint": "Pour supprimer votre compte, veuillez contacter le support à info@mpahmapu.com"
+    },
+    "payments": {
+      "title": "Paiements",
+      "default_auto_release": "Versement automatique par défaut pour les nouveaux emplois",
+      "default_auto_release_desc": "Si activé, les nouveaux emplois versent le paiement d'un travailleur 2 heures après sa demande, sauf refus. Vous pouvez toujours le modifier par emploi."
     }
   },
   "dashboard_home": {
@@ -1871,7 +1876,12 @@
     "mark_job_complete": "Marquer l'emploi comme terminé",
     "complete_modal_desc": "Cela libérera RWF {amount} pour le(s) travailleur(s). Cette action est irréversible.",
     "complete_and_release": "Terminer & Libérer le paiement",
-    "confirm_cancel_alert": "Annuler cet emploi ? Le montant déposé sera remboursé sur votre portefeuille."
+    "confirm_cancel_alert": "Annuler cet emploi ? Le montant déposé sera remboursé sur votre portefeuille.",
+    "auto_release_title": "Versement automatique",
+    "auto_release_on_desc": "Activé — vous pouvez approuver les demandes de paiement, mais si vous n'agissez pas sous 2 heures, elles sont versées automatiquement.",
+    "auto_release_off_desc": "Désactivé — vous devez approuver chaque demande de paiement. Les demandes non approuvées ouvrent un dossier support après 24 heures.",
+    "auto_release_failed": "Impossible de mettre à jour le versement automatique",
+    "applications_closed": "Candidatures fermées"
   },
   "seeker_help": {
     "faq1_q": "Comment suis-je payé ?",

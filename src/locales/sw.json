@@ -1329,6 +1329,11 @@
       "delete_account": "Futa Akaunti",
       "delete_account_desc": "Inafuta kabisa akaunti yako na data zote zinazohusiana. Hatua hii haiwezi kutenduliwa.",
       "delete_account_hint": "Ili kufuta akaunti yako, tafadhali wasiliana na msaada kupitia info@mpahmapu.com"
+    },
+    "payments": {
+      "title": "Malipo",
+      "default_auto_release": "Utoaji wa moja kwa moja chaguo-msingi kwa kazi mpya",
+      "default_auto_release_desc": "Ikiwashwa, kazi mpya hutoa malipo ya mfanyakazi saa 2 baada ya kuomba isipokuwa ukikataa. Bado unaweza kubadilisha kwa kila kazi."
     }
   },
   "dashboard_home": {
@@ -1871,7 +1876,12 @@
     "mark_job_complete": "Weka Kazi Imekamilika",
     "complete_modal_desc": "Hii itatoa RWF {amount} kwa mfanyakazi. Hatua hii haiwezi kubadilishwa.",
     "complete_and_release": "Kamilisha & Toa Malipo",
-    "confirm_cancel_alert": "Ghairi kazi hii? Kiasi cha escrow kitarejeshwa kwenye wallet yako."
+    "confirm_cancel_alert": "Ghairi kazi hii? Kiasi cha escrow kitarejeshwa kwenye wallet yako.",
+    "auto_release_title": "Utoaji wa moja kwa moja",
+    "auto_release_on_desc": "Imewashwa — unaweza kuidhinisha maombi ya malipo, lakini usipochukua hatua ndani ya saa 2 yatatolewa kiotomatiki.",
+    "auto_release_off_desc": "Imezimwa — lazima uidhinishe kila ombi la malipo. Maombi yasiyoidhinishwa hufungua kesi ya usaidizi baada ya saa 24.",
+    "auto_release_failed": "Imeshindwa kusasisha utoaji wa moja kwa moja",
+    "applications_closed": "Maombi yamefungwa"
   },
   "seeker_help": {
     "faq1_q": "Je, ninalipwaje?",
