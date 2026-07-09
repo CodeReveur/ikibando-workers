@@ -154,6 +154,8 @@ export function HireModal({ onClose }: { onClose: () => void }) {
   const [payMethod, setPayMethod] = useState<"WALLET" | "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD">("MTN_MOMO");
   const [paymentPhone, setPaymentPhone] = useState("");
   const [payNote, setPayNote] = useState("");
+  // When on, a worker's per-period payment request pays out immediately (no manual approval).
+  const [directRelease, setDirectRelease] = useState(false);
 
   const DRAFT_KEY = "MpahMapu_draft_hire";
 
@@ -256,6 +258,10 @@ export function HireModal({ onClose }: { onClose: () => void }) {
         : form.rateType === "day" ? "PER_DAY"
         : form.rateType === "week" ? "PER_WEEK"
         : form.rateType === "month" ? "PER_MONTH" : "PER_YEAR";
+      const paymentMode = form.rateType === "hr" ? "HOURLY"
+        : form.rateType === "day" ? "DAILY"
+        : form.rateType === "week" ? "WEEKLY"
+        : form.rateType === "month" ? "MONTHLY" : "YEARLY";
 
       const jobPayload = {
         category: form.category, district: form.district,
@@ -266,6 +272,9 @@ export function HireModal({ onClose }: { onClose: () => void }) {
         urgency: "IMMEDIATE" as const,
         startTime, durationHours: parseInt(form.durationHours) || 1,
         rateType,
+        paymentMode: paymentMode as import("@/lib/api").PaymentMode,
+        paymentPeriods: parseInt(form.durationHours) || 1,
+        directRelease,
         direct: true, // Hire Now: private offer to the picked worker(s), not a broadcast.
       };
 
@@ -579,6 +588,20 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                     </div>
                   </FField>
                 </div>
+
+                <label style={{
+                  background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10,
+                  padding: "12px 14px", display: "flex", gap: 10, alignItems: "flex-start", cursor: "pointer",
+                }}>
+                  <input type="checkbox" checked={directRelease}
+                    onChange={e => setDirectRelease(e.target.checked)}
+                    style={{ marginTop: 2, accentColor: "#f97316", width: 16, height: 16, cursor: "pointer" }} />
+                  <span style={{ fontSize: 12.5, color: "#ccc", lineHeight: 1.5 }}>
+                    <strong style={{ color: "#f0f0f0" }}>Auto-release each period</strong><br />
+                    The worker can request payment after each {getUnit(form.rateType, 1)} completes. On = instant
+                    release; off = you approve each request (auto-approves in 2h).
+                  </span>
+                </label>
 
                 {headcountNum > 1 && budget > 0 && (
                   <div style={{

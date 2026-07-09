@@ -16,6 +16,7 @@ import { fmt } from "@/lib/dashboard-data";
 import { RichTextDisplay } from "@/components/ui/rich-text-editor";
 import { useLanguage } from "@/lib/language-context";
 import { useToast } from "@/components/ui/toast";
+import { PaymentPanel } from "@/components/payments/payment-panel";
 
 type Stage = { done: boolean; active: boolean; label: string; date?: string | null; content: React.ReactNode };
 
@@ -99,6 +100,7 @@ export default function SeekerJobDetail() {
   const [job,    setJob]    = useState<JobDto | null>(null);
   const [app,    setApp]    = useState<ApplicationDto | null>(null);
   const [txn,    setTxn]    = useState<PaymentDto | null>(null);
+  const [token,  setToken]  = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy,    setBusy]   = useState<string | null>(null);
   const [note,    setNote]   = useState("");
@@ -112,6 +114,7 @@ export default function SeekerJobDetail() {
   const load = useCallback(async () => {
     const token = localStorage.getItem("access_token");
     if (!token || !id) return;
+    setToken(token);
     setLoading(true);
     try {
       const [j, myApps, txns] = await Promise.all([
@@ -429,6 +432,10 @@ export default function SeekerJobDetail() {
             {t("seeker_job_detail.app_timeline")}
           </p>
           <Timeline stages={stages} />
+
+          {token && appStatus === "ACCEPTED" && (
+            <PaymentPanel jobId={id} role="worker" token={token} />
+          )}
         </div>
 
         {/* Right: Sidebar */}

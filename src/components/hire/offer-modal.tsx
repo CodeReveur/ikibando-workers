@@ -108,6 +108,8 @@ export function OfferModal({ worker, onClose }: Props) {
   const [payMethod, setPayMethod] = useState<"WALLET" | "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD">("MTN_MOMO");
   const [paymentPhone, setPaymentPhone] = useState("");
   const [payNote, setPayNote] = useState("");
+  // When on, a worker's per-period payment request pays out immediately (no manual approval).
+  const [directRelease, setDirectRelease] = useState(false);
 
   const [title,    setTitle]    = useState("");
   const [date,     setDate]     = useState("");
@@ -263,6 +265,10 @@ export function OfferModal({ worker, onClose }: Props) {
         : rateType === "day" ? "PER_DAY"
         : rateType === "week" ? "PER_WEEK"
         : rateType === "month" ? "PER_MONTH" : "PER_YEAR";
+      const paymentMode = rateType === "hr" ? "HOURLY"
+        : rateType === "day" ? "DAILY"
+        : rateType === "week" ? "WEEKLY"
+        : rateType === "month" ? "MONTHLY" : "YEARLY";
 
       const jobPayload = {
         category: worker.experienceType || "OTHER",
@@ -274,6 +280,9 @@ export function OfferModal({ worker, onClose }: Props) {
         urgency: "IMMEDIATE" as const,
         startTime, durationHours: Math.round(hours),
         rateType: rt,
+        paymentMode: paymentMode as import("@/lib/api").PaymentMode,
+        paymentPeriods: Math.round(hours) || 1,
+        directRelease,
         direct: true, // Direct offer to this one worker, not a broadcast.
       };
 
@@ -495,6 +504,20 @@ export function OfferModal({ worker, onClose }: Props) {
                   </div>
                 </FField>
               </div>
+
+              <label style={{
+                background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10,
+                padding: "12px 14px", display: "flex", gap: 10, alignItems: "flex-start", cursor: "pointer", marginTop: 12,
+              }}>
+                <input type="checkbox" checked={directRelease}
+                  onChange={e => setDirectRelease(e.target.checked)}
+                  style={{ marginTop: 2, accentColor: "#f97316", width: 16, height: 16, cursor: "pointer" }} />
+                <span style={{ fontSize: 12.5, color: "#ccc", lineHeight: 1.5 }}>
+                  <strong style={{ color: "#f0f0f0" }}>Auto-release each period</strong><br />
+                  The worker can request payment after each {getUnit(rateType, 1)} completes. On = instant release;
+                  off = you approve each request (auto-approves in 2h).
+                </span>
+              </label>
 
               {/* Province + District — searchable */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>

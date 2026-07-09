@@ -18,6 +18,7 @@ import { ratingLabel } from "@/lib/rating";
 import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
 import { useLanguage } from "@/lib/language-context";
 import { useToast } from "@/components/ui/toast";
+import { PaymentPanel } from "@/components/payments/payment-panel";
 
 const dateLocaleMap: Record<string, string> = {
   rw: "rw-RW",
@@ -102,6 +103,7 @@ export default function OwnerJobDetail() {
   const [job, setJob] = useState<JobDto | null>(null);
   const [apps, setApps] = useState<ApplicationDto[]>([]);
   const [txn, setTxn] = useState<PaymentDto | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
   const [showComplete, setShowComplete] = useState(false);
@@ -117,6 +119,7 @@ export default function OwnerJobDetail() {
   const load = useCallback(async () => {
     const token = localStorage.getItem("access_token");
     if (!token || !id) return;
+    setToken(token);
     setLoading(true);
     try {
       const [j, a, txns] = await Promise.all([
@@ -470,6 +473,10 @@ export default function OwnerJobDetail() {
             {t("owner_jobs.timeline") || "Job Timeline"}
           </p>
           <Timeline stages={stages} />
+
+          {token && hasAccepted && (
+            <PaymentPanel jobId={id} role="employer" token={token} />
+          )}
         </div>
 
         {/* Right: Sidebar */}

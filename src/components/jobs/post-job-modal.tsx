@@ -166,6 +166,8 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
   const [payMethod, setPayMethod] = useState<"WALLET" | "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD">("MTN_MOMO");
   const [paymentPhone, setPaymentPhone] = useState("");
   const [payNote, setPayNote] = useState("");
+  // When on, a worker's per-period payment request pays out immediately (no manual approval).
+  const [directRelease, setDirectRelease] = useState(false);
 
   const [job, setJob] = useState<JobForm>({
     category: "", headcount: "1", date: "", time: "",
@@ -332,6 +334,14 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
         : job.rateType === "week" ? "PER_WEEK"
         : job.rateType === "month" ? "PER_MONTH" : "PER_YEAR";
 
+      // The pricing unit doubles as the installment payment mode; the duration count is the
+      // number of billable periods the worker can request payment for one at a time.
+      const paymentMode = job.rateType === "hr" ? "HOURLY"
+        : job.rateType === "day" ? "DAILY"
+        : job.rateType === "week" ? "WEEKLY"
+        : job.rateType === "month" ? "MONTHLY" : "YEARLY";
+      const paymentPeriods = parseInt(job.durationHours) || 1;
+
       const jobPayload = {
         category:      job.category,
         province:      job.province || undefined,
@@ -347,6 +357,9 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
         startTime,
         durationHours: parseInt(job.durationHours) || 1,
         rateType,
+        paymentMode: paymentMode as import("@/lib/api").PaymentMode,
+        paymentPeriods,
+        directRelease,
         locationNotes: job.notes || undefined,
       };
 
@@ -625,6 +638,23 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                       />
                     </div>
                   </FField>
+                </div>
+
+                {/* Installment payments: how the worker gets paid over the periods above. */}
+                <div style={{
+                  background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10,
+                  padding: "12px 14px", display: "flex", gap: 12, alignItems: "flex-start",
+                }}>
+                  <label style={{ display: "flex", gap: 10, alignItems: "flex-start", cursor: "pointer", flex: 1 }}>
+                    <input type="checkbox" checked={directRelease}
+                      onChange={e => setDirectRelease(e.target.checked)}
+                      style={{ marginTop: 2, accentColor: "#f97316", width: 16, height: 16, cursor: "pointer" }} />
+                    <span style={{ fontSize: 12.5, color: "#ccc", lineHeight: 1.5 }}>
+                      <strong style={{ color: "#f0f0f0" }}>Auto-release each period</strong><br />
+                      The worker can request payment after each {getUnit(job.rateType, 1)} is completed. With this on,
+                      approved amounts release instantly; with it off, you approve each request (auto-approves in 2h).
+                    </span>
+                  </label>
                 </div>
 
                 {/* Province + District — searchable */}

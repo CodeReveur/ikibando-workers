@@ -8,6 +8,7 @@ import { useLanguage } from "@/lib/language-context";
 import { Pip } from "./ui";
 import { getWallet, getNotifications, getUnreadNotificationCount, markAllNotificationsRead, type WalletDto, type NotificationDto } from "@/lib/api";
 import { fmt } from "@/lib/dashboard-data";
+import { PaymentApprovalModal } from "@/components/payments/payment-approval-modal";
 
 export const TB_HEIGHT = 64;
 
@@ -232,6 +233,9 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
             </div>
           )}
         </div>
+
+        {/* Employer payment approvals — pending per-period requests with countdown */}
+        {isOwner && <PaymentApprovalModal />}
 
         <div style={{ position:"relative" }}>
           <button

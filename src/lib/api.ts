@@ -337,6 +337,113 @@ export async function getJobCategories(): Promise<JobCategoryMeta[]> {
   return data.data;
 }
 
+// ── Payment modes ─────────────────────────────────────────────────────────────
+export type PaymentMode =
+  | "HOURLY" | "CUSTOM_HOURS" | "DAILY" | "CUSTOM_DAYS"
+  | "WEEKLY" | "MONTHLY" | "CUSTOM_MONTHS" | "YEARLY";
+
+export type PaymentRequestStatus =
+  | "PENDING" | "APPROVED" | "AUTO_APPROVED" | "DECLINED" | "DISPUTED" | "CANCELLED";
+
+/** One billable period in a job's installment schedule. */
+export interface SchedulePeriod {
+  index: number;
+  unlockAt: string;
+  amountRwf: number;
+  /** LOCKED, AVAILABLE, PENDING, APPROVED, AUTO_APPROVED, DECLINED, DISPUTED, CANCELLED, PAID. */
+  state: string;
+  requestable: boolean;
+  requestId: string | null;
+}
+
+export interface PaymentScheduleDto {
+  jobId: string;
+  paymentMode: PaymentMode;
+  paymentPeriods: number;
+  directRelease: boolean;
+  startTime: string | null;
+  workerPayoutTotal: number;
+  releasedTotal: number;
+  periods: SchedulePeriod[];
+}
+
+export interface PaymentRequestDto {
+  id: string;
+  jobId: string;
+  jobTitle: string;
+  workerId: string;
+  workerName: string;
+  employerId: string;
+  employerName: string;
+  periodIndex: number;
+  totalPeriods: number;
+  amountRwf: number;
+  status: PaymentRequestStatus;
+  directRelease: boolean;
+  unlockAt: string;
+  requestedAt: string;
+  expiresAt: string | null;
+  decidedAt: string | null;
+  declineReason: string | null;
+  releasedAt: string | null;
+  createdAt: string;
+}
+
+export interface ActivityLogDto {
+  id: string;
+  jobId: string | null;
+  actorId: string | null;
+  actorName: string;
+  type: string;
+  message: string;
+  data: Record<string, unknown> | null;
+  createdAt: string;
+}
+
+export async function getPaymentSchedule(jobId: string, token: string): Promise<PaymentScheduleDto> {
+  const { data } = await http.get(`/api/jobs/${jobId}/payment-schedule`, { headers: authHeader(token) });
+  return data.data;
+}
+
+export async function getJobActivity(jobId: string, token: string): Promise<ActivityLogDto[]> {
+  const { data } = await http.get(`/api/jobs/${jobId}/activity`, { headers: authHeader(token) });
+  return data.data;
+}
+
+/** Worker: request payment for a completed period. */
+export async function requestPeriodPayment(jobId: string, periodIndex: number, token: string): Promise<PaymentRequestDto> {
+  const { data } = await http.post("/api/payment-requests", { jobId, periodIndex }, { headers: authHeader(token) });
+  return data.data;
+}
+
+/** Employer: pending payment requests to act on (feeds the navbar approval modal). */
+export async function getIncomingPaymentRequests(token: string): Promise<PaymentRequestDto[]> {
+  const { data } = await http.get("/api/payment-requests/incoming", { headers: authHeader(token) });
+  return data.data;
+}
+
+/** Worker: my payment requests across all jobs. */
+export async function getMyPaymentRequests(token: string): Promise<PaymentRequestDto[]> {
+  const { data } = await http.get("/api/payment-requests/mine", { headers: authHeader(token) });
+  return data.data;
+}
+
+export async function approvePaymentRequest(id: string, token: string): Promise<PaymentRequestDto> {
+  const { data } = await http.post(`/api/payment-requests/${id}/approve`, {}, { headers: authHeader(token) });
+  return data.data;
+}
+
+export async function declinePaymentRequest(id: string, reason: string, token: string): Promise<PaymentRequestDto> {
+  const { data } = await http.post(`/api/payment-requests/${id}/decline`, { reason }, { headers: authHeader(token) });
+  return data.data;
+}
+
+/** Either party: raise a complaint that freezes the money until an agent resolves it. */
+export async function disputePaymentRequest(id: string, reason: string, token: string): Promise<PaymentRequestDto> {
+  const { data } = await http.post(`/api/payment-requests/${id}/dispute`, { reason }, { headers: authHeader(token) });
+  return data.data;
+}
+
 // ── Shared pagination wrapper ─────────────────────────────────────────────────
 export interface Page<T> {
   content: T[];
@@ -365,6 +472,9 @@ export interface JobDto {
   locationNotes: string | null;
   ratePerHour: number;
   rateType: string;
+  paymentMode: PaymentMode;
+  paymentPeriods: number;
+  directRelease: boolean;
   headcount: number;
   urgency: "IMMEDIATE" | "SAME_DAY" | "SCHEDULED";
   status: string;
@@ -625,6 +735,10 @@ export interface JobPayload {
   urgency: "IMMEDIATE" | "SAME_DAY" | "SCHEDULED";
   startTime: string; durationHours: number;
   rateType?: string; locationNotes?: string;
+  /** How the escrow is paid out over time, and over how many periods. */
+  paymentMode?: PaymentMode; paymentPeriods?: number;
+  /** When true, per-period payment requests pay out immediately without manual approval. */
+  directRelease?: boolean;
   /** True for Hire Now / direct Offer: don't broadcast to all workers, only the picked one. */
   direct?: boolean;
 }
