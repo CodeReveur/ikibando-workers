@@ -2034,6 +2034,7 @@
     "state_DECLINED": "Refusé",
     "state_CANCELLED": "Annulé",
     "state_APPROVED": "Approuvé",
-    "state_AUTO_APPROVED": "Approuvé auto"
+    "state_AUTO_APPROVED": "Approuvé auto",
+    "escalates_in": "un dossier support s ouvre dans"
   }
 }

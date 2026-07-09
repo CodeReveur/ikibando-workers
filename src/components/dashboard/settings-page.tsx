@@ -341,6 +341,23 @@ function ProfileTab({
   const [phone,   setPhone]   = useState(session.phone ?? "");
   const [saving,  setSaving]  = useState(false);
   const [saved,   setSaved]   = useState(false);
+  const [autoRelease, setAutoRelease] = useState<boolean>(!!(session as { defaultAutoRelease?: boolean }).defaultAutoRelease);
+  const [autoSaving, setAutoSaving] = useState(false);
+
+  const toggleAutoRelease = async (val: boolean) => {
+    setAutoRelease(val);
+    setAutoSaving(true);
+    try {
+      await updateProfile({ defaultAutoRelease: val }, getToken());
+      saveUserLocally({ defaultAutoRelease: val } as Record<string, unknown>);
+      success(t("settings_page.notifications.save_success") || "Preferences saved successfully");
+    } catch {
+      setAutoRelease(!val);
+      toastError(t("owner_jobs.auto_release_failed") || "Couldn't update auto-release");
+    } finally {
+      setAutoSaving(false);
+    }
+  };
 
   const initials = name.trim().split(/\s+/).map(w => w[0]).join("").slice(0, 2).toUpperCase() || "?";
 
@@ -453,6 +470,27 @@ function ProfileTab({
           </button>
         </div>
       </div>
+
+      {/* Employer payments preference — default auto-release for new jobs */}
+      {session.role === "EMPLOYER" && (
+        <div style={card}>
+          <div style={cardHeader}>
+            <User size={14} color="#555" />
+            <p style={cardHeaderLabel}>{t("settings_page.payments.title") || "Payments"}</p>
+          </div>
+          <div style={cardBody}>
+            <label style={{ display: "flex", gap: 12, alignItems: "flex-start", cursor: autoSaving ? "wait" : "pointer" }}>
+              <input type="checkbox" checked={autoRelease} disabled={autoSaving}
+                onChange={e => toggleAutoRelease(e.target.checked)}
+                style={{ marginTop: 3, accentColor: "#f97316", width: 16, height: 16 }} />
+              <span style={{ fontSize: 13, color: "#bbb", lineHeight: 1.6 }}>
+                <strong style={{ color: "#e0e0e0" }}>{t("settings_page.payments.default_auto_release") || "Default auto-release for new jobs"}</strong><br />
+                {t("settings_page.payments.default_auto_release_desc") || "When on, new jobs auto-release a worker's payment 2 hours after they request it unless you decline. You can still change this per job."}
+              </span>
+            </label>
+          </div>
+        </div>
+      )}
 
       {/* Language Preferences Card */}
       <div style={card}>

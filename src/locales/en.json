@@ -2039,6 +2039,7 @@
     "state_DECLINED": "Declined",
     "state_CANCELLED": "Cancelled",
     "state_APPROVED": "Approved",
-    "state_AUTO_APPROVED": "Auto-approved"
+    "state_AUTO_APPROVED": "Auto-approved",
+    "escalates_in": "support case opens in"
   }
 }

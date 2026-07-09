@@ -152,7 +152,7 @@ export function PaymentPanel({ jobId, role, token }: {
                     ? `${t("payments.unlocks", { when: relative(p.unlockAt) }) || `Unlocks ${relative(p.unlockAt)}`} (${fmtDate(p.unlockAt)})`
                     : (t("payments.completed", { when: fmtDate(p.unlockAt) }) || `Completed ${fmtDate(p.unlockAt)}`)}
                   {r?.status === "PENDING" && r.expiresAt && (
-                    <> · {t("payments.auto_approves_in") || "auto-approves in"} <Countdown to={r.expiresAt} /></>
+                    <> · {(schedule.directRelease ? (t("payments.auto_approves_in") || "auto-approves in") : (t("payments.escalates_in") || "support case opens in"))} <Countdown to={r.expiresAt} /></>
                   )}
                 </div>
               </div>

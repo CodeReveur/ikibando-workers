@@ -103,7 +103,7 @@ export function PaymentApprovalModal() {
                       </div>
                       {r.expiresAt && (
                         <div style={{ fontSize: 11.5, color: "#eab308", marginTop: 4 }}>
-                          {t("payments.auto_approves_in") || "auto-approves in"} <Countdown to={r.expiresAt} onElapsed={load} />
+                          {(r.directRelease ? (t("payments.auto_approves_in") || "auto-approves in") : (t("payments.escalates_in") || "support case opens in"))} <Countdown to={r.expiresAt} onElapsed={load} />
                         </div>
                       )}
                     </div>

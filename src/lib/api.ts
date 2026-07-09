@@ -88,6 +88,7 @@ export interface AuthResult {
     totpEnabled: boolean;
     emailVerified: boolean;
     onboardingCompleted: boolean;
+    defaultAutoRelease?: boolean;
     accountStatus?: string;
     profileCompletion?: number;
     approvalEligible?: boolean;
@@ -259,7 +260,7 @@ export async function getProfile(token: string): Promise<AuthResult["user"]> {
 }
 
 export async function updateProfile(
-  payload: { name?: string; phone?: string },
+  payload: { name?: string; phone?: string; defaultAutoRelease?: boolean },
   token: string,
 ): Promise<AuthResult["user"]> {
   const { data } = await http.patch("/api/users/me", payload, { headers: authHeader(token) });
@@ -707,6 +708,12 @@ export interface JobUpdatePayload {
 
 export async function updateJob(jobId: string, payload: JobUpdatePayload, token: string): Promise<JobDto> {
   const { data } = await http.patch(`/api/jobs/${jobId}`, payload, { headers: authHeader(token) });
+  return data.data;
+}
+
+/** Employer: turn a job's auto-release on/off (allowed anytime). */
+export async function setJobAutoRelease(jobId: string, directRelease: boolean, token: string): Promise<JobDto> {
+  const { data } = await http.patch(`/api/jobs/${jobId}/auto-release`, { directRelease }, { headers: authHeader(token) });
   return data.data;
 }
 

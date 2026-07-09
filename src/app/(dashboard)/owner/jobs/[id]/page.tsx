@@ -19,6 +19,7 @@ import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-edito
 import { useLanguage } from "@/lib/language-context";
 import { useToast } from "@/components/ui/toast";
 import { PaymentPanel } from "@/components/payments/payment-panel";
+import { setJobAutoRelease } from "@/lib/api";
 
 const dateLocaleMap: Record<string, string> = {
   rw: "rw-RW",
@@ -182,6 +183,18 @@ export default function OwnerJobDetail() {
     try {
       await cancelJob(id, token);
       router.push("/owner/offers");
+    } finally { setBusy(null); }
+  };
+
+  const doToggleAutoRelease = async (val: boolean) => {
+    const tk = token || localStorage.getItem("access_token");
+    if (!tk) return;
+    setBusy("autorelease");
+    try {
+      const updated = await setJobAutoRelease(id, val, tk);
+      setJob(updated);
+    } catch (e: any) {
+      alert(apiError(e, t("owner_jobs.auto_release_failed") || "Couldn't update auto-release"));
     } finally { setBusy(null); }
   };
 
@@ -493,6 +506,23 @@ export default function OwnerJobDetail() {
             <InfoRow label={t("owner_offers.urgency") || "Urgency"} value={job.urgency?.replace("_", " ")} />
             {job.startTime && <InfoRow label={t("owner_offers.start_time") || "Start Time"} value={dt(job.startTime, currentLocale) ?? "—"} />}
             {job.requirements && <InfoRow label={t("seeker_job_detail.requirements") || "Requirements"} value={<RichTextDisplay content={job.requirements} />} />}
+          </div>
+
+          {/* Auto-release toggle — editable anytime; affects future payment requests only. */}
+          <div style={{ background: "#111", border: "1px solid #1c1c1c", borderRadius: 14, padding: "16px 18px" }}>
+            <p style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              {t("owner_jobs.auto_release_title") || "Auto-release"}
+            </p>
+            <label style={{ display: "flex", gap: 10, alignItems: "flex-start", cursor: busy === "autorelease" ? "wait" : "pointer" }}>
+              <input type="checkbox" checked={!!job.directRelease} disabled={busy === "autorelease"}
+                onChange={e => doToggleAutoRelease(e.target.checked)}
+                style={{ marginTop: 2, accentColor: "#f97316", width: 16, height: 16 }} />
+              <span style={{ fontSize: 12.5, color: "#bbb", lineHeight: 1.5 }}>
+                {job.directRelease
+                  ? (t("owner_jobs.auto_release_on_desc") || "On — you can approve payment requests, but if you don't act within 2 hours they auto-release.")
+                  : (t("owner_jobs.auto_release_off_desc") || "Off — you must approve every payment request. Unapproved requests open a support case after 24 hours.")}
+              </span>
+            </label>
           </div>
 
           {/* Financial summary */}

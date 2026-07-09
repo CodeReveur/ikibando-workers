@@ -2035,6 +2035,7 @@
     "state_DECLINED": "Byanzwe",
     "state_CANCELLED": "Byahagaritswe",
     "state_APPROVED": "Byemejwe",
-    "state_AUTO_APPROVED": "Byemejwe ako kanya"
+    "state_AUTO_APPROVED": "Byemejwe ako kanya",
+    "escalates_in": "urubanza rufungurwa mu"
   }
 }

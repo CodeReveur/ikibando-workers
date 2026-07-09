@@ -2034,6 +2034,7 @@
     "state_DECLINED": "Imekataliwa",
     "state_CANCELLED": "Imeghairiwa",
     "state_APPROVED": "Imeidhinishwa",
-    "state_AUTO_APPROVED": "Imeidhinishwa kiotomatiki"
+    "state_AUTO_APPROVED": "Imeidhinishwa kiotomatiki",
+    "escalates_in": "kesi ya usaidizi hufunguliwa baada ya"
   }
 }

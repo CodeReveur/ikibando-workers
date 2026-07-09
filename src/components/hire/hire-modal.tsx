@@ -556,35 +556,6 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                 </FField>
 
                 <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  <FField label={t("hire_modal.details.workers_label")}>
-                    <div style={{ position: "relative" }}>
-                      <Users size={13} color="#444" style={iconL} />
-                      <input type="number" min="1" max="50"
-                        value={form.headcount}
-                        onChange={e => setForm(f => ({ ...f, headcount: e.target.value }))}
-                        style={{ ...inp, paddingLeft: 32 }}
-                        onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-                        onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
-                      />
-                    </div>
-                  </FField>
-                  <FField label={t("hire_modal.details.rate_label")}>
-                    <input type="number" min="0" placeholder={`e.g. ${minRate.toLocaleString()}`}
-                      value={form.budget}
-                      onChange={e => setForm(f => ({ ...f, budget: e.target.value }))}
-                      style={inp}
-                      onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-                      onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
-                    />
-                    {budget > 0 && !rateOk && (
-                      <p style={{ margin: "2px 0 0", fontSize: 11, color: "#ef4444" }}>
-                        Minimum is {fmt(minRate)} {RATE_LABEL[form.rateType]}
-                      </p>
-                    )}
-                  </FField>
-                </div>
-
-                <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                   <FField label={t("post_job.labels.payment_mode") || "Payment mode"}>
                     <div style={{ position: "relative" }}>
                       <select value={form.paymentMode}
@@ -644,6 +615,36 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                     }) || `Worker is paid every ${interval} ${getUnit(form.rateType, interval)}, ${periodsNum} time(s) — ${durationNum} ${getUnit(form.rateType, durationNum)} total.`}
                   </p>
                 )}
+
+                {/* Workers + amount — chosen after the schedule so the rate matches the mode. */}
+                <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <FField label={t("hire_modal.details.workers_label")}>
+                    <div style={{ position: "relative" }}>
+                      <Users size={13} color="#444" style={iconL} />
+                      <input type="number" min="1" max="50"
+                        value={form.headcount}
+                        onChange={e => setForm(f => ({ ...f, headcount: e.target.value }))}
+                        style={{ ...inp, paddingLeft: 32 }}
+                        onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
+                        onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                      />
+                    </div>
+                  </FField>
+                  <FField label={t("hire_modal.details.rate_label")}>
+                    <input type="number" min="0" placeholder={`e.g. ${minRate.toLocaleString()}`}
+                      value={form.budget}
+                      onChange={e => setForm(f => ({ ...f, budget: e.target.value }))}
+                      style={inp}
+                      onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
+                      onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                    />
+                    {budget > 0 && !rateOk && (
+                      <p style={{ margin: "2px 0 0", fontSize: 11, color: "#ef4444" }}>
+                        Minimum is {fmt(minRate)} {RATE_LABEL[form.rateType]}
+                      </p>
+                    )}
+                  </FField>
+                </div>
 
                 <label style={{
                   background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10,
