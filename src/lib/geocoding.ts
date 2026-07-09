@@ -10,6 +10,38 @@ export interface LocationData {
 
 // Simple in-memory cache to store the last reverse geocoding results
 const geocodeCache = new Map<string, LocationData>();
+const forwardCache = new Map<string, { latitude: number; longitude: number } | null>();
+
+/**
+ * Forward-geocodes a place name (e.g. "Nyarutovu, Karama, Kanombe, Kicukiro, Rwanda") into
+ * coordinates via OpenStreetMap Nominatim, restricted to Rwanda. Returns null on no match or error
+ * so callers can fall back to a broader query. Never throws.
+ */
+export async function forwardGeocode(
+  query: string
+): Promise<{ latitude: number; longitude: number } | null> {
+  const q = (query || "").trim();
+  if (!q) return null;
+  if (forwardCache.has(q)) return forwardCache.get(q)!;
+
+  const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=rw&q=${encodeURIComponent(q)}`;
+  try {
+    const response = await fetch(url, {
+      headers: { "User-Agent": "Ikibando-Workers-MpahMapu-App" },
+    });
+    if (!response.ok) throw new Error(`Nominatim search error: status ${response.status}`);
+    const data = await response.json();
+    const hit = Array.isArray(data) && data.length > 0
+      ? { latitude: parseFloat(data[0].lat), longitude: parseFloat(data[0].lon) }
+      : null;
+    const valid = hit && Number.isFinite(hit.latitude) && Number.isFinite(hit.longitude) ? hit : null;
+    forwardCache.set(q, valid);
+    return valid;
+  } catch (error) {
+    console.error("Forward geocoding failed:", error);
+    return null;
+  }
+}
 
 /**
  * Reverse geocodes a latitude and longitude into a structured location address

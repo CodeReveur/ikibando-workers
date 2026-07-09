@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Provinces, Districts, Sectors, Cells, Villages } from "rwanda";
+import { geoProvinces, geoDistricts, geoSectors, geoCells, geoVillages } from "@/lib/rwanda-geo";
 import type { Address } from "@/lib/api";
 
 /**
@@ -47,30 +47,18 @@ export function AddressPicker({ value, onChange }: Props) {
   const a: Address = value ?? { country: "Rwanda" };
   const isRwanda = a.country === "Rwanda";
 
-  const provinces = useMemo(() => (Provinces() ?? []), []);
-  const districts = useMemo(
-    () => (a.province ? Districts({ provinces: a.province }) ?? [] : []),
-    [a.province]
-  );
+  const provinces = useMemo(() => geoProvinces(), []);
+  const districts = useMemo(() => geoDistricts(a.province), [a.province]);
   const sectors = useMemo(
-    () =>
-      a.province && a.district
-        ? Sectors({ province: a.province, district: a.district }) ?? []
-        : [],
+    () => geoSectors(a.province, a.district),
     [a.province, a.district]
   );
   const cells = useMemo(
-    () =>
-      a.province && a.district && a.sector
-        ? Cells({ province: a.province, district: a.district, sector: a.sector }) ?? []
-        : [],
+    () => geoCells(a.province, a.district, a.sector),
     [a.province, a.district, a.sector]
   );
   const villages = useMemo(
-    () =>
-      a.province && a.district && a.sector && a.cell
-        ? Villages({ province: a.province, district: a.district, sector: a.sector, cell: a.cell }) ?? []
-        : [],
+    () => geoVillages(a.province, a.district, a.sector, a.cell),
     [a.province, a.district, a.sector, a.cell]
   );
 

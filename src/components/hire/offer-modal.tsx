@@ -6,6 +6,7 @@ import { X, Calendar, Clock, CheckCircle, Bell, MapPin, Navigation, Loader2 } fr
 import { RWANDA_PROVINCES, MIN_RATE_BY_PERIOD } from "@/lib/constants";
 import { postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, type WorkerProfileDto, type PaymentMode } from "@/lib/api";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
+import { forwardGeocode } from "@/lib/geocoding";
 import { useToast } from "@/components/ui/toast";
 import { useLanguage } from "@/lib/language-context";
 import { useSession, type Session } from "@/components/dashboard/session-ctx";
@@ -160,6 +161,18 @@ export function OfferModal({ worker, onClose }: Props) {
   useEffect(() => {
     setPayMethod("MTN_MOMO");
   }, [hasSession]);
+
+  // Move the map to the selected district/province by forward-geocoding it.
+  useEffect(() => {
+    if (!district) return;
+    let cancelled = false;
+    const handle = setTimeout(async () => {
+      const hit = await forwardGeocode([district, province || "", "Rwanda"].filter(Boolean).join(", "));
+      if (!cancelled && hit) { setLat(hit.latitude); setLng(hit.longitude); }
+    }, 500);
+    return () => { cancelled = true; clearTimeout(handle); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [province, district]);
 
   // Restore draft on open
   useEffect(() => {

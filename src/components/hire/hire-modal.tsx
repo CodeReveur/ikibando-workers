@@ -10,6 +10,7 @@ import {
 import { JOB_CATEGORIES, RWANDA_PROVINCES, MIN_RATE_BY_PERIOD } from "@/lib/constants";
 import { getWorkers, postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, type WorkerProfileDto, type PaymentMode } from "@/lib/api";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
+import { forwardGeocode } from "@/lib/geocoding";
 import { ratingInfo } from "@/lib/rating";
 import { useToast } from "@/components/ui/toast";
 import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
@@ -176,6 +177,18 @@ export function HireModal({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     setPayMethod("MTN_MOMO");
   }, [hasSession]);
+
+  // Move the map to the selected district/province by forward-geocoding it.
+  useEffect(() => {
+    if (!form.district) return;
+    let cancelled = false;
+    const handle = setTimeout(async () => {
+      const hit = await forwardGeocode([form.district, form.province || "", "Rwanda"].filter(Boolean).join(", "));
+      if (!cancelled && hit) setForm(f => ({ ...f, latitude: hit.latitude, longitude: hit.longitude }));
+    }, 500);
+    return () => { cancelled = true; clearTimeout(handle); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.province, form.district]);
 
   // Restore draft on open
   useEffect(() => {

@@ -7,7 +7,8 @@ import {
   CheckCircle, AlarmClock, Loader2, Navigation, Search, MapPin,
 } from "lucide-react";
 import { JOB_CATEGORIES, RWANDA_PROVINCES, CURRENCY, MIN_RATE_BY_PERIOD } from "@/lib/constants";
-import { Sectors, Cells, Villages } from "rwanda";
+import { geoSectors, geoCells, geoVillages } from "@/lib/rwanda-geo";
+import { forwardGeocode } from "@/lib/geocoding";
 import { postJob, postGuestJob, getWallet, apiError, checkGuestAccount, type PaymentMode } from "@/lib/api";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { saveRedirect } from "@/lib/auth-redirect";
@@ -78,15 +79,6 @@ function districtsFor(province: string): string[] {
   return p ? [...p.districts] : allDistricts();
 }
 
-// Map our province labels to the `rwanda` dataset's short names so we can look up the
-// sector/cell/village hierarchy (same constant dataset the registration wizard uses).
-const PKG_PROVINCE: Record<string, string> = {
-  "City of Kigali": "Kigali",
-  "Northern Province": "North",
-  "Southern Province": "South",
-  "Eastern Province": "East",
-  "Western Province": "West",
-};
 
 // ── types ────────────────────────────────────────────────────────────────────
 interface JobForm {
@@ -252,6 +244,28 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = ""; };
   }, []);
+
+  // Move the map to the chosen admin location: forward-geocode the deepest level available
+  // (village → cell → sector → district), falling back to a broader query if a precise one misses.
+  useEffect(() => {
+    if (!job.district) return;
+    const parts = [job.village, job.cell, job.sector, job.district].filter(Boolean) as string[];
+    if (parts.length === 0) return;
+    let cancelled = false;
+    const handle = setTimeout(async () => {
+      for (let i = 0; i < parts.length; i++) {
+        const query = [...parts.slice(i), job.province || "", "Rwanda"].filter(Boolean).join(", ");
+        const hit = await forwardGeocode(query);
+        if (cancelled) return;
+        if (hit) {
+          setJob(f => ({ ...f, latitude: hit.latitude, longitude: hit.longitude }));
+          return;
+        }
+      }
+    }, 500);
+    return () => { cancelled = true; clearTimeout(handle); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [job.province, job.district, job.sector, job.cell, job.village]);
 
   // Escape to close
   useEffect(() => {
@@ -471,11 +485,10 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
     : "-";
   const locationLabel = [getLocalizedProvinceLabel(job.province), job.district].filter(Boolean).join(" › ");
 
-  // Cascading Rwanda location options (constant geographic names, same in every language).
-  const pkgProvince   = PKG_PROVINCE[job.province] ?? job.province;
-  const sectorOpts    = (job.province && job.district) ? (Sectors({ province: pkgProvince, district: job.district }) ?? []) : [];
-  const cellOpts      = (job.sector) ? (Cells({ province: pkgProvince, district: job.district, sector: job.sector }) ?? []) : [];
-  const villageOpts   = (job.cell) ? (Villages({ province: pkgProvince, district: job.district, sector: job.sector, cell: job.cell }) ?? []) : [];
+  // Cascading Rwanda location options — resilient to casing/whitespace drift (see rwanda-geo.ts).
+  const sectorOpts    = geoSectors(job.province, job.district);
+  const cellOpts      = geoCells(job.province, job.district, job.sector);
+  const villageOpts   = geoVillages(job.province, job.district, job.sector, job.cell);
 
   // ── SUCCESS ────────────────────────────────────────────────────────────────
   if (done) return (
