@@ -62,6 +62,24 @@ export default function OwnerAnalytics() {
   const acceptedApps = allApps.filter(a => a.status === "ACCEPTED").length;
   const pendingApps  = allApps.filter(a => a.status === "PENDING").length;
 
+  // ── Active sessions: ongoing engagements where at least one worker is hired and the
+  // job is neither completed nor cancelled — these are the live "sessions" to manage.
+  const isActiveStatus = (s: string) => s !== "COMPLETED" && s !== "CANCELLED" && s !== "DRAFT";
+  const activeSessionJobs = jobs.filter(j => (j.acceptedCount ?? 0) > 0 && isActiveStatus(j.status as string));
+  const activeSessions = activeSessionJobs.length;
+  const workersOnDuty  = activeSessionJobs.reduce((s, j) => s + (j.acceptedCount ?? 0), 0);
+
+  // ── Engagement funnel: how postings convert into completed work.
+  const jobsPosted = jobs.length;
+  const totalApps  = allApps.length;
+  const funnel = [
+    { label: t("owner_analytics.funnel_posted")    || "Jobs posted",         count: jobsPosted,    color: "#60a5fa" },
+    { label: t("owner_analytics.funnel_apps")       || "Applications received", count: totalApps,   color: "#a78bfa" },
+    { label: t("owner_analytics.funnel_hired")      || "Workers hired",       count: acceptedApps,  color: "#f97316" },
+    { label: t("owner_analytics.funnel_completed")  || "Jobs completed",      count: completedJobs, color: "#22c55e" },
+  ];
+  const funnelMax = Math.max(...funnel.map(f => f.count), 1);
+
   // Category breakdown
   const catTotals: Record<string, number> = {};
   payments.forEach(p => {
@@ -108,6 +126,61 @@ export default function OwnerAnalytics() {
         <StatCard label={t("owner_analytics.in_escrow") || "In Escrow"}        value={fmt(heldNow)}           sub={t("seeker_analytics.awaiting_release") || "Pending release"} accent="#f59e0b" />
         <StatCard label={t("owner_analytics.jobs_completed") || "Jobs Completed"}   value={String(completedJobs)}  sub={t("seeker_analytics.all_time") || "All time"}        accent="#22c55e" />
         <StatCard label={t("owner_analytics.pending_review") || "Pending Review"}   value={String(pendingApps)}    sub={t("owner_workers.need_action") || "Need action"}     accent="#ef4444" />
+      </div>
+
+      <div className="owner-analytics-grid" style={{ marginBottom: 28 }}>
+        <StatCard label={t("owner_analytics.active_sessions") || "Active Sessions"}  value={String(activeSessions)}  sub={t("owner_analytics.ongoing_now") || "Ongoing now"}          accent="#f97316" />
+        <StatCard label={t("owner_analytics.workers_on_duty") || "Workers On Duty"}  value={String(workersOnDuty)}   sub={t("owner_analytics.across_sessions") || "Across sessions"}  accent="#22c55e" />
+        <StatCard label={t("owner_analytics.total_applications") || "Applications"}  value={String(totalApps)}       sub={t("seeker_analytics.all_time") || "All time"}               accent="#a78bfa" />
+      </div>
+
+      {/* Active sessions — live engagements the employer is managing */}
+      <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:14, padding:"22px 24px", marginBottom:14 }}>
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
+          <p style={{ margin:0, fontWeight:700, fontSize:14, color:"#e0e0e0" }}>{t("owner_analytics.active_sessions") || "Active Sessions"}</p>
+          <span style={{ fontSize:11, color:"#333" }}>{activeSessions} {t("owner_analytics.ongoing") || "ongoing"}</span>
+        </div>
+        {activeSessions === 0 ? (
+          <p style={{ margin:0, fontSize:12, color:"#333", textAlign:"center", padding:"24px 0" }}>{t("owner_analytics.no_active_sessions") || "No active sessions right now"}</p>
+        ) : activeSessionJobs.map(j => (
+          <div key={j.id as unknown as string} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"11px 0", borderBottom:"1px solid #191919" }}>
+            <div style={{ minWidth:0 }}>
+              <p style={{ margin:"0 0 2px", fontSize:13, fontWeight:600, color:"#e0e0e0", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{j.title}</p>
+              <p style={{ margin:0, fontSize:11, color:"#555" }}>
+                {j.district}{j.province ? `, ${j.province}` : ""} · {fmt(j.ratePerHour)}/hr
+              </p>
+            </div>
+            <div style={{ display:"flex", alignItems:"center", gap:14, flexShrink:0, marginLeft:12 }}>
+              <div style={{ textAlign:"right" }}>
+                <p style={{ margin:0, fontSize:14, fontWeight:800, color:"#22c55e" }}>{j.acceptedCount ?? 0}/{j.headcount}</p>
+                <p style={{ margin:0, fontSize:10, color:"#444" }}>{t("owner_analytics.hired") || "hired"}</p>
+              </div>
+              <span style={{ fontSize:10, fontWeight:700, color:"#f97316", background:"rgba(249,115,22,0.08)", border:"1px solid rgba(249,115,22,0.2)", borderRadius:99, padding:"3px 9px" }}>
+                {(j.status as string)}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Engagement funnel */}
+      <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:14, padding:"22px 24px", marginBottom:14 }}>
+        <p style={{ margin:"0 0 18px", fontWeight:700, fontSize:14, color:"#e0e0e0" }}>{t("owner_analytics.engagement_funnel") || "Engagement Funnel"}</p>
+        {funnel.map((f, i) => {
+          const pct = Math.round((f.count / funnelMax) * 100);
+          const conv = i === 0 ? 100 : Math.round((f.count / (funnel[0].count || 1)) * 100);
+          return (
+            <div key={f.label} style={{ marginBottom:14 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", marginBottom:5 }}>
+                <span style={{ fontSize:12, color:"#555" }}>{f.label}</span>
+                <span style={{ fontSize:12, fontWeight:700, color:f.color }}>{f.count} <span style={{ color:"#333", fontWeight:500 }}>· {conv}%</span></span>
+              </div>
+              <div style={{ height:7, background:"#1a1a1a", borderRadius:99 }}>
+                <div style={{ height:"100%", width:`${pct}%`, background:f.color, borderRadius:99, transition:"width 0.4s" }} />
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Weekly spending chart */}

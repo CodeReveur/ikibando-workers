@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft, Check, Clock, MapPin, User,
-  Calendar, Loader2, DollarSign, CheckCircle, X, Wallet, Star,
+  Calendar, Loader2, DollarSign, CheckCircle, X, Wallet, Star, Navigation,
 } from "lucide-react";
 import {
   getJob, getMyApplications, getWalletTransactions,
@@ -463,6 +463,12 @@ export default function SeekerJobDetail() {
             <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: "0.08em" }}>{t("seeker_job_detail.job_details")}</p>
             <InfoRow label={t("seeker_job_detail.category")} value={job.category} />
             <InfoRow label={t("seeker_job_detail.location")} value={`${job.district}${job.province ? `, ${job.province}` : ""}`} />
+            {(job.street || job.houseNumber) && (
+              <InfoRow
+                label={t("seeker_job_detail.address") || "Street / House"}
+                value={[job.houseNumber, job.street].filter(Boolean).join(" ")}
+              />
+            )}
             {job.locationNotes && <InfoRow label={t("seeker_job_detail.location_notes")} value={<RichTextDisplay content={job.locationNotes} />} />}
             <InfoRow label={t("seeker_job_detail.rate")} value={`RWF ${job.ratePerHour?.toLocaleString()} / hr`} />
             <InfoRow label={t("seeker_job_detail.duration")} value={`${job.durationHours} hours`} />
@@ -485,6 +491,18 @@ export default function SeekerJobDetail() {
                 directRelease={job.directRelease}
               />
             </div>
+
+            {/* Track the way — live turn-by-turn navigation, available to every worker */}
+            <button
+              onClick={() => router.push(`/seeker/jobs/${job.id}/navigate`)}
+              style={{
+                width: "100%", marginTop: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                background: "#f97316", color: "#fff", border: "none", borderRadius: 10,
+                padding: "12px", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "inherit",
+              }}
+            >
+              <Navigation size={15} /> {t("seeker_job_detail.track_the_way") || "Track the way — live navigation"}
+            </button>
           </div>
 
           {/* Earnings */}

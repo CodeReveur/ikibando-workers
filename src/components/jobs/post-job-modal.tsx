@@ -92,6 +92,8 @@ interface JobForm {
   sector: string;
   cell: string;
   village: string;
+  street: string;
+  houseNumber: string;
   latitude:  number | null;
   longitude: number | null;
   ratePerHour: string;
@@ -183,6 +185,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
     category: "", headcount: "1", date: "", time: "",
     durationHours: "4", province: "", district: "",
     sector: "", cell: "", village: "",
+    street: "", houseNumber: "",
     latitude: null, longitude: null,
     ratePerHour: "", rateType: "hr", paymentMode: "HOURLY", paymentInterval: "1", notes: "",
   });
@@ -320,6 +323,11 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
     if (!job.date)         errs.date      = t("post_job.errors.required") || "Required";
     if (!job.time)         errs.time      = t("post_job.errors.required") || "Required";
     if (!job.district)     errs.district  = t("post_job.errors.required") || "Required";
+    // Precise destination for worker navigation: require a street/avenue name OR a map pin.
+    const hasPin = job.latitude != null && job.longitude != null;
+    if (!job.street.trim() && !hasPin) {
+      errs.street = t("post_job.errors.street_or_pin") || "Enter the street/avenue (and house number), or drop a pin on the map";
+    }
     const minRate = MIN_RATE_BY_PERIOD[job.rateType];
     if (!job.ratePerHour || parseInt(job.ratePerHour) < minRate) {
       errs.ratePerHour = `Minimum is ${fmt(minRate)} ${RATE_LABEL[job.rateType]}`;
@@ -386,6 +394,8 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
         village:       job.village || undefined,
         latitude:      job.latitude  ?? undefined,
         longitude:     job.longitude ?? undefined,
+        street:        job.street.trim()      || undefined,
+        houseNumber:   job.houseNumber.trim() || undefined,
         ratePerHour:   parseInt(job.ratePerHour),
         headcount:     parseInt(job.headcount) || 1,
         urgency:       "SAME_DAY" as const,
@@ -787,6 +797,41 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                     />
                   </FField>
                 </div>
+
+                {/* Street / avenue + house number — precise destination for worker navigation */}
+                <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 10 }}>
+                  <FField
+                    label={t("post_job.labels.street") || "Street / Avenue"}
+                    error={errors.street}
+                  >
+                    <input
+                      type="text"
+                      placeholder={t("post_job.placeholders.street") || "e.g. KG 7 Ave"}
+                      value={job.street}
+                      onChange={e => setJob(f => ({ ...f, street: e.target.value }))}
+                      style={{
+                        width: "100%", background: "#141414",
+                        border: `1px solid ${errors.street ? "rgba(239,68,68,0.5)" : "#2a2a2a"}`,
+                        borderRadius: 8, padding: "10px 12px", fontSize: 13, color: "#fff", fontFamily: "inherit",
+                      }}
+                    />
+                  </FField>
+                  <FField label={t("post_job.labels.house_number") || "House / Plot no."}>
+                    <input
+                      type="text"
+                      placeholder={t("post_job.placeholders.house_number") || "e.g. 12"}
+                      value={job.houseNumber}
+                      onChange={e => setJob(f => ({ ...f, houseNumber: e.target.value }))}
+                      style={{
+                        width: "100%", background: "#141414", border: "1px solid #2a2a2a",
+                        borderRadius: 8, padding: "10px 12px", fontSize: 13, color: "#fff", fontFamily: "inherit",
+                      }}
+                    />
+                  </FField>
+                </div>
+                <p style={{ margin: "-4px 0 4px", fontSize: 11, color: "#555" }}>
+                  {t("post_job.hints.street_or_pin") || "Name the street & house number, or drop a pin on the map below — workers use this to navigate to you."}
+                </p>
 
                 {/* Map + GPS */}
                 <FField label={t("post_job.labels.precise_location") || "Precise location (click map or use GPS)"}>

@@ -469,9 +469,18 @@ export interface JobDto {
   category: string;
   province: string | null;
   district: string;
+  sector: string | null;
+  cell: string | null;
+  village: string | null;
   latitude: number | null;
   longitude: number | null;
   locationNotes: string | null;
+  /** Street / avenue of the job site — used for precise navigation. */
+  street: string | null;
+  /** House / plot number at the street. */
+  houseNumber: string | null;
+  /** Free-form resolved address (from map pin), if any. */
+  address: string | null;
   ratePerHour: number;
   rateType: string;
   paymentMode: PaymentMode;
@@ -795,6 +804,8 @@ export interface JobPayload {
   urgency: "IMMEDIATE" | "SAME_DAY" | "SCHEDULED";
   startTime: string; durationHours: number;
   rateType?: string; locationNotes?: string;
+  /** Precise destination addressing for worker navigation. */
+  street?: string; houseNumber?: string;
   /** How the escrow is paid out over time, and over how many periods. */
   paymentMode?: PaymentMode; paymentPeriods?: number; paymentInterval?: number;
   /** When true, per-period payment requests pay out immediately without manual approval. */
