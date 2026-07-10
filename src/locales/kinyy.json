@@ -1579,7 +1579,16 @@
     "processing": "Biri gutunganywa...",
     "withdraw_btn": "Bikuza {amount}",
     "cancel": "Guhagarika",
-    "wd_success_toast": "Ubusabe bwo kubikuza bwoherejwe neza!"
+    "wd_success_toast": "Ubusabe bwo kubikuza bwoherejwe neza!",
+    "otp_sent_toast": "Twakoherereje kode kuri email yo kwemeza ubu bukwe.",
+    "otp_len_err": "Andika kode y'imibare 6 wabonye kuri email",
+    "otp_resent_toast": "Kode nshya yakoherejwe kuri email yawe.",
+    "otp_title": "Emeza kubikuza kwawe",
+    "otp_desc": "Ku mutekano wawe, andika kode y'imibare 6 twaguhereje kuri email kugira wemeze ubu bukwe.",
+    "otp_label": "KODE YO KWEMEZA",
+    "otp_resend": "Ongera wohereze kode",
+    "wd_send_code": "Komeza — mpa kode kuri email",
+    "wd_confirm_btn": "Emeza kubikuza {amount}"
   },
   "seeker_bonuses": {
     "bonus_earned": "Agahimbazamusyi",

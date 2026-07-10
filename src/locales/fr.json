@@ -1578,7 +1578,16 @@
     "processing": "Traitement...",
     "withdraw_btn": "Retirer {amount}",
     "cancel": "Annuler",
-    "wd_success_toast": "Demande de retrait soumise avec succès !"
+    "wd_success_toast": "Demande de retrait soumise avec succès !",
+    "otp_sent_toast": "Nous vous avons envoyé un code par e-mail pour confirmer ce retrait.",
+    "otp_len_err": "Saisissez le code à 6 chiffres reçu par e-mail",
+    "otp_resent_toast": "Un nouveau code vous a été envoyé par e-mail.",
+    "otp_title": "Confirmez votre retrait",
+    "otp_desc": "Pour votre sécurité, saisissez le code à 6 chiffres que nous venons de vous envoyer par e-mail pour confirmer ce retrait.",
+    "otp_label": "CODE DE VÉRIFICATION",
+    "otp_resend": "Renvoyer le code",
+    "wd_send_code": "Continuer — envoyez-moi un code",
+    "wd_confirm_btn": "Confirmer le retrait {amount}"
   },
   "seeker_bonuses": {
     "bonus_earned": "Bonus gagné",

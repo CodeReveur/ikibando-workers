@@ -1578,7 +1578,16 @@
     "processing": "Inashughulikiwa...",
     "withdraw_btn": "Toa {amount}",
     "cancel": "Ghairi",
-    "wd_success_toast": "Ombi la kutoa pesa limewasilishwa kwa mafanikio!"
+    "wd_success_toast": "Ombi la kutoa pesa limewasilishwa kwa mafanikio!",
+    "otp_sent_toast": "Tumekutumia msimbo kwa barua pepe kuthibitisha uondoaji huu.",
+    "otp_len_err": "Weka msimbo wa tarakimu 6 kutoka barua pepe yako",
+    "otp_resent_toast": "Msimbo mpya umetumwa kwako kwa barua pepe.",
+    "otp_title": "Thibitisha uondoaji wako",
+    "otp_desc": "Kwa usalama wako, weka msimbo wa tarakimu 6 tuliokutumia kwa barua pepe kuthibitisha uondoaji huu.",
+    "otp_label": "MSIMBO WA UTHIBITISHO",
+    "otp_resend": "Tuma msimbo tena",
+    "wd_send_code": "Endelea — nitumie msimbo",
+    "wd_confirm_btn": "Thibitisha uondoaji {amount}"
   },
   "seeker_bonuses": {
     "bonus_earned": "Bonus uliyopata",

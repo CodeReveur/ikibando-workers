@@ -6,7 +6,7 @@ import {
   X, Loader2, CreditCard, Clock,
 } from "lucide-react";
 import {
-  getWallet, getWalletTransactions, requestWithdrawal, apiError,
+  getWallet, getWalletTransactions, requestWithdrawalOtp, confirmWithdrawal, apiError,
   type WalletDto, type PaymentDto,
 } from "@/lib/api";
 type WdMethod = "MTN_MOMO" | "AIRTEL_MONEY";
@@ -47,6 +47,9 @@ export default function SeekerEarnings() {
   const [wdMethod,  setWdMethod]  = useState<WdMethod>("MTN_MOMO");
   const [wdBusy,    setWdBusy]    = useState(false);
   const [wdErr,     setWdErr]     = useState("");
+  // OTP step: after details are submitted we email a code the user must confirm.
+  const [wdStep,    setWdStep]    = useState<"details" | "otp">("details");
+  const [wdCode,    setWdCode]    = useState("");
 
   const load = useCallback(async () => {
     const token = localStorage.getItem("access_token");
@@ -61,6 +64,11 @@ export default function SeekerEarnings() {
 
   useEffect(() => { load(); }, [load]);
 
+  const closeWd = () => {
+    setWdOpen(false); setWdErr(""); setWdStep("details"); setWdCode("");
+  };
+
+  // Step 1: validate and request an email OTP.
   const doWithdraw = async () => {
     const token = localStorage.getItem("access_token")!;
     const amount = parseInt(wdAmt, 10);
@@ -69,14 +77,44 @@ export default function SeekerEarnings() {
     if (!wdPhone.trim() || wdPhone.replace(/\D/g,"").length < 9) { setWdErr(t("seeker_earnings.valid_phone_err") || "Enter a valid phone number"); return; }
     setWdBusy(true); setWdErr("");
     try {
-      await requestWithdrawal({ amount, phoneNumber: wdPhone.trim(), paymentMethod: wdMethod }, token);
+      await requestWithdrawalOtp({ amount, phoneNumber: wdPhone.trim(), paymentMethod: wdMethod }, token);
+      setWdStep("otp"); setWdCode("");
+      toastSuccess(t("seeker_earnings.otp_sent_toast") || "We've emailed you a code to confirm this withdrawal.");
+    } catch (e: any) {
+      const errMsg = apiError(e, t("seeker_earnings.wd_failed_err") || "Withdrawal failed. Please try again.");
+      setWdErr(errMsg);
+      toastError(errMsg);
+    } finally { setWdBusy(false); }
+  };
+
+  // Step 2: confirm the emailed OTP and finalise the withdrawal.
+  const confirmWd = async () => {
+    const token = localStorage.getItem("access_token")!;
+    const code = wdCode.trim();
+    if (code.length !== 6) { setWdErr(t("seeker_earnings.otp_len_err") || "Enter the 6-digit code from your email"); return; }
+    setWdBusy(true); setWdErr("");
+    try {
+      await confirmWithdrawal(code, token);
       await load(); // refresh wallet + transactions
-      setWdOpen(false); setWdAmt(""); setWdPhone("");
+      closeWd(); setWdAmt(""); setWdPhone("");
       toastSuccess(t("seeker_earnings.wd_success_toast") || "Withdrawal request submitted successfully!");
     } catch (e: any) {
       const errMsg = apiError(e, t("seeker_earnings.wd_failed_err") || "Withdrawal failed. Please try again.");
       setWdErr(errMsg);
       toastError(errMsg);
+    } finally { setWdBusy(false); }
+  };
+
+  // Resend the OTP (re-uses the same details).
+  const resendWd = async () => {
+    const token = localStorage.getItem("access_token")!;
+    const amount = parseInt(wdAmt, 10);
+    setWdBusy(true); setWdErr("");
+    try {
+      await requestWithdrawalOtp({ amount, phoneNumber: wdPhone.trim(), paymentMethod: wdMethod }, token);
+      toastSuccess(t("seeker_earnings.otp_resent_toast") || "A new code has been emailed to you.");
+    } catch (e: any) {
+      toastError(apiError(e, t("seeker_earnings.wd_failed_err") || "Could not resend the code."));
     } finally { setWdBusy(false); }
   };
 
@@ -238,7 +276,7 @@ export default function SeekerEarnings() {
           <div style={{ background:"#111", border:"1px solid #222", borderRadius:18, width:"100%", maxWidth:440, padding:"28px" }}>
             <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:22 }}>
               <p style={{ margin:0, fontSize:16, fontWeight:800, color:"#fff" }}>{t("seeker_earnings.withdraw_title")}</p>
-              <button onClick={() => { setWdOpen(false); setWdErr(""); }} style={{ background:"none", border:"none", cursor:"pointer", color:"#555" }}><X size={18} /></button>
+              <button onClick={closeWd} style={{ background:"none", border:"none", cursor:"pointer", color:"#555" }}><X size={18} /></button>
             </div>
 
             <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:10, padding:"12px 16px", marginBottom:18 }}>
@@ -246,6 +284,7 @@ export default function SeekerEarnings() {
               <p style={{ margin:0, fontSize:22, fontWeight:900, color:"#22c55e" }}>{fmt(wallet?.balance ?? 0)}</p>
             </div>
 
+            {wdStep === "details" && (<>
             {/* Provider selector */}
             <p style={{ margin:"0 0 8px", fontSize:11, fontWeight:700, color:"#3a3a3a", letterSpacing:"0.06em" }}>{t("seeker_earnings.momo_provider")}</p>
             <div className="wd-providers" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:18 }}>
@@ -305,12 +344,38 @@ export default function SeekerEarnings() {
             <p style={{ margin:"0 0 18px", fontSize:11, color:"#2a2a2a", lineHeight:1.6 }}>
               {t("seeker_earnings.phone_hint")}
             </p>
+            </>)}
+
+            {wdStep === "otp" && (<>
+              <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10 }}>
+                <Shield size={15} color="#22c55e" />
+                <p style={{ margin:0, fontSize:13, fontWeight:700, color:"#e0e0e0" }}>
+                  {t("seeker_earnings.otp_title") || "Confirm your withdrawal"}
+                </p>
+              </div>
+              <p style={{ margin:"0 0 14px", fontSize:12, color:"#666", lineHeight:1.6 }}>
+                {t("seeker_earnings.otp_desc") || "For your security, enter the 6-digit code we just emailed you to confirm this withdrawal."}
+              </p>
+              <p style={{ margin:"0 0 6px", fontSize:11, fontWeight:700, color:"#3a3a3a", letterSpacing:"0.06em" }}>
+                {t("seeker_earnings.otp_label") || "VERIFICATION CODE"}
+              </p>
+              <input
+                style={{ ...inp, marginBottom:10, letterSpacing:"8px", textAlign:"center", fontSize:20, fontWeight:800 }}
+                type="text" inputMode="numeric" maxLength={6}
+                placeholder="000000"
+                value={wdCode}
+                onChange={e => setWdCode(e.target.value.replace(/\D/g,"").slice(0,6))}
+              />
+              <button onClick={resendWd} disabled={wdBusy} style={{ background:"none", border:"none", color:"#60a5fa", fontSize:12, fontWeight:600, cursor:"pointer", padding:0, marginBottom:16, fontFamily:"inherit" }}>
+                {t("seeker_earnings.otp_resend") || "Resend code"}
+              </button>
+            </>)}
 
             {wdErr && <p style={{ margin:"0 0 12px", fontSize:12, color:"#ef4444", background:"rgba(239,68,68,0.07)", borderRadius:8, padding:"8px 12px" }}>{wdErr}</p>}
 
             <div style={{ display:"flex", gap:10 }}>
               <button
-                onClick={doWithdraw} disabled={wdBusy}
+                onClick={wdStep === "details" ? doWithdraw : confirmWd} disabled={wdBusy}
                 style={{
                   flex:1, background: wdMethod === "MTN_MOMO" ? "#ffcc00" : "#ff0000",
                   color: wdMethod === "MTN_MOMO" ? "#000" : "#fff",
@@ -324,14 +389,18 @@ export default function SeekerEarnings() {
                     <Loader2 size={14} style={{ animation:"spin 0.7s linear infinite" }} />{" "}
                     {t("seeker_earnings.processing") || "Processing…"}
                   </>
+                ) : wdStep === "details" ? (
+                  t("seeker_earnings.wd_send_code") || "Continue — email me a code"
                 ) : (
-                  t("seeker_earnings.withdraw_btn")
+                  t("seeker_earnings.wd_confirm_btn")
                     ?.replace("{amount}", wdAmt ? fmt(parseInt(wdAmt, 10)||0) : "") ||
-                  `Withdraw ${wdAmt ? fmt(parseInt(wdAmt, 10)||0) : ""}`
+                  `Confirm withdrawal ${wdAmt ? fmt(parseInt(wdAmt, 10)||0) : ""}`
                 )}
               </button>
-              <button onClick={() => { setWdOpen(false); setWdErr(""); }} style={{ flex:1, background:"transparent", color:"#555", border:"1px solid #222", borderRadius:9, padding:"12px", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>
-                {t("seeker_earnings.cancel")}
+              <button
+                onClick={wdStep === "otp" ? () => { setWdStep("details"); setWdErr(""); } : closeWd}
+                style={{ flex:1, background:"transparent", color:"#555", border:"1px solid #222", borderRadius:9, padding:"12px", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>
+                {wdStep === "otp" ? (t("common.general.back") || "Back") : t("seeker_earnings.cancel")}
               </button>
             </div>
           </div>

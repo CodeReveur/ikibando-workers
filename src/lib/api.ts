@@ -694,11 +694,20 @@ export async function requestRefund(paymentId: string, reason: string, token: st
   return data.data;
 }
 
-export async function requestWithdrawal(
+/**
+ * Step 1 of a withdrawal: validate it and email the user a 6-digit confirmation code.
+ * No money moves until {@link confirmWithdrawal} is called with the code.
+ */
+export async function requestWithdrawalOtp(
   payload: { amount: number; phoneNumber: string; paymentMethod: "MTN_MOMO" | "AIRTEL_MONEY"; notes?: string },
   token: string,
-): Promise<TransferDto> {
-  const { data } = await http.post("/api/wallet/withdraw", payload, { headers: authHeader(token) });
+): Promise<void> {
+  await http.post("/api/wallet/withdraw/otp", payload, { headers: authHeader(token) });
+}
+
+/** Step 2: confirm the emailed code and process the withdrawal. */
+export async function confirmWithdrawal(code: string, token: string): Promise<TransferDto> {
+  const { data } = await http.post("/api/wallet/withdraw/confirm", { code }, { headers: authHeader(token) });
   return data.data;
 }
 

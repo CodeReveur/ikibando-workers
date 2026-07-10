@@ -1579,7 +1579,16 @@
     "processing": "Processing...",
     "withdraw_btn": "Withdraw {amount}",
     "cancel": "Cancel",
-    "wd_success_toast": "Withdrawal request submitted successfully!"
+    "wd_success_toast": "Withdrawal request submitted successfully!",
+    "otp_sent_toast": "We've emailed you a code to confirm this withdrawal.",
+    "otp_len_err": "Enter the 6-digit code from your email",
+    "otp_resent_toast": "A new code has been emailed to you.",
+    "otp_title": "Confirm your withdrawal",
+    "otp_desc": "For your security, enter the 6-digit code we just emailed you to confirm this withdrawal.",
+    "otp_label": "VERIFICATION CODE",
+    "otp_resend": "Resend code",
+    "wd_send_code": "Continue — email me a code",
+    "wd_confirm_btn": "Confirm withdrawal {amount}"
   },
   "seeker_bonuses": {
     "bonus_earned": "Bonus earned",
