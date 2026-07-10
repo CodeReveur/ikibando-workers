@@ -467,6 +467,12 @@ export default function SeekerJobDetail() {
             <InfoRow label={t("seeker_job_detail.rate")} value={`RWF ${job.ratePerHour?.toLocaleString()} / hr`} />
             <InfoRow label={t("seeker_job_detail.duration")} value={`${job.durationHours} hours`} />
             <InfoRow label={t("seeker_job_detail.headcount")} value={`${job.headcount} ${job.headcount !== 1 ? t("seeker_job_detail.workers") : t("seeker_job_detail.worker")}`} />
+            {job.workerPayout != null && job.headcount > 0 && (
+              <InfoRow
+                label={t("seeker_job_detail.take_home") || "You'll earn (all charges covered)"}
+                value={<span style={{ color: "#22c55e", fontWeight: 700 }}>RWF {Math.round(job.workerPayout / job.headcount).toLocaleString()}</span>}
+              />
+            )}
             <InfoRow label={t("seeker_job_detail.urgency")} value={job.urgency?.replace("_", " ")} />
             {job.startTime && <InfoRow label={t("seeker_job_detail.start_time")} value={dt(job.startTime) ?? "—"} />}
             {job.requirements && <InfoRow label={t("seeker_job_detail.requirements")} value={<RichTextDisplay content={job.requirements} />} />}
@@ -487,7 +493,11 @@ export default function SeekerJobDetail() {
               <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: "0.08em" }}>{t("seeker_job_detail.your_earnings")}</p>
               <div style={{ textAlign: "center", padding: "8px 0" }}>
                 <p style={{ margin: "0 0 4px", fontSize: 32, fontWeight: 900, color: isReleased ? "#22c55e" : "#f97316" }}>
-                  RWF {myPayout != null ? myPayout.toLocaleString() : Math.round(job.ratePerHour * (job.durationHours ?? 1)).toLocaleString()}
+                  RWF {myPayout != null
+                    ? myPayout.toLocaleString()
+                    : (job.workerPayout != null && job.headcount > 0
+                        ? Math.round(job.workerPayout / job.headcount)
+                        : Math.round(job.ratePerHour * (job.durationHours ?? 1))).toLocaleString()}
                 </p>
                 <p style={{ margin: 0, fontSize: 11, color: "#444" }}>
                   {isReleased

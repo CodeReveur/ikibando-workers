@@ -128,6 +128,11 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
                 return `per ${u} · ${d} ${u}${d !== 1 ? "s" : ""} duration`;
               })()}
             </p>
+            {job.workerPayout != null && job.headcount > 0 && (
+              <p style={{ margin: "8px 0 0", fontSize: 12, fontWeight: 700, color: "#22c55e" }}>
+                You'll earn {fmt(Math.round(job.workerPayout / job.headcount))} · all charges covered
+              </p>
+            )}
           </div>
           <div style={{ textAlign: "right" }}>
             {job.applicationsClosed ? (

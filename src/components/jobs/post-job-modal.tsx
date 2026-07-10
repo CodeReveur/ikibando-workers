@@ -9,7 +9,7 @@ import {
 import { JOB_CATEGORIES, RWANDA_PROVINCES, CURRENCY, MIN_RATE_BY_PERIOD } from "@/lib/constants";
 import { geoSectors, geoCells, geoVillages } from "@/lib/rwanda-geo";
 import { forwardGeocode } from "@/lib/geocoding";
-import { postJob, postGuestJob, getWallet, apiError, checkGuestAccount, type PaymentMode } from "@/lib/api";
+import { postJob, postGuestJob, getWallet, apiError, checkGuestAccount, getPricingConfig, workerCommissionOf, employerServiceFeeOf, DEFAULT_PRICING, type PricingConfig, type PaymentMode } from "@/lib/api";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { saveRedirect } from "@/lib/auth-redirect";
 import { useToast } from "@/components/ui/toast";
@@ -187,6 +187,10 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
     ratePerHour: "", rateType: "hr", paymentMode: "HOURLY", paymentInterval: "1", notes: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof JobForm, string>>>({});
+
+  // Live platform charges (admin-configurable); falls back to defaults until loaded.
+  const [pricing, setPricing] = useState<PricingConfig>(DEFAULT_PRICING);
+  useEffect(() => { getPricingConfig().then(setPricing).catch(() => {}); }, []);
 
   const DRAFT_KEY = "MpahMapu_draft_postjob";
 
@@ -477,10 +481,13 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
   const hours       = duration;
   const heads       = parseInt(job.headcount) || 1;
   const baseCost    = rate * hours * heads;
-  const escrowFee   = Math.round(baseCost * 0.05);
-  const escrow      = baseCost + escrowFee;      // employer pays gross + 5% fee
-  const platformFee = Math.round(baseCost * 0.25);
-  const workerPay   = baseCost - platformFee;      // net workers receive (75%)
+  const escrowFee   = employerServiceFeeOf(baseCost, pricing);
+  const escrow      = baseCost + escrowFee;        // employer pays gross + non-refundable service fee
+  const platformFee = workerCommissionOf(baseCost, pricing);
+  const workerPay   = baseCost - platformFee;      // net the workers receive (all charges covered)
+  const feePctLabel = pricing.employerServiceFeeFixed > 0
+    ? "service fee"
+    : `${(pricing.employerServiceFeeRate * 100).toFixed(pricing.employerServiceFeeRate * 100 % 1 === 0 ? 0 : 1)}% service fee`;
   const catLabel = getLocalizedCategoryLabel(job.category);
   const dateLabel = job.date
     ? new Date(job.date + "T00:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })
@@ -921,16 +928,20 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                   {escrow > 0 && (
                     <div style={{ background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10, padding: "12px 14px", marginBottom: 12 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                        <span style={{ fontSize: 12, color: "#666" }}>Gross worker payout ({heads} × {hours}h × {fmt(rate)})</span>
+                        <span style={{ fontSize: 12, color: "#666" }}>Job cost ({heads} × {hours}h × {fmt(rate)})</span>
                         <span style={{ fontSize: 12, color: "#d0d0d0", fontWeight: 600 }}>{fmt(baseCost)}</span>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                        <span style={{ fontSize: 12, color: "#666" }}>Platform handling charge (5% fee)</span>
+                        <span style={{ fontSize: 12, color: "#666" }}>Platform {feePctLabel} · non-refundable</span>
                         <span style={{ fontSize: 12, color: "#22c55e", fontWeight: 600 }}>+{fmt(escrowFee)}</span>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", paddingTop: 8, paddingBottom: 8, borderTop: "1px solid #1e1e1e" }}>
                         <span style={{ fontSize: 13, color: "#aaa", fontWeight: 700 }}>Total amount to pay</span>
                         <span style={{ fontSize: 14, color: "#f97316", fontWeight: 800 }}>{fmt(escrow)}</span>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", paddingTop: 8, borderTop: "1px solid #1e1e1e" }}>
+                        <span style={{ fontSize: 11, color: "#666" }}>Worker take-home (all charges covered)</span>
+                        <span style={{ fontSize: 12, color: "#d0d0d0", fontWeight: 600 }}>{fmt(workerPay)}</span>
                       </div>
                     </div>
                   )}

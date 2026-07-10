@@ -484,6 +484,12 @@ export interface JobDto {
   startTime: string | null;
   durationHours: number;
   totalAmount: number | null;
+  /** Worker commission rate applied to this job (fraction, e.g. 0.20). */
+  platformFeeRate: number | null;
+  /** Commission deducted from the worker's gross earnings (RWF). */
+  platformFee: number | null;
+  /** Net the worker takes home — public "all charges covered" price (RWF). */
+  workerPayout: number | null;
   createdAt: string;
   completedAt: string | null;
   cancelledAt: string | null;
@@ -740,6 +746,44 @@ export async function getJobs(params?: {
 export async function getJob(id: string): Promise<JobDto> {
   const { data } = await http.get(`/api/jobs/${id}`);
   return data.data;
+}
+
+/** Public platform charge/bonus parameters — admin-configurable (see /api/config/pricing). */
+export interface PricingConfig {
+  workerCommissionRate: number;       // fraction of job cost taken from the worker
+  workerCommissionFixed: number;      // fixed RWF override (0 = use rate)
+  employerServiceFeeRate: number;     // fraction added at posting, non-refundable
+  employerServiceFeeFixed: number;    // fixed RWF override (0 = use rate)
+  cancellationPenaltyRate: number;
+  cancellationWorkerCompRate: number;
+  referralRewardRwf: number;
+}
+
+/** Defaults matching the server's fallback so the UI still works if the call fails. */
+export const DEFAULT_PRICING: PricingConfig = {
+  workerCommissionRate: 0.20, workerCommissionFixed: 0,
+  employerServiceFeeRate: 0.05, employerServiceFeeFixed: 0,
+  cancellationPenaltyRate: 0.10, cancellationWorkerCompRate: 0.04,
+  referralRewardRwf: 1000,
+};
+
+export async function getPricingConfig(): Promise<PricingConfig> {
+  try {
+    const { data } = await http.get("/api/config/pricing");
+    return { ...DEFAULT_PRICING, ...(data.data ?? {}) };
+  } catch {
+    return DEFAULT_PRICING;
+  }
+}
+
+/** Worker commission for a gross job cost, honouring a fixed-amount override. */
+export function workerCommissionOf(baseCost: number, p: PricingConfig): number {
+  return p.workerCommissionFixed > 0 ? p.workerCommissionFixed : Math.round(baseCost * p.workerCommissionRate);
+}
+
+/** Employer service fee for a gross job cost, honouring a fixed-amount override. */
+export function employerServiceFeeOf(baseCost: number, p: PricingConfig): number {
+  return p.employerServiceFeeFixed > 0 ? p.employerServiceFeeFixed : Math.round(baseCost * p.employerServiceFeeRate);
 }
 
 export interface JobPayload {
