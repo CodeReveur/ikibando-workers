@@ -205,7 +205,8 @@
       "rejected": "Imekataliwa",
       "failed": "Imeshindwa",
       "success": "Imefanikiwa",
-      "edit": "Hariri"
+      "edit": "Hariri",
+      "back": "Rudi"
     },
     "provinces": {
       "city_of_kigali": "Jiji la Kigali",
@@ -844,7 +845,8 @@
       "not_signed_in": "Lazima uingie ili kupachika kazi.",
       "not_signed_in_title": "Hujaingia",
       "post_failed": "Imeshindwa kupachika kazi. Tafadhali jaribu tena.",
-      "post_failed_title": "Uchapishaji Umeshindwa"
+      "post_failed_title": "Uchapishaji Umeshindwa",
+      "street_or_pin": "Weka mtaa/barabara (na nambari ya nyumba), au weka alama kwenye ramani"
     },
     "success": {
       "title": "Kazi imepachikwa!",
@@ -878,7 +880,9 @@
       "village": "Kijiji",
       "payment_mode": "Njia ya malipo",
       "pay_every": "Lipa kila",
-      "num_payments": "Idadi ya malipo"
+      "num_payments": "Idadi ya malipo",
+      "street": "Mtaa / Barabara",
+      "house_number": "Nambari ya nyumba / kiwanja"
     },
     "placeholders": {
       "search_category": "Tafuta kategoria…",
@@ -888,7 +892,9 @@
       "notes": "mfano nguo rasmi zinahitajika, zana zinatolewa, hafla ya nje…",
       "sector": "Chagua sekta…",
       "cell": "Chagua kata…",
-      "village": "Chagua kijiji…"
+      "village": "Chagua kijiji…",
+      "street": "mf. KG 7 Ave",
+      "house_number": "mf. 12"
     },
     "gps": {
       "detecting": "Inatafuta…",
@@ -934,6 +940,9 @@
     "direct_release": {
       "title": "Toa malipo kiotomatiki kila kipindi",
       "desc": "Mfanyakazi anaweza kuomba malipo baada ya kila {unit} kukamilika. Ikiwashwa, kiasi kilichoidhinishwa hutolewa papo hapo; vinginevyo, unaidhinisha kila ombi (huidhinishwa kiotomatiki baada ya saa 2)."
+    },
+    "hints": {
+      "street_or_pin": "Taja mtaa na nambari ya nyumba, au weka alama kwenye ramani hapa chini — wafanyakazi hutumia hii kukufikia."
     }
   },
   "offer": {
@@ -1499,7 +1508,10 @@
     "withdraw_fail": "Imeshindwa kuondoa maombi.",
     "verify_success": "Kukamilika kwa kazi kumethibitishwa kwa mafanikio!",
     "verify_fail": "Uthibitishaji umeshindwa. Tafadhali angalia ID yako ya beji.",
-    "badge_required": "ID ya beji inahitajika."
+    "badge_required": "ID ya beji inahitajika.",
+    "take_home": "Utapata (gharama zote zimehusishwa)",
+    "address": "Mtaa / Nyumba",
+    "track_the_way": "Fuata njia — uelekezaji wa moja kwa moja"
   },
   "seeker_applications": {
     "total_applied": "Jumla ya Maombi",
@@ -1810,7 +1822,20 @@
     "offer_breakdown": "Mchanganuo wa Zabuni",
     "avg_rate": "Wastani wa malipo: {rate} kwa saa",
     "no_spending": "Hakuna data ya matumizi kwa siku 7 zilizopita",
-    "no_category": "Bado hakuna data ya kategoria"
+    "no_category": "Bado hakuna data ya kategoria",
+    "active_sessions": "Vipindi Vinavyoendelea",
+    "ongoing_now": "Vinaendelea sasa",
+    "workers_on_duty": "Wafanyakazi Kazini",
+    "across_sessions": "Katika vipindi vyote",
+    "total_applications": "Maombi",
+    "ongoing": "vinaendelea",
+    "no_active_sessions": "Hakuna vipindi vinavyoendelea kwa sasa",
+    "hired": "walioajiriwa",
+    "engagement_funnel": "Mkondo wa Ushiriki",
+    "funnel_posted": "Kazi zilizochapishwa",
+    "funnel_apps": "Maombi yaliyopokelewa",
+    "funnel_hired": "Wafanyakazi walioajiriwa",
+    "funnel_completed": "Kazi zilizokamilika"
   },
   "owner_help": {
     "live_chat": "Chat ya Moja kwa Moja",
@@ -2063,5 +2088,12 @@
     "state_APPROVED": "Imeidhinishwa",
     "state_AUTO_APPROVED": "Imeidhinishwa kiotomatiki",
     "escalates_in": "kesi ya usaidizi hufunguliwa baada ya"
+  },
+  "navigate": {
+    "title": "Elekea kazini",
+    "loading": "Inaandaa njia yako…",
+    "no_location": "Hakuna eneo kamili la kazi hii",
+    "error": "Imeshindwa kupakia kazi hii",
+    "no_location_hint": "Mwajiri bado hajaweka eneo kamili. Wasiliana naye kwa mtaa na nambari ya nyumba."
   }
 }

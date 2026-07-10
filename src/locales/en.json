@@ -206,7 +206,8 @@
       "rejected": "Rejected",
       "failed": "Failed",
       "success": "Success",
-      "edit": "Edit"
+      "edit": "Edit",
+      "back": "Back"
     },
     "provinces": {
       "city_of_kigali": "City of Kigali",
@@ -845,7 +846,8 @@
       "not_signed_in": "You must be signed in to post a job.",
       "not_signed_in_title": "Not Signed In",
       "post_failed": "Failed to post job. Please try again.",
-      "post_failed_title": "Post Failed"
+      "post_failed_title": "Post Failed",
+      "street_or_pin": "Enter the street/avenue (and house number), or drop a pin on the map"
     },
     "success": {
       "title": "Job posted!",
@@ -879,7 +881,9 @@
       "village": "Village",
       "payment_mode": "Payment mode",
       "pay_every": "Pay every",
-      "num_payments": "Number of payments"
+      "num_payments": "Number of payments",
+      "street": "Street / Avenue",
+      "house_number": "House / Plot no."
     },
     "placeholders": {
       "search_category": "Search category…",
@@ -889,7 +893,9 @@
       "notes": "e.g. formal attire required, tools provided, outdoor event…",
       "sector": "Select sector…",
       "cell": "Select cell…",
-      "village": "Select village…"
+      "village": "Select village…",
+      "street": "e.g. KG 7 Ave",
+      "house_number": "e.g. 12"
     },
     "gps": {
       "detecting": "Detecting…",
@@ -935,6 +941,9 @@
     "direct_release": {
       "title": "Auto-release each period",
       "desc": "The worker can request payment after each {unit} is completed. With this on, approved amounts release instantly; with it off, you approve each request (auto-approves in 2h)."
+    },
+    "hints": {
+      "street_or_pin": "Name the street & house number, or drop a pin on the map below — workers use this to navigate to you."
     }
   },
   "offer": {
@@ -1500,7 +1509,10 @@
     "withdraw_fail": "Failed to withdraw application.",
     "verify_success": "Job completion verified successfully!",
     "verify_fail": "Verification failed. Please check your badge ID.",
-    "badge_required": "Badge ID is required."
+    "badge_required": "Badge ID is required.",
+    "take_home": "You'll earn (all charges covered)",
+    "address": "Street / House",
+    "track_the_way": "Track the way — live navigation"
   },
   "seeker_applications": {
     "total_applied": "Total Applied",
@@ -1811,7 +1823,20 @@
     "offer_breakdown": "Offer Breakdown",
     "avg_rate": "Avg. job rate: {rate} per hour",
     "no_spending": "No spending data for the last 7 days",
-    "no_category": "No category data yet"
+    "no_category": "No category data yet",
+    "active_sessions": "Active Sessions",
+    "ongoing_now": "Ongoing now",
+    "workers_on_duty": "Workers On Duty",
+    "across_sessions": "Across sessions",
+    "total_applications": "Applications",
+    "ongoing": "ongoing",
+    "no_active_sessions": "No active sessions right now",
+    "hired": "hired",
+    "engagement_funnel": "Engagement Funnel",
+    "funnel_posted": "Jobs posted",
+    "funnel_apps": "Applications received",
+    "funnel_hired": "Workers hired",
+    "funnel_completed": "Jobs completed"
   },
   "owner_help": {
     "live_chat": "Live Chat",
@@ -2068,5 +2093,12 @@
     "state_APPROVED": "Approved",
     "state_AUTO_APPROVED": "Auto-approved",
     "escalates_in": "support case opens in"
+  },
+  "navigate": {
+    "title": "Navigate to job",
+    "loading": "Preparing your route…",
+    "no_location": "No precise location for this job",
+    "error": "Couldn't load this job",
+    "no_location_hint": "The employer hasn't pinned an exact spot yet. Contact them for the street and house number."
   }
 }

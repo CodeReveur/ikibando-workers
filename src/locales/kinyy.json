@@ -205,7 +205,8 @@
       "rejected": "Yahakanywe",
       "failed": "Byaranze",
       "success": "Byakunze ✅",
-      "edit": "Hindura"
+      "edit": "Hindura",
+      "back": "Subira inyuma"
     },
     "provinces": {
       "city_of_kigali": "Umujyi wa Kigali",
@@ -844,7 +845,8 @@
       "not_signed_in": "Ugomba kwinjira kugira ngo utange akazi.",
       "not_signed_in_title": "Ntiwinjiye",
       "post_failed": "Gutanga akazi byanze. Ongera ugerageze.",
-      "post_failed_title": "Gushyiraho akazi byanze"
+      "post_failed_title": "Gushyiraho akazi byanze",
+      "street_or_pin": "Andika umuhanda/avenue (na nomero y'inzu), cyangwa ushyire akadomo ku ikarita"
     },
     "success": {
       "title": "Akazi katangajwe!",
@@ -878,7 +880,9 @@
       "village": "Umudugudu",
       "payment_mode": "Uburyo bwo kwishyura",
       "pay_every": "Kwishyura buri",
-      "num_payments": "Umubare w'ubwishyu"
+      "num_payments": "Umubare w'ubwishyu",
+      "street": "Umuhanda / Avenue",
+      "house_number": "Nomero y'inzu / isambu"
     },
     "placeholders": {
       "search_category": "Shakisha ikiciro…",
@@ -888,7 +892,9 @@
       "notes": "urugero imyambaro ya kure, ibikoresho birahari, ibirori byo hanze…",
       "sector": "Hitamo umurenge…",
       "cell": "Hitamo akagari…",
-      "village": "Hitamo umudugudu…"
+      "village": "Hitamo umudugudu…",
+      "street": "urug. KG 7 Ave",
+      "house_number": "urug. 12"
     },
     "gps": {
       "detecting": "Gushakisha…",
@@ -934,6 +940,9 @@
     "direct_release": {
       "title": "Kwishyura ako kanya kuri buri gice",
       "desc": "Umukozi ashobora gusaba ubwishyu nyuma ya buri {unit} irangiye. Iyo iki gikora, amafaranga yemejwe yishyurwa ako kanya; iyo bidakora, wemeza buri busabe (byiyemeza mu masaha 2)."
+    },
+    "hints": {
+      "street_or_pin": "Vuga umuhanda na nomero y'inzu, cyangwa ushyire akadomo ku ikarita hepfo — abakozi babikoresha kugera aho uri."
     }
   },
   "offer": {
@@ -1500,7 +1509,10 @@
     "withdraw_fail": "Gukuramo dosiye byanze.",
     "verify_success": "Gusoza akazi byemejwe neza!",
     "verify_fail": "Kwemezwa byanze. Reba neza ID ya badge yawe.",
-    "badge_required": "ID ya badge irakenewe."
+    "badge_required": "ID ya badge irakenewe.",
+    "take_home": "Uzahembwa (amafaranga yose akuweho)",
+    "address": "Umuhanda / Inzu",
+    "track_the_way": "Kurikira inzira — kuyobora ako kanya"
   },
   "seeker_applications": {
     "total_applied": "Dosiye zose",
@@ -1811,7 +1823,20 @@
     "offer_breakdown": "Imiterere y'imirimo",
     "avg_rate": "Igiciro cya rugereko: {rate} ku isaha",
     "no_spending": "Nta makuru y'amafaranga yakoreshejwe mu minsi 7 ishize",
-    "no_category": "Nta makuru y'ibihe by'akazi arboneka"
+    "no_category": "Nta makuru y'ibihe by'akazi arboneka",
+    "active_sessions": "Ibikorwa Birimo",
+    "ongoing_now": "Birimo gukorwa ubu",
+    "workers_on_duty": "Abakozi Bakora",
+    "across_sessions": "Muri ibikorwa byose",
+    "total_applications": "Abasabye",
+    "ongoing": "birimo",
+    "no_active_sessions": "Nta gikorwa kirimo gukorwa ubu",
+    "hired": "batowe",
+    "engagement_funnel": "Inzira y'Ihererekanya",
+    "funnel_posted": "Imirimo yatanzwe",
+    "funnel_apps": "Abasabye bakiriwe",
+    "funnel_hired": "Abakozi batowe",
+    "funnel_completed": "Imirimo yarangiye"
   },
   "owner_help": {
     "live_chat": "Kuganira Live",
@@ -2064,5 +2089,12 @@
     "state_APPROVED": "Byemejwe",
     "state_AUTO_APPROVED": "Byemejwe ako kanya",
     "escalates_in": "urubanza rufungurwa mu"
+  },
+  "navigate": {
+    "title": "Yobora ugana ku murimo",
+    "loading": "Gutegura inzira yawe…",
+    "no_location": "Nta hantu nyaho h'uyu murimo",
+    "error": "Ntibishoboye gupakira uyu murimo",
+    "no_location_hint": "Umukoresha ntararashyira ahantu nyaho. Muvugishe umenye umuhanda na nomero y'inzu."
   }
 }

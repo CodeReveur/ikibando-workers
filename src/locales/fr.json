@@ -205,7 +205,8 @@
       "rejected": "Refusé",
       "failed": "Échoué",
       "success": "Succès",
-      "edit": "Modifier"
+      "edit": "Modifier",
+      "back": "Retour"
     },
     "provinces": {
       "city_of_kigali": "Ville de Kigali",
@@ -844,7 +845,8 @@
       "not_signed_in": "Vous devez être connecté pour publier un emploi.",
       "not_signed_in_title": "Non connecté",
       "post_failed": "Échec de la publication. Veuillez réessayer.",
-      "post_failed_title": "Échec de la publication"
+      "post_failed_title": "Échec de la publication",
+      "street_or_pin": "Saisissez la rue/avenue (et le numéro), ou placez un repère sur la carte"
     },
     "success": {
       "title": "Offre publiée !",
@@ -878,7 +880,9 @@
       "village": "Village",
       "payment_mode": "Mode de paiement",
       "pay_every": "Payer tous les",
-      "num_payments": "Nombre de paiements"
+      "num_payments": "Nombre de paiements",
+      "street": "Rue / Avenue",
+      "house_number": "N° maison / parcelle"
     },
     "placeholders": {
       "search_category": "Rechercher une catégorie…",
@@ -888,7 +892,9 @@
       "notes": "ex. tenue correcte exigée, outils fournis, événement en plein air…",
       "sector": "Choisir le secteur…",
       "cell": "Choisir la cellule…",
-      "village": "Choisir le village…"
+      "village": "Choisir le village…",
+      "street": "ex. KG 7 Ave",
+      "house_number": "ex. 12"
     },
     "gps": {
       "detecting": "Détection…",
@@ -934,6 +940,9 @@
     "direct_release": {
       "title": "Versement automatique à chaque période",
       "desc": "Le travailleur peut demander un paiement après chaque {unit} terminé. Si activé, les montants approuvés sont versés instantanément ; sinon, vous approuvez chaque demande (approbation automatique en 2h)."
+    },
+    "hints": {
+      "street_or_pin": "Indiquez la rue et le numéro, ou placez un repère sur la carte ci-dessous — les travailleurs l'utilisent pour vous rejoindre."
     }
   },
   "offer": {
@@ -1499,7 +1508,10 @@
     "withdraw_fail": "Échec du retrait de la candidature.",
     "verify_success": "Fin de travail vérifiée avec succès !",
     "verify_fail": "La vérification a échoué. Veuillez vérifier votre ID de badge.",
-    "badge_required": "L'identifiant du badge est requis."
+    "badge_required": "L'identifiant du badge est requis.",
+    "take_home": "Vous gagnerez (frais inclus)",
+    "address": "Rue / Maison",
+    "track_the_way": "Suivre l'itinéraire — navigation en direct"
   },
   "seeker_applications": {
     "total_applied": "Total postulé",
@@ -1810,7 +1822,20 @@
     "offer_breakdown": "Répartition des offres",
     "avg_rate": "Tarif moyen : {rate} par heure",
     "no_spending": "Aucune donnée de dépense pour les 7 derniers jours",
-    "no_category": "Aucune donnée de catégorie pour l'instant"
+    "no_category": "Aucune donnée de catégorie pour l'instant",
+    "active_sessions": "Sessions actives",
+    "ongoing_now": "En cours",
+    "workers_on_duty": "Travailleurs en service",
+    "across_sessions": "Toutes sessions",
+    "total_applications": "Candidatures",
+    "ongoing": "en cours",
+    "no_active_sessions": "Aucune session active pour le moment",
+    "hired": "embauché(s)",
+    "engagement_funnel": "Entonnoir d'engagement",
+    "funnel_posted": "Emplois publiés",
+    "funnel_apps": "Candidatures reçues",
+    "funnel_hired": "Travailleurs embauchés",
+    "funnel_completed": "Emplois terminés"
   },
   "owner_help": {
     "live_chat": "Discussion en direct",
@@ -2063,5 +2088,12 @@
     "state_APPROVED": "Approuvé",
     "state_AUTO_APPROVED": "Approuvé auto",
     "escalates_in": "un dossier support s ouvre dans"
+  },
+  "navigate": {
+    "title": "Naviguer vers l'emploi",
+    "loading": "Préparation de votre itinéraire…",
+    "no_location": "Aucune localisation précise pour cet emploi",
+    "error": "Impossible de charger cet emploi",
+    "no_location_hint": "L'employeur n'a pas encore indiqué d'emplacement exact. Contactez-le pour la rue et le numéro."
   }
 }
