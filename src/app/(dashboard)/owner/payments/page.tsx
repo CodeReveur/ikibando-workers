@@ -89,15 +89,19 @@ export default function OwnerPayments() {
     } finally { setTopupBusy(false); }
   };
 
+  const PENDING_MSG = () => t("owner_payments.refund_submitted") ||
+    "Refund request submitted. An admin will review it; approved refunds are returned to your wallet minus any applicable charges.";
+
   const doRefund = async () => {
     if (!refundFor) return;
+    if (refundNote.trim().length < 10) { alert(t("owner_payments.refund_reason_err") || "Please give a clear reason (at least 10 characters)."); return; }
     const token = localStorage.getItem("access_token")!;
     setRefundBusy(true);
     try {
-      const updated = await requestRefund(refundFor.id, refundNote || "Employer requested refund", token);
+      const updated = await requestRefund(refundFor.id, refundNote.trim(), token);
       setPayments(prev => prev.map(p => p.id === updated.id ? updated : p));
-      const w = await getWallet(token); setWallet(w);
       setRefundFor(null); setRefundNote("");
+      alert(PENDING_MSG());
     } catch (e: any) {
       alert(apiError(e, t("owner_payments.refund_failed_err") || "Refund request failed"));
     } finally { setRefundBusy(false); }
@@ -105,13 +109,14 @@ export default function OwnerPayments() {
 
   const doGeneralRefund = async () => {
     if (!selectedRefundPaymentId) return;
+    if (refundNote.trim().length < 10) { alert(t("owner_payments.refund_reason_err") || "Please give a clear reason (at least 10 characters)."); return; }
     const token = localStorage.getItem("access_token")!;
     setRefundBusy(true);
     try {
-      const updated = await requestRefund(selectedRefundPaymentId, refundNote || "Employer requested refund", token);
+      const updated = await requestRefund(selectedRefundPaymentId, refundNote.trim(), token);
       setPayments(prev => prev.map(p => p.id === updated.id ? updated : p));
-      const w = await getWallet(token); setWallet(w);
       setGeneralRefundOpen(false); setSelectedRefundPaymentId(""); setRefundNote("");
+      alert(PENDING_MSG());
     } catch (e: any) {
       alert(apiError(e, t("owner_payments.refund_failed_err") || "Refund request failed"));
     } finally { setRefundBusy(false); }
@@ -233,15 +238,24 @@ export default function OwnerPayments() {
                       {p.phoneNumber ? ` · ${p.phoneNumber}` : ""}
                     </p>
                     {p.refundReason && <p style={{ margin:0, fontSize:10, color:"#3a3a3a" }}>{t("owner_payments.reason") || "Reason:"} {p.refundReason}</p>}
+                    {p.refundRequestedAt && p.status === "HELD" && (
+                      <p style={{ margin:0, fontSize:10, color:"#f59e0b" }}>{t("owner_payments.refund_pending") || "Refund requested — awaiting admin approval"}</p>
+                    )}
                   </div>
                 </div>
                 <div className="payment-meta" style={{ display:"flex", alignItems:"center", gap:12, flexShrink:0 }}>
                   <span style={{ fontSize:10, fontWeight:700, borderRadius:99, padding:"3px 9px", color:s.color, background:s.bg }}>{localizedStatus}</span>
                   <p style={{ margin:0, fontSize:15, fontWeight:800, color:"#e0e0e0" }}>{fmt(p.amountRwf)}</p>
                   {p.type === "PAYMENT" && isHeld && (
-                    <button onClick={() => { setRefundFor(p); setRefundNote(""); }} style={{ background:"rgba(96,165,250,0.07)", border:"1px solid rgba(96,165,250,0.15)", color:"#60a5fa", borderRadius:7, padding:"5px 10px", fontSize:10, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
-                      {t("owner_payments.refund_btn") || "Refund"}
-                    </button>
+                    p.refundRequestedAt ? (
+                      <span style={{ fontSize:10, fontWeight:700, borderRadius:99, padding:"3px 9px", color:"#f59e0b", background:"rgba(245,158,11,0.08)" }}>
+                        {t("owner_payments.refund_pending_badge") || "Refund pending"}
+                      </span>
+                    ) : (
+                      <button onClick={() => { setRefundFor(p); setRefundNote(""); }} style={{ background:"rgba(96,165,250,0.07)", border:"1px solid rgba(96,165,250,0.15)", color:"#60a5fa", borderRadius:7, padding:"5px 10px", fontSize:10, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
+                        {t("owner_payments.refund_btn") || "Refund"}
+                      </button>
+                    )
                   )}
                 </div>
               </div>
@@ -343,16 +357,20 @@ export default function OwnerPayments() {
               <p style={{ margin:0, fontSize:13, color:"#f97316", fontWeight:800 }}>{fmt(refundFor.amountRwf)}</p>
             </div>
             <p style={{ margin:"0 0 6px", fontSize:11, fontWeight:700, color:"#3a3a3a" }}>{t("owner_payments.reason_refund") || "REASON FOR REFUND"}</p>
-            <input
+            <textarea
               autoFocus
               value={refundNote}
               onChange={e => setRefundNote(e.target.value)}
               placeholder="e.g. Job cancelled, worker did not show up"
-              style={{ ...inp, marginBottom:20 }}
+              rows={3}
+              style={{ ...inp, marginBottom:10, resize:"vertical" }}
             />
+            <p style={{ margin:"0 0 18px", fontSize:11, color:"#f59e0b", lineHeight:1.6, background:"rgba(245,158,11,0.06)", border:"1px solid rgba(245,158,11,0.15)", borderRadius:8, padding:"9px 12px" }}>
+              {t("owner_payments.refund_notice") || "Refunds are reviewed by an admin — this is not instant. The non-refundable service fee is kept, and if a worker is already engaged a cancellation charge applies."}
+            </p>
             <div style={{ display:"flex", gap:10 }}>
-              <button onClick={doRefund} disabled={refundBusy} style={{ flex:1, background:"#60a5fa", color:"#fff", border:"none", borderRadius:9, padding:"11px", fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
-                {refundBusy ? <Loader2 size={14} style={{ animation:"spin 0.7s linear infinite" }} /> : (t("owner_payments.confirm_refund") || "Confirm Refund")}
+              <button onClick={doRefund} disabled={refundBusy || refundNote.trim().length < 10} style={{ flex:1, background: refundNote.trim().length < 10 ? "#2a3a4a" : "#60a5fa", color:"#fff", border:"none", borderRadius:9, padding:"11px", fontSize:13, fontWeight:700, cursor: refundBusy || refundNote.trim().length < 10 ? "not-allowed" : "pointer", fontFamily:"inherit" }}>
+                {refundBusy ? <Loader2 size={14} style={{ animation:"spin 0.7s linear infinite" }} /> : (t("owner_payments.submit_refund") || "Submit request")}
               </button>
               <button onClick={() => setRefundFor(null)} style={{ flex:1, background:"transparent", color:"#555", border:"1px solid #222", borderRadius:9, padding:"11px", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>
                 {t("owner_payments.cancel") || "Cancel"}
@@ -386,15 +404,19 @@ export default function OwnerPayments() {
             </select>
 
             <p style={{ margin:"0 0 6px", fontSize:11, fontWeight:700, color:"#3a3a3a" }}>{t("owner_payments.reason_refund") || "REASON FOR REFUND"}</p>
-            <input
+            <textarea
               value={refundNote}
               onChange={e => setRefundNote(e.target.value)}
               placeholder="e.g. Job cancelled, worker did not show up"
-              style={{ ...inp, marginBottom:20 }}
+              rows={3}
+              style={{ ...inp, marginBottom:10, resize:"vertical" }}
             />
+            <p style={{ margin:"0 0 18px", fontSize:11, color:"#f59e0b", lineHeight:1.6, background:"rgba(245,158,11,0.06)", border:"1px solid rgba(245,158,11,0.15)", borderRadius:8, padding:"9px 12px" }}>
+              {t("owner_payments.refund_notice") || "Refunds are reviewed by an admin — this is not instant. The non-refundable service fee is kept, and if a worker is already engaged a cancellation charge applies."}
+            </p>
             <div style={{ display:"flex", gap:10 }}>
-              <button onClick={doGeneralRefund} disabled={refundBusy || !selectedRefundPaymentId} style={{ flex:1, background:"#60a5fa", color:"#fff", border:"none", borderRadius:9, padding:"11px", fontSize:13, fontWeight:700, cursor: refundBusy || !selectedRefundPaymentId ? "not-allowed" : "pointer", fontFamily:"inherit" }}>
-                {refundBusy ? <Loader2 size={14} style={{ animation:"spin 0.7s linear infinite" }} /> : (t("owner_payments.confirm_refund") || "Confirm Refund")}
+              <button onClick={doGeneralRefund} disabled={refundBusy || !selectedRefundPaymentId || refundNote.trim().length < 10} style={{ flex:1, background: (!selectedRefundPaymentId || refundNote.trim().length < 10) ? "#2a3a4a" : "#60a5fa", color:"#fff", border:"none", borderRadius:9, padding:"11px", fontSize:13, fontWeight:700, cursor: refundBusy || !selectedRefundPaymentId || refundNote.trim().length < 10 ? "not-allowed" : "pointer", fontFamily:"inherit" }}>
+                {refundBusy ? <Loader2 size={14} style={{ animation:"spin 0.7s linear infinite" }} /> : (t("owner_payments.submit_refund") || "Submit request")}
               </button>
               <button onClick={() => { setGeneralRefundOpen(false); setSelectedRefundPaymentId(""); }} style={{ flex:1, background:"transparent", color:"#555", border:"1px solid #222", borderRadius:9, padding:"11px", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>
                 {t("owner_payments.cancel") || "Cancel"}

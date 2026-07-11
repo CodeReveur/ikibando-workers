@@ -1781,7 +1781,13 @@
     "claim_refund_title": "Réclamer un remboursement du dépôt",
     "pay_method": "MODE DE PAIEMENT",
     "topup_card_hint": "Vous serez redirigé vers une page de paiement par carte sécurisée dans un nouvel onglet. Les fonds apparaîtront automatiquement dans votre portefeuille une fois le paiement confirmé.",
-    "topup_pending_err": "Paiement pas encore confirmé. Si vous avez été débité, cela apparaîtra bientôt."
+    "topup_pending_err": "Paiement pas encore confirmé. Si vous avez été débité, cela apparaîtra bientôt.",
+    "refund_pending": "Remboursement demandé — en attente d’approbation de l’administrateur",
+    "refund_pending_badge": "Remboursement en attente",
+    "refund_submitted": "Demande de remboursement envoyée. Un administrateur l’examinera ; les remboursements approuvés sont reversés sur votre portefeuille moins les frais applicables.",
+    "refund_reason_err": "Veuillez indiquer une raison claire (au moins 10 caractères).",
+    "refund_notice": "Les remboursements sont examinés par un administrateur — ce n’est pas instantané. Les frais de service non remboursables sont conservés, et si un travailleur est déjà engagé, des frais d’annulation s’appliquent.",
+    "submit_refund": "Envoyer la demande"
   },
   "owner_workers": {
     "total_applied": "Total des postulants",

@@ -1781,7 +1781,13 @@
     "claim_refund_title": "Dai Urejeshaji wa Escrow",
     "pay_method": "NJIA YA MALIPO",
     "topup_card_hint": "Utapelekwa kwenye ukurasa salama wa malipo ya kadi katika kichupo kipya. Fedha zitaonekana kwenye pochi yako kiotomatiki mara malipo yatakapothibitishwa.",
-    "topup_pending_err": "Malipo hayajathibitishwa bado. Ikiwa umetozwa, yataonekana hivi karibuni."
+    "topup_pending_err": "Malipo hayajathibitishwa bado. Ikiwa umetozwa, yataonekana hivi karibuni.",
+    "refund_pending": "Marejesho yameombwa — yanasubiri idhini ya msimamizi",
+    "refund_pending_badge": "Marejesho yanasubiri",
+    "refund_submitted": "Ombi la marejesho limewasilishwa. Msimamizi ataliangalia; marejesho yaliyoidhinishwa hurejeshwa kwenye pochi yako baada ya gharama husika.",
+    "refund_reason_err": "Tafadhali toa sababu wazi (angalau herufi 10).",
+    "refund_notice": "Marejesho hukaguliwa na msimamizi — si papo hapo. Ada ya huduma isiyorejeshwa hubaki, na kama mfanyakazi tayari ameshirikishwa gharama ya kughairi hutozwa.",
+    "submit_refund": "Wasilisha ombi"
   },
   "owner_workers": {
     "total_applied": "Jumla ya Waombaji",

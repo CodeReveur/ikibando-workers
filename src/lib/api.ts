@@ -593,6 +593,9 @@ export interface PaymentDto {
   releasedAt: string | null;
   refundedAt: string | null;
   refundReason: string | null;
+  /** Set (with status still HELD) while a refund request awaits admin approval. */
+  refundRequestedAt: string | null;
+  refundRequestReason: string | null;
   createdAt: string;
 }
 

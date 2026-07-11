@@ -1782,7 +1782,13 @@
     "claim_refund_title": "Saba Isubizwa rya Escrow",
     "pay_method": "UBURYO BWO KWISHYURA",
     "topup_card_hint": "Uzajyanwa ku rupapuro rwizewe rwo kwishyura na karita mu gafeni gashya. Amafaranga azagaragara muri wallet yawe iyo kwishyura byemejwe.",
-    "topup_pending_err": "Kwishyura ntibiremezwa. Niba wishyuye, bizagaragara vuba."
+    "topup_pending_err": "Kwishyura ntibiremezwa. Niba wishyuye, bizagaragara vuba.",
+    "refund_pending": "Gusaba kwishyurwa — bitegereje kwemezwa n’umuyobozi",
+    "refund_pending_badge": "Kwishyurwa gutegereje",
+    "refund_submitted": "Icyifuzo cyo kwishyurwa cyoherejwe. Umuyobozi arakigenzura; ayemejwe asubizwa muri wallet yawe hakuwemo amafaranga akatwa.",
+    "refund_reason_err": "Nyamuneka tanga impamvu isobanutse (nibura inyuguti 10).",
+    "refund_notice": "Kwishyurwa bigenzurwa n’umuyobozi — ntibiba ako kanya. Amafaranga y’serivisi adasubizwa arakomeza gukatwa, kandi niba umukozi yaramaze gushakwa hakatwa amafaranga yo guhagarika.",
+    "submit_refund": "Ohereza icyifuzo"
   },
   "owner_workers": {
     "total_applied": "Abasabye bose",
