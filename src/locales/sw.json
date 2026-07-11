@@ -1844,7 +1844,9 @@
     "funnel_posted": "Kazi zilizochapishwa",
     "funnel_apps": "Maombi yaliyopokelewa",
     "funnel_hired": "Wafanyakazi walioajiriwa",
-    "funnel_completed": "Kazi zilizokamilika"
+    "funnel_completed": "Kazi zilizokamilika",
+    "total_spent": "Jumla Iliyotumika",
+    "on_jobs": "Kwa kazi · muda wote"
   },
   "owner_help": {
     "live_chat": "Chat ya Moja kwa Moja",

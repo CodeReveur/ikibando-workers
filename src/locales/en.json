@@ -1845,7 +1845,9 @@
     "funnel_posted": "Jobs posted",
     "funnel_apps": "Applications received",
     "funnel_hired": "Workers hired",
-    "funnel_completed": "Jobs completed"
+    "funnel_completed": "Jobs completed",
+    "total_spent": "Total Spent",
+    "on_jobs": "On jobs · all time"
   },
   "owner_help": {
     "live_chat": "Live Chat",

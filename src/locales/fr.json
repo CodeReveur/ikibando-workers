@@ -1844,7 +1844,9 @@
     "funnel_posted": "Emplois publiés",
     "funnel_apps": "Candidatures reçues",
     "funnel_hired": "Travailleurs embauchés",
-    "funnel_completed": "Emplois terminés"
+    "funnel_completed": "Emplois terminés",
+    "total_spent": "Total dépensé",
+    "on_jobs": "Sur les emplois · depuis toujours"
   },
   "owner_help": {
     "live_chat": "Discussion en direct",

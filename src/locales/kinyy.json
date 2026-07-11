@@ -1845,7 +1845,9 @@
     "funnel_posted": "Imirimo yatanzwe",
     "funnel_apps": "Abasabye bakiriwe",
     "funnel_hired": "Abakozi batowe",
-    "funnel_completed": "Imirimo yarangiye"
+    "funnel_completed": "Imirimo yarangiye",
+    "total_spent": "Amafaranga Yose Yakoreshejwe",
+    "on_jobs": "Ku mirimo · igihe cyose"
   },
   "owner_help": {
     "live_chat": "Kuganira Live",

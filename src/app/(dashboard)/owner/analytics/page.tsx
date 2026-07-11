@@ -56,15 +56,21 @@ export default function OwnerAnalytics() {
 
   if (loading) return <PageLoader />;
 
-  const totalSpent   = payments.reduce((s, p) => s + p.amountRwf, 0);
-  const heldNow      = payments.filter(p => p.status === "HELD").reduce((s, p) => s + p.amountRwf, 0);
+  // Only real, employer-borne money. `payments` also carries top-ups and withdrawals and includes
+  // FAILED/REFUNDED rows, so we must filter: escrow the employer actually funded = type PAYMENT with
+  // status HELD (in escrow) or RELEASED (paid to workers). Refunded escrow and failed top-ups are
+  // money that never left / came back, so they're excluded from every spend figure.
+  const escrowTxns = payments.filter(p => p.type === "PAYMENT");
+  const funded     = escrowTxns.filter(p => p.status === "HELD" || p.status === "RELEASED");
+  const heldNow    = escrowTxns.filter(p => p.status === "HELD").reduce((s, p) => s + p.amountRwf, 0);
+  const totalSpent = funded.reduce((s, p) => s + p.amountRwf, 0);      // all-time committed to jobs
   const completedJobs = jobs.filter(j => (j.status as string) === "COMPLETED").length;
   const acceptedApps = allApps.filter(a => a.status === "ACCEPTED").length;
   const pendingApps  = allApps.filter(a => a.status === "PENDING").length;
 
-  // Category breakdown
+  // Category breakdown — funded escrow only (each row maps to a job).
   const catTotals: Record<string, number> = {};
-  payments.forEach(p => {
+  funded.forEach(p => {
     const job = jobs.find(j => (j.id as unknown as string) === p.jobId);
     const cat = job?.category ?? "Other";
     catTotals[cat] = (catTotals[cat] ?? 0) + p.amountRwf;
@@ -74,8 +80,8 @@ export default function OwnerAnalytics() {
 
   const COLORS = ["#f97316","#60a5fa","#22c55e","#a78bfa","#f59e0b"];
 
-  // Weekly bars (last 7 calendar days per payment)
-  const recentPayments = payments.filter(p => {
+  // Weekly bars — funded escrow in the last 7 calendar days.
+  const recentPayments = funded.filter(p => {
     const d = new Date(p.createdAt);
     return Date.now() - d.getTime() < 7 * 86_400_000;
   });
@@ -100,7 +106,7 @@ export default function OwnerAnalytics() {
 
       <div className="owner-analytics-grid">
         <StatCard label={t("owner_analytics.spent_week") || "Spent This Week"}  value={fmt(weekTotal)}         sub={t("seeker_analytics.last_7_days") || "Last 7 days"}     accent="#f97316" />
-        <StatCard label={t("owner_analytics.total_deposited") || "Total Deposited"}  value={fmt(totalSpent)}        sub={t("seeker_analytics.all_time") || "All time"}        accent="#a78bfa" />
+        <StatCard label={t("owner_analytics.total_spent") || "Total Spent"}  value={fmt(totalSpent)}        sub={t("owner_analytics.on_jobs") || "On jobs · all time"}        accent="#a78bfa" />
         <StatCard label={t("owner_analytics.workers_hired") || "Workers Hired"}    value={String(acceptedApps)}   sub={t("seeker_analytics.all_time") || "All time"}  accent="#60a5fa" />
       </div>
 
