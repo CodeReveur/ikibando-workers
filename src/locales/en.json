@@ -1788,7 +1788,12 @@
     "refund_submitted": "Refund request submitted. An admin will review it; approved refunds are returned to your wallet minus any applicable charges.",
     "refund_reason_err": "Please give a clear reason (at least 10 characters).",
     "refund_notice": "Refunds are reviewed by an admin — this is not instant. The non-refundable service fee is kept, and if a worker is already engaged a cancellation charge applies.",
-    "submit_refund": "Submit request"
+    "submit_refund": "Submit request",
+    "filter_all_types": "All types",
+    "filter_escrow": "Escrow payments",
+    "filter_all_statuses": "All statuses",
+    "clear_filters": "Clear",
+    "no_match": "No transactions match these filters"
   },
   "owner_workers": {
     "total_applied": "Total Applied",

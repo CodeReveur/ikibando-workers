@@ -55,7 +55,7 @@ export default function SeekerApplications() {
   const currentLocale = dateLocaleMap[language] || "en-RW";
   const [apps,      setApps]      = useState<ApplicationDto[]>([]);
   const [loading,   setLoading]   = useState(true);
-  const [tab,       setTab]       = useState<TabKey>("offers");
+  const [tab,       setTab]       = useState<TabKey>("all");
   const [actionMap, setActionMap] = useState<Record<string, "loading" | "done">>({});
   const [noteFor,   setNoteFor]   = useState<string | null>(null);
   const [noteText,  setNoteText]  = useState("");
@@ -118,10 +118,10 @@ export default function SeekerApplications() {
   };
 
   const TABS: { key: TabKey; label: string; count: number }[] = [
+    { key:"all",     label: t("seeker_applications.tab_all") || "All",             count:apps.length },
     { key:"offers",  label: t("seeker_applications.tab_offers") || "Direct Offers",   count:hireNowPending.length },
     { key:"active",  label: t("seeker_applications.tab_active") || "Active",          count:accepted.length },
     { key:"applied", label: t("seeker_applications.tab_applied") || "Applied",         count:selfPending.length },
-    { key:"all",     label: t("seeker_applications.tab_all") || "All",             count:apps.length },
   ];
 
   return (

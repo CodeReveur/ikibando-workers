@@ -48,6 +48,8 @@ export default function OwnerPayments() {
   const [refundBusy, setRefundBusy] = useState(false);
   const [generalRefundOpen, setGeneralRefundOpen] = useState(false);
   const [selectedRefundPaymentId, setSelectedRefundPaymentId] = useState("");
+  const [typeFilter,   setTypeFilter]   = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   const load = useCallback(async () => {
     const token = localStorage.getItem("access_token");
@@ -130,6 +132,11 @@ export default function OwnerPayments() {
   const refundedAmt  = jobPayments.filter(p => p.status === "REFUNDED").reduce((s,p) => s + p.amountRwf, 0);
 
   const inp: React.CSSProperties = { width:"100%", background:"#131313", border:"1px solid #222", borderRadius:9, padding:"10px 14px", fontSize:13, color:"#d0d0d0", fontFamily:"inherit", outline:"none", boxSizing:"border-box" };
+  const filterSel: React.CSSProperties = { background:"#131313", border:"1px solid #222", borderRadius:8, padding:"8px 12px", fontSize:12, color:"#d0d0d0", fontFamily:"inherit", outline:"none" };
+
+  const filteredPayments = payments.filter(p =>
+    (!typeFilter   || p.type   === typeFilter) &&
+    (!statusFilter || p.status === statusFilter));
 
   return (
     <div>
@@ -201,22 +208,46 @@ export default function OwnerPayments() {
         </button>
       } />
 
-      {payments.length === 0 ? (
+      {/* Filters — All is the default first option */}
+      <div style={{ display:"flex", gap:10, flexWrap:"wrap", marginBottom:12 }}>
+        <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} style={filterSel}>
+          <option value="">{t("owner_payments.filter_all_types") || "All types"}</option>
+          <option value="PAYMENT">{t("owner_payments.filter_escrow") || "Escrow payments"}</option>
+          <option value="TOPUP">{t("owner_payments.wallet_topup") || "Top-ups"}</option>
+          <option value="WITHDRAWAL">{t("owner_payments.withdrawal") || "Withdrawals"}</option>
+        </select>
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={filterSel}>
+          <option value="">{t("owner_payments.filter_all_statuses") || "All statuses"}</option>
+          <option value="HELD">{t("owner_payments.in_escrow") || "In escrow"}</option>
+          <option value="RELEASED">{t("seeker_jobs.status_released") || "Released"}</option>
+          <option value="REFUNDED">{t("owner_payments.refunded") || "Refunded"}</option>
+          <option value="PENDING">{t("seeker_jobs.status_pending") || "Pending"}</option>
+          <option value="SUCCESS">{t("common.general.success") || "Success"}</option>
+          <option value="FAILED">{t("common.general.failed") || "Failed"}</option>
+        </select>
+        {(typeFilter || statusFilter) && (
+          <button onClick={() => { setTypeFilter(""); setStatusFilter(""); }} style={{ ...filterSel, cursor:"pointer", color:"#f97316" }}>
+            {t("owner_payments.clear_filters") || "Clear"}
+          </button>
+        )}
+      </div>
+
+      {filteredPayments.length === 0 ? (
         <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:14, padding:"40px 24px", textAlign:"center" }}>
           <CreditCard size={28} color="#2a2a2a" style={{ marginBottom:12 }} />
-          <p style={{ margin:0, color:"#444", fontSize:13 }}>{t("owner_payments.no_transactions") || "No transactions yet"}</p>
+          <p style={{ margin:0, color:"#444", fontSize:13 }}>{payments.length === 0 ? (t("owner_payments.no_transactions") || "No transactions yet") : (t("owner_payments.no_match") || "No transactions match these filters")}</p>
           <p style={{ margin:"6px 0 0", color:"#333", fontSize:12 }}>{t("owner_payments.no_transactions_desc") || "Transactions appear here when you post jobs."}</p>
         </div>
       ) : (
         <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:14, overflow:"hidden", marginBottom:14 }}>
-          {payments.map((p, i) => {
+          {filteredPayments.map((p, i) => {
             const s = STATUS_STYLE[p.status] ?? STATUS_STYLE.PENDING;
             const localizedStatus = t("seeker_jobs.status_" + p.status.toLowerCase()) || s.label;
             const isHeld = p.status === "HELD";
 
             return (
               <div key={p.id} className="payment-row" style={{
-                borderBottom: i < payments.length - 1 ? "1px solid #181818" : "none",
+                borderBottom: i < filteredPayments.length - 1 ? "1px solid #181818" : "none",
               }}>
                 <div style={{ display:"flex", alignItems:"center", gap:12, flex:1, minWidth:0 }}>
                   <div style={{ width:40, height:40, borderRadius:10, flexShrink:0,

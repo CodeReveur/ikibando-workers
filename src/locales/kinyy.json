@@ -1788,7 +1788,12 @@
     "refund_submitted": "Icyifuzo cyo kwishyurwa cyoherejwe. Umuyobozi arakigenzura; ayemejwe asubizwa muri wallet yawe hakuwemo amafaranga akatwa.",
     "refund_reason_err": "Nyamuneka tanga impamvu isobanutse (nibura inyuguti 10).",
     "refund_notice": "Kwishyurwa bigenzurwa n’umuyobozi — ntibiba ako kanya. Amafaranga y’serivisi adasubizwa arakomeza gukatwa, kandi niba umukozi yaramaze gushakwa hakatwa amafaranga yo guhagarika.",
-    "submit_refund": "Ohereza icyifuzo"
+    "submit_refund": "Ohereza icyifuzo",
+    "filter_all_types": "Ubwoko bwose",
+    "filter_escrow": "Amafaranga ari mu bubiko",
+    "filter_all_statuses": "Uko bimeze kose",
+    "clear_filters": "Siba",
+    "no_match": "Nta gikorwa gihuye n’aya matonde"
   },
   "owner_workers": {
     "total_applied": "Abasabye bose",

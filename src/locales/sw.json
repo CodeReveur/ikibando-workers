@@ -1787,7 +1787,12 @@
     "refund_submitted": "Ombi la marejesho limewasilishwa. Msimamizi ataliangalia; marejesho yaliyoidhinishwa hurejeshwa kwenye pochi yako baada ya gharama husika.",
     "refund_reason_err": "Tafadhali toa sababu wazi (angalau herufi 10).",
     "refund_notice": "Marejesho hukaguliwa na msimamizi — si papo hapo. Ada ya huduma isiyorejeshwa hubaki, na kama mfanyakazi tayari ameshirikishwa gharama ya kughairi hutozwa.",
-    "submit_refund": "Wasilisha ombi"
+    "submit_refund": "Wasilisha ombi",
+    "filter_all_types": "Aina zote",
+    "filter_escrow": "Malipo ya amana",
+    "filter_all_statuses": "Hali zote",
+    "clear_filters": "Futa",
+    "no_match": "Hakuna miamala inayolingana na vichujio hivi"
   },
   "owner_workers": {
     "total_applied": "Jumla ya Waombaji",

@@ -1787,7 +1787,12 @@
     "refund_submitted": "Demande de remboursement envoyée. Un administrateur l’examinera ; les remboursements approuvés sont reversés sur votre portefeuille moins les frais applicables.",
     "refund_reason_err": "Veuillez indiquer une raison claire (au moins 10 caractères).",
     "refund_notice": "Les remboursements sont examinés par un administrateur — ce n’est pas instantané. Les frais de service non remboursables sont conservés, et si un travailleur est déjà engagé, des frais d’annulation s’appliquent.",
-    "submit_refund": "Envoyer la demande"
+    "submit_refund": "Envoyer la demande",
+    "filter_all_types": "Tous les types",
+    "filter_escrow": "Paiements sous séquestre",
+    "filter_all_statuses": "Tous les statuts",
+    "clear_filters": "Effacer",
+    "no_match": "Aucune transaction ne correspond à ces filtres"
   },
   "owner_workers": {
     "total_applied": "Total des postulants",

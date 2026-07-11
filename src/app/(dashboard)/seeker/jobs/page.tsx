@@ -39,7 +39,7 @@ export default function SeekerJobs() {
   const [apps,    setApps]    = useState<ApplicationDto[]>([]);
   const [txns,    setTxns]    = useState<PaymentDto[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab,     setTab]     = useState<TabKey>("active");
+  const [tab,     setTab]     = useState<TabKey>("all");
 
   const load = useCallback(() => {
     const token = localStorage.getItem("access_token");
@@ -71,9 +71,9 @@ export default function SeekerJobs() {
   })();
 
   const TABS: { key: TabKey; label: string; count: number }[] = [
+    { key:"all",       label: `${t("seeker_jobs.tab_all") || "All"} (${accepted.length})`,        count:accepted.length },
     { key:"active",    label: `${t("seeker_jobs.tab_active") || "Active"} (${active.length})`,       count:active.length },
     { key:"completed", label: `${t("seeker_jobs.tab_completed") || "Completed"} (${completed.length})`, count:completed.length },
-    { key:"all",       label: `${t("seeker_jobs.tab_all") || "All"} (${accepted.length})`,        count:accepted.length },
   ];
 
   const dateLocaleMap: Record<string, string> = {

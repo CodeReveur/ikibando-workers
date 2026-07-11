@@ -61,7 +61,7 @@ export default function OwnerWorkers() {
   const currentLocale = dateLocaleMap[language] || "en-RW";
   const [groups,    setGroups]    = useState<JobGroup[]>([]);
   const [loading,   setLoading]   = useState(true);
-  const [tab,       setTab]       = useState<TabKey>("pending");
+  const [tab,       setTab]       = useState<TabKey>("all");
   const [actionMap, setActionMap] = useState<Record<string, "loading" | "done">>({});
   const [noteFor,   setNoteFor]   = useState<string | null>(null);
   const [noteText,  setNoteText]  = useState("");
@@ -158,7 +158,7 @@ export default function OwnerWorkers() {
 
       {/* Tabs */}
       <div className="tabs-container">
-        {(["pending","hired","all"] as TabKey[]).map(tabKey => (
+        {(["all","pending","hired"] as TabKey[]).map(tabKey => (
           <button key={tabKey} onClick={() => setTab(tabKey)} style={{
             padding:"7px 18px", borderRadius:7, fontSize:12, fontWeight:700, border:"none", cursor:"pointer",
             fontFamily:"inherit", transition:"all 0.12s",
