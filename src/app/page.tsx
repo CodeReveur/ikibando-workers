@@ -165,6 +165,7 @@ export default function Home() {
              per row instead of a single stacked column. */
           grid-template-columns: repeat(2, 1fr);
           gap: 8px;
+          align-items: start;   /* cards size to content, no stretched empty boxes */
         }
         @media (min-width: 800px) {
           .card-grid {

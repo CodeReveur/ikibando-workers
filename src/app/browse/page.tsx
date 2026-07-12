@@ -144,6 +144,7 @@ const CSS = `
     display: grid;
     grid-template-columns: 1fr;
     gap: 10px;
+    align-items: start;   /* size each card to its content, don't stretch to the tallest */
   }
   @media (min-width: 560px) {
     .browse-grid { grid-template-columns: repeat(2, 1fr); }
