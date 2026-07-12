@@ -162,21 +162,21 @@ export default function Home() {
         .card-grid {
           display: grid;
           /* 2-up by default so small phones still show a pair of cards
-             per row instead of a single stacked column. */
-          grid-template-columns: repeat(2, 1fr);
+             per row instead of a single stacked column. minmax(0,1fr) keeps
+             columns inside the container so they never overflow past the navbar. */
+          grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 8px;
-          align-items: start;   /* cards size to content, no stretched empty boxes */
         }
         @media (min-width: 800px) {
           .card-grid {
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 10px;
           }
         }
         /* Home summary: 4 per row (with 4 rows = up to 16 items shown). */
         @media (min-width: 1100px) {
           .card-grid {
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(4, minmax(0, 1fr));
           }
         }
         /* Only drop to a single column on truly tiny widths (watch-class

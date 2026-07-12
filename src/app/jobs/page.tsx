@@ -143,11 +143,11 @@ const CSS = `
     display: grid;
     grid-template-columns: 1fr;
     gap: 10px;
-    align-items: start;   /* size each card to its content, don't stretch to the tallest */
   }
-  @media (min-width: 560px)  { .jobs-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 900px)  { .jobs-grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (min-width: 1180px) { .jobs-grid { grid-template-columns: repeat(4, 1fr); } }
+  /* minmax(0,1fr) keeps columns inside the container width (plain 1fr can overflow). */
+  @media (min-width: 560px)  { .jobs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 900px)  { .jobs-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (min-width: 1180px) { .jobs-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
   .jcard { transition: border-color 0.15s; cursor: pointer; text-decoration: none; }
   .jcard:hover { border-color: #f97316 !important; }
   .cat-chip { transition: background 0.12s, color 0.12s, border-color 0.12s; }

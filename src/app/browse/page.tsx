@@ -144,16 +144,17 @@ const CSS = `
     display: grid;
     grid-template-columns: 1fr;
     gap: 10px;
-    align-items: start;   /* size each card to its content, don't stretch to the tallest */
   }
+  /* minmax(0,1fr) keeps columns inside the container width — plain 1fr lets wide
+     card content push columns past the container and overflow past the navbar. */
   @media (min-width: 560px) {
-    .browse-grid { grid-template-columns: repeat(2, 1fr); }
+    .browse-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   @media (min-width: 900px) {
-    .browse-grid { grid-template-columns: repeat(3, 1fr); }
+    .browse-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
   @media (min-width: 1180px) {
-    .browse-grid { grid-template-columns: repeat(4, 1fr); }
+    .browse-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   }
   .bcard { transition: border-color 0.15s; cursor: pointer; }
   .bcard:hover { border-color: #f97316 !important; }
