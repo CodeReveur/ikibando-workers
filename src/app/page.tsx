@@ -159,25 +159,12 @@ export default function Home() {
 
       {/* responsive grid styles */}
       <style>{`
+        /* Responsive by container width: as many ~150px columns as fit (up to ~4
+           on the wide home summary), fewer on phones — no overflow, no cramping. */
         .card-grid {
           display: grid;
-          /* 2-up by default so small phones still show a pair of cards
-             per row instead of a single stacked column. minmax(0,1fr) keeps
-             columns inside the container so they never overflow past the navbar. */
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 8px;
-        }
-        @media (min-width: 800px) {
-          .card-grid {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 10px;
-          }
-        }
-        /* Home summary: 4 per row (with 4 rows = up to 16 items shown). */
-        @media (min-width: 1100px) {
-          .card-grid {
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-          }
+          grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+          gap: 10px;
         }
         /* Only drop to a single column on truly tiny widths (watch-class
            screens), where two cards side by side would be unreadable. */

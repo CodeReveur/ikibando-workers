@@ -140,21 +140,12 @@ const LOCATIONS = ["Kacyiru", "Nyamirambo", "Kimihurura", "Remera", "Gisozi", "K
 // ── styles ─────────────────────────────────────────────────────────────────
 const CSS = `
   * { box-sizing: border-box; }
+  /* Responsive by container width: fit as many ~260px columns as fit (≈4 on wide
+     screens, fewer as it narrows) without overflowing or cramping card content. */
   .browse-grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 10px;
-  }
-  /* minmax(0,1fr) keeps columns inside the container width — plain 1fr lets wide
-     card content push columns past the container and overflow past the navbar. */
-  @media (min-width: 560px) {
-    .browse-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
-  @media (min-width: 900px) {
-    .browse-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  }
-  @media (min-width: 1180px) {
-    .browse-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   }
   .bcard { transition: border-color 0.15s; cursor: pointer; }
   .bcard:hover { border-color: #f97316 !important; }
@@ -516,8 +507,8 @@ function BrowsePageInner() {
                       textDecoration: "none",
                     }}>
                       {/* top row */}
-                      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
                           <div style={{
                             width: 42, height: 42, borderRadius: 999, flexShrink: 0,
                             background: "rgba(249,115,22,0.12)",
@@ -535,6 +526,7 @@ function BrowsePageInner() {
                           <span style={{
                             fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "3px 8px",
                             background: "rgba(34,197,94,0.1)", color: "#22c55e",
+                            flexShrink: 0, whiteSpace: "nowrap",
                           }}>
                             {t("browse_page.badges.available") || "Available"}
                           </span>
