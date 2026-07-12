@@ -1064,7 +1064,8 @@
       "title": "Besoin d'embaucher quelqu'un ?",
       "desc": "Publiez un emploi en moins de 2 minutes et trouvez des travailleurs vérifiés dans votre région.",
       "button": "Publier un emploi"
-    }
+    },
+    "loading_more": "Chargement…"
   },
   "browse_page": {
     "hero": {

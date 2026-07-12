@@ -4,6 +4,7 @@ import Footer from "@/components/layout/footer";
 import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { getWorkers, getJobs, daysAgo, type WorkerProfileDto, type JobDto } from "@/lib/api";
+import { useInfiniteReveal } from "@/lib/use-infinite-reveal";
 import { ratingInfo } from "@/lib/rating";
 import { useLanguage } from "@/lib/language-context";
 import {
@@ -147,8 +148,11 @@ const CSS = `
   @media (min-width: 560px) {
     .browse-grid { grid-template-columns: repeat(2, 1fr); }
   }
-  @media (min-width: 760px) {
+  @media (min-width: 900px) {
     .browse-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (min-width: 1180px) {
+    .browse-grid { grid-template-columns: repeat(4, 1fr); }
   }
   .bcard { transition: border-color 0.15s; cursor: pointer; }
   .bcard:hover { border-color: #f97316 !important; }
@@ -319,6 +323,10 @@ function BrowsePageInner() {
     if (sortJob === "newest")      list = [...list].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     return list;
   }, [jobs, search, filterCategory, filterLocation, filterMinAmount, filterMaxAmount, sortJob]);
+
+  // Infinite scroll for each tab (reveal 16 = 4×4 at a time as the user scrolls).
+  const workersReveal = useInfiniteReveal(filteredWorkers, 16);
+  const jobsReveal     = useInfiniteReveal(filteredJobs, 16);
 
   const S: React.CSSProperties = { fontFamily: "Inter, DM Sans, system-ui, sans-serif" };
 
@@ -495,7 +503,7 @@ function BrowsePageInner() {
           : filteredWorkers.length === 0
             ? <Empty label={t("browse_page.empty.workers") || "No workers match your filters."} />
             : <div className="browse-grid">
-                {filteredWorkers.map((w: WorkerProfileDto) => {
+                {workersReveal.visible.map((w: WorkerProfileDto) => {
                   const expType = (w.experienceType ?? "").toLowerCase();
                   const wCatKey = CATEGORIES.find(c => c.apiValues.includes(expType))?.key || expType;
                   const localizedWCat = t("common.categories." + wCatKey) || w.categoryName || w.experienceType || t("common.general.worker");
@@ -571,6 +579,11 @@ function BrowsePageInner() {
                 })}
               </div>
         )}
+        {tab === "workers" && !loadingData && workersReveal.hasMore && (
+          <div ref={workersReveal.sentinelRef} style={{ textAlign: "center", padding: "24px 0", color: "#555", fontSize: 13 }}>
+            {t("jobs_page.loading_more") || "Loading more…"}
+          </div>
+        )}
 
         {/* JOBS GRID */}
         {tab === "jobs" && (
@@ -578,7 +591,7 @@ function BrowsePageInner() {
           : filteredJobs.length === 0
             ? <Empty label={t("jobs_page.empty.title") || "No jobs match your filters."} />
             : <div className="browse-grid">
-                {filteredJobs.map((j: JobDto) => {
+                {jobsReveal.visible.map((j: JobDto) => {
                   const posted = daysAgo(j.createdAt);
                   const jCatKey = CATEGORIES.find(c => c.apiValues.includes(j.category.toLowerCase()))?.key || j.category;
                   const localizedJCat = t("common.categories." + jCatKey) || j.category;
@@ -614,6 +627,11 @@ function BrowsePageInner() {
                   );
                 })}
               </div>
+        )}
+        {tab === "jobs" && !loadingData && jobsReveal.hasMore && (
+          <div ref={jobsReveal.sentinelRef} style={{ textAlign: "center", padding: "24px 0", color: "#555", fontSize: 13 }}>
+            {t("jobs_page.loading_more") || "Loading more…"}
+          </div>
         )}
 
       </div>

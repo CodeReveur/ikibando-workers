@@ -1065,7 +1065,8 @@
       "title": "Need to hire someone?",
       "desc": "Post a job in under 2 minutes and get matched with ID-verified workers in your area.",
       "button": "Post a job"
-    }
+    },
+    "loading_more": "Loading more…"
   },
   "browse_page": {
     "hero": {

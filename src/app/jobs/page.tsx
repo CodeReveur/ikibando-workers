@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import Footer from "@/components/layout/footer";
 import { PostJobModal } from "@/components/jobs/post-job-modal";
 import { getJobs, daysAgo, type JobDto } from "@/lib/api";
+import { useInfiniteReveal } from "@/lib/use-infinite-reveal";
 import { useLanguage } from "@/lib/language-context";
 import {
   UtensilsCrossed, Sparkles, Shield, Car, Zap, Wrench, Leaf,
@@ -143,8 +144,9 @@ const CSS = `
     grid-template-columns: 1fr;
     gap: 10px;
   }
-  @media (min-width: 560px) { .jobs-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 760px) { .jobs-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 560px)  { .jobs-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 900px)  { .jobs-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 1180px) { .jobs-grid { grid-template-columns: repeat(4, 1fr); } }
   .jcard { transition: border-color 0.15s; cursor: pointer; text-decoration: none; }
   .jcard:hover { border-color: #f97316 !important; }
   .cat-chip { transition: background 0.12s, color 0.12s, border-color 0.12s; }
@@ -208,6 +210,9 @@ export default function JobsPage() {
     if (sort === "newest")      list = [...list].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     return list;
   }, [jobs, search, filterCategory, filterLocation, filterUrgent, filterMinAmt, sort]);
+
+  // Infinite scroll: reveal in batches of 16 (4 rows × 4 columns) as the user scrolls.
+  const { visible, hasMore, sentinelRef } = useInfiniteReveal(filtered, 16);
 
   return (
     <main style={{ background: "#111", minHeight: "100vh", color: "#f5f5f5", fontFamily: "Inter, DM Sans, system-ui, sans-serif" }}>
@@ -361,7 +366,7 @@ export default function JobsPage() {
           ? <Empty />
           : (
             <div className="jobs-grid">
-              {filtered.map((j: JobDto) => {
+              {visible.map((j: JobDto) => {
                 const posted = daysAgo(j.createdAt);
                 const catKey = CATEGORIES.find(c => c.apiValues.includes(j.category.toLowerCase()))?.key || j.category;
                 const localizedCat = t("common.categories." + catKey) || j.category;
@@ -430,6 +435,12 @@ export default function JobsPage() {
               })}
             </div>
           )}
+        {/* Infinite-scroll sentinel + loading indicator */}
+        {!loadingJobs && hasMore && (
+          <div ref={sentinelRef} style={{ textAlign: "center", padding: "24px 0", color: "#555", fontSize: 13 }}>
+            {t("jobs_page.loading_more") || "Loading more…"}
+          </div>
+        )}
 
         {/* POST A JOB CTA */}
         <div id="post" style={{

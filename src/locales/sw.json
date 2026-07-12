@@ -1064,7 +1064,8 @@
       "title": "Je, unahitaji kuajiri mtu?",
       "desc": "Weka kazi kwa chini ya dakika 2 na ulinganishwe na wafanyakazi walioidhinishwa katika eneo lako.",
       "button": "Weka kazi"
-    }
+    },
+    "loading_more": "Inapakia zaidi…"
   },
   "browse_page": {
     "hero": {

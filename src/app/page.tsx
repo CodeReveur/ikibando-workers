@@ -138,8 +138,8 @@ export default function Home() {
   const fmt = (n: number) => t("common.general.currency_pattern", { amount: n.toLocaleString() });
 
   useEffect(() => {
-    getWorkers({ size: 7 }).then(p => setWorkers(p.content)).catch(() => {});
-    getJobs({ size: 6 }).then(p => setJobs(p.content)).catch(() => {});
+    getWorkers({ size: 16 }).then(p => setWorkers(p.content)).catch(() => {});
+    getJobs({ size: 16 }).then(p => setJobs(p.content)).catch(() => {});
   }, []);
 
   return (
@@ -170,6 +170,12 @@ export default function Home() {
           .card-grid {
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
+          }
+        }
+        /* Home summary: 4 per row (with 4 rows = up to 16 items shown). */
+        @media (min-width: 1100px) {
+          .card-grid {
+            grid-template-columns: repeat(4, 1fr);
           }
         }
         /* Only drop to a single column on truly tiny widths (watch-class
