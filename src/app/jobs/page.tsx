@@ -139,12 +139,17 @@ const postedLabel = (d: number) => d === 0 ? "Today" : `${d}d ago`;
 
 const CSS = `
   * { box-sizing: border-box; }
-  /* Responsive by container width: as many ~260px columns as fit, no overflow/cramping. */
+  /* Column count follows the CONTAINER width (container queries):
+     4 large/mid → 3 mini-mid → 2 mobile → 1 watch. */
+  .jobs-wrap { container-type: inline-size; }
   .jobs-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: 1fr;
     gap: 10px;
   }
+  @container (min-width: 340px) { .jobs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @container (min-width: 520px) { .jobs-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @container (min-width: 680px) { .jobs-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
   .jcard { transition: border-color 0.15s; cursor: pointer; text-decoration: none; }
   .jcard:hover { border-color: #f97316 !important; }
   .cat-chip { transition: background 0.12s, color 0.12s, border-color 0.12s; }
@@ -209,8 +214,8 @@ export default function JobsPage() {
     return list;
   }, [jobs, search, filterCategory, filterLocation, filterUrgent, filterMinAmt, sort]);
 
-  // Infinite scroll: reveal in batches of 16 (4 rows × 4 columns) as the user scrolls.
-  const { visible, hasMore, sentinelRef } = useInfiniteReveal(filtered, 16);
+  // Infinite scroll: reveal 28 at a time (≈7 rows × 4 columns) as the user scrolls.
+  const { visible, hasMore, sentinelRef } = useInfiniteReveal(filtered, 28);
 
   return (
     <main style={{ background: "#111", minHeight: "100vh", color: "#f5f5f5", fontFamily: "Inter, DM Sans, system-ui, sans-serif" }}>
@@ -221,7 +226,7 @@ export default function JobsPage() {
       {showPostJob && <PostJobModal onClose={() => setShowPostJob(false)} />}
       <style>{CSS}</style>
 
-      <div style={{ maxWidth: 760, margin: "0 auto", padding: "36px 20px 64px" }}>
+      <div className="jobs-wrap" style={{ maxWidth: 760, margin: "0 auto", padding: "36px 20px 64px" }}>
 
         {/* HEADER */}
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 14, marginBottom: 28 }}>

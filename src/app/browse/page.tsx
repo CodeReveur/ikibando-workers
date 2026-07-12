@@ -140,13 +140,17 @@ const LOCATIONS = ["Kacyiru", "Nyamirambo", "Kimihurura", "Remera", "Gisozi", "K
 // ── styles ─────────────────────────────────────────────────────────────────
 const CSS = `
   * { box-sizing: border-box; }
-  /* Responsive by container width: fit as many ~260px columns as fit (≈4 on wide
-     screens, fewer as it narrows) without overflowing or cramping card content. */
+  /* Column count follows the CONTAINER width (container queries), not the window:
+     4 on large/mid → 3 mini-mid → 2 mobile → 1 watch. */
+  .browse-wrap { container-type: inline-size; }
   .browse-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: 1fr;
     gap: 10px;
   }
+  @container (min-width: 340px) { .browse-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @container (min-width: 520px) { .browse-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @container (min-width: 680px) { .browse-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
   .bcard { transition: border-color 0.15s; cursor: pointer; }
   .bcard:hover { border-color: #f97316 !important; }
   .chip { transition: background 0.12s, color 0.12s, border-color 0.12s; cursor: pointer; }
@@ -317,9 +321,9 @@ function BrowsePageInner() {
     return list;
   }, [jobs, search, filterCategory, filterLocation, filterMinAmount, filterMaxAmount, sortJob]);
 
-  // Infinite scroll for each tab (reveal 16 = 4×4 at a time as the user scrolls).
-  const workersReveal = useInfiniteReveal(filteredWorkers, 16);
-  const jobsReveal     = useInfiniteReveal(filteredJobs, 16);
+  // Infinite scroll: reveal 28 at a time (≈7 rows × 4 columns) as the user scrolls.
+  const workersReveal = useInfiniteReveal(filteredWorkers, 28);
+  const jobsReveal     = useInfiniteReveal(filteredJobs, 28);
 
   const S: React.CSSProperties = { fontFamily: "Inter, DM Sans, system-ui, sans-serif" };
 
@@ -336,7 +340,7 @@ function BrowsePageInner() {
       />
       <style>{CSS}</style>
 
-      <div style={{ maxWidth: 760, margin: "0 auto", padding: "36px 20px 64px" }}>
+      <div className="browse-wrap" style={{ maxWidth: 760, margin: "0 auto", padding: "36px 20px 64px" }}>
 
         {/* PAGE TITLE */}
         <div style={{ marginBottom: 28 }}>
