@@ -176,6 +176,14 @@ const CSS = `
 const fmt = (n: number) => `RWF ${n.toLocaleString()}`;
 
 // ── sub-components ─────────────────────────────────────────────────────────
+/**
+ * Whether a worker counts as "available". Single source of truth — change what availability
+ * depends on here (currently: the worker has at least one availability slot set).
+ */
+function isAvailable(w: WorkerProfileDto): boolean {
+  return Array.isArray(w.availability) && w.availability.length > 0;
+}
+
 function ActiveChip({ label, onRemove }: { label: string; onRemove: () => void }) {
   return (
     <span style={{
@@ -510,31 +518,26 @@ function BrowsePageInner() {
                       padding: "16px", display: "flex", flexDirection: "column", gap: 12,
                       textDecoration: "none",
                     }}>
-                      {/* top row */}
-                      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
-                          <div style={{
-                            width: 42, height: 42, borderRadius: 999, flexShrink: 0,
-                            background: "rgba(249,115,22,0.12)",
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            fontSize: 16, fontWeight: 800, color: "#f97316",
-                          }}>
-                            {w.name[0]}
-                          </div>
-                          <div>
-                            <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
-                            <p style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2 }}>{localizedWCat}</p>
-                          </div>
+                      {/* top row — availability shows as a green dot on the avatar, never over the name */}
+                      <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+                        <div style={{
+                          width: 42, height: 42, borderRadius: 999, flexShrink: 0, position: "relative",
+                          background: "rgba(249,115,22,0.12)",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontSize: 16, fontWeight: 800, color: "#f97316",
+                        }}>
+                          {w.name[0]}
+                          {isAvailable(w) && (
+                            <span title={t("browse_page.badges.available") || "Available"} style={{
+                              position: "absolute", bottom: -1, right: -1, width: 12, height: 12,
+                              borderRadius: 999, background: "#22c55e", border: "2px solid #1c1c1c",
+                            }} />
+                          )}
                         </div>
-                        {w.availability.length > 0 && (
-                          <span style={{
-                            fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "3px 8px",
-                            background: "rgba(34,197,94,0.1)", color: "#22c55e",
-                            flexShrink: 0, whiteSpace: "nowrap",
-                          }}>
-                            {t("browse_page.badges.available") || "Available"}
-                          </span>
-                        )}
+                        <div style={{ minWidth: 0 }}>
+                          <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
+                          <p style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2 }}>{localizedWCat}</p>
+                        </div>
                       </div>
 
                       {/* rating + location */}
