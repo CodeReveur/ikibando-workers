@@ -718,11 +718,53 @@ function WorkerProfileSection({
               placeholder={t("settings_page.worker_details.category_search_placeholder")}
               value={catSearch}
               onChange={e => setCatSearch(e.target.value)}
-              style={{ ...fieldInput, padding: "9px 14px", marginBottom: 10 }}
+              style={{ ...fieldInput, padding: "9px 14px" }}
               onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
               onBlur={e => (e.currentTarget.style.borderColor = "#222")}
             />
-            <div className="skills-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 8, maxHeight: 200, overflowY: "auto", paddingRight: 4 }}>
+
+            {/* Picked categories, in the order chosen — the first one is the primary. */}
+            {experiences.length > 0 && (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 8 }}>
+                {experiences.map((slug, i) => {
+                  const meta = categories.find(c => c.slug === slug);
+                  return (
+                    <span key={slug} style={{
+                      display: "inline-flex", alignItems: "center", gap: 6,
+                      padding: "4px 4px 4px 10px", borderRadius: 8, fontSize: 11, fontWeight: 600,
+                      border: `1px solid ${i === 0 ? "#f97316" : "#222"}`,
+                      background: i === 0 ? "rgba(249,115,22,0.12)" : "#141414",
+                      color: i === 0 ? "#f97316" : "#aaa",
+                    }}>
+                      {meta?.displayName ?? slug}
+                      {i === 0 && (
+                        <span style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.05em", opacity: 0.75 }}>
+                          {t("onboarding.personal.category_primary") || "Primary"}
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => toggleExperience(slug)}
+                        style={{
+                          width: 16, height: 16, borderRadius: 999, border: "none", background: "transparent",
+                          color: "inherit", cursor: "pointer", fontSize: 13, lineHeight: 1, opacity: 0.7,
+                          fontFamily: "inherit", padding: 0,
+                        }}
+                      >×</button>
+                    </span>
+                  );
+                })}
+              </div>
+            )}
+
+            {experiences.length > 0 && (
+              <p style={{ margin: "8px 0 0", fontSize: 11, color: "#555", lineHeight: 1.5 }}>
+                {t("onboarding.personal.category_note")
+                  || "All your categories are shown on your profile. The first one you pick is your primary category."}
+              </p>
+            )}
+
+            <div className="skills-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 8, maxHeight: 200, overflowY: "auto", paddingRight: 4, marginTop: 10 }}>
               {categories
                 .filter(c =>
                   c.displayName.toLowerCase().includes(catSearch.toLowerCase()) ||

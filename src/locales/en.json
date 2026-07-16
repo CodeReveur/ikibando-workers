@@ -641,7 +641,9 @@
       "age_restriction_error": "You must be at least 18 years old to register.",
       "age_restriction_title": "Age Restriction",
       "category_multi_hint": "— select all that apply",
-      "category_selected": "selected"
+      "category_selected": "selected",
+      "category_primary": "Primary",
+      "category_note": "All your categories are shown on your profile. The first one you pick is your primary category."
     },
     "location_avail": {
       "location_label": "Your Location",

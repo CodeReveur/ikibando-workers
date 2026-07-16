@@ -640,7 +640,9 @@
       "age_restriction_error": "Lazima uwe na angalau umri wa miaka 18 ili ujisajili.",
       "age_restriction_title": "Kizuizi cha Umri",
       "category_multi_hint": "— chagua vyote vinavyohusika",
-      "category_selected": "zimechaguliwa"
+      "category_selected": "zimechaguliwa",
+      "category_primary": "Kuu",
+      "category_note": "Kategoria zako zote zinaonyeshwa kwenye wasifu wako. Ya kwanza unayochagua ndiyo kategoria yako kuu."
     },
     "location_avail": {
       "location_label": "Mahali Pako",

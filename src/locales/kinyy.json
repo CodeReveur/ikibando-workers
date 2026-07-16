@@ -640,7 +640,9 @@
       "age_restriction_error": "Ugomba kuba ufite nibura imyaka 18 kugira ngo wiyandikishe.",
       "age_restriction_title": "Imyaka ntihagije",
       "category_multi_hint": "— hitamo ibikwiye byose",
-      "category_selected": "byatoranyijwe"
+      "category_selected": "byatoranyijwe",
+      "category_primary": "Ibanze",
+      "category_note": "Ibyiciro byawe byose bigaragara kuri profile yawe. Icya mbere watoranyije ni cyo cyiciro cyawe cy'ibanze."
     },
     "location_avail": {
       "location_label": "Aho uba",

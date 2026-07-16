@@ -640,7 +640,9 @@
       "age_restriction_error": "Vous devez avoir au moins 18 ans pour vous inscrire.",
       "age_restriction_title": "Limite d'âge",
       "category_multi_hint": "— sélectionnez tout ce qui s'applique",
-      "category_selected": "sélectionné(s)"
+      "category_selected": "sélectionné(s)",
+      "category_primary": "Principale",
+      "category_note": "Toutes vos catégories apparaissent sur votre profil. La première que vous choisissez est votre catégorie principale."
     },
     "location_avail": {
       "location_label": "Votre emplacement",

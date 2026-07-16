@@ -722,9 +722,51 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                   placeholder={t("onboarding.personal.category_search_placeholder")}
                   value={catSearch}
                   onChange={(e) => setCatSearch(e.target.value)}
-                  className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-2 text-sm text-white outline-none focus:border-[#f97316] transition-colors mb-3"
+                  className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-2 text-sm text-white outline-none focus:border-[#f97316] transition-colors"
                 />
-                <div className="flex flex-wrap gap-2 max-h-[150px] overflow-y-auto">
+
+                {/* Picked categories, in the order chosen — the first one is the primary. */}
+                {experiences.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {experiences.map((slug, i) => {
+                      const meta = categories.find((c) => c.slug === slug);
+                      return (
+                        <span
+                          key={slug}
+                          className={`inline-flex items-center gap-1.5 pl-2.5 pr-1 py-1 rounded-lg text-[11px] font-semibold border ${
+                            i === 0
+                              ? "bg-[#f97316]/20 border-[#f97316] text-[#f97316]"
+                              : "bg-[#1a1a1a] border-[#2a2a2a] text-gray-300"
+                          }`}
+                        >
+                          {meta?.displayName ?? slug}
+                          {i === 0 && (
+                            <span className="text-[9px] uppercase tracking-wide opacity-75">
+                              {t("onboarding.personal.category_primary") || "Primary"}
+                            </span>
+                          )}
+                          <button
+                            type="button"
+                            aria-label={`${t("common.buttons.cancel") || "Remove"} ${meta?.displayName ?? slug}`}
+                            onClick={() => toggleExperience(slug)}
+                            className="w-4 h-4 rounded-full flex items-center justify-center text-[13px] leading-none opacity-70 hover:opacity-100 hover:bg-white/10"
+                          >
+                            ×
+                          </button>
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {experiences.length > 0 && (
+                  <p className="text-[11px] text-gray-500 mt-2 leading-relaxed">
+                    {t("onboarding.personal.category_note")
+                      || "All your categories are shown on your profile. The first one you pick is your primary category."}
+                  </p>
+                )}
+
+                <div className="flex flex-wrap gap-2 max-h-[150px] overflow-y-auto mt-3">
                   {categories
                     .filter((c) =>
                       c.displayName.toLowerCase().includes(catSearch.toLowerCase()) ||
