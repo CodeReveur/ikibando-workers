@@ -460,6 +460,39 @@ export async function getPaymentSchedule(jobId: string, token: string): Promise<
   return data.data;
 }
 
+// ── Job completion evidence (optional proof: photos + one short video) ─────────
+export interface JobEvidenceDto {
+  id: string;
+  kind: "PHOTO" | "VIDEO";
+  url: string;
+  caption: string | null;
+  uploadedByName: string | null;
+  uploadedById: string | null;
+  createdAt: string;
+}
+
+/** Caps mirrored from the server (JobService.MAX_EVIDENCE_*). */
+export const MAX_EVIDENCE_PHOTOS = 20;
+export const MAX_EVIDENCE_VIDEO_SECONDS = 20;
+
+export async function getJobEvidence(jobId: string, token: string): Promise<JobEvidenceDto[]> {
+  const { data } = await http.get(`/api/jobs/${jobId}/evidence`, { headers: authHeader(token) });
+  return data.data;
+}
+
+export async function addJobEvidence(
+  jobId: string,
+  payload: { kind: "PHOTO" | "VIDEO"; url: string; caption?: string },
+  token: string,
+): Promise<JobEvidenceDto> {
+  const { data } = await http.post(`/api/jobs/${jobId}/evidence`, payload, { headers: authHeader(token) });
+  return data.data;
+}
+
+export async function deleteJobEvidence(jobId: string, evidenceId: string, token: string): Promise<void> {
+  await http.delete(`/api/jobs/${jobId}/evidence/${evidenceId}`, { headers: authHeader(token) });
+}
+
 export async function getJobActivity(jobId: string, token: string): Promise<ActivityLogDto[]> {
   const { data } = await http.get(`/api/jobs/${jobId}/activity`, { headers: authHeader(token) });
   return data.data;

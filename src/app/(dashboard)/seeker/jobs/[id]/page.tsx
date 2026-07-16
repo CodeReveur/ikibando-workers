@@ -17,6 +17,7 @@ import { RichTextDisplay } from "@/components/ui/rich-text-editor";
 import { useLanguage } from "@/lib/language-context";
 import { useToast } from "@/components/ui/toast";
 import { PaymentPanel } from "@/components/payments/payment-panel";
+import { JobEvidence } from "@/components/jobs/job-evidence";
 import { PaymentModeInfo } from "@/components/payments/payment-mode-info";
 
 type Stage = { done: boolean; active: boolean; label: string; date?: string | null; content: React.ReactNode };
@@ -437,6 +438,9 @@ export default function SeekerJobDetail() {
           {token && appStatus === "ACCEPTED" && (
             <PaymentPanel jobId={id} role="worker" token={token} />
           )}
+
+          {/* Optional proof of work — the worker uploads, employer and admins can review. */}
+          {token && isAccepted && <JobEvidence jobId={id} canUpload />}
         </div>
 
         {/* Right: Sidebar */}

@@ -19,6 +19,7 @@ import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-edito
 import { useLanguage } from "@/lib/language-context";
 import { useToast } from "@/components/ui/toast";
 import { PaymentPanel } from "@/components/payments/payment-panel";
+import { JobEvidence } from "@/components/jobs/job-evidence";
 import { setJobAutoRelease } from "@/lib/api";
 
 const dateLocaleMap: Record<string, string> = {
@@ -495,6 +496,9 @@ export default function OwnerJobDetail() {
           {token && hasAccepted && (
             <PaymentPanel jobId={id} role="employer" token={token} />
           )}
+
+          {/* Proof of work the worker attached — read-only here. Hides itself when empty. */}
+          {token && <JobEvidence jobId={id} canUpload={false} />}
         </div>
 
         {/* Right: Sidebar */}
