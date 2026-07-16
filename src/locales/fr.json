@@ -1398,6 +1398,16 @@
       "saved": "Photo de profil mise à jour",
       "failed": "Impossible de mettre à jour votre photo de profil",
       "upload_failed": "Échec de l'envoi de la photo"
+    },
+    "push": {
+      "title": "Notifications du navigateur",
+      "label": "Notifications push sur cet appareil",
+      "desc": "Recevez les nouvelles offres et mises à jour même lorsque cet onglet est fermé.",
+      "denied_desc": "Bloquées par votre navigateur. Autorisez les notifications pour ce site dans les paramètres, puis rechargez.",
+      "enabled": "Notifications du navigateur activées",
+      "disabled": "Notifications du navigateur désactivées",
+      "blocked": "Votre navigateur a bloqué les notifications. Autorisez-les dans les paramètres pour activer cette option.",
+      "failed": "Impossible de modifier les notifications du navigateur"
     }
   },
   "dashboard_home": {

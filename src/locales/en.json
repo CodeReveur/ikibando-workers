@@ -1399,6 +1399,16 @@
       "saved": "Profile picture updated",
       "failed": "Couldn't update your profile picture",
       "upload_failed": "Photo upload failed"
+    },
+    "push": {
+      "title": "Browser notifications",
+      "label": "Push notifications on this device",
+      "desc": "Get new job alerts and updates even when this tab is closed.",
+      "denied_desc": "Blocked by your browser. Allow notifications for this site in your browser settings, then reload.",
+      "enabled": "Browser notifications turned on",
+      "disabled": "Browser notifications turned off",
+      "blocked": "Your browser blocked notifications. Allow them in your browser settings to turn this on.",
+      "failed": "Couldn't change browser notifications"
     }
   },
   "dashboard_home": {

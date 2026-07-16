@@ -1399,6 +1399,16 @@
       "saved": "Ifoto ya profile yavuguruwe",
       "failed": "Ntibyashobotse kuvugurura ifoto ya profile",
       "upload_failed": "Gushyiraho ifoto byanze"
+    },
+    "push": {
+      "title": "Imenyesha za mushakisha",
+      "label": "Imenyesha kuri iki gikoresho",
+      "desc": "Menya akazi gashya n'ivugururwa n'ubwo iyi tab yafunze.",
+      "denied_desc": "Byahagaritswe na mushakisha wawe. Emerera imenyesha z'uru rubuga mu igenamiterere, hanyuma wongere upakire.",
+      "enabled": "Imenyesha za mushakisha zafunguwe",
+      "disabled": "Imenyesha za mushakisha zafunzwe",
+      "blocked": "Mushakisha wawe yahagaritse imenyesha. Zemerere mu igenamiterere kugira ngo ubifungure.",
+      "failed": "Ntibyashobotse guhindura imenyesha za mushakisha"
     }
   },
   "dashboard_home": {

@@ -1027,6 +1027,24 @@ export async function getWorkerReviews(id: string): Promise<WorkerReview[]> {
   return data.data;
 }
 
+// ── Browser push ───────────────────────────────────────────────────────────────
+/** VAPID public key the browser needs to subscribe. Empty string → push is disabled server-side. */
+export async function getVapidPublicKey(): Promise<string> {
+  const { data } = await http.get("/api/push/vapid-public-key");
+  return data.data?.publicKey ?? "";
+}
+
+export async function savePushSubscription(
+  sub: { endpoint: string; p256dh: string; auth: string },
+  token: string,
+): Promise<void> {
+  await http.post("/api/push/subscribe", sub, { headers: authHeader(token) });
+}
+
+export async function deletePushSubscription(endpoint: string, token: string): Promise<void> {
+  await http.delete("/api/push/subscribe", { data: { endpoint }, headers: authHeader(token) });
+}
+
 // ── Newsletter & feature announcements ─────────────────────────────────────────
 export interface FeatureAnnouncement {
   id: string;

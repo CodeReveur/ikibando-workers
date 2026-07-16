@@ -54,6 +54,9 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         badgeId:       s.badgeId,
         badgeUrl:      s.badgeUrl,
         photoUrl:      s.photoUrl,
+        profilePhotoUrl: s.profilePhotoUrl,
+        photoOnProfile:  s.photoOnProfile,
+        profilePhoto:    s.profilePhoto,
         accountStatus:     s.accountStatus,
         profileCompletion: s.profileCompletion,
         approvalEligible:  s.approvalEligible,
@@ -64,6 +67,9 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       // Async fetch to ensure we have the freshest data (e.g. badge updates)
       const token = localStorage.getItem("access_token");
       if (token) {
+        // Browsers rotate push subscriptions; re-register silently for anyone who already
+        // granted permission. No-op when unsupported or not granted — never prompts here.
+        import("@/lib/push").then(({ syncPushSubscription }) => syncPushSubscription(token)).catch(() => {});
         import("@/lib/api").then(({ getProfile }) => {
           getProfile(token).then((freshUser) => {
             const updated = {

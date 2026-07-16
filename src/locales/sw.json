@@ -1398,6 +1398,16 @@
       "saved": "Picha ya wasifu imesasishwa",
       "failed": "Imeshindwa kusasisha picha yako ya wasifu",
       "upload_failed": "Kupakia picha kumeshindikana"
+    },
+    "push": {
+      "title": "Arifa za kivinjari",
+      "label": "Arifa za push kwenye kifaa hiki",
+      "desc": "Pata arifa za kazi mpya na masasisho hata wakati kichupo hiki kimefungwa.",
+      "denied_desc": "Zimezuiwa na kivinjari chako. Ruhusu arifa za tovuti hii katika mipangilio, kisha pakia upya.",
+      "enabled": "Arifa za kivinjari zimewashwa",
+      "disabled": "Arifa za kivinjari zimezimwa",
+      "blocked": "Kivinjari chako kimezuia arifa. Ziruhusu katika mipangilio ya kivinjari ili kuwasha.",
+      "failed": "Imeshindwa kubadilisha arifa za kivinjari"
     }
   },
   "dashboard_home": {

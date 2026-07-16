@@ -27,6 +27,7 @@ import {
 } from "@/lib/api";
 import { AddressPicker, isAddressComplete } from "@/components/ui/address-picker";
 import { BadgeSubmissionWizard } from "@/components/auth/badge-submission-wizard";
+import { enablePush, disablePush, pushPermission } from "@/lib/push";
 
 /* ── Types ────────────────────────────────────────────────────────────────── */
 
@@ -1508,6 +1509,8 @@ function NotificationsTab({ role, success }: { role: string; success: (m: string
   const items = isEmployer ? employerItems : workerItems;
 
   return (
+    <>
+    <PushNotificationCard success={success} />
     <div style={card}>
       <div style={cardHeader}>
         <Bell size={14} color="#555" />
@@ -1537,6 +1540,76 @@ function NotificationsTab({ role, success }: { role: string; success: (m: string
             </button>
           </div>
         ))}
+      </div>
+    </div>
+    </>
+  );
+}
+
+/**
+ * Browser push. Permission lives with the browser, not our DB — so the state is read from
+ * Notification.permission, and "denied" can only be undone in browser settings.
+ */
+function PushNotificationCard({ success }: { success: (m: string) => void }) {
+  const { t } = useLanguage();
+  const { error: toastError } = useToast();
+  const [perm, setPerm] = useState<NotificationPermission | "unsupported" | "loading">("loading");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => { setPerm(pushPermission()); }, []);
+
+  if (perm === "loading" || perm === "unsupported") return null;
+
+  const enabled = perm === "granted";
+
+  const onToggle = async () => {
+    setBusy(true);
+    try {
+      if (enabled) {
+        await disablePush(getToken());
+        setPerm(pushPermission());
+        success(t("settings_page.push.disabled") || "Browser notifications turned off");
+      } else {
+        const ok = await enablePush(getToken());
+        setPerm(pushPermission());
+        if (ok) success(t("settings_page.push.enabled") || "Browser notifications turned on");
+        else toastError(t("settings_page.push.blocked") || "Your browser blocked notifications. Allow them in your browser settings to turn this on.");
+      }
+    } catch {
+      toastError(t("settings_page.push.failed") || "Couldn't change browser notifications");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div style={card}>
+      <div style={cardHeader}>
+        <Bell size={14} color="#555" />
+        <p style={cardHeaderLabel}>{t("settings_page.push.title") || "Browser notifications"}</p>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, padding: "16px 20px" }}>
+        <div>
+          <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "#ccc" }}>
+            {t("settings_page.push.label") || "Push notifications on this device"}
+          </p>
+          <p style={{ margin: "3px 0 0", fontSize: 12, color: "#444", lineHeight: 1.5 }}>
+            {perm === "denied"
+              ? (t("settings_page.push.denied_desc") || "Blocked by your browser. Allow notifications for this site in your browser settings, then reload.")
+              : (t("settings_page.push.desc") || "Get new job alerts and updates even when this tab is closed.")}
+          </p>
+        </div>
+        <button
+          onClick={onToggle}
+          disabled={busy || perm === "denied"}
+          style={{
+            background: "none", border: "none", padding: 0, flexShrink: 0, display: "flex",
+            cursor: busy || perm === "denied" ? "not-allowed" : "pointer",
+            opacity: perm === "denied" ? 0.4 : 1,
+          }}
+        >
+          {enabled ? <ToggleRight size={32} color="#f97316" /> : <ToggleLeft size={32} color="#333" />}
+        </button>
       </div>
     </div>
   );
