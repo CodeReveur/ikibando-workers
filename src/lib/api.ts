@@ -731,6 +731,27 @@ export async function claimBonuses(token: string): Promise<BonusSummary> {
   return data.data;
 }
 
+/** A live promotion: do X, earn Y. Awarded automatically when the user qualifies. */
+export interface BonusRule {
+  id: string;
+  code: string;
+  triggerType:
+    | "FIRST_JOB" | "JOBS_MILESTONE" | "RATING_STREAK"
+    | "NEWSLETTER_SUBSCRIBE" | "IDENTITY_VERIFIED";
+  title: string;
+  description: string | null;
+  amountRwf: number;
+  threshold: number | null;
+  active: boolean;
+  repeatable: boolean;
+}
+
+/** Promotions that are live right now — drives "Ways to earn bonuses". */
+export async function getActiveBonusRules(token: string): Promise<BonusRule[]> {
+  const { data } = await http.get("/api/wallet/bonus-rules", { headers: authHeader(token) });
+  return data.data;
+}
+
 export async function getBonuses(token: string): Promise<BonusSummary> {
   const { data } = await http.get("/api/wallet/bonuses", { headers: authHeader(token) });
   return data.data;

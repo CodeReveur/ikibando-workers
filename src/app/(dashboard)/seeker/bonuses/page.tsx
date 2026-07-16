@@ -5,7 +5,10 @@ import { CheckCircle, Star, Award, TrendingUp, Shield, Copy, Users, Gift } from 
 import { fmt } from "@/lib/dashboard-data";
 import { SectionHead } from "@/components/dashboard/ui";
 import { useLanguage } from "@/lib/language-context";
-import { getBonuses, getMyReferral, claimBonuses, apiError, type BonusSummary, type ReferralSummary } from "@/lib/api";
+import {
+  getBonuses, getMyReferral, claimBonuses, getActiveBonusRules, apiError,
+  type BonusSummary, type ReferralSummary, type BonusRule,
+} from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
 
 export default function SeekerBonuses() {
@@ -24,6 +27,7 @@ export default function SeekerBonuses() {
   const [claiming, setClaiming] = useState(false);
   const [bonus, setBonus]       = useState<BonusSummary | null>(null);
   const [referral, setReferral] = useState<ReferralSummary | null>(null);
+  const [rules, setRules]       = useState<BonusRule[]>([]);
   const { success, error: toastError } = useToast();
 
   const doClaim = async () => {
@@ -43,10 +47,11 @@ export default function SeekerBonuses() {
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (!token) { setLoading(false); return; }
-    Promise.allSettled([getBonuses(token), getMyReferral(token)])
-      .then(([b, r]) => {
+    Promise.allSettled([getBonuses(token), getMyReferral(token), getActiveBonusRules(token)])
+      .then(([b, r, p]) => {
         if (b.status === "fulfilled") setBonus(b.value);
         if (r.status === "fulfilled") setReferral(r.value);
+        if (p.status === "fulfilled") setRules(p.value);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -67,13 +72,32 @@ export default function SeekerBonuses() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  /* Ways to earn = the promotions actually live right now, plus the referral programme.
+     This used to be a hardcoded list where five of six said "Coming soon" forever; now a card
+     only appears when an admin has switched that promotion on, so it's never an empty promise. */
+  const TRIGGER_STYLE: Record<string, { icon: typeof Users; color: string }> = {
+    FIRST_JOB:            { icon: CheckCircle, color: "#22c55e" },
+    JOBS_MILESTONE:       { icon: Award,       color: "#a78bfa" },
+    RATING_STREAK:        { icon: Star,        color: "#f59e0b" },
+    IDENTITY_VERIFIED:    { icon: Shield,      color: "#fb923c" },
+    NEWSLETTER_SUBSCRIBE: { icon: TrendingUp,  color: "#f97316" },
+  };
+
   const WAYS = [
-    { icon: Users,       label: t("seeker_bonuses.refer_friend") || "Refer a friend",   desc: t("seeker_bonuses.refer_friend_desc") || "They complete their first job", reward: fmt(reward), color: "#60a5fa" },
-    { icon: CheckCircle, label: t("seeker_bonuses.first_job") || "First job done",    desc: t("seeker_bonuses.first_job_desc") || "Complete your debut job",       reward: t("seeker_bonuses.coming_soon") || "Coming soon", color: "#22c55e" },
-    { icon: Star,        label: t("seeker_bonuses.streak") || "5-star streak",     desc: t("seeker_bonuses.streak_desc") || "Keep a 5.0 rating for 10 jobs", reward: t("seeker_bonuses.coming_soon") || "Coming soon", color: "#f59e0b" },
-    { icon: Award,       label: t("seeker_bonuses.club") || "10 jobs club",      desc: t("seeker_bonuses.club_desc") || "Complete 10 jobs",              reward: t("seeker_bonuses.coming_soon") || "Coming soon", color: "#a78bfa" },
-    { icon: TrendingUp,  label: t("seeker_bonuses.top_worker") || "Top worker",        desc: t("seeker_bonuses.top_worker_desc") || "Rank in the top 10%",           reward: t("seeker_bonuses.coming_soon") || "Coming soon", color: "#f97316" },
-    { icon: Shield,      label: t("seeker_bonuses.verified_pro") || "Verified pro",      desc: t("seeker_bonuses.verified_pro_desc") || "Pass identity verification",    reward: t("seeker_bonuses.coming_soon") || "Coming soon", color: "#fb923c" },
+    {
+      icon: Users,
+      label: t("seeker_bonuses.refer_friend") || "Refer a friend",
+      desc: t("seeker_bonuses.refer_friend_desc") || "They complete their first job",
+      reward: fmt(reward),
+      color: "#60a5fa",
+    },
+    ...rules.map(r => ({
+      icon: TRIGGER_STYLE[r.triggerType]?.icon ?? Gift,
+      label: r.title,
+      desc: r.description ?? "",
+      reward: fmt(r.amountRwf),
+      color: TRIGGER_STYLE[r.triggerType]?.color ?? "#f97316",
+    })),
   ];
 
   const fmtDate = (s: string) =>
