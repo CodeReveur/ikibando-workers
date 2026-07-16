@@ -1394,7 +1394,8 @@
     "no_applications": "Hakuna maombi bado",
     "no_applications_desc": "Vinjari kazi zilizo wazi na utume maombi ili kuanza kupata mapato",
     "browse_jobs": "Vinjari kazi",
-    "loading": "Inapakia..."
+    "loading": "Inapakia...",
+    "updates_title": "Mpya"
   },
   "seeker_jobs": {
     "active_jobs": "Kazi Zinazoendelea",

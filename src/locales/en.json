@@ -1395,7 +1395,8 @@
     "no_applications": "No applications yet",
     "no_applications_desc": "Browse open jobs and apply to start earning",
     "browse_jobs": "Browse jobs",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "updates_title": "What's new"
   },
   "seeker_jobs": {
     "active_jobs": "Active Jobs",

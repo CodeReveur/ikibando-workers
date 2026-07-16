@@ -1394,7 +1394,8 @@
     "no_applications": "Aucune candidature pour le moment",
     "no_applications_desc": "Parcourez les emplois ouverts et postulez pour commencer à gagner",
     "browse_jobs": "Parcourir les emplois",
-    "loading": "Chargement..."
+    "loading": "Chargement...",
+    "updates_title": "Nouveautés"
   },
   "seeker_jobs": {
     "active_jobs": "Emplois actifs",

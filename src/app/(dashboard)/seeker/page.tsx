@@ -3,12 +3,12 @@
 import { useEffect, useState, useCallback } from "react";
 import {
   Briefcase, Clock, CheckCircle, X, MapPin,
-  Wallet, TrendingUp, Zap, ArrowRight,
+  Wallet, TrendingUp, Zap, ArrowRight, Sparkles,
 } from "lucide-react";
 import {
   getWallet, getMyApplications, getWalletTransactions,
-  updateApplicationStatus, apiError,
-  type WalletDto, type ApplicationDto, type PaymentDto,
+  updateApplicationStatus, apiError, getAnnouncements,
+  type WalletDto, type ApplicationDto, type PaymentDto, type FeatureAnnouncement,
 } from "@/lib/api";
 import { StatCard, SectionHead, Dot, PageLoader } from "@/components/dashboard/ui";
 import { fmt } from "@/lib/dashboard-data";
@@ -43,6 +43,7 @@ export default function SeekerHome() {
   const [wallet,  setWallet]  = useState<WalletDto | null>(null);
   const [apps,    setApps]    = useState<ApplicationDto[]>([]);
   const [txns,    setTxns]    = useState<PaymentDto[]>([]);
+  const [updates, setUpdates] = useState<FeatureAnnouncement[]>([]);
   const [loading, setLoading] = useState(true);
   const [respondingId, setRespondingId] = useState<string | null>(null);
 
@@ -54,7 +55,8 @@ export default function SeekerHome() {
       getWallet(token).catch(() => null),
       getMyApplications(token).catch(() => [] as ApplicationDto[]),
       getWalletTransactions(token).catch(() => [] as PaymentDto[]),
-    ]).then(([w, a, t]) => { setWallet(w); setApps(a); setTxns(t); })
+      getAnnouncements().catch(() => [] as FeatureAnnouncement[]),
+    ]).then(([w, a, t, u]) => { setWallet(w); setApps(a); setTxns(t); setUpdates(u); })
       .finally(() => setLoading(false));
   }, []);
 
@@ -314,6 +316,48 @@ export default function SeekerHome() {
             );
           })}
         </div>
+      )}
+
+      {/* Worker updates — latest platform features / announcements */}
+      {updates.length > 0 && (
+        <>
+          <div style={{ marginTop: 28 }}>
+            <SectionHead title={t("dashboard_home.updates_title") || "What's new"} action={
+              <a href="/whats-new" style={{ display:"flex", alignItems:"center", gap:4, fontSize:12, fontWeight:700, color:"#f97316", textDecoration:"none" }}>
+                {t("dashboard_home.see_all")} <ArrowRight size={12} />
+              </a>
+            } />
+          </div>
+          <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:14, overflow:"hidden" }}>
+            {updates.slice(0, 3).map((u, i, arr) => {
+              const inner = (
+                <>
+                  <div style={{ width:36, height:36, borderRadius:9, flexShrink:0, background:"rgba(249,115,22,0.08)", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                    <Sparkles size={16} color="#f97316" />
+                  </div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <p style={{ margin:0, fontSize:13, fontWeight:600, color:"#d0d0d0", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{u.title}</p>
+                    {u.description && (
+                      <p style={{ margin:"3px 0 0", fontSize:11, color:"#3a3a3a", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{u.description}</p>
+                    )}
+                  </div>
+                  <div style={{ display:"flex", alignItems:"center", gap:8, flexShrink:0 }}>
+                    <span style={{ fontSize:11, color:"#333" }}>{new Date(u.createdAt).toLocaleDateString(currentLocale)}</span>
+                    {u.url && <ArrowRight size={13} color="#f97316" />}
+                  </div>
+                </>
+              );
+              const rowStyle: React.CSSProperties = {
+                display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
+                borderBottom: i < arr.length - 1 ? "1px solid #181818" : "none",
+                textDecoration:"none",
+              };
+              return u.url
+                ? <a key={u.id} href={u.url} style={rowStyle} className="sk-card">{inner}</a>
+                : <div key={u.id} style={rowStyle}>{inner}</div>;
+            })}
+          </div>
+        </>
       )}
     </div>
   );

@@ -1395,7 +1395,8 @@
     "no_applications": "Nta dosiye wigeze wohereza",
     "no_applications_desc": "Shaka akazi gafunguye hanyuma wohereze dosiye ngo utangire gukorera amafaranga",
     "browse_jobs": "Shaka akazi",
-    "loading": "Biratunganywa..."
+    "loading": "Biratunganywa...",
+    "updates_title": "Ibishya"
   },
   "seeker_jobs": {
     "active_jobs": "Akazi kawe",

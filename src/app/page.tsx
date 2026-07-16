@@ -259,12 +259,17 @@ export default function Home() {
               >
                 <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, minWidth: 0 }}>
                   <div style={{
-                    width: 40, height: 40, borderRadius: 999, flexShrink: 0,
+                    width: 40, height: 40, borderRadius: 999, flexShrink: 0, overflow: "hidden",
                     background: "rgba(249,115,22,0.12)",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: 15, fontWeight: 800, color: "#f97316",
                   }}>
-                    {w.name[0]}
+                    {w.photoUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={w.photoUrl} alt={w.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ) : (
+                      w.name[0]
+                    )}
                   </div>
                   <div style={{ flex: "1 1 100px", minWidth: 100 }}>
                     <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0", wordBreak: "break-word", lineHeight: 1.3 }}>{w.name}</p>
