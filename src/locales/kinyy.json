@@ -1709,7 +1709,12 @@
     "claim": "Fata",
     "claim_desc": "Bifate kugira ngo byongerwe muri wallet yawe.",
     "claimed": "Inyongera yashyizwe muri wallet yawe",
-    "claim_failed": "Ntibyashobotse gufata inyongera yawe. Ongera ugerageze."
+    "claim_failed": "Ntibyashobotse gufata inyongera yawe. Ongera ugerageze.",
+    "all_claimed": "Byose byafashwe",
+    "in_wallet": "Bisanzwe muri wallet yawe — nta kintu cyo gufata ubu.",
+    "none_yet": "Nta nyongera irahaba.",
+    "view_wallet": "Reba wallet",
+    "status_claimed": "Byafashwe"
   },
   "seeker_analytics": {
     "this_week": "Iyi Cyumweru",

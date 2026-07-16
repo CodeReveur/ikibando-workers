@@ -1709,7 +1709,12 @@
     "claim": "Dai",
     "claim_desc": "Idai ili iongezwe kwenye pochi yako.",
     "claimed": "Bonasi imeongezwa kwenye pochi yako",
-    "claim_failed": "Imeshindwa kudai bonasi yako. Tafadhali jaribu tena."
+    "claim_failed": "Imeshindwa kudai bonasi yako. Tafadhali jaribu tena.",
+    "all_claimed": "Zote zimedaiwa",
+    "in_wallet": "Tayari kwenye pochi yako — hakuna cha kudai kwa sasa.",
+    "none_yet": "Hakuna bonasi bado.",
+    "view_wallet": "Tazama pochi",
+    "status_claimed": "Imedaiwa"
   },
   "seeker_analytics": {
     "this_week": "Wiki Hii",

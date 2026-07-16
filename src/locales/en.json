@@ -1710,7 +1710,12 @@
     "claim": "Claim",
     "claim_desc": "Claim it to add it to your wallet.",
     "claimed": "Bonus added to your wallet",
-    "claim_failed": "Couldn't claim your bonus. Please try again."
+    "claim_failed": "Couldn't claim your bonus. Please try again.",
+    "all_claimed": "All claimed",
+    "in_wallet": "Already in your wallet — nothing to claim right now.",
+    "none_yet": "No bonuses yet.",
+    "view_wallet": "View wallet",
+    "status_claimed": "Claimed"
   },
   "seeker_analytics": {
     "this_week": "This Week",

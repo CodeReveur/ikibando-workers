@@ -138,23 +138,24 @@ export default function SeekerBonuses() {
         </div>
         {/* Headline is what's waiting to be claimed when there is any — a bonus isn't wallet
             money until claimed, so leading with the claimed total would be misleading. */}
+        {/* Two distinct states. With something to claim the card is a call to action; with
+            nothing outstanding it must not look like one — the money is already in the wallet. */}
         <div style={{ flex: 1 }}>
           <p style={{ margin: "0 0 4px", fontSize: 11, color: "#5a4000", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>
             {claimable > 0
               ? (t("seeker_bonuses.ready_to_claim") || "Ready to claim")
-              : t("seeker_bonuses.bonus_earned")}
+              : (t("seeker_bonuses.all_claimed") || "All claimed")}
           </p>
-          <p style={{ margin: "0 0 4px", fontSize: 38, fontWeight: 900, color: "#f97316", letterSpacing: "-1.5px" }}>
+          <p style={{ margin: "0 0 4px", fontSize: 38, fontWeight: 900, color: claimable > 0 ? "#f97316" : "#8a5a1a", letterSpacing: "-1.5px" }}>
             {loading ? "…" : fmt(claimable > 0 ? claimable : total)}
           </p>
           <p style={{ margin: 0, fontSize: 12, color: "#4a3500" }}>
             {loading ? t("seeker_bonuses.loading_bonus")
               : claimable > 0
                 ? (t("seeker_bonuses.claim_desc") || "Claim it to add it to your wallet.")
-                : (t("seeker_bonuses.credited_desc")
-                    ?.replace("{count}", String(bonus?.count ?? 0))
-                    ?.replace("{plural}", (bonus?.count ?? 0) === 1 ? "" : "es")
-                    || `Credited to your wallet · ${bonus?.count ?? 0} bonuses`)}
+                : (bonus?.count ?? 0) === 0
+                  ? (t("seeker_bonuses.none_yet") || "No bonuses yet.")
+                  : (t("seeker_bonuses.in_wallet") || "Already in your wallet — nothing to claim right now.")}
           </p>
         </div>
         {claimable > 0 ? (
@@ -165,8 +166,10 @@ export default function SeekerBonuses() {
               : `${t("seeker_bonuses.claim") || "Claim"} ${fmt(claimable)}`}
           </button>
         ) : (
-          <a href="/seeker/earnings" className="claim-btn">
-            {t("seeker_bonuses.withdraw")}
+          // Nothing to claim → a quiet link, not an orange CTA that implies action.
+          <a href="/seeker/earnings" className="claim-btn"
+             style={{ background: "transparent", border: "1px solid #3a2a10", color: "#8a5a1a", boxShadow: "none" }}>
+            {t("seeker_bonuses.view_wallet") || "View wallet"}
           </a>
         )}
       </div>
@@ -255,22 +258,33 @@ export default function SeekerBonuses() {
               display: "flex", alignItems: "center", gap: 14, padding: "14px 20px",
               borderTop: i === 0 ? "none" : "1px solid #1a1a1a",
             }}>
-              <div style={{
-                width: 38, height: 38, borderRadius: 10, background: "rgba(34,197,94,0.1)",
-                display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-              }}>
-                <Gift size={17} color="#22c55e" />
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "#e0e0e0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{b.note}</p>
-                <p style={{ margin: "2px 0 0", fontSize: 11, color: "#555" }}>{fmtDate(b.createdAt)}</p>
-              </div>
-              <div style={{ textAlign: "right", flexShrink: 0 }}>
-                <p style={{ margin: 0, fontSize: 14, fontWeight: 800, color: b.status === "SUCCESS" ? "#22c55e" : "#666" }}>+{fmt(b.amountRwf)}</p>
-                {b.status !== "SUCCESS" && (
-                  <p style={{ margin: "2px 0 0", fontSize: 10, color: "#666", textTransform: "uppercase" }}>{b.status === "PENDING" ? (t("seeker_jobs.status_pending") || "PENDING") : b.status}</p>
-                )}
-              </div>
+              {(() => {
+                const claimed = b.status === "SUCCESS";
+                const accent  = claimed ? "#22c55e" : "#f97316";
+                return (
+                  <>
+                    <div style={{
+                      width: 38, height: 38, borderRadius: 10, background: `${accent}1a`,
+                      display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                    }}>
+                      <Gift size={17} color={accent} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "#e0e0e0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{b.note}</p>
+                      <p style={{ margin: "2px 0 0", fontSize: 11, color: "#555" }}>{fmtDate(b.createdAt)}</p>
+                    </div>
+                    <div style={{ textAlign: "right", flexShrink: 0 }}>
+                      <p style={{ margin: 0, fontSize: 14, fontWeight: 800, color: accent }}>+{fmt(b.amountRwf)}</p>
+                      {/* Never leak a raw status code at a user. */}
+                      <p style={{ margin: "2px 0 0", fontSize: 10, color: claimed ? "#3d6b4a" : accent, textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                        {claimed
+                          ? (t("seeker_bonuses.status_claimed") || "Claimed")
+                          : (t("seeker_bonuses.ready_to_claim") || "Ready to claim")}
+                      </p>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           ))
         )}

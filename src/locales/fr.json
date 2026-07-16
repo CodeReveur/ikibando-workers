@@ -1709,7 +1709,12 @@
     "claim": "Réclamer",
     "claim_desc": "Réclamez-le pour l'ajouter à votre portefeuille.",
     "claimed": "Bonus ajouté à votre portefeuille",
-    "claim_failed": "Impossible de réclamer votre bonus. Veuillez réessayer."
+    "claim_failed": "Impossible de réclamer votre bonus. Veuillez réessayer.",
+    "all_claimed": "Tout réclamé",
+    "in_wallet": "Déjà dans votre portefeuille — rien à réclamer pour le moment.",
+    "none_yet": "Aucun bonus pour l'instant.",
+    "view_wallet": "Voir le portefeuille",
+    "status_claimed": "Réclamé"
   },
   "seeker_analytics": {
     "this_week": "Cette semaine",
