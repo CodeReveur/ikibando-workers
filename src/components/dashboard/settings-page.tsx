@@ -20,6 +20,8 @@ import {
   disableTotp,
   submitOnboarding,
   getJobCategories,
+  uploadFile,
+  updatePhoto,
   JobCategoryMeta,
   Address,
 } from "@/lib/api";
@@ -566,6 +568,151 @@ function readWorkerFields() {
       availability?: string[];
     };
   } catch { return null; }
+}
+
+/**
+ * Profile picture: upload a custom one, remove it entirely, or let the badge photo stand in.
+ * The badge itself always keeps its own photo — this only controls what's shown publicly.
+ */
+function ProfilePhotoCard({
+  session,
+}: {
+  session: NonNullable<ReturnType<typeof useSession>>;
+}) {
+  const { t } = useLanguage();
+  const { success, error: toastError } = useToast();
+  const stored = readStoredUser();
+
+  const badgePhoto = (stored.photoUrl as string | undefined) ?? session.photoUrl ?? null;
+  const [customPhoto, setCustomPhoto] = useState<string | null>(
+    (stored.profilePhotoUrl as string | null | undefined) ?? session.profilePhotoUrl ?? null
+  );
+  const [useBadge, setUseBadge] = useState<boolean>(
+    typeof stored.photoOnProfile === "boolean" ? stored.photoOnProfile : (session.photoOnProfile ?? true)
+  );
+  const [busy, setBusy] = useState(false);
+
+  const resolved = customPhoto || (useBadge && badgePhoto ? badgePhoto : null);
+  const initial  = (session.name || "?").trim().charAt(0).toUpperCase();
+
+  const persist = async (next: { profilePhotoUrl?: string | null; usePhotoOnProfile?: boolean }) => {
+    setBusy(true);
+    try {
+      const updated = await updatePhoto({
+        profilePhotoUrl: next.profilePhotoUrl !== undefined ? next.profilePhotoUrl : customPhoto,
+        usePhotoOnProfile: next.usePhotoOnProfile !== undefined ? next.usePhotoOnProfile : useBadge,
+      }, getToken());
+      saveUserLocally(updated);
+      success(t("settings_page.photo.saved") || "Profile picture updated");
+    } catch {
+      toastError(t("settings_page.photo.failed") || "Couldn't update your profile picture");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const onPick = async (file: File) => {
+    setBusy(true);
+    try {
+      const url = await uploadFile(file, getToken());
+      setCustomPhoto(url);
+      await persist({ profilePhotoUrl: url });
+    } catch {
+      toastError(t("settings_page.photo.upload_failed") || "Photo upload failed");
+      setBusy(false);
+    }
+  };
+
+  const onRemove = async () => {
+    setCustomPhoto(null);
+    setUseBadge(false);
+    await persist({ profilePhotoUrl: null, usePhotoOnProfile: false });
+  };
+
+  const onToggleBadge = async () => {
+    const next = !useBadge;
+    setUseBadge(next);
+    await persist({ usePhotoOnProfile: next });
+  };
+
+  return (
+    <div style={card}>
+      <div style={cardHeader}>
+        <User size={14} color="#555" />
+        <p style={cardHeaderLabel}>{t("settings_page.photo.title") || "Profile picture"}</p>
+      </div>
+      <div style={{ ...cardBody, display: "flex", alignItems: "flex-start", gap: 20, flexWrap: "wrap" }}>
+        <div style={{
+          width: 72, height: 72, borderRadius: "50%", overflow: "hidden", flexShrink: 0,
+          background: "rgba(249,115,22,0.12)", border: "2px solid #222",
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>
+          {resolved ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={resolved} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          ) : (
+            <span style={{ fontSize: 26, fontWeight: 800, color: "#f97316" }}>{initial}</span>
+          )}
+        </div>
+
+        <div style={{ flex: 1, minWidth: 220 }}>
+          <p style={{ margin: "0 0 12px", fontSize: 12, color: "#666", lineHeight: 1.6 }}>
+            {resolved
+              ? (t("settings_page.photo.shown_desc") || "This picture is shown to employers on your public profile.")
+              : (t("settings_page.photo.initials_desc") || "No picture — employers will see your initials instead.")}
+          </p>
+
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: badgePhoto ? 14 : 0 }}>
+            <label style={{ ...primaryBtn, fontSize: 12, padding: "8px 16px", cursor: busy ? "not-allowed" : "pointer", opacity: busy ? 0.6 : 1 }}>
+              {busy
+                ? (t("common.buttons.processing") || "Working…")
+                : customPhoto
+                  ? (t("settings_page.photo.change_btn") || "Change photo")
+                  : (t("settings_page.photo.upload_btn") || "Upload photo")}
+              <input
+                type="file"
+                accept="image/*"
+                disabled={busy}
+                style={{ display: "none" }}
+                onChange={e => { const f = e.target.files?.[0]; if (f) onPick(f); e.target.value = ""; }}
+              />
+            </label>
+            {resolved && (
+              <button onClick={onRemove} disabled={busy} style={{ ...ghostBtn, fontSize: 12, padding: "8px 16px", opacity: busy ? 0.6 : 1 }}>
+                {t("settings_page.photo.remove_btn") || "Remove"}
+              </button>
+            )}
+          </div>
+
+          {/* Only meaningful once a badge photo exists. */}
+          {badgePhoto && (
+            <button
+              onClick={onToggleBadge}
+              disabled={busy || !!customPhoto}
+              title={customPhoto ? (t("settings_page.photo.custom_overrides") || "Your uploaded photo is used instead. Remove it to use the badge photo.") : undefined}
+              style={{
+                display: "flex", alignItems: "center", gap: 10, background: "none", border: "none",
+                padding: 0, cursor: busy || customPhoto ? "not-allowed" : "pointer",
+                fontFamily: "inherit", textAlign: "left", opacity: customPhoto ? 0.5 : 1,
+              }}
+            >
+              {useBadge && !customPhoto
+                ? <ToggleRight size={26} color="#f97316" />
+                : <ToggleLeft size={26} color="#444" />}
+              <span>
+                <span style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#ccc" }}>
+                  {t("settings_page.photo.use_badge_label") || "Use my badge photo as profile picture"}
+                </span>
+                <span style={{ display: "block", fontSize: 11, color: "#555", marginTop: 2 }}>
+                  {t("settings_page.photo.use_badge_hint") || "Your badge keeps its photo either way."}
+                </span>
+              </span>
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function WorkerProfileSection({
@@ -1549,6 +1696,9 @@ function AccountTab({
           ))}
         </div>
       </div>
+
+      {/* Profile picture */}
+      <ProfilePhotoCard session={session} />
 
       {/* Worker Badge card */}
       {isWorker && session.badgeId && session.badgeUrl && (

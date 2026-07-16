@@ -1220,7 +1220,9 @@
       "photo_label": "Photo d'identité / Selfie",
       "national_id_label": "Numéro d'identité nationale",
       "legal_name_label": "Nom légal (nom enregistré)",
-      "address_label": "Adresse enregistrée"
+      "address_label": "Adresse enregistrée",
+      "photo_on_profile_label": "Utiliser cette photo comme photo de profil",
+      "photo_on_profile_hint": "Les employeurs la verront sur votre profil public. Elle reste sur votre badge dans tous les cas, et vous pourrez changer cela plus tard dans les Paramètres."
     },
     "toasts": {
       "photo_success": "Photo téléchargée avec succès",
@@ -1370,6 +1372,20 @@
       "title": "Paiements",
       "default_auto_release": "Versement automatique par défaut pour les nouveaux emplois",
       "default_auto_release_desc": "Si activé, les nouveaux emplois versent le paiement d'un travailleur 2 heures après sa demande, sauf refus. Vous pouvez toujours le modifier par emploi."
+    },
+    "photo": {
+      "title": "Photo de profil",
+      "shown_desc": "Cette photo est visible par les employeurs sur votre profil public.",
+      "initials_desc": "Aucune photo — les employeurs verront vos initiales.",
+      "upload_btn": "Ajouter une photo",
+      "change_btn": "Changer la photo",
+      "remove_btn": "Supprimer",
+      "use_badge_label": "Utiliser la photo de mon badge comme photo de profil",
+      "use_badge_hint": "Votre badge conserve sa photo dans tous les cas.",
+      "custom_overrides": "Votre photo importée est utilisée à la place. Supprimez-la pour utiliser celle du badge.",
+      "saved": "Photo de profil mise à jour",
+      "failed": "Impossible de mettre à jour votre photo de profil",
+      "upload_failed": "Échec de l'envoi de la photo"
     }
   },
   "dashboard_home": {

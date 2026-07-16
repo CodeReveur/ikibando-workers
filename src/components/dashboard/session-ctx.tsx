@@ -13,7 +13,14 @@ export interface Session {
   createdAt?: string;
   badgeId?: string;
   badgeUrl?: string;
+  /** Badge photo (the badge's own picture). */
   photoUrl?: string;
+  /** Custom profile picture the user uploaded, if any. */
+  profilePhotoUrl?: string | null;
+  /** Whether the badge photo may be shown as the profile picture. */
+  photoOnProfile?: boolean;
+  /** Resolved picture shown publicly — custom, else badge photo if consented, else null. */
+  profilePhoto?: string | null;
   accountStatus?: string;
   profileCompletion?: number;
   approvalEligible?: boolean;

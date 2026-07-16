@@ -1220,7 +1220,9 @@
       "photo_label": "Picha ya Pasipoti / Selfie",
       "national_id_label": "Nambari ya Kitambulisho cha Taifa",
       "legal_name_label": "Jina la Kisheria (Jina lililosajiliwa)",
-      "address_label": "Anwani Iliyosajiliwa"
+      "address_label": "Anwani Iliyosajiliwa",
+      "photo_on_profile_label": "Tumia picha hii kama picha yangu ya wasifu",
+      "photo_on_profile_hint": "Waajiri wataiona kwenye wasifu wako wa umma. Itabaki kwenye beji yako vyovyote vile, na unaweza kubadilisha hili baadaye katika Mipangilio."
     },
     "toasts": {
       "photo_success": "Picha imepakiwa kwa mafanikio",
@@ -1370,6 +1372,20 @@
       "title": "Malipo",
       "default_auto_release": "Utoaji wa moja kwa moja chaguo-msingi kwa kazi mpya",
       "default_auto_release_desc": "Ikiwashwa, kazi mpya hutoa malipo ya mfanyakazi saa 2 baada ya kuomba isipokuwa ukikataa. Bado unaweza kubadilisha kwa kila kazi."
+    },
+    "photo": {
+      "title": "Picha ya wasifu",
+      "shown_desc": "Picha hii inaonyeshwa kwa waajiri kwenye wasifu wako wa umma.",
+      "initials_desc": "Hakuna picha — waajiri wataona herufi zako za mwanzo.",
+      "upload_btn": "Pakia picha",
+      "change_btn": "Badilisha picha",
+      "remove_btn": "Ondoa",
+      "use_badge_label": "Tumia picha ya beji yangu kama picha ya wasifu",
+      "use_badge_hint": "Beji yako inabaki na picha yake vyovyote vile.",
+      "custom_overrides": "Picha uliyopakia inatumika badala yake. Iondoe ili utumie picha ya beji.",
+      "saved": "Picha ya wasifu imesasishwa",
+      "failed": "Imeshindwa kusasisha picha yako ya wasifu",
+      "upload_failed": "Kupakia picha kumeshindikana"
     }
   },
   "dashboard_home": {

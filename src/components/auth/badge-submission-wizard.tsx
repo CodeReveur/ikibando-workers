@@ -24,6 +24,8 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
   // Identity fields
   const [photoUrl, setPhotoUrl] = useState("");
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  // Defaults to accepted — the badge photo doubles as the profile picture unless declined.
+  const [usePhotoOnProfile, setUsePhotoOnProfile] = useState(true);
   const [nationalId, setNationalId] = useState("");
   const [legalName, setLegalName] = useState(authResult.user.name || "");
 
@@ -67,6 +69,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
       photoUrl,
       nationalId,
       legalName,
+      usePhotoOnProfile,
       // Server reuses the profile address; we send it too for completeness.
       address: savedAddress ?? undefined,
     };
@@ -164,6 +167,27 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
                     )}
                   </div>
                 </div>
+
+                {/* Consent for this photo to double as the public profile picture. */}
+                {photoUrl && (
+                  <label className="flex items-start gap-2.5 mt-3 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={usePhotoOnProfile}
+                      onChange={(e) => setUsePhotoOnProfile(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 accent-[#f97316] cursor-pointer shrink-0"
+                    />
+                    <span>
+                      <span className="block text-xs font-semibold text-gray-200">
+                        {t("badge_wizard.fields.photo_on_profile_label") || "Use this photo as my profile picture"}
+                      </span>
+                      <span className="block text-[11px] text-gray-500 mt-0.5 leading-relaxed">
+                        {t("badge_wizard.fields.photo_on_profile_hint")
+                          || "Employers will see it on your public profile. It stays on your badge either way, and you can change this later in Settings."}
+                      </span>
+                    </span>
+                  </label>
+                )}
               </div>
 
               <div>

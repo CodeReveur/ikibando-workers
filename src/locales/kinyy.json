@@ -1221,7 +1221,9 @@
       "photo_label": "Ifoto ya Pasiporo / Selfie",
       "national_id_label": "Nimero y'indangamuntu y'igihugu",
       "legal_name_label": "Izina ry'amategeko (Izina ryiyandikishije)",
-      "address_label": "Aho utuye handitswe"
+      "address_label": "Aho utuye handitswe",
+      "photo_on_profile_label": "Koresha iyi foto nk'ifoto ya profile yanjye",
+      "photo_on_profile_hint": "Abakoresha bazayibona kuri profile yawe rusange. Isigara ku ikarita yawe uko byagenda kose, kandi ushobora guhindura ibi nyuma muri Igenamiterere."
     },
     "toasts": {
       "photo_success": "Ifoto yashyizweho neza",
@@ -1371,6 +1373,20 @@
       "title": "Ubwishyu",
       "default_auto_release": "Kwishyura ako kanya ku mirimo mishya",
       "default_auto_release_desc": "Iyo bikora, imirimo mishya yishyura umukozi nyuma y'amasaha 2 amaze gusaba keretse wanze. Ushobora guhindura kuri buri murimo."
+    },
+    "photo": {
+      "title": "Ifoto ya profile",
+      "shown_desc": "Iyi foto igaragarira abakoresha kuri profile yawe rusange.",
+      "initials_desc": "Nta foto — abakoresha bazabona inyuguti z'amazina yawe.",
+      "upload_btn": "Shyiraho ifoto",
+      "change_btn": "Hindura ifoto",
+      "remove_btn": "Kuraho",
+      "use_badge_label": "Koresha ifoto y'ikarita yanjye nk'ifoto ya profile",
+      "use_badge_hint": "Ikarita yawe isigarana ifoto yayo uko byagenda kose.",
+      "custom_overrides": "Ifoto washyizeho ni yo ikoreshwa. Yikureho kugira ngo ukoreshe iy'ikarita.",
+      "saved": "Ifoto ya profile yavuguruwe",
+      "failed": "Ntibyashobotse kuvugurura ifoto ya profile",
+      "upload_failed": "Gushyiraho ifoto byanze"
     }
   },
   "dashboard_home": {

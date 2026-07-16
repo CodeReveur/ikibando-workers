@@ -1221,7 +1221,9 @@
       "photo_label": "Passport Photo / Selfie",
       "national_id_label": "National ID Number",
       "legal_name_label": "Legal Name (Registered Name)",
-      "address_label": "Registered Address"
+      "address_label": "Registered Address",
+      "photo_on_profile_label": "Use this photo as my profile picture",
+      "photo_on_profile_hint": "Employers will see it on your public profile. It stays on your badge either way, and you can change this later in Settings."
     },
     "toasts": {
       "photo_success": "Photo uploaded successfully",
@@ -1371,6 +1373,20 @@
       "title": "Payments",
       "default_auto_release": "Default auto-release for new jobs",
       "default_auto_release_desc": "When on, new jobs auto-release a worker's payment 2 hours after they request it unless you decline. You can still change this per job."
+    },
+    "photo": {
+      "title": "Profile picture",
+      "shown_desc": "This picture is shown to employers on your public profile.",
+      "initials_desc": "No picture — employers will see your initials instead.",
+      "upload_btn": "Upload photo",
+      "change_btn": "Change photo",
+      "remove_btn": "Remove",
+      "use_badge_label": "Use my badge photo as profile picture",
+      "use_badge_hint": "Your badge keeps its photo either way.",
+      "custom_overrides": "Your uploaded photo is used instead. Remove it to use the badge photo.",
+      "saved": "Profile picture updated",
+      "failed": "Couldn't update your profile picture",
+      "upload_failed": "Photo upload failed"
     }
   },
   "dashboard_home": {

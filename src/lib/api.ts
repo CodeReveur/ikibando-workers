@@ -106,7 +106,14 @@ export interface AuthResult {
     equipment?: any;
     availability?: any;
     badgeSubmitted?: boolean;
+    /** Badge photo (the badge's own picture). */
     photoUrl?: string;
+    /** Custom profile picture the user uploaded, if any. */
+    profilePhotoUrl?: string | null;
+    /** Whether the badge photo may be shown as the profile picture. */
+    photoOnProfile?: boolean;
+    /** Resolved picture shown publicly — custom, else badge photo if consented, else null. */
+    profilePhoto?: string | null;
     nationalId?: string;
     legalName?: string;
     badgeId?: string;
@@ -305,6 +312,23 @@ export interface BadgeSubmissionData {
   nationalId?: string;
   legalName?: string;
   address?: any;
+  /** Allow the badge photo to also be the public profile picture. Defaults to accepted. */
+  usePhotoOnProfile?: boolean;
+}
+
+export interface UpdatePhotoData {
+  /** Custom profile picture, or null to remove it. */
+  profilePhotoUrl?: string | null;
+  /** Whether the badge photo may be shown as the profile picture. */
+  usePhotoOnProfile?: boolean;
+}
+
+/** Set/clear a custom profile picture and accept/deny the badge photo on the profile. */
+export async function updatePhoto(data: UpdatePhotoData, token: string): Promise<any> {
+  const { data: res } = await http.put("/api/users/me/photo", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
 }
 
 export async function submitBadge(data: BadgeSubmissionData, token: string): Promise<any> {
