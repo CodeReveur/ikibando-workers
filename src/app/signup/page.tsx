@@ -5,7 +5,7 @@ import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowLeft } from "lucide-react";
 import { AuthCarousel } from "@/components/auth/auth-carousel";
 import { saveRedirect } from "@/lib/auth-redirect";
 import { useGoogleLogin } from "@react-oauth/google";
-import { loginWithGoogle, loginWithFacebook, registerWithEmail, apiError, apiErrorCode } from "@/lib/api";
+import { signupWithGoogle, registerWithEmail, apiError, apiErrorCode } from "@/lib/api";
 import { getAndClearRedirect } from "@/lib/auth-redirect";
 import { RegistrationWizard } from "@/components/auth/registration-wizard";
 import { useToast } from "@/components/ui/toast";
@@ -128,7 +128,7 @@ export default function SignUpPage() {
     onSuccess: async ({ access_token }) => {
       setLoading("google");
       try {
-        const result = await loginWithGoogle(access_token);
+        const result = await signupWithGoogle(access_token);
         if (!result.user.onboardingCompleted) {
           setAuthResult(result);
           setShowRoleSelect(true);
@@ -137,15 +137,21 @@ export default function SignUpPage() {
           saveAndRedirect(result);
         }
       } catch (e: unknown) {
-        // e.g. the email already has an email & password account — say so, don't just fail.
-        const isPasswordAccount = apiErrorCode(e) === "USE_PASSWORD_LOGIN";
-        const msg = isPasswordAccount
-          ? (t("signin.toasts.use_password_desc")
-              || "This email is registered with an email & password account. Please sign in with your email and password instead.")
-          : apiError(e, t("signup.toasts.google_fail_desc"));
+        // Signing up with an identity that already has an account, or with an email that's
+        // registered with a password — say which, and offer the sign-in route.
+        const code = apiErrorCode(e);
+        const sendToSignIn = code === "ACCOUNT_EXISTS" || code === "USE_PASSWORD_LOGIN";
+        const msg =
+          code === "ACCOUNT_EXISTS"
+            ? (t("signup.toasts.account_exists_desc")
+                || "You already have an account with this Google account. Please sign in instead.")
+            : code === "USE_PASSWORD_LOGIN"
+              ? (t("signin.toasts.use_password_desc")
+                  || "This email is registered with an email & password account. Please sign in with your email and password instead.")
+              : apiError(e, t("signup.toasts.google_fail_desc"));
         toastError(msg, {
           title: t("signup.toasts.signup_failed_title"),
-          action: isPasswordAccount ? { label: t("common.nav.signin") || "Sign in", href: "/signin" } : undefined,
+          action: sendToSignIn ? { label: t("common.nav.signin") || "Sign in", href: "/signin" } : undefined,
         });
       } finally {
         setLoading(null);
@@ -169,7 +175,7 @@ export default function SignUpPage() {
       (res) => {
         if (!res.authResponse?.accessToken) return;
         setLoading("facebook");
-        loginWithFacebook(res.authResponse.accessToken)
+        signupWithFacebook(res.authResponse.accessToken)   // import it when re-enabling
           .then((result) => {
             if (!result.user.onboardingCompleted) {
               setAuthResult(result);

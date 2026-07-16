@@ -472,7 +472,8 @@
       "use_google_desc": "Ce compte se connecte avec Google, pas avec un mot de passe. Veuillez continuer avec Google.",
       "use_facebook_desc": "Ce compte se connecte avec Facebook, pas avec un mot de passe. Veuillez continuer avec Facebook.",
       "use_password_desc": "Cet e-mail est enregistré avec un compte e-mail et mot de passe. Veuillez vous connecter avec votre mot de passe.",
-      "no_password_desc": "Ce compte n'a pas encore de mot de passe. Utilisez « Mot de passe oublié » pour en créer un."
+      "no_password_desc": "Ce compte n'a pas encore de mot de passe. Utilisez « Mot de passe oublié » pour en créer un.",
+      "no_account_desc": "Aucun compte trouvé pour ce compte Google. Veuillez d'abord vous inscrire."
     }
   },
   "signup": {
@@ -524,7 +525,8 @@
       "fb_not_avail_desc": "La connexion Facebook n'est pas disponible (ID d'application non configuré).",
       "fb_fail_desc": "Échec de l'inscription Facebook. Veuillez réessayer.",
       "validation_error_desc": "Veuillez remplir correctement tous les champs obligatoires.",
-      "fail_generic_desc": "L'inscription a échoué. Veuillez réessayer."
+      "fail_generic_desc": "L'inscription a échoué. Veuillez réessayer.",
+      "account_exists_desc": "Vous avez déjà un compte avec ce compte Google. Veuillez vous connecter."
     }
   },
   "auth_carousel": {

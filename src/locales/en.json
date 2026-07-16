@@ -473,7 +473,8 @@
       "use_google_desc": "This account signs in with Google, not a password. Please continue with Google.",
       "use_facebook_desc": "This account signs in with Facebook, not a password. Please continue with Facebook.",
       "use_password_desc": "This email is registered with an email & password account. Please sign in with your email and password instead.",
-      "no_password_desc": "This account doesn't have a password yet. Use 'Forgot password' to create one."
+      "no_password_desc": "This account doesn't have a password yet. Use 'Forgot password' to create one.",
+      "no_account_desc": "No account found for this Google account. Please sign up first."
     }
   },
   "signup": {
@@ -525,7 +526,8 @@
       "fb_not_avail_desc": "Facebook sign-in is not available (App ID not configured).",
       "fb_fail_desc": "Facebook sign-up failed. Please try again.",
       "validation_error_desc": "Please fill in all required fields correctly.",
-      "fail_generic_desc": "Registration failed. Please try again."
+      "fail_generic_desc": "Registration failed. Please try again.",
+      "account_exists_desc": "You already have an account with this Google account. Please sign in instead."
     }
   },
   "auth_carousel": {

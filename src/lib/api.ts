@@ -177,24 +177,44 @@ export async function authenticate2fa(tempToken: string, code: string): Promise<
   return data.data;
 }
 
-export async function loginWithGoogle(
+/** Sign in to an EXISTING account. Never creates one — an unknown identity is rejected. */
+export async function loginWithGoogle(accessToken: string): Promise<AuthResult> {
+  const { data } = await http.post("/api/auth/oauth/google", {
+    token: accessToken,
+    intent: "LOGIN",
+  });
+  return data.data;
+}
+
+/** Create a NEW account. Rejected if this Google identity already has one. */
+export async function signupWithGoogle(
   accessToken: string,
   role?: "WORKER" | "EMPLOYER"
 ): Promise<AuthResult> {
   const { data } = await http.post("/api/auth/oauth/google", {
     token: accessToken,
     role: role ?? null,
+    intent: "SIGNUP",
   });
   return data.data;
 }
 
-export async function loginWithFacebook(
+export async function loginWithFacebook(accessToken: string): Promise<AuthResult> {
+  const { data } = await http.post("/api/auth/oauth/facebook", {
+    token: accessToken,
+    intent: "LOGIN",
+  });
+  return data.data;
+}
+
+export async function signupWithFacebook(
   accessToken: string,
   role?: "WORKER" | "EMPLOYER"
 ): Promise<AuthResult> {
   const { data } = await http.post("/api/auth/oauth/facebook", {
     token: accessToken,
     role: role ?? null,
+    intent: "SIGNUP",
   });
   return data.data;
 }

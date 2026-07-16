@@ -472,7 +472,8 @@
       "use_google_desc": "Iyi konti yinjira ukoresheje Google, atari ijambobanga. Nyamuneka komeza na Google.",
       "use_facebook_desc": "Iyi konti yinjira ukoresheje Facebook, atari ijambobanga. Nyamuneka komeza na Facebook.",
       "use_password_desc": "Iyi imeyili yanditswe kuri konti ikoresha imeyili n'ijambobanga. Nyamuneka injira ukoresheje ijambobanga ryawe.",
-      "no_password_desc": "Iyi konti ntiragira ijambobanga. Koresha 'Wibagiwe ijambobanga' kugira ngo urishyireho."
+      "no_password_desc": "Iyi konti ntiragira ijambobanga. Koresha 'Wibagiwe ijambobanga' kugira ngo urishyireho.",
+      "no_account_desc": "Nta konti iboneka kuri iyi konti ya Google. Nyamuneka banza wiyandikishe."
     }
   },
   "signup": {
@@ -524,7 +525,8 @@
       "fb_not_avail_desc": "Kwinjira na Facebook ntibikunze (App ID ntabwo yateguwe).",
       "fb_fail_desc": "Kwiyandikisha na Facebook byanze. Ongera ugerageze.",
       "validation_error_desc": "Nyamuneka wuzuze neza ahabugenewe hose.",
-      "fail_generic_desc": "Kwiyandikisha byanze. Ongera ugerageze."
+      "fail_generic_desc": "Kwiyandikisha byanze. Ongera ugerageze.",
+      "account_exists_desc": "Usanzwe ufite konti ikoresha iyi konti ya Google. Nyamuneka injira."
     }
   },
   "auth_carousel": {

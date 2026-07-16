@@ -472,7 +472,8 @@
       "use_google_desc": "Akaunti hii inaingia kwa Google, si kwa nenosiri. Tafadhali endelea na Google.",
       "use_facebook_desc": "Akaunti hii inaingia kwa Facebook, si kwa nenosiri. Tafadhali endelea na Facebook.",
       "use_password_desc": "Barua pepe hii imesajiliwa kwa akaunti ya barua pepe na nenosiri. Tafadhali ingia kwa nenosiri lako.",
-      "no_password_desc": "Akaunti hii bado haina nenosiri. Tumia 'Umesahau nenosiri' kuunda moja."
+      "no_password_desc": "Akaunti hii bado haina nenosiri. Tumia 'Umesahau nenosiri' kuunda moja.",
+      "no_account_desc": "Hakuna akaunti iliyopatikana kwa akaunti hii ya Google. Tafadhali jisajili kwanza."
     }
   },
   "signup": {
@@ -524,7 +525,8 @@
       "fb_not_avail_desc": "Kuingia na Facebook hakupatikani (Kitambulisho cha Programu hakijasanidiwa).",
       "fb_fail_desc": "Kujisajili na Facebook kumeshindwa. Tafadhali jaribu tena.",
       "validation_error_desc": "Tafadhali jaza sehemu zote zinazohitajika kwa usahihi.",
-      "fail_generic_desc": "Usajili umeshindwa. Tafadhali jaribu tena."
+      "fail_generic_desc": "Usajili umeshindwa. Tafadhali jaribu tena.",
+      "account_exists_desc": "Tayari una akaunti na akaunti hii ya Google. Tafadhali ingia badala yake."
     }
   },
   "auth_carousel": {

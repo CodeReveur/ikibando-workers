@@ -101,6 +101,11 @@ export default function SignInPage() {
           msg: t("signin.toasts.no_password_desc") || "This account doesn't have a password yet. Use 'Forgot password' to create one.",
           action: { label: t("signin.toasts.set_password_label"), href: "/forgot-password" },
         };
+      case "NO_ACCOUNT_FOUND":
+        return {
+          msg: t("signin.toasts.no_account_desc") || "No account found for this Google account. Please sign up first.",
+          action: { label: t("common.nav.signup") || "Sign up", href: "/signup" },
+        };
       default:
         return { msg: apiError(e, fallback), action: undefined };
     }
