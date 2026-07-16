@@ -142,7 +142,10 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
   // Personal
   const [dob, setDob] = useState("");
   const [education, setEducation] = useState("");
-  const [experience, setExperience] = useState("");
+  // A worker can practise several fields — multiple categories may be selected.
+  const [experiences, setExperiences] = useState<string[]>([]);
+  const toggleExperience = (slug: string) =>
+    setExperiences(prev => prev.includes(slug) ? prev.filter(s => s !== slug) : [...prev, slug]);
 
   // Location + Availability
   const [address, setAddress] = useState<Address | null>(null);
@@ -170,7 +173,8 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
         const d = JSON.parse(raw);
         if (d.dob)          setDob(d.dob);
         if (d.education)    setEducation(d.education);
-        if (d.experience)   setExperience(d.experience);
+        if (Array.isArray(d.experiences)) setExperiences(d.experiences);
+        else if (d.experience) setExperiences([d.experience]);
         if (d.address)      setAddress(d.address);
         if (d.availability) setAvailability(d.availability);
         if (d.equipment)    setEquipment(d.equipment);
@@ -190,11 +194,11 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     if (!restoredRef.current) return;
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify({
-        dob, education, experience, address, availability, equipment,
+        dob, education, experiences, address, availability, equipment,
         accountType, memberEmails, tin, selectedRole, step,
       }));
     } catch {}
-  }, [dob, education, experience, address, availability, equipment, accountType, memberEmails, tin, selectedRole, step]);
+  }, [dob, education, experiences, address, availability, equipment, accountType, memberEmails, tin, selectedRole, step]);
 
   // Calculate initial step and state
   useEffect(() => {
@@ -204,7 +208,8 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
       // Populate fields if they exist
       if (u.dob) setDob(u.dob);
       if (u.educationLevel) setEducation(u.educationLevel);
-      if (u.experienceType) setExperience(u.experienceType);
+      if (u.experienceTypes && u.experienceTypes.length > 0) setExperiences(u.experienceTypes);
+      else if (u.experienceType) setExperiences([u.experienceType]);
 
       if (u.location && typeof u.location === "object" && (u.location as Address).country) {
         setAddress(u.location as Address);
@@ -365,7 +370,8 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
       role: showRoleSelect ? selectedRole : undefined,
       dob,
       educationLevel: education,
-      experienceType: experience,
+      experienceType: experiences[0] ?? "",
+      experienceTypes: experiences,
       accountType,
       tin: tin.trim() ? tin.trim() : undefined,
       teamMembers: !isEmployer && isGroup ? memberEmails : [],
@@ -618,9 +624,9 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                     .map((opt) => (
                     <button
                       key={opt.slug}
-                      onClick={() => setExperience(opt.slug)}
+                      onClick={() => setExperiences([opt.slug])}
                       className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all text-left ${
-                        experience === opt.slug
+                        experiences[0] === opt.slug
                           ? "bg-[#f97316]/20 border-[#f97316] text-[#f97316]"
                           : "bg-[#1a1a1a] border-[#2a2a2a] text-gray-400 hover:border-gray-500"
                       }`}
@@ -653,7 +659,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
 
               <button
                 onClick={handleSubmit}
-                disabled={loading || !isAddressComplete(address) || !experience}
+                disabled={loading || !isAddressComplete(address) || experiences.length === 0}
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
                 {loading && <Loader2 size={15} className="animate-spin" />}
@@ -703,10 +709,13 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
               </div>
               )}
 
-              {/* Experience */}
+              {/* Experience — pick all the fields you work in */}
               <div>
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
                   {t("onboarding.personal.category_label")}
+                  <span className="ml-1 text-gray-600 normal-case font-normal">
+                    {t("onboarding.personal.category_multi_hint") || "— select all that apply"}
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -724,9 +733,9 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                     .map((opt) => (
                     <button
                       key={opt.slug}
-                      onClick={() => setExperience(opt.slug)}
+                      onClick={() => toggleExperience(opt.slug)}
                       className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all text-left ${
-                        experience === opt.slug
+                        experiences.includes(opt.slug)
                           ? "bg-[#f97316]/20 border-[#f97316] text-[#f97316]"
                           : "bg-[#1a1a1a] border-[#2a2a2a] text-gray-400 hover:border-gray-500"
                       }`}
@@ -739,11 +748,16 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                     <span className="text-xs text-gray-500">{t("onboarding.personal.loading_categories")}</span>
                   )}
                 </div>
+                {experiences.length > 0 && (
+                  <p className="text-[11px] text-gray-500 mt-2">
+                    {experiences.length} {t("onboarding.personal.category_selected") || "selected"}
+                  </p>
+                )}
               </div>
 
               <button
                 onClick={handlePersonalSubmit}
-                disabled={!dob || (accountType !== "COMPANY" && !education) || !experience}
+                disabled={!dob || (accountType !== "COMPANY" && !education) || experiences.length === 0}
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors mt-2"
               >
                 {t("common.buttons.continue") || "Continue"}

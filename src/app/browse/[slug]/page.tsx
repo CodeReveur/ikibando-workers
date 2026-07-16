@@ -82,12 +82,17 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
         <div className="hero-row" style={{ display: "flex", flexDirection: "column", gap: 20, marginBottom: 28 }}>
           <div style={{ flexShrink: 0 }}>
             <div style={{
-              width: 80, height: 80, borderRadius: 999,
+              width: 80, height: 80, borderRadius: 999, overflow: "hidden",
               background: "rgba(249,115,22,0.12)", border: "2px solid rgba(249,115,22,0.25)",
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 32, fontWeight: 900, color: "#f97316",
             }}>
-              {worker.name[0]?.toUpperCase()}
+              {worker.photoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={worker.photoUrl} alt={worker.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                worker.name[0]?.toUpperCase()
+              )}
             </div>
           </div>
 
@@ -250,12 +255,17 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             {/* Mini avatar */}
             <div style={{
-              width: 36, height: 36, borderRadius: 999, flexShrink: 0,
+              width: 36, height: 36, borderRadius: 999, flexShrink: 0, overflow: "hidden",
               background: "rgba(249,115,22,0.12)", border: "1.5px solid rgba(249,115,22,0.25)",
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 14, fontWeight: 900, color: "#f97316",
             }}>
-              {worker.name[0]?.toUpperCase()}
+              {worker.photoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={worker.photoUrl} alt={worker.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                worker.name[0]?.toUpperCase()
+              )}
             </div>
             <div>
               <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#e0e0e0", letterSpacing: "-0.2px" }}>

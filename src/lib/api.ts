@@ -98,6 +98,7 @@ export interface AuthResult {
     dob?: string;
     educationLevel?: string;
     experienceType?: string;
+    experienceTypes?: string[];
     accountType?: string;
     tin?: string | null;
     teamMembers?: string[] | null;
@@ -212,7 +213,10 @@ export interface OnboardingData {
   role?: string;
   dob: string;
   educationLevel: string;
+  /** Primary/legacy single category slug. */
   experienceType: string;
+  /** All selected category slugs — a worker may practise several fields. */
+  experienceTypes?: string[];
   /** Account identifier. Team/Company/Crew may carry members + TIN. */
   accountType?: AccountType;
   tin?: string;
@@ -521,8 +525,12 @@ export interface JobDto {
 export interface WorkerProfileDto {
   id: string;
   name: string;
+  /** Badge photo; null → the UI shows initials. */
+  photoUrl: string | null;
   experienceType: string | null;
+  experienceTypes: string[] | null;
   categoryName: string | null;
+  categoryNames: string[] | null;
   educationLevel: string | null;
   /** Plain locality (e.g. "Kicukiro") — used for filtering/proximity. */
   district: string | null;
@@ -948,6 +956,26 @@ export async function verifyBadge(badgeId: string): Promise<BadgeVerification> {
 
 export async function getWorker(id: string): Promise<WorkerProfileDto> {
   const { data } = await http.get(`/api/workers/${id}`);
+  return data.data;
+}
+
+// ── Newsletter & feature announcements ─────────────────────────────────────────
+export interface FeatureAnnouncement {
+  id: string;
+  title: string;
+  description: string | null;
+  url: string | null;
+  createdAt: string;
+}
+
+/** Public footer newsletter signup. */
+export async function subscribeNewsletter(email: string, name?: string): Promise<void> {
+  await http.post("/api/newsletter/subscribe", { email, name });
+}
+
+/** Public "what's new" feed of feature announcements (newest first). */
+export async function getAnnouncements(): Promise<FeatureAnnouncement[]> {
+  const { data } = await http.get("/api/announcements");
   return data.data;
 }
 

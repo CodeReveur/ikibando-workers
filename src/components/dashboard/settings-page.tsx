@@ -560,7 +560,7 @@ function readWorkerFields() {
     const raw = localStorage.getItem("user");
     if (!raw) return null;
     return JSON.parse(raw) as {
-      dob?: string; educationLevel?: string; experienceType?: string;
+      dob?: string; educationLevel?: string; experienceType?: string; experienceTypes?: string[];
       location?: { lat?: number; lng?: number; address?: string };
       equipment?: { name: string; available: boolean }[];
       availability?: string[];
@@ -579,7 +579,14 @@ function WorkerProfileSection({
 
   const [dob,          setDob]          = useState(stored?.dob ?? "");
   const [education,    setEducation]    = useState(stored?.educationLevel ?? "");
-  const [experience,   setExperience]   = useState(stored?.experienceType ?? "");
+  // A worker can practise several fields — multiple categories may be selected.
+  const [experiences,  setExperiences]  = useState<string[]>(
+    stored?.experienceTypes && stored.experienceTypes.length > 0
+      ? stored.experienceTypes
+      : (stored?.experienceType ? [stored.experienceType] : [])
+  );
+  const toggleExperience = (slug: string) =>
+    setExperiences(prev => prev.includes(slug) ? prev.filter(s => s !== slug) : [...prev, slug]);
   const [categories,   setCategories]   = useState<JobCategoryMeta[]>([]);
   const [catSearch,    setCatSearch]    = useState("");
   const [address,      setAddress]      = useState<Address | null>(
@@ -621,7 +628,7 @@ function WorkerProfileSection({
   const handleSave = async () => {
     if (!dob)         { toastError("Date of birth is required"); return; }
     if (!education)   { toastError("Education level is required"); return; }
-    if (!experience)  { toastError("Work category is required"); return; }
+    if (experiences.length === 0)  { toastError("Select at least one work category"); return; }
     if (!isAddressComplete(address)) { toastError("Complete your location"); return; }
     if (availability.length === 0) { toastError("Select at least one available day"); return; }
 
@@ -638,7 +645,8 @@ function WorkerProfileSection({
       const payload = {
         dob,
         educationLevel: education,
-        experienceType: experience,
+        experienceType: experiences[0] ?? "",
+        experienceTypes: experiences,
         location: address ?? { country: "Rwanda" },
         equipment: equipment.map(name => ({ name, available: true })),
         availability: availability.map(d => FULL_DAYS[d]),
@@ -723,12 +731,12 @@ function WorkerProfileSection({
                 .map(c => (
                   <button
                     key={c.slug}
-                    onClick={() => setExperience(c.slug)}
+                    onClick={() => toggleExperience(c.slug)}
                     style={{
                       padding: "7px 13px", fontSize: 12, fontWeight: 600, borderRadius: 8,
-                      border: `1px solid ${experience === c.slug ? "#f97316" : "#222"}`,
-                      background: experience === c.slug ? "rgba(249,115,22,0.12)" : "#141414",
-                      color: experience === c.slug ? "#f97316" : "#666",
+                      border: `1px solid ${experiences.includes(c.slug) ? "#f97316" : "#222"}`,
+                      background: experiences.includes(c.slug) ? "rgba(249,115,22,0.12)" : "#141414",
+                      color: experiences.includes(c.slug) ? "#f97316" : "#666",
                       cursor: "pointer", fontFamily: "inherit", transition: "all 0.12s",
                       textAlign: "left" as const,
                     }}

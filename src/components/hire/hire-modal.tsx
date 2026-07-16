@@ -876,7 +876,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                       {selected.map(w => (
                         <div key={w.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "4px 0" }}>
-                          <Avatar name={w.name} />
+                          <Avatar name={w.name} photoUrl={w.photoUrl} />
                           <div>
                             <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
                             <p style={{ margin: "2px 0 0", fontSize: 11, color: "#555", display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
@@ -1040,7 +1040,7 @@ function WorkerRow({ w, isSel, nearby, isFirst, isMulti, disabled, onClick }: {
       border: `1px solid ${isSel ? "#f97316" : "#2a2a2a"}`,
       borderRadius: 12, padding: "12px 14px",
     }}>
-      <Avatar name={w.name} />
+      <Avatar name={w.name} photoUrl={w.photoUrl} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
           <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
@@ -1118,15 +1118,20 @@ function WorkerRow({ w, isSel, nearby, isFirst, isMulti, disabled, onClick }: {
 }
 
 // ── Avatar ────────────────────────────────────────────────────────────────────
-function Avatar({ name }: { name: string }) {
+function Avatar({ name, photoUrl }: { name: string; photoUrl?: string | null }) {
   return (
     <div style={{
-      flexShrink: 0, width: 40, height: 40, borderRadius: 999,
+      flexShrink: 0, width: 40, height: 40, borderRadius: 999, overflow: "hidden",
       background: "rgba(249,115,22,0.1)",
       display: "flex", alignItems: "center", justifyContent: "center",
       fontSize: 15, fontWeight: 800, color: "#f97316",
     }}>
-      {name[0]?.toUpperCase()}
+      {photoUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={photoUrl} alt={name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+      ) : (
+        name[0]?.toUpperCase()
+      )}
     </div>
   );
 }

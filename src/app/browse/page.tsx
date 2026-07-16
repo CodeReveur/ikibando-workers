@@ -522,11 +522,16 @@ function BrowsePageInner() {
                       <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
                         <div style={{
                           width: 42, height: 42, borderRadius: 999, flexShrink: 0, position: "relative",
-                          background: "rgba(249,115,22,0.12)",
+                          background: "rgba(249,115,22,0.12)", overflow: "hidden",
                           display: "flex", alignItems: "center", justifyContent: "center",
                           fontSize: 16, fontWeight: 800, color: "#f97316",
                         }}>
-                          {w.name[0]}
+                          {w.photoUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={w.photoUrl} alt={w.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          ) : (
+                            w.name[0]
+                          )}
                           {isAvailable(w) && (
                             <span title={t("browse_page.badges.available") || "Available"} style={{
                               position: "absolute", bottom: -1, right: -1, width: 12, height: 12,

@@ -18,7 +18,7 @@ export function OrganizationSchema() {
         name: "MpahMapu",
         url: "https://mpahmapu.com",
         logo: "https://mpahmapu.com/favicon.ico",
-        description: "Rwanda's trusted on-demand workforce platform. Find verified workers for events, cleaning, security, driving, and more in Kigali.",
+        description: "Rwanda's trusted on-demand workforce platform. Find verified workers for events, cleaning, security, driving, and more in Rwanda.",
         email: "info@mpahmapu.com",
         telephone: "+250781121117",
         address: {

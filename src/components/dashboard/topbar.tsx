@@ -252,7 +252,10 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
               <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
                 {notifs.length > 0 ? notifs.map((n) => {
                   const jobId = n.data?.jobId;
-                  const link = jobId ? (isOwner ? `/owner/jobs/${jobId}` : `/seeker/jobs/${jobId}`) : undefined;
+                  // Feature announcements carry a url in their data; job notifications carry a jobId.
+                  const link = jobId
+                    ? (isOwner ? `/owner/jobs/${jobId}` : `/seeker/jobs/${jobId}`)
+                    : (n.data?.url || undefined);
                   const time = n.createdAt ? new Date(n.createdAt).toLocaleDateString(currentLocale) : "";
                   return (
                     <div key={n.id} style={{ padding:"14px 16px", borderBottom:"1px solid #141414", display:"flex", gap:10, background: n.read ? "transparent" : "rgba(249,115,22,0.04)" }}>
