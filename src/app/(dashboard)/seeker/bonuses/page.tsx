@@ -5,7 +5,8 @@ import { CheckCircle, Star, Award, TrendingUp, Shield, Copy, Users, Gift } from 
 import { fmt } from "@/lib/dashboard-data";
 import { SectionHead } from "@/components/dashboard/ui";
 import { useLanguage } from "@/lib/language-context";
-import { getBonuses, getMyReferral, type BonusSummary, type ReferralSummary } from "@/lib/api";
+import { getBonuses, getMyReferral, claimBonuses, apiError, type BonusSummary, type ReferralSummary } from "@/lib/api";
+import { useToast } from "@/components/ui/toast";
 
 export default function SeekerBonuses() {
   const { t, language } = useLanguage();
@@ -20,8 +21,24 @@ export default function SeekerBonuses() {
 
   const [copied, setCopied]     = useState(false);
   const [loading, setLoading]   = useState(true);
+  const [claiming, setClaiming] = useState(false);
   const [bonus, setBonus]       = useState<BonusSummary | null>(null);
   const [referral, setReferral] = useState<ReferralSummary | null>(null);
+  const { success, error: toastError } = useToast();
+
+  const doClaim = async () => {
+    const token = localStorage.getItem("access_token");
+    if (!token) return;
+    setClaiming(true);
+    try {
+      setBonus(await claimBonuses(token));
+      success(t("seeker_bonuses.claimed") || "Bonus added to your wallet");
+    } catch (e) {
+      toastError(apiError(e, t("seeker_bonuses.claim_failed") || "Couldn't claim your bonus. Please try again."));
+    } finally {
+      setClaiming(false);
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -34,8 +51,9 @@ export default function SeekerBonuses() {
       .finally(() => setLoading(false));
   }, []);
 
-  const total   = bonus?.total ?? 0;
-  const items   = bonus?.items ?? [];
+  const total     = bonus?.total ?? 0;
+  const claimable = bonus?.claimable ?? 0;
+  const items     = bonus?.items ?? [];
   const code    = referral?.code ?? "";
   const reward  = referral?.rewardPerReferral ?? 1000;
   const origin  = typeof window !== "undefined" ? window.location.origin : "https://mpahmapu.com";
@@ -118,21 +136,39 @@ export default function SeekerBonuses() {
         }}>
           <Gift size={28} color="#f97316" />
         </div>
+        {/* Headline is what's waiting to be claimed when there is any — a bonus isn't wallet
+            money until claimed, so leading with the claimed total would be misleading. */}
         <div style={{ flex: 1 }}>
-          <p style={{ margin: "0 0 4px", fontSize: 11, color: "#5a4000", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>{t("seeker_bonuses.bonus_earned")}</p>
+          <p style={{ margin: "0 0 4px", fontSize: 11, color: "#5a4000", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+            {claimable > 0
+              ? (t("seeker_bonuses.ready_to_claim") || "Ready to claim")
+              : t("seeker_bonuses.bonus_earned")}
+          </p>
           <p style={{ margin: "0 0 4px", fontSize: 38, fontWeight: 900, color: "#f97316", letterSpacing: "-1.5px" }}>
-            {loading ? "…" : fmt(total)}
+            {loading ? "…" : fmt(claimable > 0 ? claimable : total)}
           </p>
           <p style={{ margin: 0, fontSize: 12, color: "#4a3500" }}>
             {loading ? t("seeker_bonuses.loading_bonus")
-              : t("seeker_bonuses.credited_desc")
-                ?.replace("{count}", String(bonus?.count ?? 0))
-                ?.replace("{plural}", (bonus?.count ?? 0) === 1 ? "" : "es") || `Credited to your wallet · ${bonus?.count ?? 0} bonuses`}
+              : claimable > 0
+                ? (t("seeker_bonuses.claim_desc") || "Claim it to add it to your wallet.")
+                : (t("seeker_bonuses.credited_desc")
+                    ?.replace("{count}", String(bonus?.count ?? 0))
+                    ?.replace("{plural}", (bonus?.count ?? 0) === 1 ? "" : "es")
+                    || `Credited to your wallet · ${bonus?.count ?? 0} bonuses`)}
           </p>
         </div>
-        <a href="/seeker/earnings" className="claim-btn">
-          {t("seeker_bonuses.withdraw")}
-        </a>
+        {claimable > 0 ? (
+          <button onClick={doClaim} disabled={claiming} className="claim-btn"
+                  style={{ border: "none", cursor: claiming ? "not-allowed" : "pointer", opacity: claiming ? 0.6 : 1 }}>
+            {claiming
+              ? (t("common.buttons.processing") || "Claiming…")
+              : `${t("seeker_bonuses.claim") || "Claim"} ${fmt(claimable)}`}
+          </button>
+        ) : (
+          <a href="/seeker/earnings" className="claim-btn">
+            {t("seeker_bonuses.withdraw")}
+          </a>
+        )}
       </div>
 
       {/* Referral program */}

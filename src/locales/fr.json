@@ -38,7 +38,8 @@
       "menu": "Menu",
       "wallet": "Portefeuille",
       "notifications": "Notifications",
-      "whats_new": "Nouveautés"
+      "whats_new": "Nouveautés",
+      "home": "Accueil"
     },
     "footer": {
       "desc": "Connecter des travailleurs indépendants vérifiés à Kigali avec des entreprises locales et des ménages.",
@@ -215,7 +216,12 @@
       "success": "Succès",
       "edit": "Modifier",
       "back": "Retour",
-      "loading": "Chargement…"
+      "loading": "Chargement…",
+      "by": "par",
+      "optional_message": "Message facultatif…",
+      "pending": "En attente",
+      "select": "Sélectionner…",
+      "withdrawn": "Retiré"
     },
     "provinces": {
       "city_of_kigali": "Ville de Kigali",
@@ -431,7 +437,8 @@
       "post_fail_title": "Échec du recrutement",
       "success_title": "Réservation confirmée !",
       "success_desc": "{names} {plural} été notifié{plural} et confirmera{plural} sous peu.",
-      "success_sub": "Le travail a été créé avec succès."
+      "success_sub": "Le travail a été créé avec succès.",
+      "category_label": "Catégorie"
     }
   },
   "signin": {
@@ -453,7 +460,9 @@
     "fields": {
       "email_label": "E-mail",
       "password_label": "Mot de passe",
-      "forgot_password_link": "Oublié ?"
+      "forgot_password_link": "Oublié ?",
+      "show_password_aria": "Afficher le mot de passe",
+      "hide_password_aria": "Masquer le mot de passe"
     },
     "footer": {
       "no_account": "Vous n'avez pas de compte ?",
@@ -1059,7 +1068,8 @@
       "urgent_only": "Urgent uniquement",
       "urgent": "Urgent uniquement",
       "min": "Min",
-      "max_pay": "Salaire max (RWF)"
+      "max_pay": "Salaire max (RWF)",
+      "categories": "Catégorie"
     },
     "sort_options": {
       "newest": "Le plus récent",
@@ -1073,7 +1083,8 @@
     },
     "cards": {
       "slots_open": "{count} postes ouverts",
-      "apply": "Postuler"
+      "apply": "Postuler",
+      "you_earn_hint": "Ce que vous touchez, après toutes les charges"
     },
     "empty": {
       "title": "Aucun emploi ne correspond à vos filtres.",
@@ -1303,7 +1314,8 @@
       "equipment_placeholder": "Saisissez un outil et appuyez sur Entrée...",
       "bio": "Biographie professionnelle",
       "bio_placeholder": "Parlez-nous de votre expérience...",
-      "save_worker_btn": "Enregistrer le profil de travailleur"
+      "save_worker_btn": "Enregistrer le profil de travailleur",
+      "availability_hint": "Choisissez les jours où vous pouvez travailler"
     },
     "security": {
       "password_title": "Modifier le mot de passe",
@@ -1328,7 +1340,9 @@
       "totp_cant_scan": "IMPOSSIBLE DE SCANNER ? SAISISSEZ CETTE CLÉ MANUELLEMENT :",
       "totp_code_label": "Code de vérification",
       "cancel": "Annuler",
-      "active_sessions_desc": "Chaque fois que vous vous connectez, une alerte de sécurité est envoyée à votre adresse e-mail enregistrée. Cela vous aide à détecter tout accès non autorisé à votre compte."
+      "active_sessions_desc": "Chaque fois que vous vous connectez, une alerte de sécurité est envoyée à votre adresse e-mail enregistrée. Cela vous aide à détecter tout accès non autorisé à votre compte.",
+      "totp_current_code_label": "Code d'authentification actuel",
+      "totp_disable_warning": "Désactiver la 2FA rend votre compte moins sûr. Saisissez votre code actuel pour confirmer."
     },
     "notifications": {
       "title": "Préférences de notification",
@@ -1448,7 +1462,8 @@
     "no_applications_desc": "Parcourez les emplois ouverts et postulez pour commencer à gagner",
     "browse_jobs": "Parcourir les emplois",
     "loading": "Chargement...",
-    "updates_title": "Nouveautés"
+    "updates_title": "Nouveautés",
+    "there": "vous"
   },
   "seeker_jobs": {
     "active_jobs": "Emplois actifs",
@@ -1504,7 +1519,9 @@
     "status_verified": "Vérifié",
     "status_assigned": "Assigné",
     "status_arrived": "Arrivé",
-    "status_paused": "En pause"
+    "status_paused": "En pause",
+    "label_job": "EMPLOI / OFFRE",
+    "location_notes": "Notes"
   },
   "seeker_job_detail": {
     "back": "Retour",
@@ -1577,7 +1594,11 @@
     "badge_required": "L'identifiant du badge est requis.",
     "take_home": "Vous gagnerez (frais inclus)",
     "address": "Rue / Maison",
-    "track_the_way": "Suivre l'itinéraire — navigation en direct"
+    "track_the_way": "Suivre l'itinéraire — navigation en direct",
+    "pays_on_time": "Paie à temps",
+    "good_instructor": "Bon encadrant",
+    "gives_tips": "Donne des pourboires",
+    "needs_improvement": "À améliorer"
   },
   "seeker_applications": {
     "total_applied": "Total postulé",
@@ -1683,7 +1704,12 @@
     "top_worker_desc": "Classez-vous dans le top 10%",
     "verified_pro": "Professionnel vérifié",
     "verified_pro_desc": "Passez la vérification d'identité",
-    "coming_soon": "Bientôt disponible"
+    "coming_soon": "Bientôt disponible",
+    "ready_to_claim": "Prêt à réclamer",
+    "claim": "Réclamer",
+    "claim_desc": "Réclamez-le pour l'ajouter à votre portefeuille.",
+    "claimed": "Bonus ajouté à votre portefeuille",
+    "claim_failed": "Impossible de réclamer votre bonus. Veuillez réessayer."
   },
   "seeker_analytics": {
     "this_week": "Cette semaine",
@@ -1804,7 +1830,9 @@
     "error_save": "Échec de la mise à jour de l'emploi",
     "job_details": "Détails du poste",
     "category": "Catégorie",
-    "rate": "Tarif"
+    "rate": "Tarif",
+    "no_apps_desc": "Aucune candidature pour l'instant.",
+    "optional_note_placeholder": "Note facultative…"
   },
   "owner_payments": {
     "wallet_balance": "Solde du portefeuille",
@@ -2011,7 +2039,9 @@
     "applications_closed": "Candidatures fermées",
     "title_label": "Titre",
     "title_ph": "Titre de l'emploi",
-    "edit_locked_notice": "Des travailleurs ont déjà postulé : la date, les heures, le nombre de travailleurs et l'urgence sont verrouillés. Vous pouvez encore modifier le titre, le lieu, la description et les exigences."
+    "edit_locked_notice": "Des travailleurs ont déjà postulé : la date, les heures, le nombre de travailleurs et l'urgence sont verrouillés. Vous pouvez encore modifier le titre, le lieu, la description et les exigences.",
+    "accept_failed": "Impossible de mettre à jour la candidature.",
+    "job_full": "Tous les travailleurs sont recrutés"
   },
   "seeker_help": {
     "faq1_q": "Comment suis-je payé ?",
@@ -2023,7 +2053,8 @@
     "faq4_q": "Comment valider la fin d'un travail ?",
     "faq4_a": "Une fois le travail terminé, demandez à l'employeur de scanner votre badge de travailleur ou de marquer la mission comme terminée depuis son tableau de bord pour libérer votre paiement.",
     "faq5_q": "Que se passe-t-il en cas de litige ?",
-    "faq5_a": "Si un employeur refuse de libérer le paiement ou ouvre un litige, notre équipe d'assistance examine le dossier sous 2 heures. Nous contacterons les deux parties pour résoudre le problème sur la base des preuves de travail."
+    "faq5_a": "Si un employeur refuse de libérer le paiement ou ouvre un litige, notre équipe d'assistance examine le dossier sous 2 heures. Nous contacterons les deux parties pour résoudre le problème sur la base des preuves de travail.",
+    "faq_title": "Questions fréquentes"
   },
   "bazabot": {
     "welcome": "Bonjour {userName} ! Je suis BazaBot, votre assistant de support MpahMapu. Comment puis-je vous aider aujourd'hui ?",
@@ -2125,7 +2156,11 @@
       "overview": "Votre demande nécessite l'intervention d'un conseiller de notre support client. BazaBot a enregistré l'historique de votre conversation et les détails de votre compte pour créer un ticket d'assistance prioritaire dans notre système de gestion.",
       "process": "Notre support a généré un ticket d'incident à {time} et envoyé un e-mail d'alerte urgent aux adresses des administrateurs. Un responsable de la médiation analyse vos messages et vous recontactera directement sur votre adresse e-mail enregistrée.",
       "guidelines": "Pour obtenir de l'aide encore plus rapidement, vous pouvez cliquer sur le bouton vert 'Appel WhatsApp' ou 'Live Chat' dans l'en-tête. Cela vous mettra en relation immédiate sur WhatsApp avec un membre de notre équipe d'assistance pour échanger en direct."
-    }
+    },
+    "placeholder_agent": "Écrivez à l'agent d'assistance…",
+    "resumed": "Cette conversation a été fermée. Je suis de nouveau là pour vous aider — n'hésitez pas à me demander ! 🤖",
+    "status_agent": "Connecté à un agent d'assistance",
+    "status_online": "En ligne"
   },
   "owner_guide": {
     "user_guide_sub": "Lire la documentation complète"
@@ -2190,5 +2225,20 @@
     "desc": "Tout ce que nous avons lancé récemment sur MpahMapu.",
     "empty": "Aucune annonce pour l'instant — revenez bientôt.",
     "cta": "Découvrir"
+  },
+  "job_evidence": {
+    "title": "Preuve du travail",
+    "photos": "photos",
+    "video": "vidéo",
+    "worker_hint": "Facultatif. Ajoutez jusqu'à 20 photos et une vidéo de 20s montrant le travail. Visible par l'employeur et notre équipe en cas de litige.",
+    "viewer_hint": "Preuve jointe par le travailleur pour cette mission.",
+    "add_photo": "Ajouter une photo",
+    "add_video": "Ajouter une vidéo",
+    "photos_full": "Limite de photos atteinte",
+    "video_added": "Vidéo ajoutée",
+    "video_too_long": "La vidéo doit durer 20 secondes ou moins.",
+    "added": "Preuve ajoutée",
+    "failed": "Impossible d'ajouter. Veuillez réessayer.",
+    "remove_failed": "Impossible de supprimer."
   }
 }

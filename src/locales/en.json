@@ -38,7 +38,8 @@
       "menu": "Menu",
       "wallet": "Wallet",
       "notifications": "Notifications",
-      "whats_new": "What's new"
+      "whats_new": "What's new",
+      "home": "Home"
     },
     "footer": {
       "desc": "Connecting verified gig workers in Kigali with local businesses and households.",
@@ -216,7 +217,12 @@
       "success": "Success",
       "edit": "Edit",
       "back": "Back",
-      "loading": "Loading…"
+      "loading": "Loading…",
+      "by": "by",
+      "optional_message": "Optional message…",
+      "pending": "Pending",
+      "select": "Select…",
+      "withdrawn": "Withdrawn"
     },
     "provinces": {
       "city_of_kigali": "City of Kigali",
@@ -432,7 +438,8 @@
       "post_fail_title": "Hire Failed",
       "success_title": "Booking confirmed!",
       "success_desc": "{names} {plural} been notified and will confirm shortly.",
-      "success_sub": "The job has been created successfully."
+      "success_sub": "The job has been created successfully.",
+      "category_label": "Category"
     }
   },
   "signin": {
@@ -454,7 +461,9 @@
     "fields": {
       "email_label": "Email",
       "password_label": "Password",
-      "forgot_password_link": "Forgot?"
+      "forgot_password_link": "Forgot?",
+      "show_password_aria": "Show password",
+      "hide_password_aria": "Hide password"
     },
     "footer": {
       "no_account": "Don't have an account?",
@@ -1060,7 +1069,8 @@
       "urgent_only": "Urgent only",
       "urgent": "Urgent only",
       "min": "Min",
-      "max_pay": "Max pay (RWF)"
+      "max_pay": "Max pay (RWF)",
+      "categories": "Category"
     },
     "sort_options": {
       "newest": "Newest first",
@@ -1074,7 +1084,8 @@
     },
     "cards": {
       "slots_open": "{count} slots open",
-      "apply": "Apply"
+      "apply": "Apply",
+      "you_earn_hint": "What you take home, after all charges"
     },
     "empty": {
       "title": "No jobs match your filters.",
@@ -1304,7 +1315,8 @@
       "equipment_placeholder": "Type a tool and press Enter...",
       "bio": "Professional Bio",
       "bio_placeholder": "Tell us about your experience...",
-      "save_worker_btn": "Save Worker Profile"
+      "save_worker_btn": "Save Worker Profile",
+      "availability_hint": "Pick the days you can work"
     },
     "security": {
       "password_title": "Change Password",
@@ -1329,7 +1341,9 @@
       "totp_cant_scan": "CAN'T SCAN? ENTER THIS KEY MANUALLY:",
       "totp_code_label": "Verification Code",
       "cancel": "Cancel",
-      "active_sessions_desc": "Every time you sign in, a security alert is sent to your registered email address. This helps you detect unauthorized access to your account."
+      "active_sessions_desc": "Every time you sign in, a security alert is sent to your registered email address. This helps you detect unauthorized access to your account.",
+      "totp_current_code_label": "Current authenticator code",
+      "totp_disable_warning": "Disabling 2FA makes your account less secure. Enter your current code to confirm."
     },
     "notifications": {
       "title": "Notification Preferences",
@@ -1449,7 +1463,8 @@
     "no_applications_desc": "Browse open jobs and apply to start earning",
     "browse_jobs": "Browse jobs",
     "loading": "Loading...",
-    "updates_title": "What's new"
+    "updates_title": "What's new",
+    "there": "there"
   },
   "seeker_jobs": {
     "active_jobs": "Active Jobs",
@@ -1505,7 +1520,9 @@
     "status_verified": "Verified",
     "status_assigned": "Assigned",
     "status_arrived": "Arrived",
-    "status_paused": "Paused"
+    "status_paused": "Paused",
+    "label_job": "JOB / OFFER",
+    "location_notes": "Notes"
   },
   "seeker_job_detail": {
     "back": "Back",
@@ -1578,7 +1595,11 @@
     "badge_required": "Badge ID is required.",
     "take_home": "You'll earn (all charges covered)",
     "address": "Street / House",
-    "track_the_way": "Track the way — live navigation"
+    "track_the_way": "Track the way — live navigation",
+    "pays_on_time": "Pays on time",
+    "good_instructor": "Good instructor",
+    "gives_tips": "Gives tips",
+    "needs_improvement": "Needs improvement"
   },
   "seeker_applications": {
     "total_applied": "Total Applied",
@@ -1684,7 +1705,12 @@
     "top_worker_desc": "Rank in the top 10%",
     "verified_pro": "Verified pro",
     "verified_pro_desc": "Pass identity verification",
-    "coming_soon": "Coming soon"
+    "coming_soon": "Coming soon",
+    "ready_to_claim": "Ready to claim",
+    "claim": "Claim",
+    "claim_desc": "Claim it to add it to your wallet.",
+    "claimed": "Bonus added to your wallet",
+    "claim_failed": "Couldn't claim your bonus. Please try again."
   },
   "seeker_analytics": {
     "this_week": "This Week",
@@ -1805,7 +1831,9 @@
     "error_save": "Failed to update job",
     "job_details": "Job Details",
     "category": "Category",
-    "rate": "Rate"
+    "rate": "Rate",
+    "no_apps_desc": "No applications yet.",
+    "optional_note_placeholder": "Optional note…"
   },
   "owner_payments": {
     "wallet_balance": "Wallet Balance",
@@ -2012,7 +2040,9 @@
     "applications_closed": "Applications closed",
     "title_label": "Title",
     "title_ph": "Job title",
-    "edit_locked_notice": "Workers have already applied, so the date, hours, number of workers and urgency are locked. You can still update the title, location, description and requirements."
+    "edit_locked_notice": "Workers have already applied, so the date, hours, number of workers and urgency are locked. You can still update the title, location, description and requirements.",
+    "accept_failed": "Could not update the application.",
+    "job_full": "All workers hired"
   },
   "seeker_help": {
     "faq1_q": "How do I get paid?",
@@ -2024,7 +2054,8 @@
     "faq4_q": "How do I verify completion?",
     "faq4_a": "Once you finish the job, ask the employer to scan your worker badge or mark the job complete from their dashboard to release your payout.",
     "faq5_q": "What happens if there is a dispute?",
-    "faq5_a": "If an employer refuses to release payment or opens a dispute, our support team reviews the case within 2 hours. We will contact both parties to resolve the issue based on work evidence."
+    "faq5_a": "If an employer refuses to release payment or opens a dispute, our support team reviews the case within 2 hours. We will contact both parties to resolve the issue based on work evidence.",
+    "faq_title": "Frequently Asked Questions"
   },
   "bazabot": {
     "welcome": "Hello {userName}! I am BazaBot, your MpahMapu support assistant. How can I help you today?",
@@ -2195,5 +2226,20 @@
     "desc": "Everything we've shipped recently on MpahMapu.",
     "empty": "No announcements yet — check back soon.",
     "cta": "Check it out"
+  },
+  "job_evidence": {
+    "title": "Proof of work",
+    "photos": "photos",
+    "video": "video",
+    "worker_hint": "Optional. Add up to 20 photos and one 20s video showing the work. It's visible to the employer and our team if anything is questioned.",
+    "viewer_hint": "Proof the worker attached for this job.",
+    "add_photo": "Add photo",
+    "add_video": "Add video",
+    "photos_full": "Photo limit reached",
+    "video_added": "Video added",
+    "video_too_long": "Video must be 20 seconds or shorter.",
+    "added": "Proof added",
+    "failed": "Couldn't add that. Please try again.",
+    "remove_failed": "Couldn't remove that."
   }
 }

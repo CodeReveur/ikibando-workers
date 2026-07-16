@@ -717,9 +717,18 @@ export interface BonusDto {
 }
 
 export interface BonusSummary {
+  /** Bonuses already claimed — this money is in the wallet. */
   total: number;
+  /** Granted but not yet claimed — not spendable until claimed. */
+  claimable: number;
   count: number;
   items: BonusDto[];
+}
+
+/** Move every outstanding bonus into the wallet. */
+export async function claimBonuses(token: string): Promise<BonusSummary> {
+  const { data } = await http.post("/api/wallet/bonuses/claim", {}, { headers: authHeader(token) });
+  return data.data;
 }
 
 export async function getBonuses(token: string): Promise<BonusSummary> {

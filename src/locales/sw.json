@@ -38,7 +38,8 @@
       "menu": "Menyu",
       "wallet": "Mkoba",
       "notifications": "Arifa",
-      "whats_new": "Mpya"
+      "whats_new": "Mpya",
+      "home": "Nyumbani"
     },
     "footer": {
       "desc": "Kuunganisha wafanyakazi wa vibarua waliohakikiwa huko Kigali na biashara na kaya za mitaani.",
@@ -215,7 +216,12 @@
       "success": "Imefanikiwa",
       "edit": "Hariri",
       "back": "Rudi",
-      "loading": "Inapakia…"
+      "loading": "Inapakia…",
+      "by": "na",
+      "optional_message": "Ujumbe wa hiari…",
+      "pending": "Inasubiri",
+      "select": "Chagua…",
+      "withdrawn": "Imeondolewa"
     },
     "provinces": {
       "city_of_kigali": "Jiji la Kigali",
@@ -431,7 +437,8 @@
       "post_fail_title": "Kodi Imeshindikana",
       "success_title": "Uhifadhi umethibitishwa!",
       "success_desc": "{names} {plural} wametumwa taarifa na watathibitisha hivi karibuni.",
-      "success_sub": "Kazi imeundwa kwa mafanikio."
+      "success_sub": "Kazi imeundwa kwa mafanikio.",
+      "category_label": "Kategoria"
     }
   },
   "signin": {
@@ -453,7 +460,9 @@
     "fields": {
       "email_label": "Barua Pepe",
       "password_label": "Nenosiri",
-      "forgot_password_link": "Umesahau?"
+      "forgot_password_link": "Umesahau?",
+      "show_password_aria": "Onyesha nenosiri",
+      "hide_password_aria": "Ficha nenosiri"
     },
     "footer": {
       "no_account": "Huna akaunti?",
@@ -1059,7 +1068,8 @@
       "urgent_only": "Haraka pekee",
       "urgent": "Haraka pekee",
       "min": "Kiwango cha chini",
-      "max_pay": "Malipo ya juu (RWF)"
+      "max_pay": "Malipo ya juu (RWF)",
+      "categories": "Kategoria"
     },
     "sort_options": {
       "newest": "Mpya zaidi kwanza",
@@ -1073,7 +1083,8 @@
     },
     "cards": {
       "slots_open": "Nafasi {count} wazi",
-      "apply": "Omba"
+      "apply": "Omba",
+      "you_earn_hint": "Unachopata, baada ya makato yote"
     },
     "empty": {
       "title": "Hakuna kazi zinazolingana na vichujio vyako.",
@@ -1303,7 +1314,8 @@
       "equipment_placeholder": "Andika zana na ubonyeze Enter...",
       "bio": "Wasifu wa Kitaalamu",
       "bio_placeholder": "Tuambie kuhusu uzoefu wako...",
-      "save_worker_btn": "Hifadhi Wasifu wa Mfanyakazi"
+      "save_worker_btn": "Hifadhi Wasifu wa Mfanyakazi",
+      "availability_hint": "Chagua siku unazoweza kufanya kazi"
     },
     "security": {
       "password_title": "Badilisha Nywila",
@@ -1328,7 +1340,9 @@
       "totp_cant_scan": "HUWEZI KUSKANI? WEKA UFUNGUO HUU KWA MKONO:",
       "totp_code_label": "Msimbo wa Uthibitisho",
       "cancel": "Ghairi",
-      "active_sessions_desc": "Kila unapoingia, arifa ya usalama hutumwa kwa anwani yako ya barua pepe iliyosajiliwa. Hii hukusaidia kugundua ufikiaji usioidhinishwa wa akaunti yako."
+      "active_sessions_desc": "Kila unapoingia, arifa ya usalama hutumwa kwa anwani yako ya barua pepe iliyosajiliwa. Hii hukusaidia kugundua ufikiaji usioidhinishwa wa akaunti yako.",
+      "totp_current_code_label": "Msimbo wa sasa wa kithibitishaji",
+      "totp_disable_warning": "Kuzima 2FA hupunguza usalama wa akaunti yako. Weka msimbo wako wa sasa kuthibitisha."
     },
     "notifications": {
       "title": "Mapendeleo ya Arifa",
@@ -1448,7 +1462,8 @@
     "no_applications_desc": "Vinjari kazi zilizo wazi na utume maombi ili kuanza kupata mapato",
     "browse_jobs": "Vinjari kazi",
     "loading": "Inapakia...",
-    "updates_title": "Mpya"
+    "updates_title": "Mpya",
+    "there": "wewe"
   },
   "seeker_jobs": {
     "active_jobs": "Kazi Zinazoendelea",
@@ -1504,7 +1519,9 @@
     "status_verified": "Imethibitishwa",
     "status_assigned": "Imepangwa",
     "status_arrived": "Imefika",
-    "status_paused": "Imesimamishwa"
+    "status_paused": "Imesimamishwa",
+    "label_job": "KAZI / OFA",
+    "location_notes": "Madokezo"
   },
   "seeker_job_detail": {
     "back": "Nyuma",
@@ -1577,7 +1594,11 @@
     "badge_required": "ID ya beji inahitajika.",
     "take_home": "Utapata (gharama zote zimehusishwa)",
     "address": "Mtaa / Nyumba",
-    "track_the_way": "Fuata njia — uelekezaji wa moja kwa moja"
+    "track_the_way": "Fuata njia — uelekezaji wa moja kwa moja",
+    "pays_on_time": "Analipa kwa wakati",
+    "good_instructor": "Mwalimu mzuri",
+    "gives_tips": "Anatoa bakshishi",
+    "needs_improvement": "Inahitaji maboresho"
   },
   "seeker_applications": {
     "total_applied": "Jumla ya Maombi",
@@ -1683,7 +1704,12 @@
     "top_worker_desc": "Kuwa kwenye 10% ya juu",
     "verified_pro": "Mfanyakazi aliyethibitishwa",
     "verified_pro_desc": "Pita uhakiki wa kitambulisho",
-    "coming_soon": "Inakuja hivi karibuni"
+    "coming_soon": "Inakuja hivi karibuni",
+    "ready_to_claim": "Tayari kudai",
+    "claim": "Dai",
+    "claim_desc": "Idai ili iongezwe kwenye pochi yako.",
+    "claimed": "Bonasi imeongezwa kwenye pochi yako",
+    "claim_failed": "Imeshindwa kudai bonasi yako. Tafadhali jaribu tena."
   },
   "seeker_analytics": {
     "this_week": "Wiki Hii",
@@ -1804,7 +1830,9 @@
     "error_save": "Imeshindwa kusasisha kazi",
     "job_details": "Maelezo ya Kazi",
     "category": "Aina",
-    "rate": "Kiwango"
+    "rate": "Kiwango",
+    "no_apps_desc": "Hakuna maombi bado.",
+    "optional_note_placeholder": "Dokezo la hiari…"
   },
   "owner_payments": {
     "wallet_balance": "Salio la Wallet",
@@ -2011,7 +2039,9 @@
     "applications_closed": "Maombi yamefungwa",
     "title_label": "Kichwa",
     "title_ph": "Kichwa cha kazi",
-    "edit_locked_notice": "Wafanyakazi tayari wameomba, kwa hivyo tarehe, saa, idadi ya wafanyakazi na dharura zimefungwa. Bado unaweza kusasisha kichwa, mahali, maelezo na mahitaji."
+    "edit_locked_notice": "Wafanyakazi tayari wameomba, kwa hivyo tarehe, saa, idadi ya wafanyakazi na dharura zimefungwa. Bado unaweza kusasisha kichwa, mahali, maelezo na mahitaji.",
+    "accept_failed": "Imeshindwa kusasisha ombi.",
+    "job_full": "Wafanyakazi wote wameajiriwa"
   },
   "seeker_help": {
     "faq1_q": "Je, ninalipwaje?",
@@ -2023,7 +2053,8 @@
     "faq4_q": "Ninathibitishaje kukamilika kwa kazi?",
     "faq4_a": "Mara tu unapomaliza kazi, mwombe mwajiri wako asasishe beji yako ya mfanyakazi au aweke alama ya kazi kukamilika kwenye dashibodi yake ili kutoa malipo yako.",
     "faq5_q": "Nini kinatokea kukiwa na mzozo?",
-    "faq5_a": "Mwajiri akikataa kutoa malipo au akianzisha mzozo, timu yetu ya usaidizi hukagua kesi hiyo ndani ya saa 2. Tutawasiliana na pande zote mbili ili kutatua suala hilo kulingana na ushahidi wa kazi iliyofanyika."
+    "faq5_a": "Mwajiri akikataa kutoa malipo au akianzisha mzozo, timu yetu ya usaidizi hukagua kesi hiyo ndani ya saa 2. Tutawasiliana na pande zote mbili ili kutatua suala hilo kulingana na ushahidi wa kazi iliyofanyika.",
+    "faq_title": "Maswali Yanayoulizwa Mara kwa Mara"
   },
   "bazabot": {
     "welcome": "Jambo {userName}! Mimi ni BazaBot, msaidizi wako wa huduma kwa wateja wa MpahMapu. Ninawezaje kukusaidia leo?",
@@ -2125,7 +2156,11 @@
       "overview": "Ombi lako linahitaji uingiliaji wa kibinafsi wa timu yetu ya usaidizi. BazaBot imerekodi historia yako ya gumzo na maelezo ya akaunti yako ili kuunda tiketi ya usaidizi yenye kipaumbele cha juu katika mfumo wetu wa usimamizi wa wateja.",
       "process": "Mfumo wetu wa usaidizi umezalisha tiketi saa {time} na kutuma barua pepe ya dharura kwa akaunti zote za wasimamizi. Meneja wa usaidizi anakagua kumbukumbu hizi za gumzo na atawasiliana nawe moja kwa moja kupitia barua pepe yako iliyosajiliwa.",
       "guidelines": "Ili kupata usaidizi wa haraka zaidi, yanaweza kubofya kitufe cha kijani cha 'Simu ya WhatsApp' au 'Chat ya Live' kwenye kichwa cha ukurasa. Hii itakuunganisha moja kwa moja na timu yetu ya usaidizi kwenye WhatsApp ili kuzungumza na mtu halisi mara moja."
-    }
+    },
+    "placeholder_agent": "Mtumie ujumbe wakala wa usaidizi…",
+    "resumed": "Mazungumzo haya yamefungwa. Nipo tena kukusaidia — jisikie huru kuniuliza chochote! 🤖",
+    "status_agent": "Umeunganishwa na wakala wa usaidizi",
+    "status_online": "Mtandaoni"
   },
   "owner_guide": {
     "user_guide_sub": "Soma nyaraka kamili"
@@ -2190,5 +2225,20 @@
     "desc": "Kila kitu tulichozindua hivi karibuni kwenye MpahMapu.",
     "empty": "Hakuna matangazo bado — rudi hivi karibuni.",
     "cta": "Angalia"
+  },
+  "job_evidence": {
+    "title": "Uthibitisho wa kazi",
+    "photos": "picha",
+    "video": "video",
+    "worker_hint": "Si lazima. Ongeza hadi picha 20 na video moja ya sekunde 20 inayoonyesha kazi. Inaonekana kwa mwajiri na timu yetu ikiwa kuna swali.",
+    "viewer_hint": "Uthibitisho ambao mfanyakazi ameambatisha kwa kazi hii.",
+    "add_photo": "Ongeza picha",
+    "add_video": "Ongeza video",
+    "photos_full": "Kikomo cha picha kimefikiwa",
+    "video_added": "Video imeongezwa",
+    "video_too_long": "Video lazima iwe sekunde 20 au chini.",
+    "added": "Uthibitisho umeongezwa",
+    "failed": "Imeshindwa kuongeza. Tafadhali jaribu tena.",
+    "remove_failed": "Imeshindwa kuondoa."
   }
 }

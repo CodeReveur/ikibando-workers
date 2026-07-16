@@ -38,7 +38,8 @@
       "menu": "Ibikubiyemo",
       "wallet": "Konti",
       "notifications": "Imenyesha",
-      "whats_new": "Ibishya"
+      "whats_new": "Ibishya",
+      "home": "Ahabanza"
     },
     "footer": {
       "desc": "Guhuza abakozi b'abanyamyuga bashyizweho ikimenyetso i Kigali n'ibigo by'ubucuruzi ndetse n'ingo.",
@@ -215,7 +216,12 @@
       "success": "Byakunze ✅",
       "edit": "Hindura",
       "back": "Subira inyuma",
-      "loading": "Biratunganywa…"
+      "loading": "Biratunganywa…",
+      "by": "na",
+      "optional_message": "Ubutumwa bwihitiwemo…",
+      "pending": "Bitegereje",
+      "select": "Hitamo…",
+      "withdrawn": "Byakuweho"
     },
     "provinces": {
       "city_of_kigali": "Umujyi wa Kigali",
@@ -431,7 +437,8 @@
       "post_fail_title": "Gukoresha Byanze",
       "success_title": "Kwandikisha byemejwe!",
       "success_desc": "{names} {plural} bohererejwe ubutumwa kandi barabyemeza vuba.",
-      "success_sub": "Akazi kashyizweho neza."
+      "success_sub": "Akazi kashyizweho neza.",
+      "category_label": "Icyiciro"
     }
   },
   "signin": {
@@ -453,7 +460,9 @@
     "fields": {
       "email_label": "Imeri",
       "password_label": "Ijambo ry'ibanga",
-      "forgot_password_link": "Waryibagiwe?"
+      "forgot_password_link": "Waryibagiwe?",
+      "show_password_aria": "Erekana ijambobanga",
+      "hide_password_aria": "Hisha ijambobanga"
     },
     "footer": {
       "no_account": "Nta konti ufite?",
@@ -1074,7 +1083,8 @@
     },
     "cards": {
       "slots_open": "Imyanya {count} isigaye",
-      "apply": "Saba"
+      "apply": "Saba",
+      "you_earn_hint": "Ibyo wakira, nyuma y'amafaranga yose akatwa"
     },
     "empty": {
       "title": "Nta kazi gahuye na filteri zawe.",
@@ -1304,7 +1314,8 @@
       "equipment_placeholder": "Andika igikoresho ukande Enter...",
       "bio": "Umwirondoro w'Umwuga",
       "bio_placeholder": "Tubwire ibyerekeye uburambe bwawe...",
-      "save_worker_btn": "Bika Umwirondoro w'Umukozi"
+      "save_worker_btn": "Bika Umwirondoro w'Umukozi",
+      "availability_hint": "Hitamo iminsi ushobora gukora"
     },
     "security": {
       "password_title": "Hindura Ijambo ry'Ibanga",
@@ -1329,7 +1340,9 @@
       "totp_cant_scan": "NTUBASHA GUSIKANA? INJIZA IYI NIMERO N'INTOKI:",
       "totp_code_label": "Kode yo Kwemeza",
       "cancel": "Kureka",
-      "active_sessions_desc": "Buri gihe winjiye, ubutumwa bw'umutekano boherezwa kuri email yawe wanditse. Ibi bigufasha kumenya niba hari uwinjiye muri konti yawe atabyemerewe."
+      "active_sessions_desc": "Buri gihe winjiye, ubutumwa bw'umutekano boherezwa kuri email yawe wanditse. Ibi bigufasha kumenya niba hari uwinjiye muri konti yawe atabyemerewe.",
+      "totp_current_code_label": "Kode igezweho ya authenticator",
+      "totp_disable_warning": "Guhagarika 2FA bigabanya umutekano wa konti yawe. Andika kode yawe igezweho kugira ngo wemeze."
     },
     "notifications": {
       "title": "Ibyo Uhitamo Ku Bimenyetso",
@@ -1449,7 +1462,8 @@
     "no_applications_desc": "Shaka akazi gafunguye hanyuma wohereze dosiye ngo utangire gukorera amafaranga",
     "browse_jobs": "Shaka akazi",
     "loading": "Biratunganywa...",
-    "updates_title": "Ibishya"
+    "updates_title": "Ibishya",
+    "there": "we"
   },
   "seeker_jobs": {
     "active_jobs": "Akazi kawe",
@@ -1505,7 +1519,9 @@
     "status_verified": "Byemejwe",
     "status_assigned": "Byahawe",
     "status_arrived": "Byageze",
-    "status_paused": "Byahagaritswe by'agateganyo"
+    "status_paused": "Byahagaritswe by'agateganyo",
+    "label_job": "AKAZI / ICYIFUZO",
+    "location_notes": "Inyandiko"
   },
   "seeker_job_detail": {
     "back": "Gusubira inyuma",
@@ -1578,7 +1594,11 @@
     "badge_required": "ID ya badge irakenewe.",
     "take_home": "Uzahembwa (amafaranga yose akuweho)",
     "address": "Umuhanda / Inzu",
-    "track_the_way": "Kurikira inzira — kuyobora ako kanya"
+    "track_the_way": "Kurikira inzira — kuyobora ako kanya",
+    "pays_on_time": "Yishyura ku gihe",
+    "good_instructor": "Umwigisha mwiza",
+    "gives_tips": "Atanga inkunga",
+    "needs_improvement": "Bikeneye kunozwa"
   },
   "seeker_applications": {
     "total_applied": "Dosiye zose",
@@ -1684,7 +1704,12 @@
     "top_worker_desc": "Ba muri 10% bambere",
     "verified_pro": "Umunyamwuga wemejwe",
     "verified_pro_desc": "Emeza umwirondoro wawe",
-    "coming_soon": "Bizaza mu gihe kiri imbere"
+    "coming_soon": "Bizaza mu gihe kiri imbere",
+    "ready_to_claim": "Byiteguye gufatwa",
+    "claim": "Fata",
+    "claim_desc": "Bifate kugira ngo byongerwe muri wallet yawe.",
+    "claimed": "Inyongera yashyizwe muri wallet yawe",
+    "claim_failed": "Ntibyashobotse gufata inyongera yawe. Ongera ugerageze."
   },
   "seeker_analytics": {
     "this_week": "Iyi Cyumweru",
@@ -1805,7 +1830,9 @@
     "error_save": "Guhindura akazi byanze",
     "job_details": "Ibisobanuro by'akazi",
     "category": "Icyiciro",
-    "rate": "Igipimo"
+    "rate": "Igipimo",
+    "no_apps_desc": "Nta busabe burahaba.",
+    "optional_note_placeholder": "Inyandiko yihitiwemo…"
   },
   "owner_payments": {
     "wallet_balance": "Amafaranga ufite ubu",
@@ -2012,7 +2039,9 @@
     "applications_closed": "Ubusabe bwafunzwe",
     "title_label": "Umutwe",
     "title_ph": "Umutwe w'akazi",
-    "edit_locked_notice": "Abakozi bamaze gusaba, bityo itariki, amasaha, umubare w'abakozi n'ihutirwa byafunzwe. Uracyashobora guhindura umutwe, aho biherereye, ibisobanuro n'ibisabwa."
+    "edit_locked_notice": "Abakozi bamaze gusaba, bityo itariki, amasaha, umubare w'abakozi n'ihutirwa byafunzwe. Uracyashobora guhindura umutwe, aho biherereye, ibisobanuro n'ibisabwa.",
+    "accept_failed": "Ntibyashobotse kuvugurura ubusabe.",
+    "job_full": "Abakozi bose barahawe akazi"
   },
   "seeker_help": {
     "faq1_q": "Nishyurwa nte?",
@@ -2024,7 +2053,8 @@
     "faq4_q": "Nemeza nte ko akazi karangiye?",
     "faq4_a": "Iyo urangije akazi, baza umukoresha wawe gusikana badge yawe y'umukozi cyangwa kwemeza ko akazi karangiye kuri dashboard ye kugira ngo amafaranga yawe arekurwe.",
     "faq5_q": "Bigenze bite iyo habonetse impaka?",
-    "faq5_a": "Iyo umukoresha wanze kurekura amafaranga cyangwa agafungura impaka, ikipe yacu isuzuma impaka zose mu masaha 2. Duvugana n'impande zombi tugakemura ikibazo hashingiwe ku bimenyetso by'akazi kakozwe."
+    "faq5_a": "Iyo umukoresha wanze kurekura amafaranga cyangwa agafungura impaka, ikipe yacu isuzuma impaka zose mu masaha 2. Duvugana n'impande zombi tugakemura ikibazo hashingiwe ku bimenyetso by'akazi kakozwe.",
+    "faq_title": "Ibibazo Bikunze Kubazwa"
   },
   "bazabot": {
     "welcome": "Muraho {userName}! Ndi BazaBot, umufasha wawe mu gukemura ibibazo kuri MpahMapu. Nshobora kugufasha nte uyu munsi?",
@@ -2126,7 +2156,11 @@
       "overview": "Ikibazo cyawe gisaba ubufasha bw'umuntu (live agent). BazaBot yabitse inyandiko zose z'ibiganiro twagiranye ndetse n'amakuru ya konti yawe kugira ngo ifungure ubusabe bw'ubufasha (support ticket) buhambaye mu buryo bwa sisitemu yacu.",
       "process": "Sisitemu yacu yafunguye ticket nshya saa {time} maze ihita yoherereza email ya alarm abadmin bose kuri platform. Manager ushinzwe ubufasha agiye gusuzuma ibiganiro maze ahite akwandikira kuri email yawe wiyandikishijeho.",
       "guidelines": "Kugira ngo ubone ubufasha vuba cyane, ushobora gukanda ku gice cy'icyatsi kibara 'WhatsApp Call' cyangwa 'Live Chat' hejuru ku rupapuro. Ibi bikugeza kuri support team yacu kuri WhatsApp maze ukavugana n'umuntu ako kanya."
-    }
+    },
+    "placeholder_agent": "Andikira umukozi w'ubufasha…",
+    "resumed": "Iki kiganiro cyarafunzwe. Ndi hano nanone kugufasha — umva ukibaza icyo ari cyo cyose! 🤖",
+    "status_agent": "Uhujwe n'umukozi w'ubufasha",
+    "status_online": "Kuri interineti"
   },
   "owner_guide": {
     "user_guide_sub": "Soma inyandiko zuzuye"
@@ -2191,5 +2225,20 @@
     "desc": "Ibyo twashyize ku rubuga rwa MpahMapu vuba aha.",
     "empty": "Nta matangazo ahari — garuka vuba.",
     "cta": "Reba"
+  },
+  "job_evidence": {
+    "title": "Ibimenyetso by'akazi",
+    "photos": "amafoto",
+    "video": "videwo",
+    "worker_hint": "Ntibisabwa. Shyiraho amafoto agera kuri 20 na videwo imwe y'amasegonda 20 yerekana akazi. Bigaragarira umukoresha n'ikipe yacu igihe habaye ikibazo.",
+    "viewer_hint": "Ibimenyetso umukozi yashyizeho kuri aka kazi.",
+    "add_photo": "Ongeraho ifoto",
+    "add_video": "Ongeraho videwo",
+    "photos_full": "Umubare ntarengwa w'amafoto wageze",
+    "video_added": "Videwo yongeweho",
+    "video_too_long": "Videwo igomba kuba amasegonda 20 cyangwa munsi yayo.",
+    "added": "Ibimenyetso byongeweho",
+    "failed": "Ntibyashobotse kongeraho. Ongera ugerageze.",
+    "remove_failed": "Ntibyashobotse gukuraho."
   }
 }
