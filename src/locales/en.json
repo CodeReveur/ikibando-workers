@@ -1096,6 +1096,10 @@
     },
     "empty": {
       "workers": "No workers match your filters."
+    },
+    "sort": {
+      "recommended": "Recommended",
+      "name": "Name (A–Z)"
     }
   },
   "worker_detail": {

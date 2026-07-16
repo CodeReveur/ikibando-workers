@@ -1095,6 +1095,10 @@
     },
     "empty": {
       "workers": "Hakuna wafanyakazi wanaolingana na vichujio vyako."
+    },
+    "sort": {
+      "recommended": "Inayopendekezwa",
+      "name": "Jina (A–Z)"
     }
   },
   "worker_detail": {

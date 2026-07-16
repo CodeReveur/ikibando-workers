@@ -65,7 +65,7 @@ import { BreadcrumbSchema, ServiceSchema } from "@/components/seo/json-ld";
 
 // ── types ──────────────────────────────────────────────────────────────────
 type Tab = "workers" | "jobs";
-type SortWorker = "rating" | "jobs" | "name";
+type SortWorker = "recommended" | "name";
 type SortJob = "amount_asc" | "amount_desc" | "newest";
 
 // ── data ───────────────────────────────────────────────────────────────────
@@ -242,7 +242,8 @@ function BrowsePageInner() {
   const [filterLocation, setFilterLocation] = useState("");
 
   // workers
-  const [sortWorker, setSortWorker] = useState<SortWorker>("name");
+  // Default keeps the server ranking: rating → completed jobs → profile completion → newest.
+  const [sortWorker, setSortWorker] = useState<SortWorker>("recommended");
 
   // jobs
   const [filterMinAmount, setFilterMinAmount] = useState("");
@@ -443,8 +444,12 @@ function BrowsePageInner() {
                 <SelectField
                   label={t("jobs_page.filters.sort_by") || "Sort by"}
                   value={sortWorker}
-                  onChange={v => setSortWorker(v as SortWorker)}
-                  options={["name"]}
+                  onChange={v => setSortWorker((v || "recommended") as SortWorker)}
+                  options={["recommended", "name"]}
+                  labels={[
+                    t("browse_page.sort.recommended") || "Recommended",
+                    t("browse_page.sort.name") || "Name (A–Z)",
+                  ]}
                 />
               )}
 

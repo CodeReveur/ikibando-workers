@@ -1096,6 +1096,10 @@
     },
     "empty": {
       "workers": "Nta mukozi gahuye na filteri zawe."
+    },
+    "sort": {
+      "recommended": "Ibyifuzwa",
+      "name": "Izina (A–Z)"
     }
   },
   "worker_detail": {
