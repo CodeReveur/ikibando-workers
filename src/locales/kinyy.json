@@ -37,11 +37,18 @@
       "help": "Ubufasha",
       "menu": "Ibikubiyemo",
       "wallet": "Konti",
-      "notifications": "Imenyesha"
+      "notifications": "Imenyesha",
+      "whats_new": "Ibishya"
     },
     "footer": {
       "desc": "Guhuza abakozi b'abanyamyuga bashyizweho ikimenyetso i Kigali n'ibigo by'ubucuruzi ndetse n'ingo.",
-      "copyright": "© 2026 MpahMapu. Uburenganzira bwose burabitswe."
+      "copyright": "© 2026 MpahMapu. Uburenganzira bwose burabitswe.",
+      "newsletter_title": "Menya ibishya",
+      "newsletter_subtitle": "Ibintu bishya n'inama, bigera kuri imeyili yawe.",
+      "newsletter_placeholder": "wowe@email.com",
+      "newsletter_button": "Iyandikishe",
+      "newsletter_thanks": "Murakoze — mwiyandikishije!",
+      "newsletter_error": "Kwiyandikisha byanze. Ongera ugerageze."
     },
     "categories": {
       "": "Umukozi",
@@ -193,7 +200,8 @@
       "processing": "Icyifuzo kiri gukorwa...",
       "done": "Yego",
       "cancel": "Gukuraho",
-      "submit": "Kohereza"
+      "submit": "Kohereza",
+      "sending": "Kohereza…"
     },
     "general": {
       "new": "Mushya",
@@ -206,7 +214,8 @@
       "failed": "Byaranze",
       "success": "Byakunze ✅",
       "edit": "Hindura",
-      "back": "Subira inyuma"
+      "back": "Subira inyuma",
+      "loading": "Biratunganywa…"
     },
     "provinces": {
       "city_of_kigali": "Umujyi wa Kigali",
@@ -629,7 +638,9 @@
       "category_search_placeholder": "Shakisha ikiciro...",
       "loading_categories": "Gushakisha ikiciro...",
       "age_restriction_error": "Ugomba kuba ufite nibura imyaka 18 kugira ngo wiyandikishe.",
-      "age_restriction_title": "Imyaka ntihagije"
+      "age_restriction_title": "Imyaka ntihagije",
+      "category_multi_hint": "— hitamo ibikwiye byose",
+      "category_selected": "byatoranyijwe"
     },
     "location_avail": {
       "location_label": "Aho uba",
@@ -2119,5 +2130,12 @@
     "no_location": "Nta hantu nyaho h'uyu murimo",
     "error": "Ntibishoboye gupakira uyu murimo",
     "no_location_hint": "Umukoresha ntararashyira ahantu nyaho. Muvugishe umenye umuhanda na nomero y'inzu."
+  },
+  "whats_new": {
+    "tag": "Ibishya",
+    "title": "Ibintu bishya n'ivugururwa",
+    "desc": "Ibyo twashyize ku rubuga rwa MpahMapu vuba aha.",
+    "empty": "Nta matangazo ahari — garuka vuba.",
+    "cta": "Reba"
   }
 }

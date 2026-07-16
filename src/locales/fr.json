@@ -37,11 +37,18 @@
       "help": "Aide",
       "menu": "Menu",
       "wallet": "Portefeuille",
-      "notifications": "Notifications"
+      "notifications": "Notifications",
+      "whats_new": "Nouveautés"
     },
     "footer": {
       "desc": "Connecter des travailleurs indépendants vérifiés à Kigali avec des entreprises locales et des ménages.",
-      "copyright": "© 2026 MpahMapu. Tous droits réservés."
+      "copyright": "© 2026 MpahMapu. Tous droits réservés.",
+      "newsletter_title": "Recevez les nouveautés",
+      "newsletter_subtitle": "Nouvelles fonctionnalités et astuces, directement dans votre boîte mail.",
+      "newsletter_placeholder": "vous@email.com",
+      "newsletter_button": "S'abonner",
+      "newsletter_thanks": "Merci — vous êtes abonné !",
+      "newsletter_error": "Échec de l'abonnement. Veuillez réessayer."
     },
     "categories": {
       "": "Travailleur",
@@ -193,7 +200,8 @@
       "processing": "Traitement...",
       "done": "Terminé",
       "cancel": "Annuler",
-      "submit": "Envoyer"
+      "submit": "Envoyer",
+      "sending": "Envoi…"
     },
     "general": {
       "new": "Nouveau",
@@ -206,7 +214,8 @@
       "failed": "Échoué",
       "success": "Succès",
       "edit": "Modifier",
-      "back": "Retour"
+      "back": "Retour",
+      "loading": "Chargement…"
     },
     "provinces": {
       "city_of_kigali": "Ville de Kigali",
@@ -629,7 +638,9 @@
       "category_search_placeholder": "Rechercher des catégories...",
       "loading_categories": "Chargement des catégories...",
       "age_restriction_error": "Vous devez avoir au moins 18 ans pour vous inscrire.",
-      "age_restriction_title": "Limite d'âge"
+      "age_restriction_title": "Limite d'âge",
+      "category_multi_hint": "— sélectionnez tout ce qui s'applique",
+      "category_selected": "sélectionné(s)"
     },
     "location_avail": {
       "location_label": "Votre emplacement",
@@ -2118,5 +2129,12 @@
     "no_location": "Aucune localisation précise pour cet emploi",
     "error": "Impossible de charger cet emploi",
     "no_location_hint": "L'employeur n'a pas encore indiqué d'emplacement exact. Contactez-le pour la rue et le numéro."
+  },
+  "whats_new": {
+    "tag": "Nouveautés",
+    "title": "Dernières fonctionnalités et mises à jour",
+    "desc": "Tout ce que nous avons lancé récemment sur MpahMapu.",
+    "empty": "Aucune annonce pour l'instant — revenez bientôt.",
+    "cta": "Découvrir"
   }
 }

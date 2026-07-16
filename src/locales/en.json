@@ -37,11 +37,18 @@
       "help": "Help",
       "menu": "Menu",
       "wallet": "Wallet",
-      "notifications": "Notifications"
+      "notifications": "Notifications",
+      "whats_new": "What's new"
     },
     "footer": {
       "desc": "Connecting verified gig workers in Kigali with local businesses and households.",
-      "copyright": "© 2026 MpahMapu. All rights reserved."
+      "copyright": "© 2026 MpahMapu. All rights reserved.",
+      "newsletter_title": "Get feature updates",
+      "newsletter_subtitle": "New features and tips, straight to your inbox.",
+      "newsletter_placeholder": "you@email.com",
+      "newsletter_button": "Subscribe",
+      "newsletter_thanks": "Thanks — you're subscribed!",
+      "newsletter_error": "Couldn't subscribe. Please try again."
     },
     "categories": {
       "": "Worker",
@@ -194,7 +201,8 @@
       "processing": "Processing...",
       "done": "Done",
       "cancel": "Cancel",
-      "submit": "Submit"
+      "submit": "Submit",
+      "sending": "Sending…"
     },
     "general": {
       "new": "New",
@@ -207,7 +215,8 @@
       "failed": "Failed",
       "success": "Success",
       "edit": "Edit",
-      "back": "Back"
+      "back": "Back",
+      "loading": "Loading…"
     },
     "provinces": {
       "city_of_kigali": "City of Kigali",
@@ -630,7 +639,9 @@
       "category_search_placeholder": "Search categories...",
       "loading_categories": "Loading categories...",
       "age_restriction_error": "You must be at least 18 years old to register.",
-      "age_restriction_title": "Age Restriction"
+      "age_restriction_title": "Age Restriction",
+      "category_multi_hint": "— select all that apply",
+      "category_selected": "selected"
     },
     "location_avail": {
       "location_label": "Your Location",
@@ -2123,5 +2134,12 @@
     "no_location": "No precise location for this job",
     "error": "Couldn't load this job",
     "no_location_hint": "The employer hasn't pinned an exact spot yet. Contact them for the street and house number."
+  },
+  "whats_new": {
+    "tag": "What's new",
+    "title": "Latest features & updates",
+    "desc": "Everything we've shipped recently on MpahMapu.",
+    "empty": "No announcements yet — check back soon.",
+    "cta": "Check it out"
   }
 }

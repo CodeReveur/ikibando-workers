@@ -37,11 +37,18 @@
       "help": "Msaada",
       "menu": "Menyu",
       "wallet": "Mkoba",
-      "notifications": "Arifa"
+      "notifications": "Arifa",
+      "whats_new": "Mpya"
     },
     "footer": {
       "desc": "Kuunganisha wafanyakazi wa vibarua waliohakikiwa huko Kigali na biashara na kaya za mitaani.",
-      "copyright": "© 2026 MpahMapu. Haki zote zimehifadhiwa."
+      "copyright": "© 2026 MpahMapu. Haki zote zimehifadhiwa.",
+      "newsletter_title": "Pata taarifa za vipengele vipya",
+      "newsletter_subtitle": "Vipengele vipya na vidokezo, moja kwa moja kwenye barua pepe yako.",
+      "newsletter_placeholder": "wewe@email.com",
+      "newsletter_button": "Jiandikishe",
+      "newsletter_thanks": "Asante — umejiandikisha!",
+      "newsletter_error": "Imeshindwa kujiandikisha. Tafadhali jaribu tena."
     },
     "categories": {
       "": "Mfanyakazi",
@@ -193,7 +200,8 @@
       "processing": "Inashughulikiwa...",
       "done": "Imekamilika",
       "cancel": "Ghairi",
-      "submit": "Wasilisha"
+      "submit": "Wasilisha",
+      "sending": "Inatuma…"
     },
     "general": {
       "new": "Mpya",
@@ -206,7 +214,8 @@
       "failed": "Imeshindwa",
       "success": "Imefanikiwa",
       "edit": "Hariri",
-      "back": "Rudi"
+      "back": "Rudi",
+      "loading": "Inapakia…"
     },
     "provinces": {
       "city_of_kigali": "Jiji la Kigali",
@@ -629,7 +638,9 @@
       "category_search_placeholder": "Tafuta kategoria...",
       "loading_categories": "Inapakia kategoria...",
       "age_restriction_error": "Lazima uwe na angalau umri wa miaka 18 ili ujisajili.",
-      "age_restriction_title": "Kizuizi cha Umri"
+      "age_restriction_title": "Kizuizi cha Umri",
+      "category_multi_hint": "— chagua vyote vinavyohusika",
+      "category_selected": "zimechaguliwa"
     },
     "location_avail": {
       "location_label": "Mahali Pako",
@@ -2118,5 +2129,12 @@
     "no_location": "Hakuna eneo kamili la kazi hii",
     "error": "Imeshindwa kupakia kazi hii",
     "no_location_hint": "Mwajiri bado hajaweka eneo kamili. Wasiliana naye kwa mtaa na nambari ya nyumba."
+  },
+  "whats_new": {
+    "tag": "Mpya",
+    "title": "Vipengele na masasisho ya hivi karibuni",
+    "desc": "Kila kitu tulichozindua hivi karibuni kwenye MpahMapu.",
+    "empty": "Hakuna matangazo bado — rudi hivi karibuni.",
+    "cta": "Angalia"
   }
 }
