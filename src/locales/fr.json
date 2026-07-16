@@ -1749,7 +1749,9 @@
     "no_pending": "Aucune candidature en attente",
     "no_new": "Aucune nouvelle notification",
     "manage_apps": "Gérer les candidatures",
-    "view_all": "Voir toutes les candidatures"
+    "view_all": "Voir toutes les candidatures",
+    "mark_all_read": "Tout marquer comme lu",
+    "empty_desc": "Les alertes d'emploi, paiements et mises à jour apparaîtront ici."
   },
   "transaction_detail": {
     "title": "Détails de la transaction",

@@ -1749,7 +1749,9 @@
     "no_pending": "Nta menyesha zitegereje",
     "no_new": "Nta menyesha nshya ufite",
     "manage_apps": "Gucunga imenyesha",
-    "view_all": "Reba imenyesha zose"
+    "view_all": "Reba imenyesha zose",
+    "mark_all_read": "Shyira byose nk'ibyasomwe",
+    "empty_desc": "Imenyesha z'akazi, kwishyura n'ivugururwa bizagaragara hano."
   },
   "transaction_detail": {
     "title": "Ibiranga Igikorwa",

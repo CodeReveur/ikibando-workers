@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   FileText, Briefcase, Wallet, Gift, BarChart2, Settings,
-  Send, CreditCard, Users, HelpCircle, LogOut, Home
+  Send, CreditCard, Users, HelpCircle, LogOut, Home, Bell
 } from "lucide-react";
 import { useSession } from "./session-ctx";
 import { useLanguage } from "@/lib/language-context";
@@ -18,7 +18,8 @@ const SEEKER_NAV = [
   { href:"/seeker/jobs",         label:"My Jobs",         icon:Briefcase },
   { href:"/seeker/earnings",     label:"My Earnings",     icon:Wallet    },
   { href:"/seeker/bonuses",      label:"Bonuses",         icon:Gift      },
-  { href:"/seeker/analytics",   label:"Analytics",       icon:BarChart2 },
+  { href:"/seeker/notifications", label:"Notifications",  icon:Bell      },
+{ href:"/seeker/analytics",   label:"Analytics",       icon:BarChart2 },
   { href:"/seeker/settings",    label:"Settings",        icon:Settings  },
   { href:"/seeker/help",        label:"Help",            icon:HelpCircle },
 ];
@@ -27,7 +28,8 @@ const OWNER_NAV = [
   { href:"/owner/offers",    label:"My Offers",  icon:Send       },
   { href:"/owner/payments",  label:"Payments",   icon:CreditCard },
   { href:"/owner/workers",   label:"Workers",    icon:Users      },
-  { href:"/owner/analytics", label:"Analytics",  icon:BarChart2  },
+  { href:"/owner/notifications", label:"Notifications", icon:Bell       },
+{ href:"/owner/analytics", label:"Analytics",  icon:BarChart2  },
   { href:"/owner/settings",  label:"Settings",   icon:Settings   },
   { href:"/owner/help",      label:"Help",       icon:HelpCircle },
 ];
@@ -70,6 +72,7 @@ export function Sidebar({ mobileOpen, closeMobile }: { mobileOpen?: boolean; clo
     else if (href === "/owner/workers") key = "workers";
     else if (href === "/owner/analytics" || href === "/seeker/analytics") key = "analytics";
     else if (href === "/owner/help" || href === "/seeker/help") key = "help";
+    else if (href === "/owner/notifications" || href === "/seeker/notifications") key = "notifications";
     
     return key ? t("common.nav." + key) : defaultLabel;
   };

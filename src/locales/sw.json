@@ -1749,7 +1749,9 @@
     "no_pending": "Hakuna maombi yanayosubiri",
     "no_new": "Hakuna arifa mpya",
     "manage_apps": "Simamia maombi",
-    "view_all": "Angalia maombi yote"
+    "view_all": "Angalia maombi yote",
+    "mark_all_read": "Weka zote kuwa zimesomwa",
+    "empty_desc": "Arifa za kazi, malipo na masasisho zitaonekana hapa."
   },
   "transaction_detail": {
     "title": "Maelezo ya Miamala",

@@ -276,6 +276,15 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
                   </div>
                 )}
               </div>
+              {/* The bell holds only the newest few and clips the text — full history lives here. */}
+              <a href={isOwner ? "/owner/notifications" : "/seeker/notifications"}
+                 onClick={() => setNotifOpen(false)}
+                 style={{
+                   display: "block", padding: "12px 16px", borderTop: "1px solid #1a1a1a",
+                   fontSize: 12, fontWeight: 700, color: "#f97316", textDecoration: "none", textAlign: "center",
+                 }}>
+                {t("notifications.view_all") || "View all notifications"}
+              </a>
             </DropPanel>
           )}
         </div>

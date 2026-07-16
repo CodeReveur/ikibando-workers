@@ -1750,7 +1750,9 @@
     "no_pending": "No pending applications",
     "no_new": "No new notifications",
     "manage_apps": "Manage applications",
-    "view_all": "View all applications"
+    "view_all": "View all applications",
+    "mark_all_read": "Mark all as read",
+    "empty_desc": "Job alerts, payments and updates will show up here."
   },
   "transaction_detail": {
     "title": "Transaction Details",
