@@ -14,6 +14,7 @@ export default function Footer() {
     { href: "/browse",  label: t("common.nav.browse")  },
     { href: "/jobs",    label: t("common.nav.jobs")    },
     { href: "/whats-new", label: t("common.nav.whats_new") || "What's new" },
+    { href: "/blog",    label: t("common.nav.blog")    },
     { href: "/about",   label: t("common.nav.about")   },
     { href: "/contact", label: t("common.nav.contact") },
     { href: "/privacy-policy", label: t("common.nav.privacy") },

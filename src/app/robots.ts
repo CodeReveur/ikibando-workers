@@ -7,7 +7,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/dashboard/", "/owner/", "/seeker/", "/api/", "/verify/", "/reset-password/", "/forgot-password/"],
+        // /unsubscribe is a per-recipient action page — nothing to index, and no crawler
+        // should be following opt-out links.
+        disallow: ["/dashboard/", "/owner/", "/seeker/", "/api/", "/verify/", "/reset-password/", "/forgot-password/", "/unsubscribe"],
       },
       {
         userAgent: "GPTBot",

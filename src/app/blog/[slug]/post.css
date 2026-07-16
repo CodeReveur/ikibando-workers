@@ -1,0 +1,136 @@
+/*
+ * Styles for admin-authored post HTML. The body is arbitrary markup from the editor's allowlist,
+ * so it can't carry its own classes — every tag is styled by element here.
+ */
+
+.post-body {
+  font-size: 15.5px;
+  line-height: 1.85;
+  color: #b4b4b4;
+}
+
+.post-body > *:first-child {
+  margin-top: 0;
+}
+
+.post-body h2 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+  margin: 40px 0 12px;
+}
+
+.post-body h3 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.2px;
+  margin: 32px 0 10px;
+}
+
+.post-body p {
+  margin: 0 0 18px;
+}
+
+.post-body strong {
+  color: #e8e8e8;
+  font-weight: 700;
+}
+
+.post-body a {
+  color: #f97316;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.post-body ul,
+.post-body ol {
+  margin: 0 0 20px;
+  padding-left: 22px;
+}
+
+.post-body li {
+  margin-bottom: 8px;
+}
+
+.post-body blockquote {
+  margin: 24px 0;
+  padding: 4px 0 4px 18px;
+  border-left: 3px solid #f97316;
+  color: #9a9a9a;
+  font-style: italic;
+}
+
+.post-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid #272727;
+  margin: 20px 0;
+  display: block;
+}
+
+.post-body hr {
+  border: none;
+  border-top: 1px solid #272727;
+  margin: 36px 0;
+}
+
+.post-body code {
+  background: #1c1c1c;
+  border: 1px solid #272727;
+  border-radius: 5px;
+  padding: 1px 6px;
+  font-size: 13px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+}
+
+.post-body pre {
+  background: #1a1a1a;
+  border: 1px solid #272727;
+  border-radius: 10px;
+  padding: 16px;
+  overflow-x: auto;
+  margin: 0 0 20px;
+}
+
+.post-body pre code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* Wide tables scroll inside the post rather than pushing the page sideways on a phone. */
+.post-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 20px;
+  font-size: 14px;
+  display: block;
+  overflow-x: auto;
+}
+
+.post-body th,
+.post-body td {
+  border: 1px solid #272727;
+  padding: 9px 12px;
+  text-align: left;
+}
+
+.post-body th {
+  background: #1a1a1a;
+  color: #e8e8e8;
+  font-weight: 700;
+}
+
+.post-body figure {
+  margin: 24px 0;
+}
+
+.post-body figcaption {
+  font-size: 12.5px;
+  color: #666;
+  text-align: center;
+  margin-top: 8px;
+}

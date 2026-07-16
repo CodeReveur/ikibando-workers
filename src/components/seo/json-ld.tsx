@@ -159,6 +159,47 @@ export function BreadcrumbSchema({ items }: { items: { name: string; url: string
   );
 }
 
+/**
+ * Blog post markup. Every post is a fresh page that names the brand and points back at the
+ * Organization node — which is exactly the corroboration Google wants before it stops treating an
+ * unfamiliar name as a typo. `publisher` is a reference to ORG_ID, not a duplicate definition, so
+ * the whole site stays one entity.
+ */
+export function ArticleSchema({
+  title,
+  description,
+  url,
+  imageUrl,
+  publishedAt,
+  updatedAt,
+}: {
+  title: string;
+  description?: string | null;
+  url: string;
+  imageUrl?: string | null;
+  publishedAt?: string | null;
+  updatedAt?: string | null;
+}) {
+  return (
+    <JsonLd
+      data={{
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        headline: title,
+        ...(description ? { description } : {}),
+        url,
+        mainEntityOfPage: { "@type": "WebPage", "@id": url },
+        image: imageUrl || SITE_LOGO,
+        ...(publishedAt ? { datePublished: publishedAt } : {}),
+        ...(updatedAt ? { dateModified: updatedAt } : {}),
+        author: { "@id": ORG_ID },
+        publisher: { "@id": ORG_ID },
+        isPartOf: { "@id": WEBSITE_ID },
+      }}
+    />
+  );
+}
+
 export function FAQSchema({ faqs }: { faqs: { question: string; answer: string }[] }) {
   return (
     <JsonLd

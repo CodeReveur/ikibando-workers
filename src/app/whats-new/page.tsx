@@ -1,19 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import Footer from "@/components/layout/footer";
 import { BreadcrumbSchema } from "@/components/seo/json-ld";
 import { useLanguage } from "@/lib/language-context";
-import { getAnnouncements, type FeatureAnnouncement } from "@/lib/api";
+import { getProductUpdates, type BlogPost } from "@/lib/api";
 
 export default function WhatsNewPage() {
   const { t } = useLanguage();
-  const [items, setItems] = useState<FeatureAnnouncement[]>([]);
+  const [items, setItems] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Product updates are the PRODUCT_UPDATE slice of the blog — one source, two views.
   useEffect(() => {
-    getAnnouncements()
+    getProductUpdates()
       .then(setItems)
       .catch(() => setItems([]))
       .finally(() => setLoading(false));
@@ -79,22 +81,20 @@ export default function WhatsNewPage() {
                 borderRadius: 14, padding: "22px 22px",
               }}>
                 <p style={{ margin: "0 0 8px", fontSize: 11, color: "#555", fontWeight: 600 }}>
-                  {formatDate(a.createdAt)}
+                  {formatDate(a.publishedAt ?? a.createdAt)}
                 </p>
                 <h2 style={{ margin: "0 0 8px", fontSize: 18, fontWeight: 800, color: "#fff", letterSpacing: "-0.3px" }}>
                   {a.title}
                 </h2>
-                {a.description && (
-                  <p style={{ margin: 0, fontSize: 14, color: "#888", lineHeight: 1.7 }}>{a.description}</p>
+                {a.excerpt && (
+                  <p style={{ margin: 0, fontSize: 14, color: "#888", lineHeight: 1.7 }}>{a.excerpt}</p>
                 )}
-                {a.url && (
-                  <a href={a.url} style={{
-                    display: "inline-flex", alignItems: "center", gap: 6, marginTop: 14,
-                    color: "#f97316", fontSize: 13, fontWeight: 700, textDecoration: "none",
-                  }}>
-                    {t("whats_new.cta") || "Check it out"} <ArrowRight size={14} />
-                  </a>
-                )}
+                <Link href={`/blog/${a.slug}`} style={{
+                  display: "inline-flex", alignItems: "center", gap: 6, marginTop: 14,
+                  color: "#f97316", fontSize: 13, fontWeight: 700, textDecoration: "none",
+                }}>
+                  {t("whats_new.cta") || "Check it out"} <ArrowRight size={14} />
+                </Link>
               </div>
             ))}
           </div>

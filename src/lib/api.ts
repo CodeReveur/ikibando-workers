@@ -1179,9 +1179,66 @@ export async function subscribeNewsletter(email: string, name?: string): Promise
   await http.post("/api/newsletter/subscribe", { email, name });
 }
 
+/** Opt out of broadcasts using the token from an email's unsubscribe link. No login needed. */
+export async function unsubscribeNewsletter(token: string): Promise<void> {
+  await http.post("/api/newsletter/unsubscribe", { token });
+}
+
 /** Public "what's new" feed of feature announcements (newest first). */
 export async function getAnnouncements(): Promise<FeatureAnnouncement[]> {
   const { data } = await http.get("/api/announcements");
+  return data.data;
+}
+
+// ── Blog / company channel ────────────────────────────────────────────────────
+
+export type BlogCategory =
+  | "PRODUCT_UPDATE"
+  | "NEWS"
+  | "PARTNERSHIP"
+  | "RECOGNITION";
+
+export interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  /** Sanitised HTML. Null on list endpoints — cards don't render the body. */
+  bodyHtml: string | null;
+  coverImageUrl: string | null;
+  category: BlogCategory;
+  status: "DRAFT" | "PUBLISHED";
+  ctaUrl: string | null;
+  publishedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const BLOG_CATEGORY_LABELS: Record<BlogCategory, string> = {
+  PRODUCT_UPDATE: "Product update",
+  NEWS: "Company news",
+  PARTNERSHIP: "Partnership",
+  RECOGNITION: "Recognition",
+};
+
+/** Published posts, newest first. Omit `category` for everything. */
+export async function getBlogPosts(params?: {
+  category?: BlogCategory;
+  page?: number;
+  size?: number;
+}): Promise<Page<BlogPost>> {
+  const { data } = await http.get("/api/blog", { params });
+  return data.data;
+}
+
+export async function getBlogPost(slug: string): Promise<BlogPost> {
+  const { data } = await http.get(`/api/blog/${slug}`);
+  return data.data;
+}
+
+/** The product-update slice of the blog — backs /whats-new. */
+export async function getProductUpdates(): Promise<BlogPost[]> {
+  const { data } = await http.get("/api/blog/updates");
   return data.data;
 }
 
