@@ -13,7 +13,7 @@ export default function Footer() {
   const links = [
     { href: "/browse",  label: t("common.nav.browse")  },
     { href: "/jobs",    label: t("common.nav.jobs")    },
-    { href: "/whats-new", label: t("common.nav.whats_new") || "What's new" },
+    // "What's new" now lives inside the blog, so linking both would send people to one page twice.
     { href: "/blog",    label: t("common.nav.blog")    },
     { href: "/about",   label: t("common.nav.about")   },
     { href: "/contact", label: t("common.nav.contact") },

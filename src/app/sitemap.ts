@@ -15,7 +15,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/about",
     "/contact",
     "/blog",
-    "/whats-new",
+    // /whats-new is deliberately absent: it 301s to /blog now, and listing a redirect in the
+    // sitemap just asks Google to crawl a hop.
     "/privacy-policy",
     "/terms-and-conditions",
     "/signin",
@@ -26,7 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const isMain = path === "";
     const isBrowseOrJobs = path.includes("browse") || path.includes("jobs");
     const isInfo = path.includes("about") || path.includes("contact");
-    const isBlog = path === "/blog" || path === "/whats-new";
+    const isBlog = path === "/blog";
     const priority = isMain ? 1.0 : isBrowseOrJobs ? 0.9 : isInfo || isBlog ? 0.7 : 0.5;
 
     return {

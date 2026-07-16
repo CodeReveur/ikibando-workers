@@ -1,0 +1,332 @@
+/*
+ * Blog / updates channel.
+ *
+ * Sizing and palette follow the rest of the site (see /about, /contact): a 760px column,
+ * 48px 20px 64px padding, clamp(32px, 6vw, 48px) h1, #1c1c1c surfaces on #111 with #272727
+ * borders. Deviating here is what made this page feel like a different product.
+ *
+ * A stylesheet rather than inline styles because these are server components and the states that
+ * matter — hover, focus, line clamping, responsive columns — can't be expressed inline.
+ */
+
+.blog-page {
+  background: #111;
+  min-height: 100vh;
+  color: #f5f5f5;
+  font-family: Inter, "DM Sans", system-ui, sans-serif;
+}
+
+.blog-shell {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 20px 64px;
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────── */
+
+.blog-hero {
+  margin-bottom: 40px;
+}
+
+.blog-eyebrow {
+  display: inline-block;
+  background: rgba(249, 115, 22, 0.1);
+  color: #f97316;
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+
+.blog-title {
+  font-size: clamp(32px, 6vw, 48px);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.05;
+  letter-spacing: -1.5px;
+  margin: 0 0 18px;
+}
+.blog-title span {
+  color: #f97316;
+}
+
+.blog-lede {
+  font-size: 15px;
+  color: #666;
+  line-height: 1.75;
+  max-width: 500px;
+  margin: 0;
+}
+
+/* ── Filters ──────────────────────────────────────────────────────── */
+
+.blog-filters {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.blog-chip {
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid #272727;
+  background: #1c1c1c;
+  color: #777;
+  transition: color 0.15s, border-color 0.15s;
+}
+.blog-chip:hover {
+  color: #e0e0e0;
+  border-color: #3a3a3a;
+}
+/* Active state is a quiet tint, not a solid orange slab — five of these lit up at once was
+   the "eye killing" part. */
+.blog-chip[data-active="true"] {
+  background: rgba(249, 115, 22, 0.1);
+  border-color: rgba(249, 115, 22, 0.35);
+  color: #f97316;
+}
+
+/* ── Post rows ────────────────────────────────────────────────────── */
+
+.blog-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/*
+ * Rows, not image cards. Most posts are written without a cover, and a grid of empty frames looks
+ * broken — a list degrades to "no image" gracefully and reads like a changelog, which is what
+ * this is.
+ */
+.blog-row {
+  display: flex;
+  gap: 22px;
+  align-items: flex-start;
+  padding: 24px 0;
+  border-top: 1px solid #1e1e1e;
+  text-decoration: none;
+  color: inherit;
+}
+.blog-row:first-child {
+  border-top: none;
+  padding-top: 4px;
+}
+.blog-row:hover .blog-row-title {
+  color: #f97316;
+}
+.blog-row:focus-visible {
+  outline: 2px solid #f97316;
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.blog-row-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.blog-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  margin-bottom: 8px;
+}
+.blog-cat {
+  color: #f97316;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.blog-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #333;
+  flex-shrink: 0;
+}
+.blog-date {
+  color: #555;
+  font-weight: 600;
+}
+
+.blog-row-title {
+  margin: 0 0 7px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.3px;
+  line-height: 1.35;
+  transition: color 0.15s;
+}
+
+.blog-excerpt {
+  margin: 0;
+  font-size: 14px;
+  color: #777;
+  line-height: 1.7;
+  /* Two lines: a long excerpt shouldn't let one row dwarf the rest of the list. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.blog-read {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 11px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #f97316;
+}
+.blog-read svg {
+  transition: transform 0.15s;
+}
+.blog-row:hover .blog-read svg {
+  transform: translateX(3px);
+}
+
+/* Only rendered when a post actually has a cover. */
+.blog-thumb {
+  width: 148px;
+  height: 92px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  border: 1px solid #272727;
+  overflow: hidden;
+  background: #1c1c1c;
+}
+.blog-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@media (max-width: 620px) {
+  .blog-row {
+    flex-direction: column-reverse;
+    gap: 14px;
+  }
+  .blog-thumb {
+    width: 100%;
+    height: 160px;
+  }
+}
+
+/* ── Empty ────────────────────────────────────────────────────────── */
+
+.blog-empty {
+  background: #1c1c1c;
+  border: 1px solid #272727;
+  border-radius: 14px;
+  padding: 44px 24px;
+  text-align: center;
+}
+.blog-empty-icon {
+  color: #f97316;
+  margin-bottom: 12px;
+}
+.blog-empty h2 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.2px;
+}
+.blog-empty p {
+  margin: 0 auto;
+  font-size: 13.5px;
+  color: #666;
+  line-height: 1.7;
+  max-width: 42ch;
+}
+
+/* ── Post page ────────────────────────────────────────────────────── */
+
+.post-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #666;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 26px;
+  transition: color 0.15s;
+}
+.post-back:hover {
+  color: #f97316;
+}
+
+.post-title {
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.08;
+  letter-spacing: -1.2px;
+  margin: 14px 0 16px;
+}
+
+.post-lede {
+  font-size: 15.5px;
+  color: #888;
+  line-height: 1.75;
+  margin: 0;
+}
+
+.post-cover {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid #272727;
+  margin: 0 0 32px;
+  display: block;
+}
+
+.post-rule {
+  border: none;
+  border-top: 1px solid #1e1e1e;
+  margin: 28px 0 32px;
+}
+
+.post-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 32px;
+  background: #f97316;
+  color: #fff;
+  border-radius: 10px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.post-cta:hover {
+  background: #ea580c;
+}
+
+.post-related {
+  border-top: 1px solid #1e1e1e;
+  margin-top: 48px;
+  padding-top: 32px;
+}
+.post-related h2 {
+  margin: 0 0 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #555;
+}

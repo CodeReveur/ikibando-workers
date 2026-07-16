@@ -323,7 +323,7 @@ export default function SeekerHome() {
         <>
           <div style={{ marginTop: 28 }}>
             <SectionHead title={t("dashboard_home.updates_title") || "What's new"} action={
-              <a href="/whats-new" style={{ display:"flex", alignItems:"center", gap:4, fontSize:12, fontWeight:700, color:"#f97316", textDecoration:"none" }}>
+              <a href="/blog?category=PRODUCT_UPDATE" style={{ display:"flex", alignItems:"center", gap:4, fontSize:12, fontWeight:700, color:"#f97316", textDecoration:"none" }}>
                 {t("dashboard_home.see_all")} <ArrowRight size={12} />
               </a>
             } />

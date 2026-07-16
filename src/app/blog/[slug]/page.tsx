@@ -3,10 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Footer from "@/components/layout/footer";
+import { PostRow } from "@/components/blog/post-row";
 import { ArticleSchema, BreadcrumbSchema } from "@/components/seo/json-ld";
 import { BLOG_CATEGORY_LABELS } from "@/lib/api";
-import { fetchPost, formatPostDate } from "@/lib/blog";
+import { fetchPost, fetchPosts, formatPostDate, readingTime } from "@/lib/blog";
 import { SITE_NAME, SITE_URL } from "@/lib/seo";
+import "../blog.css";
 import "./post.css";
 
 export async function generateMetadata({
@@ -51,16 +53,15 @@ export default async function BlogPostPage({
   if (!post) notFound();
 
   const url = `${SITE_URL}/blog/${post.slug}`;
+  const mins = readingTime(post.bodyHtml);
+
+  // Reaching the end of a post shouldn't be a dead end. Fetched after the post, so a failure here
+  // costs nothing — the section simply doesn't render.
+  const more = await fetchPosts({ size: 4 });
+  const related = (more?.content ?? []).filter((p) => p.id !== post.id).slice(0, 3);
 
   return (
-    <main
-      style={{
-        background: "#111",
-        minHeight: "100vh",
-        color: "#f5f5f5",
-        fontFamily: "Inter, DM Sans, system-ui, sans-serif",
-      }}
-    >
+    <main className="blog-page">
       <ArticleSchema
         title={post.title}
         description={post.excerpt}
@@ -77,72 +78,31 @@ export default async function BlogPostPage({
         ]}
       />
 
-      <article style={{ maxWidth: 760, margin: "0 auto", padding: "40px 20px 64px" }}>
-        <Link
-          href="/blog"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            color: "#777",
-            fontSize: 13,
-            fontWeight: 600,
-            textDecoration: "none",
-            marginBottom: 28,
-          }}
-        >
+      <article className="blog-shell">
+        <Link href="/blog" className="post-back">
           <ArrowLeft size={14} /> All posts
         </Link>
 
-        <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 14 }}>
-          <span
-            style={{
-              fontSize: 10.5,
-              fontWeight: 800,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              color: "#f97316",
-            }}
-          >
-            {BLOG_CATEGORY_LABELS[post.category]}
-          </span>
-          <span style={{ fontSize: 12, color: "#555" }}>
-            {formatPostDate(post.publishedAt ?? post.createdAt)}
-          </span>
+        <div className="blog-meta">
+          <span className="blog-cat">{BLOG_CATEGORY_LABELS[post.category]}</span>
+          <span className="blog-dot" />
+          <span className="blog-date">{formatPostDate(post.publishedAt ?? post.createdAt)}</span>
+          {mins > 0 && (
+            <>
+              <span className="blog-dot" />
+              <span className="blog-date">{mins} min read</span>
+            </>
+          )}
         </div>
 
-        <h1
-          style={{
-            fontSize: "clamp(27px, 5.5vw, 40px)",
-            fontWeight: 900,
-            color: "#fff",
-            lineHeight: 1.12,
-            letterSpacing: "-1.2px",
-            margin: "0 0 16px",
-          }}
-        >
-          {post.title}
-        </h1>
+        <h1 className="post-title">{post.title}</h1>
+        {post.excerpt && <p className="post-lede">{post.excerpt}</p>}
 
-        {post.excerpt && (
-          <p style={{ fontSize: 16, color: "#8a8a8a", lineHeight: 1.75, margin: "0 0 28px" }}>
-            {post.excerpt}
-          </p>
-        )}
+        <hr className="post-rule" />
 
         {post.coverImageUrl && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={post.coverImageUrl}
-            alt=""
-            style={{
-              width: "100%",
-              borderRadius: 14,
-              border: "1px solid #272727",
-              marginBottom: 32,
-              display: "block",
-            }}
-          />
+          <img src={post.coverImageUrl} alt="" className="post-cover" />
         )}
 
         {/* Sanitised on write (server-side allowlist), so it is safe to render as-is here. */}
@@ -151,24 +111,20 @@ export default async function BlogPostPage({
         )}
 
         {post.ctaUrl && (
-          <a
-            href={post.ctaUrl}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              marginTop: 34,
-              background: "#f97316",
-              color: "#fff",
-              borderRadius: 10,
-              padding: "12px 22px",
-              fontSize: 14,
-              fontWeight: 700,
-              textDecoration: "none",
-            }}
-          >
+          <a href={post.ctaUrl} className="post-cta">
             Check it out <ArrowRight size={15} />
           </a>
+        )}
+
+        {related.length > 0 && (
+          <section className="post-related">
+            <h2>More from the blog</h2>
+            <div className="blog-list">
+              {related.map((p) => (
+                <PostRow key={p.id} post={p} />
+              ))}
+            </div>
+          </section>
         )}
       </article>
       <Footer />

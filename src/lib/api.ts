@@ -1236,7 +1236,7 @@ export async function getBlogPost(slug: string): Promise<BlogPost> {
   return data.data;
 }
 
-/** The product-update slice of the blog — backs /whats-new. */
+/** The product-update slice of the blog. */
 export async function getProductUpdates(): Promise<BlogPost[]> {
   const { data } = await http.get("/api/blog/updates");
   return data.data;

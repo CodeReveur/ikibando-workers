@@ -44,6 +44,21 @@ export async function fetchPost(slug: string): Promise<BlogPost | null> {
   return getJson<BlogPost>(`/api/blog/${encodeURIComponent(slug)}`);
 }
 
+/**
+ * Rough minutes to read, from the post body. 200wpm is the usual figure for prose.
+ * Returns 0 when there's nothing to measure, so callers can hide the label rather than print a
+ * confident "0 min read".
+ */
+export function readingTime(bodyHtml: string | null): number {
+  if (!bodyHtml) return 0;
+  const words = bodyHtml
+    .replace(/<[^>]+>/g, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
+  return words === 0 ? 0 : Math.max(1, Math.round(words / 200));
+}
+
 export function formatPostDate(iso: string | null): string {
   if (!iso) return "";
   try {
