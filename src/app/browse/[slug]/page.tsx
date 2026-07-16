@@ -48,11 +48,32 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
 
   if (!worker) {
     return (
-      <main style={{ background: "#111", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "Inter, DM Sans, system-ui, sans-serif" }}>
-        <p style={{ fontSize: 40, margin: "0 0 16px" }}>🔍</p>
-        <h1 style={{ color: "#fff", margin: "0 0 8px", fontSize: 22, fontWeight: 800 }}>{t("worker_detail.not_found") || "Worker not found"}</h1>
-        <p style={{ color: "#555", fontSize: 14, margin: "0 0 24px" }}>{t("worker_detail.not_found_desc") || "This profile doesn't exist or has been removed."}</p>
-        <a href="/browse" style={{ color: "#f97316", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>{t("worker_detail.back") || "← Back to Browse"}</a>
+      <main style={{
+        background: "#111", minHeight: "100vh",
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+        padding: "40px 24px", textAlign: "center", boxSizing: "border-box",
+        fontFamily: "Inter, DM Sans, system-ui, sans-serif",
+      }}>
+        <p style={{ fontSize: 40, margin: "0 0 16px", lineHeight: 1 }}>🔍</p>
+        <h1 style={{
+          color: "#fff", margin: "0 0 8px", fontSize: "clamp(18px, 5.5vw, 22px)",
+          fontWeight: 800, lineHeight: 1.25, maxWidth: 320, overflowWrap: "break-word",
+        }}>
+          {t("worker_detail.not_found") || "Worker not found"}
+        </h1>
+        <p style={{
+          color: "#555", fontSize: "clamp(12px, 3.6vw, 14px)", margin: "0 0 24px",
+          lineHeight: 1.6, maxWidth: 320, overflowWrap: "break-word",
+        }}>
+          {t("worker_detail.not_found_desc") || "This profile doesn't exist or has been removed."}
+        </p>
+        <a href="/browse" style={{
+          color: "#f97316", fontSize: 14, fontWeight: 700, textDecoration: "none",
+          padding: "11px 22px", border: "1px solid #2a2a2a", borderRadius: 999,
+          maxWidth: "100%", boxSizing: "border-box",
+        }}>
+          {t("worker_detail.back") || "← Back to Browse"}
+        </a>
       </main>
     );
   }
