@@ -273,12 +273,22 @@ export default function Home() {
                   </div>
                   <div style={{ flex: "1 1 100px", minWidth: 100 }}>
                     <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0", wordBreak: "break-word", lineHeight: 1.3 }}>{w.name}</p>
-                    <p style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {(() => {
-                        const expType = (w.experienceType ?? "").toLowerCase();
-                        return t("common.categories." + expType) || w.categoryName || w.experienceType || t("common.general.worker");
-                      })()}
-                    </p>
+                    {(() => {
+                      const catSlugs = (w.experienceTypes && w.experienceTypes.length > 0)
+                        ? w.experienceTypes
+                        : (w.experienceType ? [w.experienceType] : []);
+                      const catLabels = catSlugs.map((s, i) =>
+                        t("common.categories." + (s ?? "").toLowerCase()) || w.categoryNames?.[i] || s);
+                      if (catLabels.length === 0) catLabels.push(t("common.general.worker"));
+                      const MAXW = 2;
+                      const text = catLabels.slice(0, MAXW).join(", ")
+                        + (catLabels.length > MAXW ? ` +${catLabels.length - MAXW} ${t("worker_detail.more") || "more"}` : "");
+                      return (
+                        <p title={catLabels.join(", ")} style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {text}
+                        </p>
+                      );
+                    })()}
                   </div>
                   {(() => {
                     const r = ratingInfo(w.rating, w.ratingCount);

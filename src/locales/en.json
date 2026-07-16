@@ -1124,7 +1124,8 @@
       "button_hire": "Hire {name}",
       "hire": "Hire {name}",
       "unavailable": "Unavailable"
-    }
+    },
+    "more": "more"
   },
   "not_found_page": {
     "title": "Page Not Found",

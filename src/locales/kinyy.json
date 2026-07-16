@@ -1124,7 +1124,8 @@
       "button_hire": "Akira {name}",
       "hire": "Hira {name}",
       "unavailable": "Ntariho"
-    }
+    },
+    "more": "n'ibindi"
   },
   "not_found_page": {
     "title": "Urupapuro ntirubonetse",

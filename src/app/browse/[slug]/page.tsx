@@ -57,6 +57,13 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
 
   const expType     = (worker.experienceType ?? "").toLowerCase();
   const catLabel    = t("common.categories." + expType) || worker.categoryName || worker.experienceType || t("common.general.worker");
+  // All categories the worker practises, localized. Falls back to the single one.
+  const catSlugs    = (worker.experienceTypes && worker.experienceTypes.length > 0)
+    ? worker.experienceTypes
+    : (worker.experienceType ? [worker.experienceType] : []);
+  const catLabels   = catSlugs.map((s, i) =>
+    t("common.categories." + (s ?? "").toLowerCase()) || worker.categoryNames?.[i] || s);
+  if (catLabels.length === 0) catLabels.push(t("common.general.worker"));
   const isAvailable = worker.availability.length > 0;
   const memberYear  = new Date(worker.memberSince as unknown as string).getFullYear();
   const firstName   = worker.name.split(" ")[0];
@@ -110,14 +117,25 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
             </div>
 
             <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 8, marginBottom: 10 }}>
-              <span style={{
-                display: "inline-flex", alignItems: "center", gap: 5,
-                background: "rgba(249,115,22,0.1)", border: "1px solid rgba(249,115,22,0.25)",
-                borderRadius: 999, padding: "4px 10px", fontSize: 11, fontWeight: 700, color: "#f97316",
-              }}>
-                <Briefcase size={11} />
-                {catLabel}
-              </span>
+              {(() => {
+                const MAX = 3;
+                const shown = catLabels.slice(0, MAX);
+                const extra = catLabels.length - shown.length;
+                const chip = (content: React.ReactNode, key: string, withIcon: boolean) => (
+                  <span key={key} title={catLabels.join(", ")} style={{
+                    display: "inline-flex", alignItems: "center", gap: 5,
+                    background: "rgba(249,115,22,0.1)", border: "1px solid rgba(249,115,22,0.25)",
+                    borderRadius: 999, padding: "4px 10px", fontSize: 11, fontWeight: 700, color: "#f97316",
+                  }}>
+                    {withIcon && <Briefcase size={11} />}
+                    {content}
+                  </span>
+                );
+                return [
+                  ...shown.map((c, i) => chip(c, "cat-" + i, i === 0)),
+                  extra > 0 ? chip(`+${extra} ${t("worker_detail.more") || "more"}`, "cat-more", false) : null,
+                ];
+              })()}
               <span style={{
                 fontSize: 11, fontWeight: 700, borderRadius: 999, padding: "4px 10px",
                 background: isAvailable ? "rgba(34,197,94,0.1)" : "rgba(255,255,255,0.05)",

@@ -1123,7 +1123,8 @@
       "button_hire": "Kodisha {name}",
       "hire": "Aajiri {name}",
       "unavailable": "Haipatikani"
-    }
+    },
+    "more": "zaidi"
   },
   "not_found_page": {
     "title": "Ukurasa Haupatikani",

@@ -1123,7 +1123,8 @@
       "button_hire": "Recruter {name}",
       "hire": "Embaucher {name}",
       "unavailable": "Indisponible"
-    }
+    },
+    "more": "de plus"
   },
   "not_found_page": {
     "title": "Page non trouvée",

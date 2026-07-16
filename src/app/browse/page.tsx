@@ -509,9 +509,17 @@ function BrowsePageInner() {
             ? <Empty label={t("browse_page.empty.workers") || "No workers match your filters."} />
             : <div className="browse-grid">
                 {workersReveal.visible.map((w: WorkerProfileDto) => {
-                  const expType = (w.experienceType ?? "").toLowerCase();
-                  const wCatKey = CATEGORIES.find(c => c.apiValues.includes(expType))?.key || expType;
-                  const localizedWCat = t("common.categories." + wCatKey) || w.categoryName || w.experienceType || t("common.general.worker");
+                  const catSlugs = (w.experienceTypes && w.experienceTypes.length > 0)
+                    ? w.experienceTypes
+                    : (w.experienceType ? [w.experienceType] : []);
+                  const catLabels = catSlugs.map((s, i) => {
+                    const key = CATEGORIES.find(c => c.apiValues.includes((s ?? "").toLowerCase()))?.key || (s ?? "").toLowerCase();
+                    return t("common.categories." + key) || w.categoryNames?.[i] || s;
+                  });
+                  if (catLabels.length === 0) catLabels.push(t("common.general.worker"));
+                  const MAXW = 2;
+                  const localizedWCat = catLabels.slice(0, MAXW).join(", ")
+                    + (catLabels.length > MAXW ? ` +${catLabels.length - MAXW} ${t("worker_detail.more") || "more"}` : "");
                   return (
                     <a key={w.id} href={`/browse/${w.id}`} className="bcard" style={{
                       background: "#1c1c1c", border: "1px solid #272727", borderRadius: 14,
@@ -541,7 +549,7 @@ function BrowsePageInner() {
                         </div>
                         <div style={{ minWidth: 0 }}>
                           <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
-                          <p style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2 }}>{localizedWCat}</p>
+                          <p title={catLabels.join(", ")} style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{localizedWCat}</p>
                         </div>
                       </div>
 
