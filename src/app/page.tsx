@@ -294,9 +294,9 @@ export default function Home() {
                     const r = ratingInfo(w.rating, w.ratingCount);
                     return (
                       <div style={{ display: "flex", alignItems: "center", gap: 3, flexShrink: 0, marginLeft: "auto" }}>
-                        <Star size={12} color="#f97316" fill={r.hasReviews ? "#f97316" : "none"} />
-                        <span style={{ fontSize: 12, fontWeight: 700, color: r.hasReviews ? "#f97316" : "#666" }}>
-                          {r.hasReviews ? r.value : t("common.general.new")}
+                        <Star size={12} color="#f97316" fill="#f97316" />
+                        <span style={{ fontSize: 12, fontWeight: 700, color: "#f97316" }}>
+                          {r.value}
                         </span>
                       </div>
                     );

@@ -107,8 +107,8 @@ export default function VerifyBadgePage({ params }: { params: Promise<{ badgeId:
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 20 }}>
                 <div style={{ background: "#0d0d0d", border: "1px solid #232323", borderRadius: 12, padding: "14px 10px" }}>
                   <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 2 }}>
-                    <Star size={15} color="#f97316" fill={r.hasReviews ? "#f97316" : "none"} style={{ alignSelf: "center", marginRight: 4 }} />
-                    <span style={{ fontSize: 22, fontWeight: 800, color: "#f0f0f0" }}>{r.hasReviews ? r.value : "—"}</span>
+                    <Star size={15} color="#f97316" fill="#f97316" style={{ alignSelf: "center", marginRight: 4 }} />
+                    <span style={{ fontSize: 22, fontWeight: 800, color: "#f0f0f0" }}>{r.value}</span>
                     <span style={{ fontSize: 13, fontWeight: 700, color: "#666" }}>/5</span>
                   </div>
                   <p style={{ margin: "5px 0 0", fontSize: 11, color: "#666" }}>

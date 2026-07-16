@@ -885,9 +885,9 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                               {(() => {
                                 const r = ratingInfo(w.rating, w.ratingCount);
                                 return (
-                                  <span style={{ display: "inline-flex", alignItems: "center", gap: 2, color: r.hasReviews ? "#f97316" : "#666", fontWeight: 700 }}>
-                                    <Star size={10} color="#f97316" fill={r.hasReviews ? "#f97316" : "none"} />
-                                    {r.hasReviews ? r.value : t("common.general.new")}
+                                  <span style={{ display: "inline-flex", alignItems: "center", gap: 2, color: "#f97316", fontWeight: 700 }}>
+                                    <Star size={10} color="#f97316" fill="#f97316" />
+                                    {r.value}
                                   </span>
                                 );
                               })()}
@@ -1055,8 +1055,8 @@ function WorkerRow({ w, isSel, nearby, isFirst, isMulti, disabled, onClick }: {
             const r = ratingInfo(w.rating, w.ratingCount);
             return (
               <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
-                <Star size={10} color="#f97316" fill={r.hasReviews ? "#f97316" : "none"} />
-                <span style={{ fontSize: 11, fontWeight: 700, color: r.hasReviews ? "#f97316" : "#666" }}>{r.hasReviews ? r.value : t("common.general.new")}</span>
+                <Star size={10} color="#f97316" fill="#f97316" />
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#f97316" }}>{r.value}</span>
               </span>
             );
           })()}

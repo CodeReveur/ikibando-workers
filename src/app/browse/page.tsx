@@ -564,9 +564,9 @@ function BrowsePageInner() {
                           const r = ratingInfo(w.rating, w.ratingCount);
                           return (
                             <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
-                              <Star size={11} color="#f97316" fill={r.hasReviews ? "#f97316" : "none"} />
-                              <span style={{ fontSize: 11, fontWeight: 700, color: r.hasReviews ? "#f97316" : "#666" }}>
-                                {r.hasReviews ? `${r.value} · ${r.reviews} review${r.reviews === 1 ? "" : "s"}` : t("common.general.new")}
+                              <Star size={11} color="#f97316" fill="#f97316" />
+                              <span style={{ fontSize: 11, fontWeight: 700, color: "#f97316" }}>
+                                {r.hasReviews ? `${r.value} · ${r.reviews} review${r.reviews === 1 ? "" : "s"}` : r.value}
                               </span>
                             </span>
                           );

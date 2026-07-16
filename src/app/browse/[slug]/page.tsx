@@ -153,8 +153,8 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
                     background: "rgba(249,115,22,0.1)", border: "1px solid rgba(249,115,22,0.25)",
                     borderRadius: 999, padding: "4px 10px", fontSize: 11, fontWeight: 700, color: "#f97316",
                   }}>
-                    <Star size={11} fill={r.hasReviews ? "#f97316" : "none"} />
-                    {r.hasReviews ? `${r.value} · ${r.reviews} review${r.reviews === 1 ? "" : "s"}` : (t("worker_detail.badges.new") || "New worker")}
+                    <Star size={11} fill="#f97316" />
+                    {r.hasReviews ? `${r.value} · ${r.reviews} review${r.reviews === 1 ? "" : "s"}` : r.value}
                   </span>
                 );
               })()}
@@ -182,7 +182,7 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
         <div className="stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10, marginBottom: 24 }}>
           {[
             { label: t("common.general.category") || "Category",       value: catLabels.join(", ") },
-            { label: t("worker_detail.stats.rating") || "Rating",         value: (() => { const r = ratingInfo(worker.rating, worker.ratingCount); return r.hasReviews ? `${r.value} ★ (${r.reviews})` : t("common.general.new"); })() },
+            { label: t("worker_detail.stats.rating") || "Rating",         value: (() => { const r = ratingInfo(worker.rating, worker.ratingCount); return r.hasReviews ? `${r.value} ★ (${r.reviews})` : `${r.value} ★`; })() },
             { label: t("worker_detail.stats.completed_jobs") || "Completed jobs", value: String(worker.completedJobs ?? 0) },
             { label: t("jobs_page.filters.location") || "Location",       value: worker.locationRegion || worker.locationShort || worker.district || "Rwanda" },
             { label: t("worker_detail.sections.available_days") || "Available days", value: worker.availability.length > 0 ? (t("worker_detail.trust.availability", { count: worker.availability.length }) || `${worker.availability.length} days`) : "Not set" },
