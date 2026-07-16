@@ -1115,7 +1115,8 @@
       "available_days": "Siku zinazopatikana",
       "education": "Elimu",
       "equipment": "Vifaa na zana",
-      "trust": "Uaminifu na uthibitisho"
+      "trust": "Uaminifu na uthibitisho",
+      "reviews": "Maoni"
     },
     "trust": {
       "identity": "Kitambulisho kimesajiliwa MpahMapu",
@@ -1128,7 +1129,14 @@
       "hire": "Aajiri {name}",
       "unavailable": "Haipatikani"
     },
-    "more": "zaidi"
+    "more": "zaidi",
+    "stats": {
+      "rating": "Ukadiriaji",
+      "completed_jobs": "Kazi zilizokamilika"
+    },
+    "reviews": {
+      "anonymous": "Mteja"
+    }
   },
   "not_found_page": {
     "title": "Ukurasa Haupatikani",

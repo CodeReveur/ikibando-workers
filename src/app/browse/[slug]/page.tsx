@@ -3,7 +3,7 @@
 import { use, useState, useEffect } from "react";
 import Footer from "@/components/layout/footer";
 import { OfferModal } from "@/components/hire/offer-modal";
-import { getWorker, type WorkerProfileDto } from "@/lib/api";
+import { getWorker, getWorkerReviews, type WorkerProfileDto, type WorkerReview } from "@/lib/api";
 import { ratingInfo } from "@/lib/rating";
 import { useLanguage } from "@/lib/language-context";
 import {
@@ -25,6 +25,7 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
   const { t } = useLanguage();
   const { slug } = use(params);
   const [worker,   setWorker]   = useState<WorkerProfileDto | null>(null);
+  const [reviews,  setReviews]  = useState<WorkerReview[]>([]);
   const [loading,  setLoading]  = useState(true);
   const [showHire, setShowHire] = useState(false);
 
@@ -33,6 +34,7 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
       .then(setWorker)
       .catch(() => setWorker(null))
       .finally(() => setLoading(false));
+    getWorkerReviews(slug).then(setReviews).catch(() => setReviews([]));
   }, [slug]);
 
   if (loading) {
@@ -179,9 +181,10 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
         {/* STATS GRID */}
         <div className="stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10, marginBottom: 24 }}>
           {[
-            { label: t("common.general.category") || "Category",       value: catLabel },
-            { label: t("jobs_page.filters.sort_by") || "Rating",         value: (() => { const r = ratingInfo(worker.rating, worker.ratingCount); return r.hasReviews ? `${r.value} ★ (${r.reviews})` : t("common.general.new"); })() },
-            { label: t("jobs_page.filters.location") || "Location",       value: worker.locationFull || worker.locationShort || worker.district || "Rwanda" },
+            { label: t("common.general.category") || "Category",       value: catLabels.join(", ") },
+            { label: t("worker_detail.stats.rating") || "Rating",         value: (() => { const r = ratingInfo(worker.rating, worker.ratingCount); return r.hasReviews ? `${r.value} ★ (${r.reviews})` : t("common.general.new"); })() },
+            { label: t("worker_detail.stats.completed_jobs") || "Completed jobs", value: String(worker.completedJobs ?? 0) },
+            { label: t("jobs_page.filters.location") || "Location",       value: worker.locationRegion || worker.locationShort || worker.district || "Rwanda" },
             { label: t("worker_detail.sections.available_days") || "Available days", value: worker.availability.length > 0 ? (t("worker_detail.trust.availability", { count: worker.availability.length }) || `${worker.availability.length} days`) : "Not set" },
           ].map(({ label, value }) => (
             <div key={label} style={{ background: "#1c1c1c", border: "1px solid #272727", borderRadius: 12, padding: "14px 16px" }}>
@@ -248,6 +251,39 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
             ))}
           </div>
         </Section>
+
+        {/* REVIEWS */}
+        {reviews.length > 0 && (
+          <Section title={`${t("worker_detail.sections.reviews") || "Reviews"} (${reviews.length})`}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {reviews.map((rv, i) => (
+                <div key={i} style={{ background: "#1c1c1c", border: "1px solid #272727", borderRadius: 12, padding: "14px 16px" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: (rv.text || rv.option) ? 8 : 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <div style={{ display: "flex", gap: 2 }}>
+                        {Array.from({ length: 5 }).map((_, s) => (
+                          <Star key={s} size={12} color="#f97316" fill={(rv.rating ?? 0) > s ? "#f97316" : "none"} />
+                        ))}
+                      </div>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: "#aaa" }}>
+                        {rv.reviewer || t("worker_detail.reviews.anonymous") || "Client"}
+                      </span>
+                    </div>
+                    {rv.date && <span style={{ fontSize: 11, color: "#555" }}>{new Date(rv.date).toLocaleDateString()}</span>}
+                  </div>
+                  {rv.text
+                    ? <p style={{ margin: 0, fontSize: 13, color: "#bbb", lineHeight: 1.6 }}>{rv.text}</p>
+                    : rv.option && <p style={{ margin: 0, fontSize: 12, color: "#888" }}>{rv.option}</p>}
+                  {rv.jobTitle && (
+                    <p style={{ margin: "6px 0 0", fontSize: 11, color: "#555", display: "flex", alignItems: "center", gap: 5 }}>
+                      <Briefcase size={10} /> {rv.jobTitle}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </Section>
+        )}
 
       </div>
 

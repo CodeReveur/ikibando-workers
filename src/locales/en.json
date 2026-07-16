@@ -1116,7 +1116,8 @@
       "available_days": "Available days",
       "education": "Education",
       "equipment": "Equipment & tools",
-      "trust": "Trust & verification"
+      "trust": "Trust & verification",
+      "reviews": "Reviews"
     },
     "trust": {
       "identity": "Identity registered on MpahMapu",
@@ -1129,7 +1130,14 @@
       "hire": "Hire {name}",
       "unavailable": "Unavailable"
     },
-    "more": "more"
+    "more": "more",
+    "stats": {
+      "rating": "Rating",
+      "completed_jobs": "Completed jobs"
+    },
+    "reviews": {
+      "anonymous": "Client"
+    }
   },
   "not_found_page": {
     "title": "Page Not Found",

@@ -1116,7 +1116,8 @@
       "available_days": "Iminsi aboneka",
       "education": "Amashuri",
       "equipment": "Ibikoresho",
-      "trust": "Kwizera & Kwemeza"
+      "trust": "Kwizera & Kwemeza",
+      "reviews": "Ibitekerezo"
     },
     "trust": {
       "identity": "Umwirondoro wanditswe kuri MpahMapu",
@@ -1129,7 +1130,14 @@
       "hire": "Hira {name}",
       "unavailable": "Ntariho"
     },
-    "more": "n'ibindi"
+    "more": "n'ibindi",
+    "stats": {
+      "rating": "Amanota",
+      "completed_jobs": "Imirimo yarangiye"
+    },
+    "reviews": {
+      "anonymous": "Umukiriya"
+    }
   },
   "not_found_page": {
     "title": "Urupapuro ntirubonetse",

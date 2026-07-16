@@ -1115,7 +1115,8 @@
       "available_days": "Jours disponibles",
       "education": "Éducation",
       "equipment": "Équipement & outils",
-      "trust": "Confiance & vérification"
+      "trust": "Confiance & vérification",
+      "reviews": "Avis"
     },
     "trust": {
       "identity": "Identité enregistrée sur MpahMapu",
@@ -1128,7 +1129,14 @@
       "hire": "Embaucher {name}",
       "unavailable": "Indisponible"
     },
-    "more": "de plus"
+    "more": "de plus",
+    "stats": {
+      "rating": "Note",
+      "completed_jobs": "Missions réalisées"
+    },
+    "reviews": {
+      "anonymous": "Client"
+    }
   },
   "not_found_page": {
     "title": "Page non trouvée",

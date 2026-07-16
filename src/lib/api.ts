@@ -536,8 +536,12 @@ export interface WorkerProfileDto {
   district: string | null;
   /** Compact address for cards, e.g. "Kicukiro, Rwanda". */
   locationShort: string | null;
+  /** Region-level address, e.g. "Kanombe, Rwanda" (sector/state + country). */
+  locationRegion: string | null;
   /** Full address for detail pages, e.g. "Byimana, Karama, Kanombe, Kicukiro, Kigali, Rwanda". */
   locationFull: string | null;
+  /** Number of jobs the worker has completed. */
+  completedJobs: number;
   availability: string[];
   equipment: string[];
   /** Average rating (1–5). Seeded at 5.0; real reviews = ratingCount − 1. */
@@ -956,6 +960,21 @@ export async function verifyBadge(badgeId: string): Promise<BadgeVerification> {
 
 export async function getWorker(id: string): Promise<WorkerProfileDto> {
   const { data } = await http.get(`/api/workers/${id}`);
+  return data.data;
+}
+
+export interface WorkerReview {
+  rating: number | null;
+  option: string | null;
+  text: string | null;
+  reviewer: string | null;
+  jobTitle: string | null;
+  date: string | null;
+}
+
+/** Public: reviews employers left for a worker on completed jobs (newest first). */
+export async function getWorkerReviews(id: string): Promise<WorkerReview[]> {
+  const { data } = await http.get(`/api/workers/${id}/reviews`);
   return data.data;
 }
 
