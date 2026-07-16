@@ -17,7 +17,8 @@ const CSS = `
   .hire-btn-cta:hover { background: #ea6a0a !important; }
   @media (min-width: 600px) {
     .hero-row   { flex-direction: row !important; align-items: flex-start !important; }
-    .stats-grid { grid-template-columns: repeat(4, 1fr) !important; }
+    /* All five stats on a single row. */
+    .stats-grid { grid-template-columns: repeat(5, 1fr) !important; }
   }
 `;
 
@@ -87,11 +88,11 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
   const catLabels   = catSlugs.map((s, i) =>
     t("common.categories." + (s ?? "").toLowerCase()) || worker.categoryNames?.[i] || s);
   if (catLabels.length === 0) catLabels.push(t("common.general.worker"));
-  // Keep the stat card compact — a couple of categories then "+N more" (full list on hover).
+  // Keep the stat card compact — a couple of categories then "+N" (full list on hover).
   const CAT_MAX   = 2;
   const catAll    = catLabels.join(", ");
   const catShort  = catLabels.slice(0, CAT_MAX).join(", ")
-    + (catLabels.length > CAT_MAX ? ` +${catLabels.length - CAT_MAX} ${t("worker_detail.more") || "more"}` : "");
+    + (catLabels.length > CAT_MAX ? ` +${catLabels.length - CAT_MAX}` : "");
   const isAvailable = worker.availability.length > 0;
   const memberYear  = new Date(worker.memberSince as unknown as string).getFullYear();
   const firstName   = worker.name.split(" ")[0];
@@ -211,11 +212,12 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
             { label: t("worker_detail.stats.rating") || "Rating",         value: (() => { const r = ratingInfo(worker.rating, worker.ratingCount); return r.hasReviews ? `${r.value} ★ (${r.reviews})` : `${r.value} ★`; })() },
             { label: t("worker_detail.stats.completed_jobs") || "Completed jobs", value: String(worker.completedJobs ?? 0) },
             { label: t("jobs_page.filters.location") || "Location",       value: worker.locationRegion || worker.locationShort || worker.district || "Rwanda" },
-            { label: t("worker_detail.sections.available_days") || "Available days", value: worker.availability.length > 0 ? (t("worker_detail.trust.availability", { count: worker.availability.length }) || `${worker.availability.length} days`) : "Not set" },
+            { label: t("worker_detail.sections.available_days") || "Available days", value: worker.availability.length > 0 ? String(worker.availability.length) : "—",
+              title: worker.availability.length > 0 ? (t("worker_detail.trust.availability", { count: worker.availability.length }) || undefined) : undefined },
           ] as { label: string; value: string; title?: string }[]).map(({ label, value, title }) => (
-            <div key={label} style={{ background: "#1c1c1c", border: "1px solid #272727", borderRadius: 12, padding: "14px 16px", minWidth: 0 }}>
-              <p style={{ margin: 0, fontSize: 11, color: "#555", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</p>
-              <p title={title} style={{ margin: "4px 0 0", fontSize: 15, fontWeight: 800, color: "#f0f0f0", letterSpacing: "-0.3px", overflowWrap: "break-word" }}>{value}</p>
+            <div key={label} style={{ background: "#1c1c1c", border: "1px solid #272727", borderRadius: 12, padding: "11px 12px", minWidth: 0 }}>
+              <p style={{ margin: 0, fontSize: 9.5, color: "#555", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", lineHeight: 1.3 }}>{label}</p>
+              <p title={title} style={{ margin: "4px 0 0", fontSize: 13, fontWeight: 800, color: "#f0f0f0", letterSpacing: "-0.2px", overflowWrap: "break-word", lineHeight: 1.35 }}>{value}</p>
             </div>
           ))}
         </div>
