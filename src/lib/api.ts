@@ -7,6 +7,11 @@ const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8088";
  * Handles both AppException (message at root) and @Valid errors
  * (field-level messages in data.data object).
  */
+/** Stable error code from the API (e.g. "USE_GOOGLE_LOGIN"), when the server sent one. */
+export function apiErrorCode(e: unknown): string | null {
+  return (e as any)?.response?.data?.code ?? null;
+}
+
 export function apiError(e: unknown, fallback = "Something went wrong. Please try again."): string {
   const body = (e as any)?.response?.data;
   if (!body) return fallback;

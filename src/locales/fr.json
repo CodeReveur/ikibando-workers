@@ -468,7 +468,11 @@
       "fb_fail_desc": "Échec de la connexion Facebook. Veuillez réessayer.",
       "email_pass_req_desc": "Veuillez entrer votre e-mail et votre mot de passe.",
       "invalid_creds_desc": "E-mail ou mot de passe invalide.",
-      "set_password_label": "Définir un mot de passe via Mot de passe oublié"
+      "set_password_label": "Définir un mot de passe via Mot de passe oublié",
+      "use_google_desc": "Ce compte se connecte avec Google, pas avec un mot de passe. Veuillez continuer avec Google.",
+      "use_facebook_desc": "Ce compte se connecte avec Facebook, pas avec un mot de passe. Veuillez continuer avec Facebook.",
+      "use_password_desc": "Cet e-mail est enregistré avec un compte e-mail et mot de passe. Veuillez vous connecter avec votre mot de passe.",
+      "no_password_desc": "Ce compte n'a pas encore de mot de passe. Utilisez « Mot de passe oublié » pour en créer un."
     }
   },
   "signup": {

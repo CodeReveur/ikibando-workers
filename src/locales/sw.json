@@ -468,7 +468,11 @@
       "fb_fail_desc": "Kuingia na Facebook kumeshindwa. Tafadhali jaribu tena.",
       "email_pass_req_desc": "Tafadhali ingiza barua pepe na nenosiri lako.",
       "invalid_creds_desc": "Barua pepe au nenosiri si sahihi.",
-      "set_password_label": "Weka nenosiri kupitia Umesahau Nenosiri"
+      "set_password_label": "Weka nenosiri kupitia Umesahau Nenosiri",
+      "use_google_desc": "Akaunti hii inaingia kwa Google, si kwa nenosiri. Tafadhali endelea na Google.",
+      "use_facebook_desc": "Akaunti hii inaingia kwa Facebook, si kwa nenosiri. Tafadhali endelea na Facebook.",
+      "use_password_desc": "Barua pepe hii imesajiliwa kwa akaunti ya barua pepe na nenosiri. Tafadhali ingia kwa nenosiri lako.",
+      "no_password_desc": "Akaunti hii bado haina nenosiri. Tumia 'Umesahau nenosiri' kuunda moja."
     }
   },
   "signup": {

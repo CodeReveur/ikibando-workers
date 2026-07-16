@@ -5,7 +5,7 @@ import { Eye, EyeOff, Mail, Lock, ArrowLeft } from "lucide-react";
 import { AuthCarousel } from "@/components/auth/auth-carousel";
 import { saveRedirect } from "@/lib/auth-redirect";
 import { useGoogleLogin } from "@react-oauth/google";
-import { loginWithGoogle, loginWithFacebook, loginWithEmail } from "@/lib/api";
+import { loginWithGoogle, loginWithFacebook, loginWithEmail, apiError, apiErrorCode } from "@/lib/api";
 import { getAndClearRedirect } from "@/lib/auth-redirect";
 import { RegistrationWizard } from "@/components/auth/registration-wizard";
 import { BadgeSubmissionWizard } from "@/components/auth/badge-submission-wizard";
@@ -74,14 +74,48 @@ export default function SignInPage() {
   }, []);
   */
 
+  /**
+   * Turn a sign-in failure into a clear, localized message plus the right next step.
+   * Driven by the server's stable code, so it never depends on parsing English text.
+   */
+  const signInError = (e: unknown, fallback: string) => {
+    const code = apiErrorCode(e);
+    switch (code) {
+      case "USE_GOOGLE_LOGIN":
+        return {
+          msg: t("signin.toasts.use_google_desc") || "This account signs in with Google, not a password. Please continue with Google.",
+          action: undefined,
+        };
+      case "USE_FACEBOOK_LOGIN":
+        return {
+          msg: t("signin.toasts.use_facebook_desc") || "This account signs in with Facebook, not a password. Please continue with Facebook.",
+          action: undefined,
+        };
+      case "USE_PASSWORD_LOGIN":
+        return {
+          msg: t("signin.toasts.use_password_desc") || "This email is registered with an email & password account. Please sign in with your email and password.",
+          action: undefined,
+        };
+      case "NO_PASSWORD_SET":
+        return {
+          msg: t("signin.toasts.no_password_desc") || "This account doesn't have a password yet. Use 'Forgot password' to create one.",
+          action: { label: t("signin.toasts.set_password_label"), href: "/forgot-password" },
+        };
+      default:
+        return { msg: apiError(e, fallback), action: undefined };
+    }
+  };
+
   /* ── Google handler ─────────────────────────────────────────────────── */
   const handleGoogle = useGoogleLogin({
     onSuccess: async ({ access_token }) => {
       setLoading("google");
       try {
         proceed(await loginWithGoogle(access_token));
-      } catch {
-        toastError(t("signin.toasts.google_fail_desc"), { title: t("signin.toasts.login_failed_title") });
+      } catch (e: unknown) {
+        // Surface why Google was refused (e.g. it's a password account) instead of a generic failure.
+        const { msg, action } = signInError(e, t("signin.toasts.google_fail_desc"));
+        toastError(msg, { title: t("signin.toasts.login_failed_title"), action });
       } finally {
         setLoading(null);
       }
@@ -133,14 +167,8 @@ export default function SignInPage() {
         proceed(result);
       }
     } catch (e: unknown) {
-      const msg =
-        (e as { response?: { data?: { message?: string } } })?.response?.data?.message ??
-        t("signin.toasts.invalid_creds_desc");
-      const isSocial = msg.includes("Google or Facebook");
-      toastError(msg, {
-        title: t("signin.toasts.login_failed_title"),
-        action: isSocial ? { label: t("signin.toasts.set_password_label"), href: "/forgot-password" } : undefined,
-      });
+      const { msg, action } = signInError(e, t("signin.toasts.invalid_creds_desc"));
+      toastError(msg, { title: t("signin.toasts.login_failed_title"), action });
     } finally {
       setLoading(null);
     }

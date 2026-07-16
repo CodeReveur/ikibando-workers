@@ -5,7 +5,7 @@ import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowLeft } from "lucide-react";
 import { AuthCarousel } from "@/components/auth/auth-carousel";
 import { saveRedirect } from "@/lib/auth-redirect";
 import { useGoogleLogin } from "@react-oauth/google";
-import { loginWithGoogle, loginWithFacebook, registerWithEmail } from "@/lib/api";
+import { loginWithGoogle, loginWithFacebook, registerWithEmail, apiError, apiErrorCode } from "@/lib/api";
 import { getAndClearRedirect } from "@/lib/auth-redirect";
 import { RegistrationWizard } from "@/components/auth/registration-wizard";
 import { useToast } from "@/components/ui/toast";
@@ -136,8 +136,17 @@ export default function SignUpPage() {
         } else {
           saveAndRedirect(result);
         }
-      } catch {
-        toastError(t("signup.toasts.google_fail_desc"), { title: t("signup.toasts.signup_failed_title") });
+      } catch (e: unknown) {
+        // e.g. the email already has an email & password account — say so, don't just fail.
+        const isPasswordAccount = apiErrorCode(e) === "USE_PASSWORD_LOGIN";
+        const msg = isPasswordAccount
+          ? (t("signin.toasts.use_password_desc")
+              || "This email is registered with an email & password account. Please sign in with your email and password instead.")
+          : apiError(e, t("signup.toasts.google_fail_desc"));
+        toastError(msg, {
+          title: t("signup.toasts.signup_failed_title"),
+          action: isPasswordAccount ? { label: t("common.nav.signin") || "Sign in", href: "/signin" } : undefined,
+        });
       } finally {
         setLoading(null);
       }

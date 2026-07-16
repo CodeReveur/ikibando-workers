@@ -468,7 +468,11 @@
       "fb_fail_desc": "Kwinjira na Facebook byanze. Ongera ugerageze.",
       "email_pass_req_desc": "Nyamuneka andika imeri n'ijambo ry'ibanga.",
       "invalid_creds_desc": "Imeri cyangwa ijambo ry'ibanga si byo.",
-      "set_password_label": "Shyiraho ijambo ry'ibanga unyuze kuri Wibagiwe ijambo ry'ibanga"
+      "set_password_label": "Shyiraho ijambo ry'ibanga unyuze kuri Wibagiwe ijambo ry'ibanga",
+      "use_google_desc": "Iyi konti yinjira ukoresheje Google, atari ijambobanga. Nyamuneka komeza na Google.",
+      "use_facebook_desc": "Iyi konti yinjira ukoresheje Facebook, atari ijambobanga. Nyamuneka komeza na Facebook.",
+      "use_password_desc": "Iyi imeyili yanditswe kuri konti ikoresha imeyili n'ijambobanga. Nyamuneka injira ukoresheje ijambobanga ryawe.",
+      "no_password_desc": "Iyi konti ntiragira ijambobanga. Koresha 'Wibagiwe ijambobanga' kugira ngo urishyireho."
     }
   },
   "signup": {

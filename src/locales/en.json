@@ -469,7 +469,11 @@
       "fb_fail_desc": "Facebook sign-in failed. Please try again.",
       "email_pass_req_desc": "Please enter your email and password.",
       "invalid_creds_desc": "Invalid email or password.",
-      "set_password_label": "Set a password via Forgot Password"
+      "set_password_label": "Set a password via Forgot Password",
+      "use_google_desc": "This account signs in with Google, not a password. Please continue with Google.",
+      "use_facebook_desc": "This account signs in with Facebook, not a password. Please continue with Facebook.",
+      "use_password_desc": "This email is registered with an email & password account. Please sign in with your email and password instead.",
+      "no_password_desc": "This account doesn't have a password yet. Use 'Forgot password' to create one."
     }
   },
   "signup": {
