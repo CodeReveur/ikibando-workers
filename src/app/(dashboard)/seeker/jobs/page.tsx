@@ -6,7 +6,7 @@ import {
   Wallet, Zap, X,
 } from "lucide-react";
 import {
-  getMyApplications, getWalletTransactions,
+  getMyApplications, getWalletTransactions, applicationNetHourly,
   type ApplicationDto, type PaymentDto,
 } from "@/lib/api";
 import { ST, fmt } from "@/lib/dashboard-data";
@@ -189,7 +189,7 @@ export default function SeekerJobs() {
                 {/* Rate + earnings + track link */}
                 <div style={{ textAlign:"right", flexShrink:0 }}>
                   <p style={{ margin:0, fontWeight:800, fontSize:15, color:"#f97316" }}>
-                    {fmt(app.jobRatePerHour)}<span style={{ fontSize:10, color:"#3a3a3a" }}>/hr</span>
+                    {fmt(applicationNetHourly(app))}<span style={{ fontSize:10, color:"#3a3a3a" }}>/hr</span>
                   </p>
                   {pmt && (
                     <p style={{ margin:"4px 0 0", fontSize:12, fontWeight:700, color: isReleased ? "#22c55e" : "#f59e0b" }}>

@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import Footer from "@/components/layout/footer";
 import { PostJobModal } from "@/components/jobs/post-job-modal";
-import { getJobs, daysAgo, type JobDto } from "@/lib/api";
+import { getJobs, daysAgo, workerNetHourly, type JobDto } from "@/lib/api";
 import { useInfiniteReveal } from "@/lib/use-infinite-reveal";
 import { useLanguage } from "@/lib/language-context";
 import {
@@ -422,8 +422,10 @@ export default function JobsPage() {
 
                     {/* footer */}
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
-                      <span style={{ fontSize: 15, fontWeight: 800, color: "#f97316" }}>
-                        {fmt(j.ratePerHour)}
+                      {/* Workers see their take-home, never the employer's posting price. */}
+                      <span style={{ fontSize: 15, fontWeight: 800, color: "#f97316" }}
+                            title={t("jobs_page.cards.you_earn_hint") || "What you take home, after all charges"}>
+                        {fmt(workerNetHourly(j))}
                         <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}>{t("common.general.per_hour") || " / hr"}</span>
                       </span>
                       <span style={{

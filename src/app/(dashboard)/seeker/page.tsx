@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import {
   getWallet, getMyApplications, getWalletTransactions,
-  updateApplicationStatus, apiError, getAnnouncements,
+  updateApplicationStatus, apiError, getAnnouncements, applicationNetHourly,
   type WalletDto, type ApplicationDto, type PaymentDto, type FeatureAnnouncement,
 } from "@/lib/api";
 import { StatCard, SectionHead, Dot, PageLoader } from "@/components/dashboard/ui";
@@ -211,7 +211,7 @@ export default function SeekerHome() {
                   </div>
                 </div>
                 <div style={{ textAlign:"right", flexShrink:0 }}>
-                  <p style={{ margin:"0 0 8px", fontWeight:800, fontSize:14, color:"#f97316" }}>{fmt(app.jobRatePerHour)}/hr</p>
+                  <p style={{ margin:"0 0 8px", fontWeight:800, fontSize:14, color:"#f97316" }}>{fmt(applicationNetHourly(app))}/hr</p>
                   <div style={{ display:"flex", gap:6 }}>
                     <button className="act-btn accept" disabled={respondingId === app.id}
                       onClick={() => handleOffer(app.id, "ACCEPTED")}>{t("dashboard_home.accept")}</button>
@@ -307,7 +307,7 @@ export default function SeekerHome() {
                   </div>
                 </div>
                 <div style={{ textAlign:"right", flexShrink:0 }}>
-                  <p style={{ margin:"0 0 3px", fontSize:13, fontWeight:800, color:"#f97316" }}>{fmt(app.jobRatePerHour)}/hr</p>
+                  <p style={{ margin:"0 0 3px", fontSize:13, fontWeight:800, color:"#f97316" }}>{fmt(applicationNetHourly(app))}/hr</p>
                   <span style={{ fontSize:10, fontWeight:700, borderRadius:99, padding:"2px 8px", color, background:`${color}18` }}>
                     {STATUS_LABEL[app.status] ?? app.status}
                   </span>

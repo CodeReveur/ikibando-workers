@@ -9,6 +9,7 @@ import {
 import {
   getJob, getMyApplications, getWalletTransactions,
   updateApplicationStatus, withdrawApplication, verifyJobCompletion,
+  workerNetHourly, workerNetTotal,
   type JobDto, type ApplicationDto, type PaymentDto,
 } from "@/lib/api";
 import { ratingLabel } from "@/lib/rating";
@@ -289,7 +290,8 @@ export default function SeekerJobDetail() {
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
             <DollarSign size={12} color="#666" />
-            <span style={{ fontSize: 11, color: "#888" }}>RWF {job.ratePerHour?.toLocaleString()} / hr</span>
+            {/* The worker's net — never the employer's posting price. */}
+            <span style={{ fontSize: 11, color: "#888" }}>RWF {workerNetHourly(job).toLocaleString()} / hr</span>
           </div>
         </div>
       ) : null,
@@ -474,7 +476,7 @@ export default function SeekerJobDetail() {
               />
             )}
             {job.locationNotes && <InfoRow label={t("seeker_job_detail.location_notes")} value={<RichTextDisplay content={job.locationNotes} />} />}
-            <InfoRow label={t("seeker_job_detail.rate")} value={`RWF ${job.ratePerHour?.toLocaleString()} / hr`} />
+            <InfoRow label={t("seeker_job_detail.rate")} value={`RWF ${workerNetHourly(job).toLocaleString()} / hr`} />
             <InfoRow label={t("seeker_job_detail.duration")} value={`${job.durationHours} hours`} />
             <InfoRow label={t("seeker_job_detail.headcount")} value={`${job.headcount} ${job.headcount !== 1 ? t("seeker_job_detail.workers") : t("seeker_job_detail.worker")}`} />
             {job.workerPayout != null && job.headcount > 0 && (
@@ -515,11 +517,8 @@ export default function SeekerJobDetail() {
               <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: "0.08em" }}>{t("seeker_job_detail.your_earnings")}</p>
               <div style={{ textAlign: "center", padding: "8px 0" }}>
                 <p style={{ margin: "0 0 4px", fontSize: 32, fontWeight: 900, color: isReleased ? "#22c55e" : "#f97316" }}>
-                  RWF {myPayout != null
-                    ? myPayout.toLocaleString()
-                    : (job.workerPayout != null && job.headcount > 0
-                        ? Math.round(job.workerPayout / job.headcount)
-                        : Math.round(job.ratePerHour * (job.durationHours ?? 1))).toLocaleString()}
+                  {/* Fallback used to be gross (rate x hours) — that overstated earnings. */}
+                  RWF {(myPayout != null ? myPayout : workerNetTotal(job)).toLocaleString()}
                 </p>
                 <p style={{ margin: 0, fontSize: 11, color: "#444" }}>
                   {isReleased

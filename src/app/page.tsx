@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Footer from "@/components/layout/footer";
 import { PostJobModal } from "@/components/jobs/post-job-modal";
-import { getWorkers, getJobs, daysAgo, type WorkerProfileDto, type JobDto } from "@/lib/api";
+import { getWorkers, getJobs, daysAgo, workerNetHourly, type WorkerProfileDto, type JobDto } from "@/lib/api";
 import { ratingInfo } from "@/lib/rating";
 import { useLanguage } from "@/lib/language-context";
 import {
@@ -339,12 +339,14 @@ export default function Home() {
                   <MapPin size={11} color="#555" style={{ flexShrink: 0 }} />
                   <span style={{ fontSize: 11, color: "#555", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{j.district}</span>
                 </div>
-                <span style={{
-                  alignSelf: "flex-start", marginTop: "auto",
-                  background: "rgba(249,115,22,0.1)", borderRadius: 999,
-                  padding: "4px 12px", fontSize: 11, fontWeight: 700, color: "#f97316",
-                }}>
-                  {fmt(j.ratePerHour)} {t("common.general.per_hour")}
+                {/* Worker take-home, not the employer's posting price. */}
+                <span title={t("jobs_page.cards.you_earn_hint") || "What you take home, after all charges"}
+                  style={{
+                    alignSelf: "flex-start", marginTop: "auto",
+                    background: "rgba(249,115,22,0.1)", borderRadius: 999,
+                    padding: "4px 12px", fontSize: 11, fontWeight: 700, color: "#f97316",
+                  }}>
+                  {fmt(workerNetHourly(j))} {t("common.general.per_hour")}
                 </span>
               </a>
             ))

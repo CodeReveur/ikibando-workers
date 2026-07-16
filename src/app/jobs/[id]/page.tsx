@@ -4,7 +4,7 @@ import { use } from "react";
 import { useState, useEffect } from "react";
 import Footer from "@/components/layout/footer";
 import { ApplyModal } from "@/components/jobs/apply-modal";
-import { getJob, daysAgo, type JobDto } from "@/lib/api";
+import { getJob, daysAgo, workerNetHourly, workerNetTotal, type JobDto } from "@/lib/api";
 import { ratingLabel } from "@/lib/rating";
 import {
   MapPin, Clock, Users, ChevronLeft,
@@ -116,10 +116,14 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
           borderRadius: 14, padding: "20px 22px", marginBottom: 24,
           display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12,
         }}>
+          {/* The headline number is what the worker takes home — the employer's posting price is
+              theirs, not the worker's, and showing it here only sets up a nasty surprise at payout. */}
           <div>
-            <p style={{ margin: "0 0 2px", fontSize: 11, fontWeight: 700, color: "#f97316", textTransform: "uppercase", letterSpacing: "0.08em" }}>Rate</p>
+            <p style={{ margin: "0 0 2px", fontSize: 11, fontWeight: 700, color: "#f97316", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              You&apos;ll earn
+            </p>
             <p style={{ margin: 0, fontSize: 30, fontWeight: 900, color: "#f97316", letterSpacing: "-1px", lineHeight: 1 }}>
-              {fmt(job.ratePerHour)}
+              {fmt(workerNetHourly(job))}
             </p>
             <p style={{ margin: "4px 0 0", fontSize: 12, color: "#555" }}>
               {(() => {
@@ -128,11 +132,9 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
                 return `per ${u} · ${d} ${u}${d !== 1 ? "s" : ""} duration`;
               })()}
             </p>
-            {job.workerPayout != null && job.headcount > 0 && (
-              <p style={{ margin: "8px 0 0", fontSize: 12, fontWeight: 700, color: "#22c55e" }}>
-                You'll earn {fmt(Math.round(job.workerPayout / job.headcount))} · all charges covered
-              </p>
-            )}
+            <p style={{ margin: "8px 0 0", fontSize: 12, fontWeight: 700, color: "#22c55e" }}>
+              {fmt(workerNetTotal(job))} total · all charges covered
+            </p>
           </div>
           <div style={{ textAlign: "right" }}>
             {job.applicationsClosed ? (
@@ -247,8 +249,9 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
               </p>
             </div>
             <div style={{ width: 1, height: 28, background: "#2a2a2a", flexShrink: 0 }} />
-            <p style={{ margin: 0, fontSize: 15, fontWeight: 900, color: "#f97316", letterSpacing: "-0.4px", whiteSpace: "nowrap" }}>
-              {fmt(job.ratePerHour)} <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}>/hr</span>
+            <p title="What you take home, after all charges"
+               style={{ margin: 0, fontSize: 15, fontWeight: 900, color: "#f97316", letterSpacing: "-0.4px", whiteSpace: "nowrap" }}>
+              {fmt(workerNetHourly(job))} <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}>/hr</span>
             </p>
           </div>
 

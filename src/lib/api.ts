@@ -638,7 +638,12 @@ export interface ApplicationDto {
   jobTitle: string;
   jobCategory: string;
   jobDistrict: string;
+  /** Gross rate the employer posted — not the worker's take-home. Use workerNetHourly(). */
   jobRatePerHour: number;
+  /** Net payout for all workers on the job, stamped at posting. */
+  jobWorkerPayout: number | null;
+  jobHeadcount: number | null;
+  jobDurationHours: number | null;
   workerId: string;
   workerName: string;
   workerDistrict: string | null;
@@ -899,6 +904,58 @@ export function workerCommissionOf(baseCost: number, p: PricingConfig): number {
 /** Employer service fee for a gross job cost, honouring a fixed-amount override. */
 export function employerServiceFeeOf(baseCost: number, p: PricingConfig): number {
   return p.employerServiceFeeFixed > 0 ? p.employerServiceFeeFixed : Math.round(baseCost * p.employerServiceFeeRate);
+}
+
+/* ── What a worker actually takes home ─────────────────────────────────────────
+ * Workers are shown their net, never the employer's posting price. The job's own
+ * workerPayout is authoritative: the server stamps it at posting from the admin-set
+ * commission, so a job keeps the rate it was posted under even if fees change later.
+ * The live PricingConfig is only a fallback for rows posted before payout was stamped.
+ */
+type PayoutShape = {
+  ratePerHour: number;
+  headcount?: number | null;
+  durationHours?: number | null;
+  workerPayout?: number | null;
+};
+
+/** Total the worker takes home for the whole job (their share, all charges deducted). */
+export function workerNetTotal(job: PayoutShape, p: PricingConfig = DEFAULT_PRICING): number {
+  const heads = job.headcount && job.headcount > 0 ? job.headcount : 1;
+  if (job.workerPayout != null && job.workerPayout > 0) {
+    return Math.round(job.workerPayout / heads);
+  }
+  const hours = job.durationHours && job.durationHours > 0 ? job.durationHours : 1;
+  const gross = job.ratePerHour * hours;
+  return Math.round(gross - workerCommissionOf(gross, p));
+}
+
+/** The worker's net per hour — the number to show wherever a job's "rate" is displayed to workers. */
+export function workerNetHourly(job: PayoutShape, p: PricingConfig = DEFAULT_PRICING): number {
+  const hours = job.durationHours && job.durationHours > 0 ? job.durationHours : 1;
+  return Math.round(workerNetTotal(job, p) / hours);
+}
+
+/** Same, for an ApplicationDto — its job fields are prefixed, so adapt rather than re-derive. */
+type ApplicationPayoutShape = {
+  jobRatePerHour: number;
+  jobWorkerPayout?: number | null;
+  jobHeadcount?: number | null;
+  jobDurationHours?: number | null;
+};
+const asPayout = (a: ApplicationPayoutShape): PayoutShape => ({
+  ratePerHour: a.jobRatePerHour,
+  workerPayout: a.jobWorkerPayout,
+  headcount: a.jobHeadcount,
+  durationHours: a.jobDurationHours,
+});
+
+export function applicationNetHourly(a: ApplicationPayoutShape, p: PricingConfig = DEFAULT_PRICING): number {
+  return workerNetHourly(asPayout(a), p);
+}
+
+export function applicationNetTotal(a: ApplicationPayoutShape, p: PricingConfig = DEFAULT_PRICING): number {
+  return workerNetTotal(asPayout(a), p);
 }
 
 export interface JobPayload {
