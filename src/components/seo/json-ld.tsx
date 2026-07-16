@@ -1,3 +1,8 @@
+import {
+  SITE_URL, SITE_NAME, SITE_DESCRIPTION, SITE_LOGO, SITE_ALTERNATE_NAMES,
+  SOCIAL_PROFILES, ORG_ID, WEBSITE_ID, BUSINESS_EMAIL, BUSINESS_PHONE, BUSINESS_ADDRESS,
+} from "@/lib/seo";
+
 export function JsonLd({ data }: { data: Record<string, unknown> }) {
   return (
     <script
@@ -9,25 +14,51 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
 
 // Pre-built schemas
 
+/**
+ * The brand entity. Google spell-corrects unfamiliar names ("MpahMapu" → "Mahmapu") until it's
+ * confident the brand exists, so this states the name, its legitimate variants, a real logo and
+ * every profile that corroborates it — under a stable @id the other schemas point back to, so
+ * they read as one entity instead of three unrelated ones.
+ */
 export function OrganizationSchema() {
   return (
     <JsonLd
       data={{
         "@context": "https://schema.org",
         "@type": "Organization",
-        name: "MpahMapu",
-        url: "https://mpahmapu.com",
-        logo: "https://mpahmapu.com/favicon.ico",
-        description: "Rwanda's trusted on-demand workforce platform. Find verified workers for events, cleaning, security, driving, and more in Rwanda.",
-        email: "info@mpahmapu.com",
-        telephone: "+250781121117",
+        "@id": ORG_ID,
+        name: SITE_NAME,
+        alternateName: SITE_ALTERNATE_NAMES,
+        legalName: SITE_NAME,
+        url: SITE_URL,
+        logo: {
+          "@type": "ImageObject",
+          url: SITE_LOGO,
+          width: 512,
+          height: 512,
+          caption: SITE_NAME,
+        },
+        image: SITE_LOGO,
+        description: SITE_DESCRIPTION,
+        email: BUSINESS_EMAIL,
+        telephone: BUSINESS_PHONE,
         address: {
           "@type": "PostalAddress",
-          addressLocality: "Kigali",
-          addressRegion: "Kigali City",
-          addressCountry: "RW",
+          streetAddress: BUSINESS_ADDRESS.streetAddress,
+          addressLocality: BUSINESS_ADDRESS.addressLocality,
+          addressRegion: BUSINESS_ADDRESS.addressRegion,
+          addressCountry: BUSINESS_ADDRESS.addressCountry,
         },
-        sameAs: [],
+        contactPoint: {
+          "@type": "ContactPoint",
+          contactType: "customer support",
+          email: BUSINESS_EMAIL,
+          telephone: BUSINESS_PHONE,
+          areaServed: "RW",
+          availableLanguage: ["en", "rw", "fr", "sw"],
+        },
+        // Empty until real profiles are configured. An unverifiable sameAs is worse than none.
+        ...(SOCIAL_PROFILES.length > 0 ? { sameAs: SOCIAL_PROFILES } : {}),
         foundingDate: "2025",
         areaServed: {
           "@type": "Country",
@@ -44,14 +75,19 @@ export function WebSiteSchema() {
       data={{
         "@context": "https://schema.org",
         "@type": "WebSite",
-        name: "MpahMapu",
-        url: "https://mpahmapu.com",
-        description: "Find verified workers instantly or get hired for a job today.",
+        "@id": WEBSITE_ID,
+        name: SITE_NAME,
+        alternateName: SITE_ALTERNATE_NAMES,
+        url: SITE_URL,
+        description: SITE_DESCRIPTION,
+        // Ties the site to the brand entity above rather than standing alone.
+        publisher: { "@id": ORG_ID },
+        inLanguage: ["en", "rw", "fr", "sw"],
         potentialAction: {
           "@type": "SearchAction",
           target: {
             "@type": "EntryPoint",
-            urlTemplate: "https://mpahmapu.com/browse?q={search_term_string}",
+            urlTemplate: `${SITE_URL}/browse?q={search_term_string}`,
           },
           "query-input": "required name=search_term_string",
         },
@@ -66,18 +102,24 @@ export function LocalBusinessSchema() {
       data={{
         "@context": "https://schema.org",
         "@type": "EmploymentAgency",
-        name: "MpahMapu",
-        url: "https://mpahmapu.com",
-        logo: "https://mpahmapu.com/favicon.ico",
-        image: "https://mpahmapu.com/favicon.ico",
+        "@id": `${SITE_URL}/#localbusiness`,
+        // Same brand, described as a business — parentOrganization keeps it one entity.
+        name: SITE_NAME,
+        alternateName: SITE_ALTERNATE_NAMES,
+        parentOrganization: { "@id": ORG_ID },
+        url: SITE_URL,
+        logo: SITE_LOGO,
+        image: SITE_LOGO,
         description: "On-demand workforce platform connecting employers with verified workers in Kigali, Rwanda.",
-        email: "info@mpahmapu.com",
-        telephone: "+250781121117",
+        email: BUSINESS_EMAIL,
+        telephone: BUSINESS_PHONE,
+        ...(SOCIAL_PROFILES.length > 0 ? { sameAs: SOCIAL_PROFILES } : {}),
         address: {
           "@type": "PostalAddress",
-          addressLocality: "Kigali",
-          addressRegion: "Kigali City",
-          addressCountry: "RW",
+          streetAddress: BUSINESS_ADDRESS.streetAddress,
+          addressLocality: BUSINESS_ADDRESS.addressLocality,
+          addressRegion: BUSINESS_ADDRESS.addressRegion,
+          addressCountry: BUSINESS_ADDRESS.addressCountry,
         },
         geo: {
           "@type": "GeoCoordinates",
@@ -145,11 +187,8 @@ export function ServiceSchema({ name, description, url }: { name: string; descri
         name,
         description,
         url,
-        provider: {
-          "@type": "Organization",
-          name: "MpahMapu",
-          url: "https://mpahmapu.com",
-        },
+        // Reference the brand entity rather than declaring a second, unlinked Organization.
+        provider: { "@id": ORG_ID },
         areaServed: {
           "@type": "Country",
           name: "Rwanda",

@@ -13,11 +13,13 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#0f766e",
     lang: "en",
     categories: ["business", "productivity", "utilities"],
+    // These were all coutput.png — a 10000x10000, 5MB image declared as 192/512. Every PWA
+    // install and icon fetch pulled 5MB. Now really the sizes they claim to be.
     icons: [
       { src: "/favicon.ico", sizes: "any", type: "image/x-icon" },
-      { src: "/coutput.png", sizes: "192x192", type: "image/png", purpose: "any" },
-      { src: "/coutput.png", sizes: "512x512", type: "image/png", purpose: "any" },
-      { src: "/coutput.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
   };
 }
