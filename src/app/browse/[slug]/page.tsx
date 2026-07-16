@@ -87,6 +87,11 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
   const catLabels   = catSlugs.map((s, i) =>
     t("common.categories." + (s ?? "").toLowerCase()) || worker.categoryNames?.[i] || s);
   if (catLabels.length === 0) catLabels.push(t("common.general.worker"));
+  // Keep the stat card compact — a couple of categories then "+N more" (full list on hover).
+  const CAT_MAX   = 2;
+  const catAll    = catLabels.join(", ");
+  const catShort  = catLabels.slice(0, CAT_MAX).join(", ")
+    + (catLabels.length > CAT_MAX ? ` +${catLabels.length - CAT_MAX} ${t("worker_detail.more") || "more"}` : "");
   const isAvailable = worker.availability.length > 0;
   const memberYear  = new Date(worker.memberSince as unknown as string).getFullYear();
   const firstName   = worker.name.split(" ")[0];
@@ -201,16 +206,16 @@ export default function WorkerDetailPage({ params }: { params: Promise<{ slug: s
 
         {/* STATS GRID */}
         <div className="stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10, marginBottom: 24 }}>
-          {[
-            { label: t("common.general.category") || "Category",       value: catLabels.join(", ") },
+          {([
+            { label: t("common.general.category") || "Category",       value: catShort, title: catAll },
             { label: t("worker_detail.stats.rating") || "Rating",         value: (() => { const r = ratingInfo(worker.rating, worker.ratingCount); return r.hasReviews ? `${r.value} ★ (${r.reviews})` : `${r.value} ★`; })() },
             { label: t("worker_detail.stats.completed_jobs") || "Completed jobs", value: String(worker.completedJobs ?? 0) },
             { label: t("jobs_page.filters.location") || "Location",       value: worker.locationRegion || worker.locationShort || worker.district || "Rwanda" },
             { label: t("worker_detail.sections.available_days") || "Available days", value: worker.availability.length > 0 ? (t("worker_detail.trust.availability", { count: worker.availability.length }) || `${worker.availability.length} days`) : "Not set" },
-          ].map(({ label, value }) => (
-            <div key={label} style={{ background: "#1c1c1c", border: "1px solid #272727", borderRadius: 12, padding: "14px 16px" }}>
+          ] as { label: string; value: string; title?: string }[]).map(({ label, value, title }) => (
+            <div key={label} style={{ background: "#1c1c1c", border: "1px solid #272727", borderRadius: 12, padding: "14px 16px", minWidth: 0 }}>
               <p style={{ margin: 0, fontSize: 11, color: "#555", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</p>
-              <p style={{ margin: "4px 0 0", fontSize: 15, fontWeight: 800, color: "#f0f0f0", letterSpacing: "-0.3px" }}>{value}</p>
+              <p title={title} style={{ margin: "4px 0 0", fontSize: 15, fontWeight: 800, color: "#f0f0f0", letterSpacing: "-0.3px", overflowWrap: "break-word" }}>{value}</p>
             </div>
           ))}
         </div>
