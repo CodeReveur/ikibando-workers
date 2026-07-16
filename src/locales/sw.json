@@ -1267,6 +1267,8 @@
     "home": "MpahMapu - Ajiri Wafanyakazi Waliothibitishwa Kigali, Rwanda",
     "browse": "Vinjari Wafanyakazi | MpahMapu",
     "jobs": "Tafuta Kazi | MpahMapu",
+    "blog": "Blogu | MpahMapu",
+    "whats_new": "Yaliyo Mapya | MpahMapu",
     "about": "Kutuhusu | MpahMapu",
     "contact": "Wasiliana Nasi | MpahMapu",
     "privacy_policy": "Sera ya Faragha | MpahMapu",
@@ -1278,7 +1280,9 @@
     "verify_badge": "Thibitisha Beji | MpahMapu",
     "dashboard": "Dashibodi | MpahMapu",
     "settings": "Mipangilio | MpahMapu",
-    "not_found": "Ukurasa Haupatikani | MpahMapu"
+    "not_found": "Ukurasa Haupatikani | MpahMapu",
+    "worker_detail": "{name} - {category} wa Kuajiriwa Rwanda | MpahMapu",
+    "job_detail": "Kazi ya {title} {district}, Rwanda | MpahMapu"
   },
   "settings_page": {
     "title": "Mipangilio",
@@ -2250,5 +2254,9 @@
     "added": "Uthibitisho umeongezwa",
     "failed": "Imeshindwa kuongeza. Tafadhali jaribu tena.",
     "remove_failed": "Imeshindwa kuondoa."
+  },
+  "descriptions": {
+    "worker_detail": "Ajiri {name}, {category} aliyethibitishwa {location}. Kazi {completed} zilizokamilika kwenye MpahMapu, jukwaa la wafanyakazi la Rwanda.",
+    "job_detail": "{employer} anaajiri {title} {district}, Rwanda. Omba leo kwenye MpahMapu na ulipwe kwa MoMo."
   }
 }

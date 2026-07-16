@@ -200,6 +200,149 @@ export function ArticleSchema({
   );
 }
 
+/**
+ * A worker's public profile, tied back to the Organization as the platform they work through, so
+ * profiles reinforce the brand entity rather than reading as unaffiliated strangers.
+ *
+ * aggregateRating is emitted only for workers with genuine reviews. Every worker is seeded at 5.0
+ * with a phantom first review (see ratingInfo), and marking up a rating no human left is exactly
+ * what Google's structured-data policy treats as fabricated.
+ */
+export function PersonSchema({
+  name,
+  url,
+  imageUrl,
+  jobTitle,
+  locality,
+  rating,
+  ratingCount,
+}: {
+  name: string;
+  url: string;
+  imageUrl?: string | null;
+  jobTitle?: string | null;
+  locality?: string | null;
+  rating?: number | null;
+  ratingCount?: number | null;
+}) {
+  const realReviews = (ratingCount ?? 0) - 1;
+  const hasReviews = realReviews > 0 && rating != null;
+
+  return (
+    <JsonLd
+      data={{
+        "@context": "https://schema.org",
+        "@type": "Person",
+        name,
+        url,
+        mainEntityOfPage: { "@type": "WebPage", "@id": url },
+        ...(imageUrl ? { image: imageUrl } : {}),
+        ...(jobTitle ? { jobTitle } : {}),
+        ...(locality
+          ? {
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: locality,
+                addressCountry: "RW",
+              },
+            }
+          : {}),
+        worksFor: { "@id": ORG_ID },
+        ...(hasReviews
+          ? {
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: rating,
+                reviewCount: realReviews,
+                bestRating: 5,
+                worstRating: 1,
+              },
+            }
+          : {}),
+      }}
+    />
+  );
+}
+
+/**
+ * A live job listing. This is the only schema on the site eligible for a rich result in Google's
+ * jobs experience, which is why callers pass open listings only: Google requires that a marked-up
+ * posting still accept applicants, and demotes sites that leave stale ones up.
+ *
+ * validThrough is derived from the shift's own end. Without it Google keeps surfacing a listing
+ * long after the work has happened.
+ */
+export function JobPostingSchema({
+  title,
+  description,
+  url,
+  datePosted,
+  startTime,
+  employerName,
+  district,
+  province,
+  ratePerHour,
+  durationHours,
+  headcount,
+}: {
+  title: string;
+  description?: string | null;
+  url: string;
+  datePosted: string;
+  startTime?: string | null;
+  employerName: string;
+  district: string;
+  province?: string | null;
+  ratePerHour: number;
+  durationHours?: number | null;
+  headcount?: number | null;
+}) {
+  const validThrough = (() => {
+    if (!startTime) return null;
+    const start = new Date(startTime);
+    if (Number.isNaN(start.getTime())) return null;
+    return new Date(start.getTime() + (durationHours ?? 0) * 3600_000).toISOString();
+  })();
+
+  return (
+    <JsonLd
+      data={{
+        "@context": "https://schema.org",
+        "@type": "JobPosting",
+        title,
+        // Google drops a JobPosting with no description, so fall back to a factual sentence rather
+        // than omitting the property and losing the rich result outright.
+        description:
+          description?.trim() ||
+          `${title} in ${district}, Rwanda. Posted by ${employerName} on ${SITE_NAME}.`,
+        datePosted,
+        ...(validThrough ? { validThrough } : {}),
+        url,
+        mainEntityOfPage: { "@type": "WebPage", "@id": url },
+        employmentType: "TEMPORARY",
+        hiringOrganization: { "@type": "Organization", name: employerName },
+        jobLocation: {
+          "@type": "Place",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: district,
+            ...(province ? { addressRegion: province } : {}),
+            addressCountry: "RW",
+          },
+        },
+        baseSalary: {
+          "@type": "MonetaryAmount",
+          currency: "RWF",
+          value: { "@type": "QuantitativeValue", value: ratePerHour, unitText: "HOUR" },
+        },
+        ...(headcount ? { totalJobOpenings: headcount } : {}),
+        directApply: true,
+        isPartOf: { "@id": WEBSITE_ID },
+      }}
+    />
+  );
+}
+
 export function FAQSchema({ faqs }: { faqs: { question: string; answer: string }[] }) {
   return (
     <JsonLd

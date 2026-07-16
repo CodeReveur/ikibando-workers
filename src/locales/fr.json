@@ -1267,6 +1267,8 @@
     "home": "MpahMapu - Recrutez des travailleurs vérifiés à Kigali, Rwanda",
     "browse": "Parcourir les travailleurs | MpahMapu",
     "jobs": "Trouver des emplois | MpahMapu",
+    "blog": "Blog | MpahMapu",
+    "whats_new": "Nouveautes | MpahMapu",
     "about": "À propos de nous | MpahMapu",
     "contact": "Contactez-nous | MpahMapu",
     "privacy_policy": "Politique de confidentialité | MpahMapu",
@@ -1278,7 +1280,9 @@
     "verify_badge": "Vérifier le badge | MpahMapu",
     "dashboard": "Tableau de bord | MpahMapu",
     "settings": "Paramètres | MpahMapu",
-    "not_found": "Page non trouvée | MpahMapu"
+    "not_found": "Page non trouvée | MpahMapu",
+    "worker_detail": "{name} - {category} a recruter au Rwanda | MpahMapu",
+    "job_detail": "Emploi {title} a {district}, Rwanda | MpahMapu"
   },
   "settings_page": {
     "title": "Paramètres",
@@ -2250,5 +2254,9 @@
     "added": "Preuve ajoutée",
     "failed": "Impossible d'ajouter. Veuillez réessayer.",
     "remove_failed": "Impossible de supprimer."
+  },
+  "descriptions": {
+    "worker_detail": "Recrutez {name}, {category} verifie a {location}. {completed} missions accomplies sur MpahMapu, la plateforme de main-d'oeuvre a la demande du Rwanda.",
+    "job_detail": "{employer} recrute pour {title} a {district}, Rwanda. Postulez des aujourd'hui sur MpahMapu et soyez paye par MoMo."
   }
 }

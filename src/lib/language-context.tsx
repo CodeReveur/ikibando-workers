@@ -2,12 +2,14 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import en from "@/locales/en.json";
-import fr from "@/locales/fr.json";
-import sw from "@/locales/sw.json";
-import kinyy from "@/locales/kinyy.json";
-
-type Language = "en" | "fr" | "sw" | "kinyy";
+import {
+  DEFAULT_LANGUAGE,
+  htmlLang,
+  isLanguage,
+  resolveTitleKey,
+  translate,
+  type Language,
+} from "@/lib/i18n-shared";
 
 interface LanguageContextType {
   language: Language;
@@ -17,25 +19,23 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-const translations: Record<Language, any> = { en, fr, sw, kinyy };
-
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>("kinyy");
+  const [language, setLanguageState] = useState<Language>(DEFAULT_LANGUAGE);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     let activeLang: Language | null = null;
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      const queryLang = params.get("lang") as Language;
-      if (queryLang && ["en", "fr", "sw", "kinyy"].includes(queryLang)) {
+      const queryLang = params.get("lang");
+      if (isLanguage(queryLang)) {
         activeLang = queryLang;
         localStorage.setItem("MpahMapu_lang", queryLang);
       }
     }
     if (!activeLang) {
-      const saved = localStorage.getItem("MpahMapu_lang") as Language;
-      if (saved && (saved === "en" || saved === "fr" || saved === "sw" || saved === "kinyy")) {
+      const saved = localStorage.getItem("MpahMapu_lang");
+      if (isLanguage(saved)) {
         activeLang = saved;
       }
     }
@@ -50,81 +50,41 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("MpahMapu_lang", lang);
   };
 
-  const t = (key: string, variables?: Record<string, string | number>): string => {
-    const dict = translations[language] || translations["en"];
-    const parts = key.split(".");
-    let current = dict;
-
-    for (const part of parts) {
-      if (current && typeof current === "object" && part in current) {
-        current = current[part];
-      } else {
-        // Fallback to English
-        let fallback = translations["en"];
-        for (const fPart of parts) {
-          if (fallback && typeof fallback === "object" && fPart in fallback) {
-            fallback = fallback[fPart];
-          } else {
-            return key;
-          }
-        }
-        current = fallback;
-        break;
-      }
-    }
-
-    if (typeof current !== "string") {
-      return key;
-    }
-
-    let text = current;
-    if (variables) {
-      Object.entries(variables).forEach(([k, v]) => {
-        text = text.replace(new RegExp(`{${k}}`, "g"), String(v));
-      });
-    }
-
-    return text;
-  };
+  /**
+   * Delegates to the shared translator so metadata generated on the server and text rendered on
+   * the client can never disagree about what a key means.
+   */
+  const t = (key: string, variables?: Record<string, string | number>): string =>
+    translate(mounted ? language : DEFAULT_LANGUAGE, key, variables);
 
   const pathname = usePathname();
 
-  // Dynamically set document title and html lang on path/lang changes
+  /**
+   * Keep <html lang> and the tab title in step with the switcher, which changes language without
+   * navigating, so the server-rendered title would otherwise stay frozen in the previous language.
+   *
+   * Only static routes are titled here. resolveTitleKey returns null for detail pages, which title
+   * themselves from the record they render (see usePageTitle). Overwriting those with a generic key
+   * is exactly the bug that made every blog post announce itself as "Page Not Found".
+   */
   useEffect(() => {
     if (typeof window === "undefined" || !mounted) return;
-    
-    // Set document language attribute
-    document.documentElement.lang = language === "kinyy" ? "rw" : language;
 
-    let titleKey = "home";
-    const path = pathname || "/";
-    if (path === "/") titleKey = "home";
-    else if (path === "/browse") titleKey = "browse";
-    else if (path.startsWith("/browse/")) titleKey = "browse";
-    else if (path === "/jobs") titleKey = "jobs";
-    else if (path.startsWith("/jobs/")) titleKey = "jobs";
-    else if (path === "/about") titleKey = "about";
-    else if (path === "/contact") titleKey = "contact";
-    else if (path === "/privacy-policy") titleKey = "privacy_policy";
-    else if (path === "/terms-and-conditions") titleKey = "terms_and_conditions";
-    else if (path === "/signin") titleKey = "signin";
-    else if (path === "/signup") titleKey = "signup";
-    else if (path === "/forgot-password") titleKey = "forgot_password";
-    else if (path === "/reset-password") titleKey = "reset_password";
-    else if (path.startsWith("/verify/")) titleKey = "verify_badge";
-    else if (path.endsWith("/settings")) titleKey = "settings";
-    else if (path.startsWith("/seeker") || path.startsWith("/owner")) titleKey = "dashboard";
-    else titleKey = "not_found";
+    document.documentElement.lang = htmlLang(language);
 
-    const translatedTitle = t("titles." + titleKey);
-    if (translatedTitle && translatedTitle !== "titles." + titleKey) {
+    const titleKey = resolveTitleKey(pathname || "/");
+    if (!titleKey) return;
+
+    const key = `titles.${titleKey}`;
+    const translatedTitle = t(key);
+    if (translatedTitle && translatedTitle !== key) {
       document.title = translatedTitle;
     }
   }, [language, mounted, pathname, t]);
 
   // Prevent hydration mismatches by returning default "kinyy" during SSR/initial client paint
   const value = {
-    language: mounted ? language : "kinyy",
+    language: mounted ? language : DEFAULT_LANGUAGE,
     setLanguage,
     t,
   };
@@ -134,6 +94,23 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       {children}
     </LanguageContext.Provider>
   );
+}
+
+/**
+ * Let a page own its tab title.
+ *
+ * For pages the server already titled (a worker, a job), this is what keeps that title correct
+ * after the visitor switches language: the server picked one language and cannot re-render.
+ * Pass a fully-formed title, not a key, so callers can interpolate the record's own name.
+ *
+ * Safe against the provider's effect above, which only titles paths where resolveTitleKey is
+ * non-null, and those are precisely the paths that never call this.
+ */
+export function usePageTitle(title: string | null | undefined) {
+  useEffect(() => {
+    if (typeof document === "undefined" || !title) return;
+    document.title = title;
+  }, [title]);
 }
 
 export function useLanguage() {

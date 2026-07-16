@@ -1267,6 +1267,8 @@
     "home": "MpahMapu - Guhuza abakozi b'abanyamyuga bashyizweho ikimenyetso i Kigali",
     "browse": "Shaka abakozi | MpahMapu",
     "jobs": "Shaka akazi | MpahMapu",
+    "blog": "Blog | MpahMapu",
+    "whats_new": "Ibishya | MpahMapu",
     "about": "Turi bande | MpahMapu",
     "contact": "Twandikire | MpahMapu",
     "privacy_policy": "Ibiye ry'ibanga | MpahMapu",
@@ -1278,7 +1280,9 @@
     "verify_badge": "Genzura Ibirango | MpahMapu",
     "dashboard": "Dashboard | MpahMapu",
     "settings": "Igenamiterere | MpahMapu",
-    "not_found": "Urupapuro ntirubonetse | MpahMapu"
+    "not_found": "Urupapuro ntirubonetse | MpahMapu",
+    "worker_detail": "{name} - {category} wo Guhemba mu Rwanda | MpahMapu",
+    "job_detail": "Akazi ka {title} i {district}, mu Rwanda | MpahMapu"
   },
   "settings_page": {
     "title": "Igenamiterere",
@@ -2250,5 +2254,9 @@
     "added": "Ibimenyetso byongeweho",
     "failed": "Ntibyashobotse kongeraho. Ongera ugerageze.",
     "remove_failed": "Ntibyashobotse gukuraho."
+  },
+  "descriptions": {
+    "worker_detail": "Haka {name}, {category} wemejwe i {location}. Imirimo {completed} yarangiye kuri MpahMapu, urubuga rw'abakozi mu Rwanda.",
+    "job_detail": "{employer} arashaka {title} i {district}, mu Rwanda. Saba uyu munsi kuri MpahMapu wishyurwe na MoMo."
   }
 }

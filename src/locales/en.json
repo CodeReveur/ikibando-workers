@@ -1268,6 +1268,8 @@
     "home": "MpahMapu - Hire Verified Workers in Kigali, Rwanda",
     "browse": "Browse Workers | MpahMapu",
     "jobs": "Find Jobs | MpahMapu",
+    "blog": "Blog | MpahMapu",
+    "whats_new": "What's New | MpahMapu",
     "about": "About Us | MpahMapu",
     "contact": "Contact Us | MpahMapu",
     "privacy_policy": "Privacy Policy | MpahMapu",
@@ -1279,7 +1281,9 @@
     "verify_badge": "Verify Badge | MpahMapu",
     "dashboard": "Dashboard | MpahMapu",
     "settings": "Settings | MpahMapu",
-    "not_found": "Page Not Found | MpahMapu"
+    "not_found": "Page Not Found | MpahMapu",
+    "worker_detail": "{name} - {category} for Hire in Rwanda | MpahMapu",
+    "job_detail": "{title} Job in {district}, Rwanda | MpahMapu"
   },
   "settings_page": {
     "title": "Settings",
@@ -2251,5 +2255,9 @@
     "added": "Proof added",
     "failed": "Couldn't add that. Please try again.",
     "remove_failed": "Couldn't remove that."
+  },
+  "descriptions": {
+    "worker_detail": "Hire {name}, a verified {category} in {location}. {completed} jobs completed on MpahMapu, Rwanda's trusted on-demand workforce platform.",
+    "job_detail": "{employer} is hiring for {title} in {district}, Rwanda. Apply today on MpahMapu and get paid by MoMo."
   }
 }
