@@ -11,6 +11,7 @@ import {
   WebSiteSchema,
   LocalBusinessSchema,
 } from "@/components/seo/json-ld";
+import { SITE_URL } from "@/lib/seo";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -18,7 +19,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://mpahmapu.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "MpahMapu - Hire Verified Workers in Kigali, Rwanda",
     template: "%s | MpahMapu",
