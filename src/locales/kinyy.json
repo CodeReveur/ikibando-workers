@@ -1371,7 +1371,13 @@
       "danger_zone": "Aho Hari Akaga",
       "delete_account": "Gusiba Konti",
       "delete_account_desc": "Bisiba burundu konti yawe n'amakuru yose ajyanye na yo. Ibi ntibishobora gusubizwa inyuma.",
-      "delete_account_hint": "Kugira ngo usibe konti yawe, wandikire ubufasha kuri info@mpahmapu.com"
+      "delete_account_hint": "Kugira ngo usibe konti yawe, wandikire ubufasha kuri info@mpahmapu.com",
+      "public_profile": "Profile rusange",
+      "public_profile_desc": "Iyi ni linki ya profile yawe rusange. Abakoresha bashobora kubona ubuhanga bwawe, aho uherereye n'igihe uboneka.",
+      "view_profile_btn": "Reba profile rusange",
+      "copy_link_btn": "Koporora linki",
+      "badge_not_verified_desc": "Ntabwo urafite ikarita y'umukozi yemejwe.",
+      "badge_not_verified_hint": "Ikarita igufasha kugaragara kandi ikongera icyizere ku bakoresha."
     },
     "payments": {
       "title": "Ubwishyu",

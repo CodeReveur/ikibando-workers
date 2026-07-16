@@ -1371,7 +1371,13 @@
       "danger_zone": "Danger Zone",
       "delete_account": "Delete Account",
       "delete_account_desc": "Permanently deletes your account and all associated data. This cannot be undone.",
-      "delete_account_hint": "To delete your account, please contact support at info@mpahmapu.com"
+      "delete_account_hint": "To delete your account, please contact support at info@mpahmapu.com",
+      "public_profile": "Public profile",
+      "public_profile_desc": "This is your public profile link. Employers can view your skills, location, and availability here.",
+      "view_profile_btn": "View public profile",
+      "copy_link_btn": "Copy link",
+      "badge_not_verified_desc": "You don't have a verified worker badge yet.",
+      "badge_not_verified_hint": "A badge helps you stand out and builds trust with employers."
     },
     "payments": {
       "title": "Payments",

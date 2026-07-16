@@ -1370,7 +1370,13 @@
       "danger_zone": "Zone de danger",
       "delete_account": "Supprimer le compte",
       "delete_account_desc": "Supprime définitivement votre compte et toutes les données associées. Cette action est irréversible.",
-      "delete_account_hint": "Pour supprimer votre compte, veuillez contacter le support à info@mpahmapu.com"
+      "delete_account_hint": "Pour supprimer votre compte, veuillez contacter le support à info@mpahmapu.com",
+      "public_profile": "Profil public",
+      "public_profile_desc": "Voici le lien de votre profil public. Les employeurs peuvent y voir vos compétences, votre localisation et vos disponibilités.",
+      "view_profile_btn": "Voir le profil public",
+      "copy_link_btn": "Copier le lien",
+      "badge_not_verified_desc": "Vous n'avez pas encore de badge de travailleur vérifié.",
+      "badge_not_verified_hint": "Un badge vous met en valeur et renforce la confiance des employeurs."
     },
     "payments": {
       "title": "Paiements",

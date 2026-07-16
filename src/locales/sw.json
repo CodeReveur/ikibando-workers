@@ -1370,7 +1370,13 @@
       "danger_zone": "Eneo la Hatari",
       "delete_account": "Futa Akaunti",
       "delete_account_desc": "Inafuta kabisa akaunti yako na data zote zinazohusiana. Hatua hii haiwezi kutenduliwa.",
-      "delete_account_hint": "Ili kufuta akaunti yako, tafadhali wasiliana na msaada kupitia info@mpahmapu.com"
+      "delete_account_hint": "Ili kufuta akaunti yako, tafadhali wasiliana na msaada kupitia info@mpahmapu.com",
+      "public_profile": "Wasifu wa umma",
+      "public_profile_desc": "Hii ni linki ya wasifu wako wa umma. Waajiri wanaweza kuona ujuzi wako, eneo na upatikanaji wako hapa.",
+      "view_profile_btn": "Tazama wasifu wa umma",
+      "copy_link_btn": "Nakili linki",
+      "badge_not_verified_desc": "Bado huna beji ya mfanyakazi iliyothibitishwa.",
+      "badge_not_verified_hint": "Beji hukusaidia kujitokeza na kujenga imani kwa waajiri."
     },
     "payments": {
       "title": "Malipo",
