@@ -51,8 +51,9 @@ export default function SeekerBonuses() {
       .finally(() => setLoading(false));
   }, []);
 
-  const total     = bonus?.total ?? 0;
-  const claimable = bonus?.claimable ?? 0;
+  const total     = bonus?.total ?? 0;        // claimed — already wallet balance
+  const claimable = bonus?.claimable ?? 0;    // still to claim
+  const lifetime  = total + claimable;        // everything ever granted
   const items     = bonus?.items ?? [];
   const code    = referral?.code ?? "";
   const reward  = referral?.rewardPerReferral ?? 1000;
@@ -138,24 +139,20 @@ export default function SeekerBonuses() {
         </div>
         {/* Headline is what's waiting to be claimed when there is any — a bonus isn't wallet
             money until claimed, so leading with the claimed total would be misleading. */}
-        {/* Two distinct states. With something to claim the card is a call to action; with
-            nothing outstanding it must not look like one — the money is already in the wallet. */}
+        {/* This number always means one thing: what's claimable. Zero when there's nothing —
+            money already claimed is just wallet balance and is reported on the history below. */}
         <div style={{ flex: 1 }}>
           <p style={{ margin: "0 0 4px", fontSize: 11, color: "#5a4000", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-            {claimable > 0
-              ? (t("seeker_bonuses.ready_to_claim") || "Ready to claim")
-              : (t("seeker_bonuses.all_claimed") || "All claimed")}
+            {t("seeker_bonuses.ready_to_claim") || "Ready to claim"}
           </p>
           <p style={{ margin: "0 0 4px", fontSize: 38, fontWeight: 900, color: claimable > 0 ? "#f97316" : "#8a5a1a", letterSpacing: "-1.5px" }}>
-            {loading ? "…" : fmt(claimable > 0 ? claimable : total)}
+            {loading ? "…" : fmt(claimable)}
           </p>
           <p style={{ margin: 0, fontSize: 12, color: "#4a3500" }}>
             {loading ? t("seeker_bonuses.loading_bonus")
               : claimable > 0
                 ? (t("seeker_bonuses.claim_desc") || "Claim it to add it to your wallet.")
-                : (bonus?.count ?? 0) === 0
-                  ? (t("seeker_bonuses.none_yet") || "No bonuses yet.")
-                  : (t("seeker_bonuses.in_wallet") || "Already in your wallet — nothing to claim right now.")}
+                : (t("seeker_bonuses.nothing_to_claim") || "Nothing to claim right now.")}
           </p>
         </div>
         {claimable > 0 ? (
@@ -241,8 +238,15 @@ export default function SeekerBonuses() {
         )}
       </div>
 
-      {/* Bonus history */}
-      <SectionHead title={t("seeker_bonuses.bonus_history") || "Bonus history"} />
+      {/* Bonus history — the lifetime total lives here, not on the claim card. */}
+      <SectionHead
+        title={t("seeker_bonuses.bonus_history") || "Bonus history"}
+        action={items.length > 0 ? (
+          <span style={{ fontSize: 12, fontWeight: 700, color: "#22c55e" }}>
+            {fmt(lifetime)} {t("seeker_bonuses.total_earned") || "earned in total"}
+          </span>
+        ) : undefined}
+      />
       <div style={{ background: "#131313", border: "1px solid #1c1c1c", borderRadius: 14, marginBottom: 14, overflow: "hidden" }}>
         {loading ? (
           <p style={{ margin: 0, padding: "22px", fontSize: 13, color: "#4a4a4a" }}>{t("common.general.loading") || "Loading…"}</p>

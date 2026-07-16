@@ -1714,7 +1714,9 @@
     "in_wallet": "Tayari kwenye pochi yako — hakuna cha kudai kwa sasa.",
     "none_yet": "Hakuna bonasi bado.",
     "view_wallet": "Tazama pochi",
-    "status_claimed": "Imedaiwa"
+    "status_claimed": "Imedaiwa",
+    "nothing_to_claim": "Hakuna cha kudai kwa sasa.",
+    "total_earned": "umepata kwa jumla"
   },
   "seeker_analytics": {
     "this_week": "Wiki Hii",

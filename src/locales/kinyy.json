@@ -1714,7 +1714,9 @@
     "in_wallet": "Bisanzwe muri wallet yawe — nta kintu cyo gufata ubu.",
     "none_yet": "Nta nyongera irahaba.",
     "view_wallet": "Reba wallet",
-    "status_claimed": "Byafashwe"
+    "status_claimed": "Byafashwe",
+    "nothing_to_claim": "Nta kintu cyo gufata ubu.",
+    "total_earned": "byinjiye muri rusange"
   },
   "seeker_analytics": {
     "this_week": "Iyi Cyumweru",

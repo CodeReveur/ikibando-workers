@@ -1714,7 +1714,9 @@
     "in_wallet": "Déjà dans votre portefeuille — rien à réclamer pour le moment.",
     "none_yet": "Aucun bonus pour l'instant.",
     "view_wallet": "Voir le portefeuille",
-    "status_claimed": "Réclamé"
+    "status_claimed": "Réclamé",
+    "nothing_to_claim": "Rien à réclamer pour le moment.",
+    "total_earned": "gagné au total"
   },
   "seeker_analytics": {
     "this_week": "Cette semaine",

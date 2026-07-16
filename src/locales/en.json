@@ -1715,7 +1715,9 @@
     "in_wallet": "Already in your wallet — nothing to claim right now.",
     "none_yet": "No bonuses yet.",
     "view_wallet": "View wallet",
-    "status_claimed": "Claimed"
+    "status_claimed": "Claimed",
+    "nothing_to_claim": "Nothing to claim right now.",
+    "total_earned": "earned in total"
   },
   "seeker_analytics": {
     "this_week": "This Week",
