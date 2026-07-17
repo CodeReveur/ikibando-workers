@@ -1,4 +1,17 @@
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://mpahmapu.com";
+/**
+ * The origin the site actually answers on, and therefore the one every canonical, sitemap entry,
+ * schema @id and og:url must use.
+ *
+ * It is www. The host 308s https://mpahmapu.com to https://www.mpahmapu.com, so the bare domain
+ * is a redirect, not a home. This defaulted to the bare domain, which made every page declare a
+ * canonical pointing at a URL that redirects straight back to the page declaring it. Google will
+ * not follow that: it reported no user-declared canonical at all and picked the crawled URL
+ * itself, and every sitemap entry cost it a redirect hop to discover a page it already had.
+ *
+ * If the redirect is ever flipped to strip www instead, change this to match. The rule is simply
+ * that this constant and the host's redirect must agree.
+ */
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.mpahmapu.com";
 export const SITE_NAME = "MpahMapu";
 export const SITE_DESCRIPTION = "Find verified workers instantly or get hired for a job today. Rwanda's trusted on-demand workforce platform for events, cleaning, security, driving, and more.";
 export const SITE_LOCALE = "en_RW";
@@ -32,17 +45,41 @@ export const SITE_ALTERNATE_NAMES = [
 
 /**
  * Profiles that prove this brand is a real, single entity. This is the strongest signal Google
- * uses to stop treating an unfamiliar name as a typo — an empty list means nothing corroborates
- * that "MpahMapu" exists.
+ * has for deciding an unfamiliar name is a real thing rather than a typo, and while it was empty
+ * nothing anywhere corroborated that "MpahMapu" exists — which is why a search for it offered a
+ * similarly spelled stranger instead.
  *
- * Set NEXT_PUBLIC_SOCIAL_PROFILES to a comma-separated list of full profile URLs
- * (LinkedIn, Facebook, Instagram, X, YouTube). Only list profiles you actually control:
- * pointing sameAs at a page that doesn't reference the site back is worthless or harmful.
+ * Hard-coded rather than env-only: these are public brand facts, not secrets or per-environment
+ * config, and leaving them to a variable meant they were simply never set. NEXT_PUBLIC_SOCIAL_PROFILES
+ * still overrides, for a staging site that should not claim the real accounts.
+ *
+ * Every URL here is verified to resolve. Facebook is normalised to www; web.facebook.com is an
+ * alternate host and sameAs should name the canonical one.
+ *
+ * Two caveats worth knowing, because sameAs only works as well as what it points at:
+ *   - YouTube and X are branded "Ikibando", the previous name. Google reads the profile, so those
+ *     currently argue the entity is Ikibando rather than MpahMapu. Renaming them, or at minimum
+ *     putting MpahMapu in the profile name/bio, is what turns them from mixed signal into proof.
+ *   - LinkedIn and Facebook are personal profiles, not a Company Page. For an Organization they
+ *     are a category mismatch; a real Page would carry more weight.
+ * In every case the profile should link back to https://www.mpahmapu.com. sameAs is a claim we
+ * make; the link back is what corroborates it.
  */
-export const SOCIAL_PROFILES: string[] = (process.env.NEXT_PUBLIC_SOCIAL_PROFILES ?? "")
-  .split(",")
-  .map((s) => s.trim())
-  .filter(Boolean);
+const DEFAULT_SOCIAL_PROFILES = [
+  "https://www.youtube.com/@Ikibandoh",
+  "https://www.instagram.com/mpamapu/",
+  "https://x.com/ikibandoh",
+  "https://www.linkedin.com/in/mpah-mapu-524a6241b/",
+  "https://www.facebook.com/profile.php?id=61591875575238",
+];
+
+export const SOCIAL_PROFILES: string[] = (() => {
+  const fromEnv = (process.env.NEXT_PUBLIC_SOCIAL_PROFILES ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return fromEnv.length > 0 ? fromEnv : DEFAULT_SOCIAL_PROFILES;
+})();
 
 /** Stable schema.org node ids, so Organization/WebSite/LocalBusiness merge into one entity. */
 export const ORG_ID = `${SITE_URL}/#organization`;
