@@ -808,6 +808,32 @@ export async function getNotifications(token: string, page = 0, size = 20): Prom
   return data.data;
 }
 
+/**
+ * The safe click target for a notification.
+ *
+ * Every URL a notification carries is an internal app route (/blog/..., /seeker/jobs/...), but
+ * older ones were stored as absolute URLs built from the server's first CORS origin — which is
+ * http://localhost:3000 by default and a non-canonical host otherwise, so following them landed on
+ * a dead host or a login page. Reducing any absolute URL to its path makes the link resolve
+ * against wherever the app is actually running, which repairs those stored notifications without a
+ * data migration. Relative URLs pass straight through.
+ */
+export function notificationHref(rawUrl: string | undefined | null): string | undefined {
+  if (!rawUrl) return undefined;
+  const url = rawUrl.trim();
+  if (!url) return undefined;
+  if (url.startsWith("/")) return url;
+  try {
+    const u = new URL(url);
+    // Only http(s) app links are collapsed to a path; anything else (mailto:, tel:) is left alone.
+    if (u.protocol === "http:" || u.protocol === "https:") return u.pathname + u.search + u.hash;
+    return url;
+  } catch {
+    // Not a parseable URL — treat it as a relative path rather than dropping the link.
+    return url.startsWith("/") ? url : `/${url}`;
+  }
+}
+
 export async function getUnreadNotificationCount(token: string): Promise<number> {
   const { data } = await http.get("/api/notifications/unread-count", { headers: authHeader(token) });
   return data.data.count;

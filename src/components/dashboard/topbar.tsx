@@ -6,7 +6,7 @@ import { Bell, X, Wallet, Plus, Globe } from "lucide-react";
 import { useSession } from "./session-ctx";
 import { useLanguage } from "@/lib/language-context";
 import { Pip } from "./ui";
-import { getWallet, getNotifications, getUnreadNotificationCount, markAllNotificationsRead, type WalletDto, type NotificationDto } from "@/lib/api";
+import { getWallet, getNotifications, getUnreadNotificationCount, markAllNotificationsRead, notificationHref, type WalletDto, type NotificationDto } from "@/lib/api";
 import { fmt } from "@/lib/dashboard-data";
 import { PaymentApprovalModal } from "@/components/payments/payment-approval-modal";
 
@@ -252,17 +252,21 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
               <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
                 {notifs.length > 0 ? notifs.map((n) => {
                   const jobId = n.data?.jobId;
-                  // Feature announcements carry a url in their data; job notifications carry a jobId.
+                  // Job notifications route to the recipient's own dashboard view; everything else
+                  // uses the stored url, reduced to a same-origin path so a bad host can't send it
+                  // to a dead page or a login screen.
                   const link = jobId
                     ? (isOwner ? `/owner/jobs/${jobId}` : `/seeker/jobs/${jobId}`)
-                    : (n.data?.url || undefined);
+                    : notificationHref(n.data?.url);
                   const time = n.createdAt ? new Date(n.createdAt).toLocaleDateString(currentLocale) : "";
                   return (
                     <div key={n.id} style={{ padding:"14px 16px", borderBottom:"1px solid #141414", display:"flex", gap:10, background: n.read ? "transparent" : "rgba(249,115,22,0.04)" }}>
                       <div style={{ width:6, height:6, borderRadius:99, marginTop:5, flexShrink:0, background: n.read ? "#333" : "#f97316" }} />
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <p style={{ margin:"0 0 3px", fontSize:12, fontWeight:700, color:"#e0e0e0", lineHeight:1.4 }}>{n.title}</p>
-                        <p style={{ margin:"0 0 6px", fontSize:12, color:"#a0a0a0", lineHeight:1.5 }}>{n.body}</p>
+                        <p style={{ margin:"0 0 3px", fontSize:12, fontWeight:700, color:"#e0e0e0", lineHeight:1.4, overflow:"hidden", textOverflow:"ellipsis", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>{n.title}</p>
+                        {/* Clamp to three lines: a post with no excerpt stores its whole body here,
+                            which otherwise fills the dropdown with one notification. */}
+                        <p style={{ margin:"0 0 6px", fontSize:12, color:"#a0a0a0", lineHeight:1.5, overflow:"hidden", textOverflow:"ellipsis", display:"-webkit-box", WebkitLineClamp:3, WebkitBoxOrient:"vertical", wordBreak:"break-word" }}>{n.body}</p>
                         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                           <p style={{ margin:0, fontSize:10, color:"#444" }}>{time}</p>
                           {link && <a href={link} style={{ fontSize:10, color:"#f97316", textDecoration:"none", fontWeight:600 }}>{t("seeker_jobs.track_link") || "View"} →</a>}

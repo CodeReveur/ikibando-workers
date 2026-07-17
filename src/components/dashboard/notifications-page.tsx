@@ -6,7 +6,7 @@ import {
   AlertTriangle, Sparkles, ArrowRight, Loader2,
 } from "lucide-react";
 import {
-  getNotifications, markNotificationRead, markAllNotificationsRead,
+  getNotifications, markNotificationRead, markAllNotificationsRead, notificationHref,
   type NotificationDto,
 } from "@/lib/api";
 import { SectionHead, PageLoader } from "@/components/dashboard/ui";
@@ -83,9 +83,13 @@ export function NotificationsPage({ role }: { role: "seeker" | "owner" }) {
     markAllNotificationsRead(token).catch(() => {});
   };
 
-  /** Where this notification points: an explicit url wins, else the job it refers to. */
+  /**
+   * Where this notification points: an explicit url wins, else the job it refers to.
+   * The url is reduced to a same-origin path so a stale absolute URL (built from the wrong host)
+   * can't send the click to a dead page or the login screen.
+   */
   const linkFor = (n: NotificationDto): string | undefined => {
-    if (n.data?.url) return n.data.url;
+    if (n.data?.url) return notificationHref(n.data.url);
     if (n.data?.jobId) return `/${role}/jobs/${n.data.jobId}`;
     return undefined;
   };
