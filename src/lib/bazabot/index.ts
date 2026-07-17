@@ -1,11 +1,12 @@
 /**
  * BazaBot public entry point.
  *
- * `runAgent` is the single function the route handler calls. It decides between:
- *   - AI mode: full reasoning + tool-calling agent (when a model is configured
- *     and the inference server is reachable), and
- *   - Rule mode: the legacy multilingual intent + knowledge engine, used as a
- *     transparent fallback so the widget never breaks when no model is present.
+ * `runAgentStream` is the single function the route handler calls. It decides
+ * between:
+ *   - AI mode: full reasoning + tool-calling agent with true token streaming
+ *     (when a model is configured and reachable), and
+ *   - Rule mode: the legacy multilingual intent + knowledge engine, streamed in
+ *     chunks, used as a transparent fallback so the widget never breaks.
  *
  * Everything is assembled here via light dependency injection; individual
  * modules stay independently replaceable.
@@ -16,12 +17,13 @@ import { buildRegistry } from "./tools";
 import { KnowledgeSearcher } from "./knowledge/knowledge";
 import { Agent } from "./agent/agent";
 import { runRuleEngine } from "./fallback";
+import { analyze, type Lang } from "@/components/support/bazabot-brain";
 import { sanitizeInput, checkRateLimit } from "./security/guard";
 import { analytics } from "./analytics/analytics";
 import { log } from "./logger";
-import type { AgentRequest, AgentResult } from "./types";
+import type { AgentEmit, AgentMeta, AgentRequest, AgentResult } from "./types";
 
-export type { AgentRequest, AgentResult } from "./types";
+export type { AgentRequest, AgentResult, AgentMeta, AgentEmit } from "./types";
 export { analytics } from "./analytics/analytics";
 export { loadConfig, isAiConfigured } from "./config";
 
@@ -44,44 +46,90 @@ function getAgent(cfg: BazaBotConfig): Agent {
   return agent;
 }
 
+/** Emit a text as small delta chunks for a live typing feel (rule mode only). */
+async function emitChunks(emit: AgentEmit, text: string): Promise<void> {
+  const parts = text.split(/(\s+)/);
+  let buffer = "";
+  for (const p of parts) {
+    buffer += p;
+    if (buffer.length >= 12) {
+      emit("delta", { text: buffer });
+      buffer = "";
+      await new Promise(r => setTimeout(r, 12));
+    }
+  }
+  if (buffer) emit("delta", { text: buffer });
+}
+
+function metaOf(r: AgentResult): AgentMeta {
+  return {
+    source: r.source, intent: r.intent, lang: r.lang,
+    actions: r.actions, suggestions: r.suggestions, escalate: r.escalate, latencyMs: r.latencyMs,
+  };
+}
+
+/** Stream one rule-engine turn (used as fallback + when AI is off). */
+async function streamRuleTurn(req: AgentRequest, cfg: BazaBotConfig, emit: AgentEmit): Promise<AgentMeta> {
+  const result = runRuleEngine(req, cfg);
+  await emitChunks(emit, result.reply);
+  return metaOf(result);
+}
+
 /**
- * Run one user turn. Never throws — always returns an AgentResult the UI can
- * render, degrading to the rule engine on any failure.
+ * Run one user turn with streaming. Never throws — always resolves to turn
+ * metadata, degrading to the rule engine on any failure.
  */
-export async function runAgent(req: AgentRequest): Promise<AgentResult> {
+export async function runAgentStream(req: AgentRequest, emit: AgentEmit): Promise<AgentMeta> {
   const cfg = loadConfig();
 
   // Rate limit per session.
   if (!checkRateLimit(req.context.sessionId, cfg.rateLimitPerMinute)) {
-    return ruleResult(req, "You're sending messages a bit fast — give me a moment and try again. 🙂");
+    await emitChunks(emit, "You're sending messages a bit fast — give me a moment and try again. 🙂");
+    return { source: "rules", lang: req.context.language, actions: [], suggestions: [], escalate: false, latencyMs: 0 };
   }
 
   // Sanitize input.
   const { clean, suspectedInjection } = sanitizeInput(req.message);
-  if (suspectedInjection) log.warn("suspected prompt injection", { sessionId: req.context.sessionId });
   const safeReq: AgentRequest = { ...req, message: clean };
-  if (!clean) return ruleResult(safeReq, "Did you want to ask me something? I'm here to help.");
+  if (!clean) {
+    await emitChunks(emit, "Did you want to ask me something? I'm here to help.");
+    return { source: "rules", lang: req.context.language, actions: [], suggestions: [], escalate: false, latencyMs: 0 };
+  }
 
-  // AI mode when configured + reachable; otherwise fall back.
-  if (isAiConfigured(cfg)) {
+  // Prompt-injection guard: deflect without invoking the model at all.
+  if (suspectedInjection) {
+    log.warn("suspected prompt injection — deflected", { sessionId: req.context.sessionId });
+    await emitChunks(emit,
+      "I can only help with questions about MpahMapu — I can't change how I work. What would you like to know about the platform?");
+    return { source: "rules", lang: req.context.language, actions: [], suggestions: [], escalate: false, latencyMs: 0 };
+  }
+
+  // Language gate: lightweight local models produce poor output in low-resource
+  // languages (Kinyarwanda/Swahili), where the curated rule engine has accurate
+  // translations. Use AI for English; use rules otherwise. Override with
+  // BAZABOT_AI_ALL_LANGS=true once your model handles those languages well.
+  const detectedLang: Lang = analyze(clean, req.context.language as Lang).lang;
+  const aiAllLangs = /^(1|true|yes|on)$/i.test(process.env.BAZABOT_AI_ALL_LANGS ?? "");
+  const languageOk = aiAllLangs || detectedLang === "en";
+
+  // AI mode when configured + language supported; otherwise fall back.
+  if (isAiConfigured(cfg) && languageOk) {
     try {
-      const agent = getAgent(cfg);
-      return await agent.run(safeReq);
+      return await getAgent(cfg).runStream(safeReq, emit);
     } catch (e) {
       log.error("AI agent failed, falling back to rules", { message: (e as Error)?.message });
-      analytics.fallback();
-      return runRuleEngine(safeReq, cfg);
+      void analytics.fallback();
+      return streamRuleTurn(safeReq, cfg, emit);
     }
   }
 
-  analytics.fallback();
-  return runRuleEngine(safeReq, cfg);
+  void analytics.fallback();
+  return streamRuleTurn(safeReq, cfg, emit);
 }
 
-/** Small helper for early-return rule replies. */
-function ruleResult(req: AgentRequest, reply: string): AgentResult {
-  return {
-    reply, source: "rules", lang: req.context.language,
-    actions: [], suggestions: [], escalate: false, latencyMs: 0,
-  };
+/** Non-streaming convenience entry (collects the stream). */
+export async function runAgent(req: AgentRequest): Promise<AgentResult> {
+  let reply = "";
+  const meta = await runAgentStream(req, (ev, data) => { if (ev === "delta") reply += data.text ?? ""; });
+  return { reply, ...meta };
 }

@@ -1,80 +1,69 @@
 /**
- * Lightweight, in-memory analytics. Tracks the signals that help improve the
- * assistant: intent distribution, tool usage, knowledge search hit/miss,
- * fallback rate, latency and completion. No PII — messages are never stored,
- * only derived counters.
+ * Analytics, backed by the shared KV store.
  *
- * Swap this for a persistent sink (DB / metrics pipeline) by implementing the
- * same `track*` surface; the agent depends only on these functions.
+ * Tracks the signals that help improve the assistant: intent distribution, tool
+ * usage, knowledge hit/miss, fallback + escalation rates, latency, completion.
+ * No PII — messages are never stored, only derived counters. Because it uses the
+ * KV store, counters aggregate across instances when Redis is enabled.
+ *
+ * Track methods are fire-and-forget (call sites use `void analytics.x(...)`) so
+ * they never add latency to a user turn.
  */
+import { getKV } from "../store/kv";
 
-interface Counters {
-  totalTurns: number;
-  bySource: Record<string, number>;   // ai | rules | knowledge | escalation
-  byIntent: Record<string, number>;
-  toolCalls: Record<string, number>;
-  toolFailures: Record<string, number>;
-  knowledgeHits: number;
-  knowledgeMisses: number;
-  fallbacks: number;                  // times AI was unavailable → rules
-  escalations: number;
-  latencySumMs: number;
-  latencyCount: number;
+const H_META = "an:meta";
+const H_SOURCE = "an:source";
+const H_INTENT = "an:intent";
+const H_TOOLS = "an:tools";
+const H_TOOL_FAIL = "an:toolfail";
+
+async function inc(hash: string, field: string, by = 1): Promise<void> {
+  try { (await getKV()).hincr(hash, field, by); } catch { /* analytics must never throw */ }
 }
 
-const counters: Counters = {
-  totalTurns: 0,
-  bySource: {},
-  byIntent: {},
-  toolCalls: {},
-  toolFailures: {},
-  knowledgeHits: 0,
-  knowledgeMisses: 0,
-  fallbacks: 0,
-  escalations: 0,
-  latencySumMs: 0,
-  latencyCount: 0,
-};
-
-const inc = (map: Record<string, number>, key: string) => { map[key] = (map[key] ?? 0) + 1; };
-
 export const analytics = {
-  turn(source: string, intent: string, latencyMs: number, escalated: boolean) {
-    counters.totalTurns++;
-    inc(counters.bySource, source);
-    inc(counters.byIntent, intent);
-    counters.latencySumMs += latencyMs;
-    counters.latencyCount++;
-    if (escalated) counters.escalations++;
+  async turn(source: string, intent: string, latencyMs: number, escalated: boolean): Promise<void> {
+    await Promise.all([
+      inc(H_META, "totalTurns"),
+      inc(H_SOURCE, source),
+      inc(H_INTENT, intent),
+      inc(H_META, "latencySumMs", Math.round(latencyMs)),
+      inc(H_META, "latencyCount"),
+      escalated ? inc(H_META, "escalations") : Promise.resolve(),
+    ]);
   },
-  tool(name: string, ok: boolean) {
-    inc(counters.toolCalls, name);
-    if (!ok) inc(counters.toolFailures, name);
+  async tool(name: string, ok: boolean): Promise<void> {
+    await inc(H_TOOLS, name);
+    if (!ok) await inc(H_TOOL_FAIL, name);
   },
-  knowledge(hit: boolean) {
-    if (hit) counters.knowledgeHits++; else counters.knowledgeMisses++;
+  async knowledge(hit: boolean): Promise<void> {
+    await inc(H_META, hit ? "knowledgeHits" : "knowledgeMisses");
   },
-  fallback() {
-    counters.fallbacks++;
+  async fallback(): Promise<void> {
+    await inc(H_META, "fallbacks");
   },
-  /** Snapshot for an admin endpoint / dashboard. */
-  snapshot() {
-    const avgLatency = counters.latencyCount ? Math.round(counters.latencySumMs / counters.latencyCount) : 0;
-    const kbTotal = counters.knowledgeHits + counters.knowledgeMisses;
+  /** Snapshot for the admin dashboard. Aggregates across instances via KV. */
+  async snapshot() {
+    const kv = await getKV();
+    const [meta, bySource, byIntent, toolCalls, toolFailures] = await Promise.all([
+      kv.hgetallNum(H_META), kv.hgetallNum(H_SOURCE), kv.hgetallNum(H_INTENT),
+      kv.hgetallNum(H_TOOLS), kv.hgetallNum(H_TOOL_FAIL),
+    ]);
+    const totalTurns = meta.totalTurns ?? 0;
+    const latencyCount = meta.latencyCount ?? 0;
+    const kbHits = meta.knowledgeHits ?? 0;
+    const kbMisses = meta.knowledgeMisses ?? 0;
+    const kbTotal = kbHits + kbMisses;
     return {
-      totalTurns: counters.totalTurns,
-      bySource: { ...counters.bySource },
-      byIntent: { ...counters.byIntent },
-      toolCalls: { ...counters.toolCalls },
-      toolFailures: { ...counters.toolFailures },
+      totalTurns,
+      bySource, byIntent, toolCalls, toolFailures,
       knowledge: {
-        hits: counters.knowledgeHits,
-        misses: counters.knowledgeMisses,
-        successRate: kbTotal ? +(counters.knowledgeHits / kbTotal).toFixed(3) : 0,
+        hits: kbHits, misses: kbMisses,
+        successRate: kbTotal ? +(kbHits / kbTotal).toFixed(3) : 0,
       },
-      fallbackRate: counters.totalTurns ? +(counters.fallbacks / counters.totalTurns).toFixed(3) : 0,
-      escalationRate: counters.totalTurns ? +(counters.escalations / counters.totalTurns).toFixed(3) : 0,
-      avgLatencyMs: avgLatency,
+      fallbackRate: totalTurns ? +((meta.fallbacks ?? 0) / totalTurns).toFixed(3) : 0,
+      escalationRate: totalTurns ? +((meta.escalations ?? 0) / totalTurns).toFixed(3) : 0,
+      avgLatencyMs: latencyCount ? Math.round((meta.latencySumMs ?? 0) / latencyCount) : 0,
     };
   },
 };

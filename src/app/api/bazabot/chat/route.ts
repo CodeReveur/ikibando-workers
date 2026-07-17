@@ -2,18 +2,19 @@
  * POST /api/bazabot/chat
  *
  * The agent endpoint. Runs one turn through the BazaBot agent (AI mode with tool
- * calling, or the rule-engine fallback) and streams the result back as
- * Server-Sent Events so the UI can render a live typing effect:
+ * calling + true token streaming, or the rule-engine fallback) and forwards the
+ * result as Server-Sent Events:
  *
- *   event: status   → { text }        // "Searching…", shown while tools run
- *   event: delta    → { text }        // incremental reply text
- *   event: done     → { AgentResult meta minus the reply body }
+ *   event: status   → { text }          // "Searching jobs…", live thinking state
+ *   event: action   → { explanation }   // a tool the agent ran (user-safe)
+ *   event: delta    → { text }          // incremental answer tokens
+ *   event: done     → { AgentMeta }     // source, intent, suggestions, escalate…
  *   event: error    → { message }
  *
  * Auth: the client passes the user's access token in the body; it is used only
  * to authorise backend tool calls and is never logged or persisted.
  */
-import { runAgent, type AgentRequest } from "@/lib/bazabot";
+import { runAgentStream, type AgentRequest } from "@/lib/bazabot";
 import type { ChatMessage, Lang, Role } from "@/lib/bazabot/types";
 
 export const runtime = "nodejs";
@@ -32,7 +33,7 @@ interface Body {
 }
 
 const enc = new TextEncoder();
-function sse(event: string, data: unknown): Uint8Array {
+function frame(event: string, data: unknown): Uint8Array {
   return enc.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
 }
 
@@ -66,39 +67,14 @@ export async function POST(request: Request): Promise<Response> {
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
       const close = () => { try { controller.close(); } catch { /* already closed */ } };
+      const emit = (event: string, data: unknown) => {
+        try { controller.enqueue(frame(event, data)); } catch { /* client gone */ }
+      };
       try {
-        controller.enqueue(sse("status", { text: "Thinking…" }));
-
-        const result = await runAgent(req);
-
-        // Stream the reply in small chunks for a live typing feel. (True
-        // token-level streaming from the model is a future enhancement — the
-        // multi-step tool loop resolves the full reply first.)
-        const words = result.reply.split(/(\s+)/);
-        let buffer = "";
-        for (const w of words) {
-          buffer += w;
-          if (buffer.length >= 12) {
-            controller.enqueue(sse("delta", { text: buffer }));
-            buffer = "";
-            // Small yield so chunks flush progressively.
-            await new Promise(r => setTimeout(r, 15));
-          }
-        }
-        if (buffer) controller.enqueue(sse("delta", { text: buffer }));
-
-        controller.enqueue(sse("done", {
-          source: result.source,
-          intent: result.intent,
-          lang: result.lang,
-          actions: result.actions,
-          suggestions: result.suggestions,
-          escalate: result.escalate,
-          latencyMs: result.latencyMs,
-        }));
+        const meta = await runAgentStream(req, emit);
+        emit("done", meta);
       } catch (e) {
-        controller.enqueue(sse("error", { message: "Something went wrong. Please try again." }));
-        // Server-side visibility without leaking to the client.
+        emit("error", { message: "Something went wrong. Please try again." });
         console.error("[bazabot:route] chat failed", (e as Error)?.message);
       } finally {
         close();

@@ -16,7 +16,7 @@ import { analyze } from "@/components/support/bazabot-brain";
 import { log } from "../logger";
 
 export const INTENTS = [
-  "search_worker", "search_job", "create_job", "cancel_booking", "check_wallet",
+  "search_worker", "search_job", "search_employer", "create_job", "cancel_booking", "check_wallet",
   "check_transactions", "check_notifications", "explain_policy", "verify_account",
   "payment_help", "technical_support", "recommendation", "complaint", "greeting",
   "navigation_help", "check_profile", "update_profile", "unknown",
@@ -75,14 +75,22 @@ function safeJson(text: string): any | null {
   try { return JSON.parse(m[0]); } catch { return null; }
 }
 
-/** Classify a message. Uses the model when provided, else the heuristic. */
+/**
+ * Classify a message.
+ *
+ * The curated keyword engine (bazabot-brain) is purpose-built for this platform
+ * and more reliable than a lightweight LLM at labelling platform topics, so it
+ * is the PRIMARY source of the intent label. The LLM is used to (a) enrich
+ * structured params and (b) classify only when the heuristic is "unknown". This
+ * keeps intent accurate on small models while still extracting rich slots.
+ */
 export async function detectIntent(
   message: string,
   fallbackLang: Lang,
   provider: AIProvider | null
 ): Promise<DetectedIntent> {
-  const fallback = heuristic(message, fallbackLang);
-  if (!provider) return fallback;
+  const base = heuristic(message, fallbackLang);
+  if (!provider) return base;
 
   try {
     const raw = await provider.chat(
@@ -90,15 +98,21 @@ export async function detectIntent(
       { json: true, temperature: 0, maxTokens: 160 }
     );
     const parsed = safeJson(raw);
-    if (!parsed || !INTENTS.includes(parsed.intent)) return fallback;
+    const llmIntent: Intent | null = parsed && INTENTS.includes(parsed.intent) ? parsed.intent : null;
+    const llmParams = parsed?.params && typeof parsed.params === "object" ? parsed.params : {};
+    const llmLang: Lang | null = parsed && ["en", "fr", "sw", "kinyy"].includes(parsed.lang) ? parsed.lang : null;
+
+    // Heuristic wins the label when it recognised the topic; LLM only fills the
+    // gap. Params merge (LLM slots enrich the heuristic's regex slots).
+    const intent: Intent = base.intent !== "unknown" ? base.intent : (llmIntent ?? "unknown");
     return {
-      intent: parsed.intent as Intent,
-      lang: (["en", "fr", "sw", "kinyy"].includes(parsed.lang) ? parsed.lang : fallback.lang) as Lang,
-      params: { ...fallback.params, ...(parsed.params && typeof parsed.params === "object" ? parsed.params : {}) },
-      confidence: 0.85,
+      intent,
+      lang: base.params && base.confidence >= 0.5 ? base.lang : (llmLang ?? base.lang),
+      params: { ...base.params, ...llmParams },
+      confidence: base.intent !== "unknown" ? Math.max(base.confidence, 0.7) : (llmIntent ? 0.7 : 0.2),
     };
   } catch (e) {
-    log.warn("intent LLM classification failed, using heuristic", { message: (e as Error)?.message });
-    return fallback;
+    log.warn("intent LLM enrichment failed, using heuristic", { message: (e as Error)?.message });
+    return base;
   }
 }

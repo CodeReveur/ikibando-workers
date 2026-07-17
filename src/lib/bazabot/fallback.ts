@@ -41,7 +41,7 @@ export function runRuleEngine(req: AgentRequest, _cfg: BazaBotConfig): AgentResu
 
   const base = (reply: string, source: AgentResult["source"], escalate = false): AgentResult => {
     const latencyMs = Date.now() - started;
-    analytics.turn(source, topic, latencyMs, escalate);
+    void analytics.turn(source, topic, latencyMs, escalate);
     return {
       reply, source, intent: topic, lang,
       actions: [], suggestions: escalate ? [] : suggestionsFor(role),
@@ -57,10 +57,10 @@ export function runRuleEngine(req: AgentRequest, _cfg: BazaBotConfig): AgentResu
   // 2) Precise, role-aware FAQ.
   const kb = matchKnowledge(message, role);
   if (kb) {
-    analytics.knowledge(true);
+    void analytics.knowledge(true);
     return base(kb, "knowledge");
   }
-  analytics.knowledge(false);
+  void analytics.knowledge(false);
 
   // 3) Coarse multilingual intent (mainly for non-English visitors).
   if (topic !== "fallback") {

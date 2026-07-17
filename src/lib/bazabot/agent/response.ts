@@ -42,6 +42,30 @@ export function explainActions(actions: AgentAction[]): string {
   return unique.slice(0, 2).join(" and ") + ".";
 }
 
+/**
+ * Contextual follow-up suggestions derived from intent + role, with no extra
+ * model call. Used when the streamed final answer doesn't carry its own.
+ */
+export function contextualSuggestions(intent: string, role: string): Suggestion[] {
+  const s = (label: string): Suggestion => ({ label, query: label });
+  const byIntent: Record<string, Suggestion[]> = {
+    search_job: [s("Show remote jobs"), s("Jobs in Kigali")],
+    search_worker: [s("Find cleaners"), s("Are they verified?")],
+    search_employer: [s("Who is hiring now?"), s("Employers in Kigali")],
+    check_wallet: [s("Show my recent transactions"), s("How do I withdraw?")],
+    check_transactions: [s("What's my balance?"), s("Explain the fees")],
+    check_notifications: [s("Any new jobs for me?"), s("Show my applications")],
+    explain_policy: [s("How do refunds work?"), s("What are the fees?")],
+    verify_account: [s("How do I get verified?"), s("Check my badge status")],
+    payment_help: [s("How do I withdraw?"), s("How does escrow work?")],
+    verify: [s("How do I get verified?"), s("Are workers verified?")],
+  };
+  if (byIntent[intent]) return byIntent[intent];
+  if (role === "seeker") return [s("How do I get paid?"), s("How do I get more jobs?")];
+  if (role === "owner") return [s("How does escrow work?"), s("How do I post a job?")];
+  return [s("How does escrow work?"), s("Are workers verified?")];
+}
+
 /** Deduplicate + clamp suggestions. */
 export function normalizeSuggestions(raw: unknown, max = 3): Suggestion[] {
   if (!Array.isArray(raw)) return [];

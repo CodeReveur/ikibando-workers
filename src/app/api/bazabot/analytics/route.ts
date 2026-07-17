@@ -17,5 +17,5 @@ export async function GET(request: Request): Promise<Response> {
     const token = auth.replace(/^Bearer\s+/i, "");
     if (token !== required) return Response.json({ error: "unauthorized" }, { status: 401 });
   }
-  return Response.json(analytics.snapshot());
+  return Response.json(await analytics.snapshot());
 }

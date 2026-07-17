@@ -39,17 +39,24 @@ export async function ensureCorpusEmbeddings(
 
   building = (async () => {
     try {
+      const started = Date.now();
       const texts = docs.map(d => `${d.title}\n${d.text}`);
-      // Embed in modest batches to keep memory low on small servers.
-      const vectors: number[][] = [];
-      const BATCH = 16;
-      for (let i = 0; i < texts.length; i += BATCH) {
-        const chunk = texts.slice(i, i + BATCH);
-        const embedded = await provider.embed(chunk);
-        vectors.push(...embedded);
-      }
+      // Embed with limited concurrency: fast enough to finish in the background,
+      // gentle enough not to overwhelm a small local server.
+      const vectors: number[][] = new Array(texts.length);
+      const CONCURRENCY = 6;
+      let cursor = 0;
+      const worker = async () => {
+        for (;;) {
+          const i = cursor++;
+          if (i >= texts.length) return;
+          const [vec] = await provider.embed([texts[i]]);
+          vectors[i] = vec;
+        }
+      };
+      await Promise.all(Array.from({ length: CONCURRENCY }, worker));
       corpusVectors = docs.map((doc, i) => ({ doc, vector: vectors[i] }));
-      log.info(`Embedded knowledge corpus`, { docs: corpusVectors.length });
+      log.info(`Embedded knowledge corpus`, { docs: corpusVectors.length, ms: Date.now() - started });
       return corpusVectors;
     } catch (e) {
       log.warn(`Embedding unavailable, keyword search will be used`, { message: (e as Error)?.message });
@@ -60,6 +67,17 @@ export async function ensureCorpusEmbeddings(
   })();
 
   return building;
+}
+
+/**
+ * Non-blocking accessor: returns the embedded corpus if it's ready, otherwise
+ * null and kicks off the build in the background. This keeps the very first
+ * knowledge query fast (it uses keyword search) while semantic search warms up.
+ */
+export function corpusEmbeddingsOrWarm(provider: AIProvider, docs: KnowledgeDoc[]): EmbeddedDoc[] | null {
+  if (corpusVectors) return corpusVectors;
+  if (!building) void ensureCorpusEmbeddings(provider, docs);
+  return null;
 }
 
 /** Rank the embedded corpus against a query vector. */

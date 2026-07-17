@@ -78,6 +78,24 @@ export interface AgentResult {
   latencyMs: number;
 }
 
+/** Everything about a finished turn except the reply body (streamed separately). */
+export interface AgentMeta {
+  source: "ai" | "rules" | "knowledge" | "escalation";
+  intent?: string;
+  lang: Lang;
+  actions: AgentAction[];
+  suggestions: Suggestion[];
+  escalate: boolean;
+  latencyMs: number;
+}
+
+/** Streaming event kinds emitted during a turn. */
+export type AgentEventName = "status" | "delta" | "action" | "done" | "error";
+
+/** Sink the agent pushes streaming events to (wired to SSE by the route). */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AgentEmit = (event: AgentEventName, data: any) => void;
+
 /** Options passed to a provider chat call. */
 export interface ProviderChatOptions {
   temperature?: number;

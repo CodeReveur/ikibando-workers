@@ -215,6 +215,7 @@ export function BazaBotChat({ role = "public", onClose, style }: {
   const [messages, setMessages] = useState<Msg[]>([{ sender: "bot", text: welcome() }]);
   const [inputText, setInputText] = useState("");
   const [botThinking, setBotThinking] = useState(false);
+  const [statusText, setStatusText] = useState("");
   const [agentTyping, setAgentTyping] = useState(false);
   const [escalated, setEscalated] = useState(false);
 
@@ -345,15 +346,16 @@ export function BazaBotChat({ role = "public", onClose, style }: {
       };
 
       let started = false;
+      setStatusText(t("bazabot.thinking") || "Thinking…");
       await streamChat(payload, (event, data) => {
         if (event === "delta") {
-          if (!started) { started = true; setBotThinking(false); }
+          if (!started) { started = true; setBotThinking(false); setStatusText(""); }
           fill(m => ({ ...m, text: m.text + (data.text ?? ""), streaming: true }));
         } else if (event === "done") {
           fill(m => ({ ...m, streaming: false, actions: data.actions, suggestions: data.suggestions }));
           if (data.escalate) { forwardToAgent(msg); setEscalated(true); wasEscalated.current = true; }
         } else if (event === "status") {
-          if (!started) setBotThinking(true);
+          if (!started) { setBotThinking(true); if (data.text) setStatusText(data.text); }
         } else if (event === "error") {
           fill(m => ({ ...m, streaming: false, error: true, text: m.text || (t("bazabot.error") || "Sorry, something went wrong.") }));
         }
@@ -362,6 +364,7 @@ export function BazaBotChat({ role = "public", onClose, style }: {
       fill(m => ({ ...m, streaming: false, error: true, text: m.text || (t("bazabot.error") || "Sorry, I couldn't reach the assistant. Please try again.") }));
     } finally {
       setBotThinking(false);
+      setStatusText("");
     }
   // messages intentionally omitted: we snapshot history at call time via the setter.
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -441,7 +444,12 @@ export function BazaBotChat({ role = "public", onClose, style }: {
               )}
               <div className={`bb-bubble bb-${m.sender}`}>
                 {showTyping
-                  ? <span className="bb-typing"><span /><span /><span /></span>
+                  ? (
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                      <span className="bb-typing"><span /><span /><span /></span>
+                      {statusText && <span style={{ fontSize: 11, color: "#9a9a9a" }}>{statusText}</span>}
+                    </span>
+                  )
                   : (isUser || m.sender === "agent") ? m.text : <Markdown text={m.text} />}
                 {m.actions && m.actions.some(a => a.ok) && (
                   <div className="bb-note"><Sparkles size={11} /> {actionNote(m.actions)}</div>

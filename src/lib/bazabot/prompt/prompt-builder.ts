@@ -74,6 +74,12 @@ export function buildComposePrompt(ctx: AgentContext, intent?: DetectedIntent): 
     "",
     "CONTEXT:\n" + buildContextBlock(ctx, intent),
     "",
+    "GROUNDING RULES:",
+    "- For specific facts (fees, numbers, names, counts, dates, balances), use ONLY the retrieved information. Never invent or alter them.",
+    "- You MAY explain general platform concepts (how escrow/hiring/verification works) from the platform description above, even without retrieved data.",
+    "- Only if the question needs specific data you don't have, say you're not certain and offer a support agent. Never refuse a normal platform question.",
+    "- Explain naturally in your own words; don't dump raw data or use unrelated analogies.",
+    "",
     "Write the reply to the user now. Plain text or light markdown. No JSON.",
   ].join("\n");
 }

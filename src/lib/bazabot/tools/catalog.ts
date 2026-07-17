@@ -85,6 +85,43 @@ export function buildCatalog(deps: CatalogDeps = {}): Tool[] {
       },
     },
 
+    // ── Search: employers (derived from open jobs) ───────────────────────────
+    {
+      name: "searchEmployers",
+      description: "Find active employers who are currently hiring, optionally by category or district.",
+      params: [
+        { name: "category", type: "string", required: false, description: "Service category" },
+        { name: "district", type: "string", required: false, description: "Rwandan district" },
+      ],
+      schema: z.object({
+        category: z.string().trim().max(60).optional(),
+        district: z.string().trim().max(60).optional(),
+      }),
+      requiresAuth: false,
+      explain: "I looked up active employers",
+      async execute(a): Promise<ToolResult> {
+        // The platform doesn't expose a public employer directory, so surface
+        // the employers behind currently-open jobs — the ones actually hiring.
+        const page = await api.getJobs({ category: a.category, district: a.district, size: 15 });
+        const items = page?.content ?? [];
+        const seen = new Map<string, { name: string; rating?: string; jobs: number }>();
+        for (const j of items) {
+          const name = field(j, "employerName");
+          if (!name) continue;
+          const prev = seen.get(name);
+          seen.set(name, {
+            name,
+            rating: field(j, "employerRatingAvg") ?? prev?.rating,
+            jobs: (prev?.jobs ?? 0) + 1,
+          });
+        }
+        const employers = [...seen.values()].sort((x, y) => y.jobs - x.jobs).slice(0, 6);
+        if (!employers.length) return ok("No employers are actively hiring for those filters right now.", []);
+        return ok(`Employers currently hiring: ` +
+          employers.map(e => `${e.name}${e.rating ? ` (${e.rating}★)` : ""}`).join("; "), employers);
+      },
+    },
+
     // ── Search: service categories ───────────────────────────────────────────
     {
       name: "searchCategories",

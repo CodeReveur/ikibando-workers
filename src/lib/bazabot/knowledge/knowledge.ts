@@ -12,7 +12,7 @@
 import type { BazaBotConfig } from "../config";
 import type { AIProvider } from "../providers";
 import { knowledgeCorpus, type KnowledgeDoc } from "./sources";
-import { ensureCorpusEmbeddings, rankByVector } from "./embeddings";
+import { corpusEmbeddingsOrWarm, rankByVector } from "./embeddings";
 import { log } from "../logger";
 
 export interface KnowledgeHit {
@@ -76,10 +76,11 @@ export class KnowledgeSearcher {
     const docs = knowledgeCorpus();
     let hits: KnowledgeHit[] = [];
 
-    // 1) Semantic
+    // 1) Semantic — only if the corpus is already embedded (else warm in the
+    //    background and use keyword this time, keeping the request fast).
     if (this.provider && this.cfg.semanticSearch && this.cfg.embeddingModel) {
       try {
-        const corpus = await ensureCorpusEmbeddings(this.provider, docs);
+        const corpus = corpusEmbeddingsOrWarm(this.provider, docs);
         if (corpus) {
           const [qVec] = await this.provider.embed([query]);
           hits = rankByVector(corpus, qVec, limit).map(r => ({

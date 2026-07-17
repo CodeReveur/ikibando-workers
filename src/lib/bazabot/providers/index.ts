@@ -5,6 +5,7 @@
  */
 import type { BazaBotConfig } from "../config";
 import type { AIProvider } from "./provider";
+import { GroqProvider } from "./groq";
 import { OllamaProvider } from "./ollama";
 import { LlamaCppProvider } from "./llamacpp";
 import { OpenAICompatProvider } from "./openai-compat";
@@ -13,9 +14,10 @@ export type { AIProvider } from "./provider";
 
 export function createProvider(cfg: BazaBotConfig): AIProvider {
   switch (cfg.engine) {
+    case "groq": return new GroqProvider(cfg);
+    case "openai-compat": return new OpenAICompatProvider(cfg);
     case "ollama": return new OllamaProvider(cfg);
     case "llamacpp": return new LlamaCppProvider(cfg);
-    case "openai-compat": return new OpenAICompatProvider(cfg);
-    default: return new OllamaProvider(cfg);
+    default: return new GroqProvider(cfg);
   }
 }
