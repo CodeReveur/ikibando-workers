@@ -32,18 +32,6 @@ import {
 } from "../memory/memory";
 import { log } from "../logger";
 
-/** A "Sign up" CTA card when a guest is trying to get started / register. */
-function getStartedCard(message: string, role: string): ResultCard | null {
-  if (role !== "public") return null;
-  if (!/\b(get(ting)? started|sign ?up|register|registration|create (an )?account|join|how (do|can) i (start|begin|join)|gutangira|kwiyandikisha)\b/i.test(message)) return null;
-  return {
-    kind: "action", id: "signup",
-    title: "Create your account",
-    subtitle: "Sign up in your browser — no app to download",
-    url: "/signup", cta: "Sign up",
-  };
-}
-
 /** Fill missing search params (category/location) from remembered preferences. */
 function enrichParams(
   params: Record<string, string | number>,
@@ -191,7 +179,7 @@ export class Agent {
     //     Job/worker searches are enriched with remembered preferences (so
     //     "any jobs for me?" reuses the category/location the user gave earlier).
     const enrichedIntent = { ...intent, params: enrichParams(intent.params, mem.profile) };
-    for (const call of [...routeIntent(enrichedIntent, message), ...keywordAugment(message)]) {
+    for (const call of [...routeIntent(enrichedIntent, message, context.role), ...keywordAugment(message)]) {
       await runTool(call.tool, call.args);
     }
 
@@ -207,10 +195,6 @@ export class Agent {
         await runTool(toolName, parsed.args ?? {});
       }
     }
-
-    // 3c) Add a "Sign up" CTA for guests who are trying to get started.
-    const startCard = getStartedCard(message, context.role);
-    if (startCard && !cards.some(c => c.id === startCard.id)) cards.push(startCard);
 
     // 4) Stream the final answer token-by-token from the model.
     emit("status", { text: "Composing answer…" });

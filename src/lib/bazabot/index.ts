@@ -19,6 +19,7 @@ import { Agent } from "./agent/agent";
 import { runRuleEngine } from "./fallback";
 import { sanitizeInput, checkRateLimit } from "./security/guard";
 import { wantsHuman } from "./escalation";
+import { wantsSignup, signupCard } from "./intent/routing";
 import { looksKinyarwanda, requestedLanguage, type LangCode } from "./lang";
 import { getKV } from "./store/kv";
 import { analytics } from "./analytics/analytics";
@@ -122,6 +123,18 @@ export async function runAgentStream(req: AgentRequest, emit: AgentEmit): Promis
   if (wantsHuman(clean)) {
     await emitChunks(emit, "Connecting you with a live agent…");
     return { source: "escalation", lang: req.context.language, actions: [], suggestions: [], escalate: true, latencyMs: 0 };
+  }
+
+  // Signup / get-started requests from a guest → reliable canned steps + a
+  // "Sign up" CTA card, without depending on the AI (so it never falls through
+  // to a generic answer). Signed-in users skip this and get a normal answer.
+  if (req.context.role === "public" && wantsSignup(clean)) {
+    await emitChunks(emit,
+      "Getting started takes a minute — tap Sign Up, choose Worker or Employer, then enter your name, email and phone. Use the button below to sign up.");
+    return {
+      source: "rules", lang: req.context.language, actions: [],
+      suggestions: [], results: [signupCard()], escalate: false, latencyMs: 0,
+    };
   }
 
   // Prompt-injection guard: deflect without invoking the model at all.
