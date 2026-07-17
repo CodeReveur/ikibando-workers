@@ -89,9 +89,11 @@ export function Sidebar({ mobileOpen, closeMobile }: { mobileOpen?: boolean; clo
         ::-webkit-scrollbar-thumb { background: #222; border-radius: 99px; }
         .dash-card:hover { border-color: #252525 !important; background: #161616 !important; }
         @media (max-width: 340px) {
+          /* Height only. Pinning both axes on a fixed-ratio logo is what forced object-fit:cover
+             and the clipping that came with it. */
           .sidebar-logo-img {
-            width: 130px !important;
-            height: 28px !important;
+            height: 26px !important;
+            width: auto !important;
           }
         }
       `}</style>
@@ -112,7 +114,10 @@ export function Sidebar({ mobileOpen, closeMobile }: { mobileOpen?: boolean; clo
         }}>
           {/* Logo */}
           <a href="/" onClick={closeMobile} className="nav-logo" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}>
-            <img src="/cover-a.png" className="sidebar-logo-img" alt="Logo" style={{ width: 190, height: 40, borderRadius: 6, objectFit: "cover" }} />
+            {/* 190x40 with object-fit:cover on the padded 1900x1069 source was clipping the top
+                of the mark. Auto width on the pre-cropped logo cannot. */}
+            <img src="/logo-nav.png" className="sidebar-logo-img" alt="MpahMapu"
+                 width={480} height={105} style={{ height: 34, width: "auto" }} />
           </a>
         </div>
 

@@ -78,7 +78,8 @@ export function AuthCarousel() {
 
       {/* Logo */}
       <a href="/" style={{ display: "flex", alignItems: "center", gap: 10, fontWeight: 900, fontSize: 20, color: "#f97316", textDecoration: "none", letterSpacing: "-0.5px", position: "relative", zIndex: 1 }}>
-        <img src="/cover-a.png" alt="Logo" style={{ width: 180, height: 70, borderRadius: 8, objectFit: "cover", }} />
+        <img src="/logo-nav.png" alt="MpahMapu" width={480} height={105}
+             style={{ height: 42, width: "auto" }} />
       </a>
 
       {/* Slide content */}

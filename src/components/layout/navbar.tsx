@@ -244,7 +244,15 @@ export default function Navbar() {
 
           {/* Logo */}
           <a href="/" className="nav-logo" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}>
-            <img src="/cover-a.png" alt="Logo" style={{ width: 149, height: 59, borderRadius: 6, objectFit: "cover" }} />
+            {/*
+              logo-nav.png is the logo cropped to its own bounds (480x105, 31KB). This was
+              cover-a.png: 1900x1069 and 168KB, of which the logo is a small centred island, shown
+              here in a 149x59 box with object-fit:cover — so the browser downloaded a 2-megapixel
+              file and threw most of it away to fake a crop. Height plus auto width keeps the real
+              aspect ratio, so it can neither crop nor stretch.
+            */}
+            <img src="/logo-nav.png" alt="MpahMapu" width={480} height={105}
+                 style={{ height: 34, width: "auto" }} />
           </a>
 
           {/* Desktop: center links */}
