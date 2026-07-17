@@ -39,3 +39,20 @@ export function looksKinyarwanda(message: string): boolean {
   for (const w of WEAK) if (words.has(w)) weak++;
   return weak >= 2;
 }
+
+/**
+ * Detect an explicit request to be answered in a particular language, e.g.
+ * "answer in Kinyarwanda", "nsubiza mu kinyarwanda", "en français", "in English".
+ * Returns the requested language code, or null. Used to set a sticky per-session
+ * language preference so the bot keeps replying in the language the user wants.
+ */
+export type LangCode = "en" | "fr" | "sw" | "kinyy";
+
+export function requestedLanguage(message: string): LangCode | null {
+  const m = message.toLowerCase();
+  if (/\b(kinyarwanda|ikinyarwanda|urwanda)\b/.test(m) || /kinyarwanda/.test(m)) return "kinyy";
+  if (/\b(fran[cç]ais|french)\b/.test(m)) return "fr";
+  if (/\b(kiswahili|swahili)\b/.test(m)) return "sw";
+  if (/\b(icyongereza|kingereza|english|anglais)\b/.test(m)) return "en";
+  return null;
+}

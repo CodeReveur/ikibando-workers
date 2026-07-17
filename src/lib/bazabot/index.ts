@@ -19,7 +19,8 @@ import { Agent } from "./agent/agent";
 import { runRuleEngine } from "./fallback";
 import { sanitizeInput, checkRateLimit } from "./security/guard";
 import { wantsHuman } from "./escalation";
-import { looksKinyarwanda } from "./lang";
+import { looksKinyarwanda, requestedLanguage, type LangCode } from "./lang";
+import { getKV } from "./store/kv";
 import { analytics } from "./analytics/analytics";
 import { log } from "./logger";
 import type { AgentEmit, AgentMeta, AgentRequest, AgentResult } from "./types";
@@ -70,10 +71,29 @@ function metaOf(r: AgentResult): AgentMeta {
 }
 
 /** Stream one rule-engine turn (used as fallback + when AI is off). */
-async function streamRuleTurn(req: AgentRequest, cfg: BazaBotConfig, emit: AgentEmit): Promise<AgentMeta> {
-  const result = runRuleEngine(req, cfg);
+async function streamRuleTurn(req: AgentRequest, cfg: BazaBotConfig, emit: AgentEmit, forceLang?: LangCode): Promise<AgentMeta> {
+  const result = runRuleEngine(req, cfg, forceLang);
   await emitChunks(emit, result.reply);
   return metaOf(result);
+}
+
+/**
+ * Resolve the effective language for a turn, with a STICKY per-session
+ * preference. An explicit request ("answer in Kinyarwanda", "nsubiza mu
+ * kinyarwanda") or a detected Kinyarwanda message sets the preference; it then
+ * persists so every following turn keeps that language — even short questions
+ * that carry no language signal of their own.
+ */
+async function resolveLanguage(sessionId: string, message: string, uiLang: LangCode): Promise<LangCode> {
+  const kv = await getKV();
+  const key = `lang:${sessionId}`;
+  const stored = (await kv.getJSON<LangCode>(key)) ?? null;
+
+  const requested = requestedLanguage(message);
+  if (requested) { await kv.setJSON(key, requested, 24 * 60 * 60); return requested; }
+  if (looksKinyarwanda(message)) { await kv.setJSON(key, "kinyy", 24 * 60 * 60); return "kinyy"; }
+  if (stored) return stored;
+  return uiLang;
 }
 
 /**
@@ -113,15 +133,17 @@ export async function runAgentStream(req: AgentRequest, emit: AgentEmit): Promis
   }
 
   // Language gate: the AI handles English, French and Swahili well. No free
-  // hosted model reliably produces Kinyarwanda (they drift to Swahili), so
-  // Kinyarwanda turns go to the curated rule engine with real Kinyarwanda
-  // answers. Override with BAZABOT_AI_ALL_LANGS=true to force AI for every
-  // language once your model handles Kinyarwanda acceptably.
+  // hosted model reliably produces Kinyarwanda (they drift into Swahili and mix
+  // languages), so Kinyarwanda goes to the curated rule engine — pure, unmixed
+  // Kinyarwanda. The preference is sticky per session (see resolveLanguage), so
+  // "answer in Kinyarwanda only" keeps working on later turns too. Override with
+  // BAZABOT_AI_ALL_LANGS=true to force the AI for every language.
   const aiAllLangs = /^(1|true|yes|on)$/i.test(process.env.BAZABOT_AI_ALL_LANGS ?? "");
-  const languageOk = aiAllLangs || !looksKinyarwanda(clean);
+  const effectiveLang = await resolveLanguage(req.context.sessionId, clean, req.context.language as LangCode);
+  const useKinyarwanda = !aiAllLangs && effectiveLang === "kinyy";
 
-  // AI mode when configured + language supported; otherwise fall back.
-  if (isAiConfigured(cfg) && languageOk) {
+  // AI mode when configured + not a Kinyarwanda turn; otherwise the rule engine.
+  if (isAiConfigured(cfg) && !useKinyarwanda) {
     try {
       return await getAgent(cfg).runStream(safeReq, emit);
     } catch (e) {
@@ -132,7 +154,7 @@ export async function runAgentStream(req: AgentRequest, emit: AgentEmit): Promis
   }
 
   void analytics.fallback();
-  return streamRuleTurn(safeReq, cfg, emit);
+  return streamRuleTurn(safeReq, cfg, emit, useKinyarwanda ? "kinyy" : undefined);
 }
 
 /** Non-streaming convenience entry (collects the stream). */

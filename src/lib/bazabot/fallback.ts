@@ -33,7 +33,7 @@ function suggestionsFor(role: string): Suggestion[] {
 }
 
 /** Run the legacy engine and adapt it to an AgentResult. */
-export function runRuleEngine(req: AgentRequest, _cfg: BazaBotConfig): AgentResult {
+export function runRuleEngine(req: AgentRequest, _cfg: BazaBotConfig, forceLang?: Lang): AgentResult {
   const started = Date.now();
   const { message, context } = req;
   const role = context.role;
@@ -41,10 +41,11 @@ export function runRuleEngine(req: AgentRequest, _cfg: BazaBotConfig): AgentResu
 
   const analyzed = analyze(message, context.language as Lang);
   const topic = analyzed.topic;
-  // Force Kinyarwanda when our dedicated detector flags it — the generic keyword
-  // detector is fooled by English loanwords ("escrow", "platform") and would
-  // otherwise answer a Kinyarwanda question in English.
-  const lang: Lang = looksKinyarwanda(message) ? "kinyy" : analyzed.lang;
+  // Reply language priority: an explicit/sticky forced language (e.g. the user
+  // asked for "Kinyarwanda only") wins; then our dedicated Kinyarwanda detector
+  // (the generic one is fooled by English loanwords like "escrow"); then the
+  // generic detection.
+  const lang: Lang = forceLang ?? (looksKinyarwanda(message) ? "kinyy" : analyzed.lang);
 
   const base = (reply: string, source: AgentResult["source"], suggestions = suggestionsFor(role)): AgentResult => {
     const latencyMs = Date.now() - started;
@@ -61,13 +62,17 @@ export function runRuleEngine(req: AgentRequest, _cfg: BazaBotConfig): AgentResu
     return base(respond(topic, lang, userName, role), "rules");
   }
 
-  // 2) Precise, role-aware FAQ.
-  const kb = matchKnowledge(message, role);
-  if (kb) {
-    void analytics.knowledge(true);
-    return base(kb, "knowledge");
+  // 2) Precise, role-aware FAQ. The FAQ corpus is English-only, so skip it for
+  //    Kinyarwanda and fall through to the topic responses, which have real
+  //    Kinyarwanda translations. (Otherwise a Kinyarwanda turn answers in English.)
+  if (lang !== "kinyy") {
+    const kb = matchKnowledge(message, role);
+    if (kb) {
+      void analytics.knowledge(true);
+      return base(kb, "knowledge");
+    }
+    void analytics.knowledge(false);
   }
-  void analytics.knowledge(false);
 
   // 3) Coarse multilingual intent (mainly for non-English visitors).
   if (topic !== "fallback") {
