@@ -1,0 +1,60 @@
+/**
+ * Response generator / sanitizer. The last line of defence before text reaches
+ * the user: strips anything that would leak internals (tool names, JSON blobs,
+ * stack traces) and enforces a friendly, bounded final message.
+ */
+import type { AgentAction, Suggestion } from "../types";
+
+const TOOL_NAME_LEAKS = /\b(searchJobs|searchWorkers|searchCategories|searchLocations|getWallet|getTransactions|getNotifications|searchBookings|getProfile|updateProfile|checkVerification|getPricing|searchKnowledge|searchFAQ|searchHelp)\s*\(/g;
+
+/** Remove code fences, obvious JSON dumps and internal identifiers. */
+export function sanitizeReply(text: string): string {
+  let out = (text ?? "").trim();
+
+  // Drop a leading JSON action object the model sometimes emits before prose.
+  if (out.startsWith("{") && out.includes('"action"')) {
+    const end = out.lastIndexOf("}");
+    const after = out.slice(end + 1).trim();
+    if (after) out = after;
+  }
+
+  // Strip code fences but keep their inner text.
+  out = out.replace(/```[a-z]*\n?/gi, "").replace(/```/g, "");
+
+  // Neutralise leaked tool-call syntax.
+  out = out.replace(TOOL_NAME_LEAKS, "");
+
+  // Collapse raw stack-trace-looking lines.
+  out = out.replace(/^\s*at\s+.*\(.*:\d+:\d+\)\s*$/gm, "").trim();
+
+  // Collapse excessive blank lines.
+  out = out.replace(/\n{3,}/g, "\n\n").trim();
+
+  return out;
+}
+
+/** Turn the actions taken into ≤2 concise, user-safe explanation lines. */
+export function explainActions(actions: AgentAction[]): string {
+  const done = actions.filter(a => a.ok).map(a => a.explanation);
+  const unique = [...new Set(done)];
+  if (!unique.length) return "";
+  if (unique.length === 1) return unique[0] + ".";
+  return unique.slice(0, 2).join(" and ") + ".";
+}
+
+/** Deduplicate + clamp suggestions. */
+export function normalizeSuggestions(raw: unknown, max = 3): Suggestion[] {
+  if (!Array.isArray(raw)) return [];
+  const seen = new Set<string>();
+  const out: Suggestion[] = [];
+  for (const item of raw) {
+    const label = typeof item === "string" ? item : (item?.label ?? item?.query);
+    if (typeof label !== "string") continue;
+    const clean = label.trim().slice(0, 80);
+    if (!clean || seen.has(clean.toLowerCase())) continue;
+    seen.add(clean.toLowerCase());
+    out.push({ label: clean, query: clean });
+    if (out.length >= max) break;
+  }
+  return out;
+}
