@@ -10,6 +10,7 @@
 import { analyze, respond, type Lang, type Topic } from "@/components/support/bazabot-brain";
 import { matchKnowledge } from "@/components/support/bazabot-knowledge";
 import { looksKinyarwanda } from "./lang";
+import { AGENT_SUGGESTION } from "./escalation";
 import type { BazaBotConfig } from "./config";
 import type { AgentRequest, AgentResult, Suggestion } from "./types";
 import { analytics } from "./analytics/analytics";
@@ -45,13 +46,13 @@ export function runRuleEngine(req: AgentRequest, _cfg: BazaBotConfig): AgentResu
   // otherwise answer a Kinyarwanda question in English.
   const lang: Lang = looksKinyarwanda(message) ? "kinyy" : analyzed.lang;
 
-  const base = (reply: string, source: AgentResult["source"], escalate = false): AgentResult => {
+  const base = (reply: string, source: AgentResult["source"], suggestions = suggestionsFor(role)): AgentResult => {
     const latencyMs = Date.now() - started;
-    void analytics.turn(source, topic, latencyMs, escalate);
+    void analytics.turn(source, topic, latencyMs, false);
     return {
       reply, source, intent: topic, lang,
-      actions: [], suggestions: escalate ? [] : suggestionsFor(role),
-      escalate, latencyMs,
+      actions: [], suggestions,
+      escalate: false, latencyMs,
     };
   };
 
@@ -73,6 +74,7 @@ export function runRuleEngine(req: AgentRequest, _cfg: BazaBotConfig): AgentResu
     return base(respond(topic, lang, userName, role), "rules");
   }
 
-  // 4) Nothing matched — escalate to a human agent.
-  return base(respond("fallback", lang, userName, role), "escalation", true);
+  // 4) Nothing matched — still help with the general overview (in the visitor's
+  //    language) and OFFER a live agent as a chip, rather than auto-escalating.
+  return base(respond("fallback", lang, userName, role), "rules", [AGENT_SUGGESTION, ...suggestionsFor(role).slice(0, 1)]);
 }

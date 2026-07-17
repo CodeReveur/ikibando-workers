@@ -2172,9 +2172,9 @@
       "guidelines": "Dispute reviews begin within 2 business hours. Our agents contact both the employer and the worker to hear both sides. Decisions are made impartially based on platform guidelines and submitted proof, and funds are distributed accordingly."
     },
     "fallback": {
-      "overview": "Your query requires personal support team intervention. BazaBot has logged your current conversation history and account details to create a priority support ticket in our customer relations management backend.",
-      "process": "Our support system has generated a ticket at {time} and sent an urgent notification email to all admin accounts. A live support manager is reviewing the chat logs and will contact you directly on your registered email address.",
-      "guidelines": "To get help even faster, you can click the green 'WhatsApp Call' or 'Live Chat' button in the header. This will open a direct line to our support team on WhatsApp where you can chat with a real person immediately."
+      "overview": "I could not find a precise answer to that specific question.",
+      "process": "You can rephrase it, or ask me about jobs, workers, payments, escrow, fees or verification — I can help with those.",
+      "guidelines": "If you would prefer a person, just say \"talk to a live agent\" and I will connect you."
     }
   },
   "owner_guide": {

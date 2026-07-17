@@ -23,7 +23,7 @@ import type {
 } from "../types";
 import { detectIntent, type DetectedIntent } from "../intent/intent";
 import { routeIntent, keywordAugment } from "../intent/routing";
-import { looksUncertain } from "../escalation";
+import { looksUncertain, AGENT_SUGGESTION } from "../escalation";
 import { buildSystemPrompt, buildComposePrompt } from "../prompt/prompt-builder";
 import { sanitizeReply, contextualSuggestions } from "./response";
 import { analytics } from "../analytics/analytics";
@@ -179,15 +179,19 @@ export class Agent {
     recordTurn(mem, { role: "assistant", content: reply });
     await this.memory.save(mem);
 
-    // If the answer signals the bot couldn't actually help, offer a live agent.
-    const escalate = looksUncertain(reply);
-    const suggestions: Suggestion[] = escalate ? [] : contextualSuggestions(intent.intent, context.role);
+    // Never auto-escalate: the bot always gives its best answer. If it sounds
+    // unsure, we simply OFFER a live-agent chip the user can tap — the hand-off
+    // stays user-initiated (explicit request), so we don't over-shift to agents.
+    const uncertain = looksUncertain(reply);
+    const suggestions: Suggestion[] = uncertain
+      ? [AGENT_SUGGESTION, ...contextualSuggestions(intent.intent, context.role).slice(0, 1)]
+      : contextualSuggestions(intent.intent, context.role);
     const latencyMs = Date.now() - started;
-    void analytics.turn("ai", intent.intent, latencyMs, escalate);
+    void analytics.turn("ai", intent.intent, latencyMs, false);
 
     return {
       source: "ai", intent: intent.intent, lang: intent.lang,
-      actions, suggestions, escalate, latencyMs,
+      actions, suggestions, escalate: false, latencyMs,
     };
   }
 

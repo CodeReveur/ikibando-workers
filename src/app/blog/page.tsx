@@ -10,7 +10,7 @@ import { SITE_NAME, SITE_URL } from "@/lib/seo";
 import "./blog.css";
 
 export const metadata: Metadata = {
-  title: "Blog — product updates, news & partnerships",
+  title: "Blog | Product updates, news & partnerships",
   description: `Product updates, company news, partnerships and recognitions from ${SITE_NAME}, Rwanda's on-demand workforce platform.`,
   alternates: { canonical: "/blog" },
   openGraph: {

@@ -2167,9 +2167,9 @@
       "guidelines": "L'examen des litiges commence dans un délai de 2 heures ouvrables. Nos agents contactent les deux parties pour recueillir leurs témoignages. Les décisions sont rendues de manière impartiale sur la base des règles de la plateforme et des preuves fournies."
     },
     "fallback": {
-      "overview": "Votre demande nécessite l'intervention d'un conseiller de notre support client. BazaBot a enregistré l'historique de votre conversation et les détails de votre compte pour créer un ticket d'assistance prioritaire dans notre système de gestion.",
-      "process": "Notre support a généré un ticket d'incident à {time} et envoyé un e-mail d'alerte urgent aux adresses des administrateurs. Un responsable de la médiation analyse vos messages et vous recontactera directement sur votre adresse e-mail enregistrée.",
-      "guidelines": "Pour obtenir de l'aide encore plus rapidement, vous pouvez cliquer sur le bouton vert 'Appel WhatsApp' ou 'Live Chat' dans l'en-tête. Cela vous mettra en relation immédiate sur WhatsApp avec un membre de notre équipe d'assistance pour échanger en direct."
+      "overview": "Je n’ai pas trouvé de réponse précise à cette question.",
+      "process": "Vous pouvez la reformuler, ou me poser des questions sur les emplois, les travailleurs, les paiements, le séquestre, les frais ou la vérification — je peux vous aider.",
+      "guidelines": "Si vous préférez parler à une personne, dites simplement « talk to a live agent » et je vous mets en relation."
     },
     "placeholder_agent": "Écrivez à l'agent d'assistance…",
     "resumed": "Cette conversation a été fermée. Je suis de nouveau là pour vous aider — n'hésitez pas à me demander ! 🤖",

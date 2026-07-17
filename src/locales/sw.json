@@ -2167,9 +2167,9 @@
       "guidelines": "Uhakiki wa migogoro unaanza ndani ya saa 2 za kazi. Wawakilishi wetu wanawasiliana na mwajiri pamoja na mfanyakazi ili kusikiliza pande zote mbili. Maamuzi yanatolewa kwa usawa kulingana na miongozo ya jukwaa na ushahidi uliowasilishwa."
     },
     "fallback": {
-      "overview": "Ombi lako linahitaji uingiliaji wa kibinafsi wa timu yetu ya usaidizi. BazaBot imerekodi historia yako ya gumzo na maelezo ya akaunti yako ili kuunda tiketi ya usaidizi yenye kipaumbele cha juu katika mfumo wetu wa usimamizi wa wateja.",
-      "process": "Mfumo wetu wa usaidizi umezalisha tiketi saa {time} na kutuma barua pepe ya dharura kwa akaunti zote za wasimamizi. Meneja wa usaidizi anakagua kumbukumbu hizi za gumzo na atawasiliana nawe moja kwa moja kupitia barua pepe yako iliyosajiliwa.",
-      "guidelines": "Ili kupata usaidizi wa haraka zaidi, yanaweza kubofya kitufe cha kijani cha 'Simu ya WhatsApp' au 'Chat ya Live' kwenye kichwa cha ukurasa. Hii itakuunganisha moja kwa moja na timu yetu ya usaidizi kwenye WhatsApp ili kuzungumza na mtu halisi mara moja."
+      "overview": "Sikupata jibu kamili kwa swali hilo mahususi.",
+      "process": "Unaweza kuliuliza kwa njia nyingine, au uniulize kuhusu kazi, wafanyakazi, malipo, escrow, ada au uthibitisho — naweza kusaidia.",
+      "guidelines": "Ukipenda kuzungumza na mtu, sema tu \"talk to a live agent\" nami nitakuunganisha."
     },
     "placeholder_agent": "Mtumie ujumbe wakala wa usaidizi…",
     "resumed": "Mazungumzo haya yamefungwa. Nipo tena kukusaidia — jisikie huru kuniuliza chochote! 🤖",

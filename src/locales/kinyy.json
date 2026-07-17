@@ -2167,9 +2167,9 @@
       "guidelines": "Kugenzura impaka bitangira mu masaha 2 y'akazi. Abalive agents bacu bavugana n'umukoresha ndetse n'umukozi kugira ngo bumve impande zombi. Umwanzuro ufatwa nta kubogama hashingiwe ku miterere y'akazi n'ibimenyetso, maze amafaranga akarekurwa."
     },
     "fallback": {
-      "overview": "Ikibazo cyawe gisaba ubufasha bw'umuntu (live agent). BazaBot yabitse inyandiko zose z'ibiganiro twagiranye ndetse n'amakuru ya konti yawe kugira ngo ifungure ubusabe bw'ubufasha (support ticket) buhambaye mu buryo bwa sisitemu yacu.",
-      "process": "Sisitemu yacu yafunguye ticket nshya saa {time} maze ihita yoherereza email ya alarm abadmin bose kuri platform. Manager ushinzwe ubufasha agiye gusuzuma ibiganiro maze ahite akwandikira kuri email yawe wiyandikishijeho.",
-      "guidelines": "Kugira ngo ubone ubufasha vuba cyane, ushobora gukanda ku gice cy'icyatsi kibara 'WhatsApp Call' cyangwa 'Live Chat' hejuru ku rupapuro. Ibi bikugeza kuri support team yacu kuri WhatsApp maze ukavugana n'umuntu ako kanya."
+      "overview": "Sinabashije kubona igisubizo nyacyo ku kibazo cyawe.",
+      "process": "Ushobora kongera kukibaza mu bundi buryo, cyangwa umbaze ku kazi, abakozi, kwishyura, escrow, amafaranga ya serivisi cyangwa kwemezwa — nshobora kubifasha.",
+      "guidelines": "Niba wifuza kuvugana n’umuntu, vuga gusa uti \"talk to a live agent\" maze nguhuze."
     },
     "placeholder_agent": "Andikira umukozi w'ubufasha…",
     "resumed": "Iki kiganiro cyarafunzwe. Ndi hano nanone kugufasha — umva ukibaza icyo ari cyo cyose! 🤖",

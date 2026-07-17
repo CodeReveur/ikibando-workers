@@ -100,7 +100,7 @@ export async function runAgentStream(req: AgentRequest, emit: AgentEmit): Promis
   // Explicit request for a human → escalate immediately (no model call). The UI
   // collects the user's name + email and creates the contact for the live agent.
   if (wantsHuman(clean)) {
-    await emitChunks(emit, "Of course — I'll connect you with a live agent right here in this chat. One moment…");
+    await emitChunks(emit, "Connecting you with a live agent…");
     return { source: "escalation", lang: req.context.language, actions: [], suggestions: [], escalate: true, latencyMs: 0 };
   }
 

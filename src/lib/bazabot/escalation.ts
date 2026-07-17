@@ -24,6 +24,9 @@ const UNCERTAINTY_PATTERNS = [
   /\bunable to (help|answer|find)\b/i,
 ];
 
+/** Chip offered (never auto-triggered) so the user can reach a human on demand. */
+export const AGENT_SUGGESTION = { label: "Talk to a live agent", query: "Talk to a live agent" };
+
 /** True when the user is explicitly asking to reach a human agent. */
 export function wantsHuman(message: string): boolean {
   return HUMAN_PATTERNS.some(p => p.test(message));

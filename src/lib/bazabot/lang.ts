@@ -16,6 +16,8 @@ const STRONG = [
   "nkeneye", "cyangwa", "murakoze", "kwishyura", "kwishyurwa", "umukoresha",
   "byanjye", "wanjye", "yanjye", "ikihe", "ninde", "uburyo", "ndagushaka",
   "mfite", "ufite", "nabonye", "ntabwo", "sinshobora", "gushakisha",
+  "nsobanurire", "sobanura", "mbwira", "ndabaza", "bishoboka", "nshobora",
+  "ushobora", "ndabona", "bakora", "nkora", "bwoko",
 ];
 
 // Weaker markers: need at least TWO together to call it Kinyarwanda.

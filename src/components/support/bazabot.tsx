@@ -32,41 +32,51 @@ interface Msg {
 const SESSION_KEY = "bazabot_session";
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
 
-interface StoredSession { createdAt: number; messages: Msg[] }
+interface StoredSession { createdAt: number; messages: Msg[]; seenAgentIds: string[] }
 
-function loadSession(fallbackWelcome: string): Msg[] {
-  if (typeof window === "undefined") return [{ sender: "bot", text: fallbackWelcome }];
+/** Read a non-expired stored session, or null. Does not mutate storage. */
+function readSession(): StoredSession | null {
+  if (typeof window === "undefined") return null;
   try {
     const raw = localStorage.getItem(SESSION_KEY);
-    if (raw) {
-      const s = JSON.parse(raw) as StoredSession;
-      if (s.createdAt && Date.now() - s.createdAt < SESSION_TTL_MS && Array.isArray(s.messages) && s.messages.length) {
-        return s.messages;
-      }
-      localStorage.removeItem(SESSION_KEY); // expired → clear
-    }
-  } catch {}
-  return [{ sender: "bot", text: fallbackWelcome }];
+    if (!raw) return null;
+    const s = JSON.parse(raw) as StoredSession;
+    if (!s.createdAt || Date.now() - s.createdAt >= SESSION_TTL_MS) return null; // expired
+    return { createdAt: s.createdAt, messages: Array.isArray(s.messages) ? s.messages : [], seenAgentIds: s.seenAgentIds ?? [] };
+  } catch { return null; }
 }
 
-function saveSession(messages: Msg[]): void {
+/**
+ * Clear an expired session AND the guest identity, so chats older than 24h don't
+ * reload — including the escalated thread the server still keeps for admins.
+ * Rotating the guest identity gives a fresh (empty) server thread.
+ */
+function clearExpiredSession(): void {
   if (typeof window === "undefined") return;
   try {
-    let createdAt = Date.now();
     const raw = localStorage.getItem(SESSION_KEY);
-    if (raw) { const s = JSON.parse(raw) as StoredSession; if (s.createdAt) createdAt = s.createdAt; }
-    if (Date.now() - createdAt >= SESSION_TTL_MS) createdAt = Date.now(); // roll over an expired session
-    // Persist finished messages only (no transient streaming/typing/form state).
+    if (!raw) return;
+    const s = JSON.parse(raw) as StoredSession;
+    if (!s.createdAt || Date.now() - s.createdAt >= SESSION_TTL_MS) {
+      localStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem("bazabot_identity");
+    }
+  } catch {}
+}
+
+function saveSession(messages: Msg[], seenAgentIds: string[], createdAt: number): void {
+  if (typeof window === "undefined") return;
+  try {
+    // Persist finished messages only (no transient streaming/form state).
     const clean = messages
       .filter(m => !m.streaming)
       .map(({ streaming, form, ...m }) => { void streaming; void form; return m; });
-    localStorage.setItem(SESSION_KEY, JSON.stringify({ createdAt, messages: clean } satisfies StoredSession));
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ createdAt, messages: clean, seenAgentIds } satisfies StoredSession));
   } catch {}
 }
 
-/** The live-agent hand-off copy shown when BazaBot escalates. */
-const ESCALATION_INTRO =
-  "You're just a step away from speaking with a live agent!\n\nSince I couldn't fully answer your question, I'll log it and connect you with a live agent right here in this chat.";
+/** Short live-agent hand-off copy shown when BazaBot escalates. */
+const ESCALATION_INTRO = "I'll connect you with a live agent — just add your details:";
 
 export type BazaBotRole = "owner" | "seeker" | "public";
 
@@ -76,6 +86,7 @@ interface Identity { name: string; email: string; guest: boolean; token?: string
 
 function resolveIdentity(): Identity {
   if (typeof window === "undefined") return { name: "Guest", email: "", guest: true };
+  clearExpiredSession(); // drop a >24h session + guest identity before resolving
   const token = localStorage.getItem("access_token") || undefined;
   try {
     const raw = localStorage.getItem("user");
@@ -265,14 +276,19 @@ export function BazaBotChat({ role = "public", onClose, style }: {
     [t, userName],
   );
   // Restore the visitor's chat from localStorage (auto-expires after 24h).
-  const [messages, setMessages] = useState<Msg[]>(() => loadSession(welcome()));
+  const restored = useRef<StoredSession | null>(readSession());
+  const [messages, setMessages] = useState<Msg[]>(
+    () => (restored.current?.messages.length ? restored.current.messages : [{ sender: "bot", text: welcome() }]),
+  );
   const [inputText, setInputText] = useState("");
   const [botThinking, setBotThinking] = useState(false);
   const [statusText, setStatusText] = useState("");
   const [agentTyping, setAgentTyping] = useState(false);
   const [escalated, setEscalated] = useState(false);
 
-  const isInitialLoad = useRef(true);
+  // Session bookkeeping: when it started + which agent replies we've already shown.
+  const sessionCreatedAt = useRef<number>(restored.current?.createdAt ?? Date.now());
+  const seenAgentIds = useRef<Set<string>>(new Set(restored.current?.seenAgentIds ?? []));
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const wasEscalated = useRef(false);
@@ -281,7 +297,9 @@ export function BazaBotChat({ role = "public", onClose, style }: {
   const pendingHandoff = useRef<string>("");
 
   // Persist the chat client-side on every change (throttled by React batching).
-  useEffect(() => { saveSession(messages); }, [messages]);
+  useEffect(() => {
+    saveSession(messages, [...seenAgentIds.current], sessionCreatedAt.current);
+  }, [messages]);
 
   // Keep the welcome message in sync with the active language.
   useEffect(() => {
@@ -305,26 +323,25 @@ export function BazaBotChat({ role = "public", onClose, style }: {
         const thread = await getContactThread(userEmail);
         if (!mounted) return;
         if (thread && thread.length > 0) {
-          if (isInitialLoad.current) {
-            const mapped = thread.map((m: any) => ({
-              sender: (m.direction === "OUTBOUND" ? "agent" : "user") as Sender,
-              text: m.body,
-            }));
-            setMessages([{ sender: "bot", text: welcome() }, ...mapped]);
-            isInitialLoad.current = false;
-          } else {
-            const agentReplies = thread.filter((m: any) => m.direction === "OUTBOUND");
+          // Append only NEW agent replies: unseen id, and created during this
+          // session (so a >24h-old escalated thread never re-populates the chat).
+          const additions: Msg[] = [];
+          for (const m of thread as any[]) {
+            if (m.direction !== "OUTBOUND") continue;
+            const id = String(m.id ?? m.body);
+            if (seenAgentIds.current.has(id)) continue;
+            seenAgentIds.current.add(id);
+            const ts = m.createdAt ? new Date(m.createdAt).getTime() : Date.now();
+            if (ts < sessionCreatedAt.current) continue; // pre-session (old) reply
+            additions.push({ sender: "agent", text: m.body });
+          }
+          if (additions.length) {
             setMessages(prev => {
-              const current = prev.filter(m => m.sender === "agent").length;
-              if (agentReplies.length > current) {
-                const extra = agentReplies.slice(current).map((m: any) => ({ sender: "agent" as Sender, text: m.body }));
-                return [...prev, ...extra];
-              }
-              return prev;
+              const shown = new Set(prev.filter(m => m.sender === "agent").map(m => m.text));
+              const fresh = additions.filter(a => !shown.has(a.text));
+              return fresh.length ? [...prev, ...fresh] : prev;
             });
           }
-        } else {
-          isInitialLoad.current = false;
         }
 
         const [typing, status] = await Promise.all([
@@ -349,7 +366,7 @@ export function BazaBotChat({ role = "public", onClose, style }: {
     poll();
     const id = setInterval(poll, 2500);
     return () => { mounted = false; clearInterval(id); };
-  }, [userEmail, t, welcome]);
+  }, [userEmail, t]);
 
   const notifyTyping = () => {
     if (!userEmail) return;
@@ -387,7 +404,7 @@ export function BazaBotChat({ role = "public", onClose, style }: {
       wasEscalated.current = true;
       setMessages(prev => [...prev, {
         sender: "bot",
-        text: `${ESCALATION_INTRO}\n\nPlease keep this tab open — an agent will respond within about 5 minutes.`,
+        text: "Connecting you with a live agent — they'll reply here shortly. Please keep this tab open.",
       }]);
       return;
     }
@@ -403,8 +420,8 @@ export function BazaBotChat({ role = "public", onClose, style }: {
 
     const next: Identity = { name: nm, email: em, guest: true, token: identity.token };
     try { localStorage.setItem("bazabot_identity", JSON.stringify({ name: nm, email: em })); } catch {}
-    // Keep isInitialLoad false so the poll under the new email only APPENDS the
-    // agent's replies rather than rebuilding (and wiping) the visible chat.
+    // The poll under the new email appends the agent's replies (id + timestamp
+    // deduped), so switching identity never wipes the visible chat.
     setIdentity(next);
 
     forwardToAgent(pendingHandoff.current || lastUserMsg.current, { name: nm, email: em });
@@ -416,7 +433,7 @@ export function BazaBotChat({ role = "public", onClose, style }: {
       const cleared = prev.map(m => (m.form ? { ...m, form: false } : m));
       return [...cleared, {
         sender: "bot",
-        text: `Thanks, ${nm}! I've logged your question and connected you with a live agent. Please keep this tab open — an agent will respond within about 5 minutes.`,
+        text: `Thanks, ${nm}! An agent will reply here shortly — please keep this tab open.`,
       }];
     });
     return true;
