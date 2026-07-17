@@ -422,6 +422,8 @@ export const KNOWLEDGE: QA[] = [
 
   // ── More small talk & guidance ───────────────────────────────────────────
   { q: "What should I do first?", a: "If you want to work, sign up as a worker and complete your profile. If you want to hire, post a job. I can guide you through either." },
+  { q: "How do I get started on MpahMapu?", a: "Open the website and tap Sign Up. Choose Worker (to be hired) or Employer (to hire). Enter your name, email, phone and a password. Workers then do a short onboarding — date of birth, education, the service categories you work in, account type, your district, equipment and availability — and submit a verification badge to get approved. It's all in the browser; there's no app to download." },
+  { q: "What are the steps to sign up as a worker?", a: "1) Tap Sign Up and choose Worker. 2) Enter your name, email, phone and password. 3) Complete onboarding: date of birth, education level, the categories you work in (e.g. Cleaning, Electrical, Security), account type, your province and district, equipment and availability. 4) Submit your verification badge with your national ID to get approved. Then you can apply to jobs or be invited through Hire Now." },
   { q: "I'm new here, where do I begin?", a: "Welcome! Choose whether you want to hire or be hired, then create your account. Ask me anything as you go." },
   { q: "Can you explain how it works simply?", a: "Employers post jobs and pay into secure escrow; workers get hired, do the job, verify it, and get paid to their wallet. I'm here to help at each step." },
   { q: "Do you have any tips for me?", a: "Keep your profile complete and verified, respond quickly, be reliable, and maintain high ratings, that's the recipe for success on MpahMapu." },

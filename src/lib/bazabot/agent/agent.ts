@@ -19,7 +19,7 @@ import type { AIProvider } from "../providers";
 import type { ToolRegistry } from "../tools";
 import type { ToolContext } from "../tools/types";
 import type {
-  AgentAction, AgentEmit, AgentMeta, AgentRequest, AgentResult, ChatMessage, Suggestion,
+  AgentAction, AgentEmit, AgentMeta, AgentRequest, AgentResult, ChatMessage, ResultCard, Suggestion,
 } from "../types";
 import { detectIntent, type DetectedIntent } from "../intent/intent";
 import { routeIntent, keywordAugment } from "../intent/routing";
@@ -27,8 +27,33 @@ import { looksUncertain, AGENT_SUGGESTION } from "../escalation";
 import { buildSystemPrompt, buildComposePrompt } from "../prompt/prompt-builder";
 import { sanitizeReply, contextualSuggestions } from "./response";
 import { analytics } from "../analytics/analytics";
-import { defaultMemoryStore, recordTurn, recordToolResult, type MemoryStore } from "../memory/memory";
+import {
+  defaultMemoryStore, recordTurn, recordToolResult, mergeProfile, profileSummary, type MemoryStore,
+} from "../memory/memory";
 import { log } from "../logger";
+
+/** A "Sign up" CTA card when a guest is trying to get started / register. */
+function getStartedCard(message: string, role: string): ResultCard | null {
+  if (role !== "public") return null;
+  if (!/\b(get(ting)? started|sign ?up|register|registration|create (an )?account|join|how (do|can) i (start|begin|join)|gutangira|kwiyandikisha)\b/i.test(message)) return null;
+  return {
+    kind: "action", id: "signup",
+    title: "Create your account",
+    subtitle: "Sign up in your browser — no app to download",
+    url: "/signup", cta: "Sign up",
+  };
+}
+
+/** Fill missing search params (category/location) from remembered preferences. */
+function enrichParams(
+  params: Record<string, string | number>,
+  profile: Record<string, string | number>,
+): Record<string, string | number> {
+  const out = { ...params };
+  if (!out.category && profile.category) out.category = profile.category;
+  if (!out.location && profile.location) out.location = profile.location;
+  return out;
+}
 
 interface ParsedAction {
   action: "tool" | "final";
@@ -113,9 +138,19 @@ export class Agent {
     const intent = await detectIntent(message, context.language, this.provider);
     emit("status", { text: "Thinking…" });
 
-    // 2) Assemble the conversation (server memory is the source of truth)
+    // 2) Load memory and LEARN from this turn before answering: fold the newly
+    //    extracted facts (category, location, …) into the durable session profile.
     const mem = await this.memory.get(context.sessionId);
-    const system = buildSystemPrompt(context, this.registry, toolCtx, intent);
+    // Learn only durable preferences (not transient slots like date/quantity).
+    const durable: Record<string, string | number> = {};
+    if (intent.params.category) durable.category = intent.params.category;
+    if (intent.params.location) durable.location = intent.params.location;
+    mergeProfile(mem, durable);
+    if (context.userName) mergeProfile(mem, { name: context.userName });
+    mergeProfile(mem, { role: context.role === "owner" ? "employer" : context.role === "seeker" ? "worker" : "guest" });
+    const memory = profileSummary(mem);
+
+    const system = buildSystemPrompt(context, this.registry, toolCtx, intent, memory);
     const history = (mem.turns.length ? mem.turns : (req.history ?? [])).slice(-8);
     const messages: ChatMessage[] = [
       { role: "system", content: system },
@@ -125,6 +160,7 @@ export class Agent {
 
     const actions: AgentAction[] = [];
     const observations: string[] = [];
+    const cards: ResultCard[] = [];
     const ran = new Set<string>();
 
     /** Execute one planned/selected tool call, recording everything. */
@@ -147,12 +183,15 @@ export class Agent {
       }
       recordToolResult(mem, result.summary);
       if (result.ok) observations.push(result.summary);
+      if (result.ok && result.cards?.length) cards.push(...result.cards);
       messages.push({ role: "tool", name, content: `Observation from ${name}: ${result.summary}` });
     };
 
     // 3a) Deterministic grounding — intent routing + keyword-triggered tools.
-    //     Robust to classifier errors; the dedupe in runTool collapses overlaps.
-    for (const call of [...routeIntent(intent, message), ...keywordAugment(message)]) {
+    //     Job/worker searches are enriched with remembered preferences (so
+    //     "any jobs for me?" reuses the category/location the user gave earlier).
+    const enrichedIntent = { ...intent, params: enrichParams(intent.params, mem.profile) };
+    for (const call of [...routeIntent(enrichedIntent, message), ...keywordAugment(message)]) {
       await runTool(call.tool, call.args);
     }
 
@@ -169,9 +208,13 @@ export class Agent {
       }
     }
 
+    // 3c) Add a "Sign up" CTA for guests who are trying to get started.
+    const startCard = getStartedCard(message, context.role);
+    if (startCard && !cards.some(c => c.id === startCard.id)) cards.push(startCard);
+
     // 4) Stream the final answer token-by-token from the model.
     emit("status", { text: "Composing answer…" });
-    const finalText = await this.streamCompose(message, context, intent, observations, emit);
+    const finalText = await this.streamCompose(message, context, intent, observations, memory, cards, emit);
     const reply = sanitizeReply(finalText) || FALLBACK_REPLY;
 
     // 5) Persist + suggestions + analytics
@@ -191,7 +234,7 @@ export class Agent {
 
     return {
       source: "ai", intent: intent.intent, lang: intent.lang,
-      actions, suggestions, escalate: false, latencyMs,
+      actions, suggestions, results: cards, escalate: false, latencyMs,
     };
   }
 
@@ -205,13 +248,20 @@ export class Agent {
     context: AgentRequest["context"],
     intent: DetectedIntent,
     observations: string[],
+    memory: string,
+    cards: ResultCard[],
     emit: AgentEmit,
   ): Promise<string> {
-    const sys = buildComposePrompt(context, intent);
+    const sys = buildComposePrompt(context, intent, memory);
     const grounding = observations.length
       ? `Verified information I retrieved (use only this for platform facts, never invent):\n${observations.map(o => `- ${o}`).join("\n")}`
       : `No lookups were needed — answer from general platform knowledge, and do not invent specific data.`;
-    const user = `User question: "${message}"\n\n${grounding}\n\nReply now, concisely and warmly.`;
+    // When cards are present, the UI shows them as clickable buttons below the
+    // reply — so tell the model NOT to paste links or restate every item.
+    const cardsNote = cards.length
+      ? `\n\nI am also showing the user ${cards.length} ${cards[0].kind} card(s) with buttons below your reply. Briefly, warmly introduce them (say you found matches and to tap a card) — do NOT list every one or paste URLs.`
+      : "";
+    const user = `User question: "${message}"\n\n${grounding}${cardsNote}\n\nReply now, concisely and warmly.`;
     const msgs: ChatMessage[] = [
       { role: "system", content: sys },
       { role: "user", content: user },

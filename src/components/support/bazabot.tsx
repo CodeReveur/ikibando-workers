@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Bot, User as UserIcon, Send, X, RotateCw, Sparkles } from "lucide-react";
 import { useLanguage } from "@/lib/language-context";
-import type { AgentAction, Suggestion } from "@/lib/bazabot/types";
+import type { AgentAction, Suggestion, ResultCard } from "@/lib/bazabot/types";
 import {
   submitContact, getContactThread, sendContactTyping,
   getContactTypingStatus, getContactStatus,
@@ -23,6 +23,8 @@ interface Msg {
   error?: boolean;
   /** Renders the name+email hand-off form inside this bubble. */
   form?: boolean;
+  /** Actionable job/worker cards rendered as buttons below the bubble. */
+  results?: ResultCard[];
 }
 
 // ── Client-side session persistence ─────────────────────────────────────────
@@ -220,6 +222,13 @@ const CSS = `
   .bb-form-btn { background:#f97316; color:#fff; border:none; border-radius:8px; padding:8px 12px; font-size:12px; font-weight:700; cursor:pointer; margin-top:2px; }
   .bb-form-btn:hover { background:#ea580c; }
   .bb-form-err { color:#f87171; font-size:10.5px; }
+  .bb-cards { margin-top:10px; display:flex; flex-direction:column; gap:7px; }
+  .bb-rcard { display:flex; align-items:center; gap:8px; background:#161616; border:1px solid #2c2c2c; border-radius:10px; padding:9px 11px; text-decoration:none; transition:border-color .12s, background .12s; }
+  .bb-rcard:hover { border-color:#f97316; background:#1b1512; }
+  .bb-rcard-title { font-size:12px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .bb-rcard-sub { font-size:10.5px; color:#9a9a9a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .bb-rcard-meta { font-size:11px; font-weight:700; color:#22c55e; flex-shrink:0; }
+  .bb-rcard-cta { font-size:10.5px; font-weight:700; color:#fff; background:#f97316; border-radius:7px; padding:5px 9px; flex-shrink:0; }
   .bb-typing { display:inline-flex; gap:4px; align-items:center; padding:3px 2px; }
   .bb-typing span { width:6px; height:6px; border-radius:99px; background:#fff; opacity:0.5; animation:bb-bounce 1.2s infinite ease-in-out; }
   .bb-typing span:nth-child(2){ animation-delay:.2s; } .bb-typing span:nth-child(3){ animation-delay:.4s; }
@@ -476,7 +485,7 @@ export function BazaBotChat({ role = "public", onClose, style }: {
           if (!started) { started = true; setBotThinking(false); setStatusText(""); }
           fill(m => ({ ...m, text: m.text + (data.text ?? ""), streaming: true }));
         } else if (event === "done") {
-          fill(m => ({ ...m, streaming: false, actions: data.actions, suggestions: data.suggestions }));
+          fill(m => ({ ...m, streaming: false, actions: data.actions, suggestions: data.suggestions, results: data.results }));
           if (data.escalate) beginHandoff(msg);
         } else if (event === "status") {
           if (!started) { setBotThinking(true); if (data.text) setStatusText(data.text); }
@@ -575,6 +584,7 @@ export function BazaBotChat({ role = "public", onClose, style }: {
                     </span>
                   )
                   : (isUser || m.sender === "agent") ? m.text : <Markdown text={m.text} />}
+                {m.results && m.results.length > 0 && <ResultCards cards={m.results} />}
                 {m.form && <HandoffForm onSubmit={submitHandoffForm} />}
                 {m.actions && m.actions.some(a => a.ok) && (
                   <div className="bb-note"><Sparkles size={11} /> {actionNote(m.actions)}</div>
@@ -622,6 +632,24 @@ export function BazaBotChat({ role = "public", onClose, style }: {
           <Send size={14} />
         </button>
       </div>
+    </div>
+  );
+}
+
+/** Actionable job/worker cards with a call-to-action button linking to the real page. */
+function ResultCards({ cards }: { cards: ResultCard[] }) {
+  return (
+    <div className="bb-cards">
+      {cards.map(c => (
+        <a key={c.id} href={c.url} className="bb-rcard" target="_blank" rel="noreferrer">
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div className="bb-rcard-title">{c.title}</div>
+            {c.subtitle && <div className="bb-rcard-sub">{c.subtitle}</div>}
+          </div>
+          {c.meta && <span className="bb-rcard-meta">{c.meta}</span>}
+          <span className="bb-rcard-cta">{c.cta}</span>
+        </a>
+      ))}
     </div>
   );
 }

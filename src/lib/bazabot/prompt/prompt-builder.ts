@@ -34,7 +34,7 @@ Behave like a helpful, concise human agent. You:
  */
 const PLATFORM_FACTS = `PLATFORM FACTS (authoritative — these override any assumption you have; NEVER contradict them):
 - MpahMapu is a WEBSITE used in a web browser, on phone or computer. There is NO mobile app. NEVER tell anyone to "download the app", or to use the App Store or Google Play — that is false. Users can simply open the website (and optionally add it to their home screen).
-- To register: on the website, click "Sign Up", choose Worker or Employer, then enter name, email and phone. Workers then complete their profile, add their skills and district, and submit a verification badge. Registration does NOT involve downloading any app or setting up a payment method.
+- To register: on the website, click "Sign Up", choose Worker or Employer, then enter name, email, phone and a password. Workers then complete a short onboarding: date of birth, education level, the service categories they work in, account type (individual/company), location (province/district), equipment and availability, and finally submit a verification badge with their national ID to get approved. Registration does NOT involve downloading any app or setting up a payment method.
 - Only state features, steps, screens, buttons or payment details that appear in the retrieved information or in these facts. If you are not certain something exists on MpahMapu, do NOT mention it. Never invent app downloads, payment setup, features or steps.`;
 
 const PROTOCOL = `RESPONSE PROTOCOL — reply with exactly ONE minified JSON object, nothing else:
@@ -70,6 +70,7 @@ export function buildSystemPrompt(
   registry: ToolRegistry,
   toolCtx: ToolContext,
   intent?: DetectedIntent,
+  memory?: string,
 ): string {
   const tools = registry.describe(toolCtx);
   return [
@@ -78,6 +79,7 @@ export function buildSystemPrompt(
     PLATFORM_FACTS,
     "",
     "CONTEXT:\n" + buildContextBlock(ctx, intent),
+    memory ? `\nMEMORY (what you already know about this user this session — use it, don't re-ask): ${memory}` : "",
     "",
     "AVAILABLE TOOLS:\n" + (tools || "(none available for this user)"),
     "",
@@ -86,13 +88,14 @@ export function buildSystemPrompt(
 }
 
 /** A lighter prompt for the final phrasing pass (no tool protocol). */
-export function buildComposePrompt(ctx: AgentContext, intent?: DetectedIntent): string {
+export function buildComposePrompt(ctx: AgentContext, intent?: DetectedIntent, memory?: string): string {
   return [
     PERSONA,
     "",
     PLATFORM_FACTS,
     "",
     "CONTEXT:\n" + buildContextBlock(ctx, intent),
+    memory ? `\nMEMORY (what you already know about this user this session — use it, don't re-ask): ${memory}` : "",
     "",
     "CONVERSATION RULES:",
     "- This is an ONGOING chat and the user was already greeted. Do NOT open with 'Hello', 'Hi', 'Hey', the user's name, or any greeting. Get straight to the answer.",

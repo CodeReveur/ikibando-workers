@@ -72,10 +72,27 @@ export interface AgentResult {
   actions: AgentAction[];
   /** Contextual follow-up suggestions. */
   suggestions: Suggestion[];
+  /** Actionable job/worker cards to render with CTA buttons. */
+  results?: ResultCard[];
   /** True when the agent could not help and a human should take over. */
   escalate: boolean;
   /** Server-measured latency, ms. */
   latencyMs: number;
+}
+
+/** An actionable card the UI renders with a call-to-action button + real link. */
+export interface ResultCard {
+  kind: "job" | "worker" | "action";
+  id: string;
+  title: string;
+  /** e.g. "Electrical · Gasabo". */
+  subtitle?: string;
+  /** e.g. "18,000 RWF" or "4.8★". */
+  meta?: string;
+  /** In-app route, e.g. "/jobs/123". */
+  url: string;
+  /** Button label, e.g. "View job". */
+  cta: string;
 }
 
 /** Everything about a finished turn except the reply body (streamed separately). */
@@ -85,6 +102,8 @@ export interface AgentMeta {
   lang: Lang;
   actions: AgentAction[];
   suggestions: Suggestion[];
+  /** Actionable job/worker cards to render with CTA buttons. */
+  results?: ResultCard[];
   escalate: boolean;
   latencyMs: number;
 }

@@ -4,7 +4,7 @@
  * name; it never touches the backend directly.
  */
 import type { z } from "zod";
-import type { Role } from "../types";
+import type { Role, ResultCard } from "../types";
 
 /** Ambient info a tool needs to act on the caller's behalf. */
 export interface ToolContext {
@@ -23,6 +23,8 @@ export interface ToolResult {
   summary: string;
   /** Structured payload, already trimmed to what's useful. */
   data?: unknown;
+  /** Actionable cards (jobs/workers) the UI renders with CTA buttons. */
+  cards?: ResultCard[];
   /** Present when ok === false. */
   error?: string;
 }

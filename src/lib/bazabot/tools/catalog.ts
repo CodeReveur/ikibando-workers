@@ -9,6 +9,7 @@
 import { z } from "zod";
 import * as api from "@/lib/api";
 import type { Tool, ToolContext, ToolResult } from "./types";
+import type { ResultCard } from "../types";
 
 /** Injected dependencies so tools stay decoupled from heavy modules. */
 export interface CatalogDeps {
@@ -16,8 +17,15 @@ export interface CatalogDeps {
   searchKnowledge?: (query: string, limit?: number) => Promise<Array<{ title: string; text: string; score: number }>>;
 }
 
-const ok = (summary: string, data?: unknown): ToolResult => ({ ok: true, summary, data });
+const ok = (summary: string, data?: unknown, cards?: ResultCard[]): ToolResult => ({ ok: true, summary, data, cards });
 const fail = (summary: string, error = "error"): ToolResult => ({ ok: false, summary, error });
+
+/** Format an RWF amount compactly, e.g. 18000 → "18,000 RWF". */
+function rwf(v: unknown): string | undefined {
+  const n = Number(v);
+  if (!Number.isFinite(n) || n <= 0) return undefined;
+  return `${n.toLocaleString("en-US")} RWF`;
+}
 
 /** Defensive field read for loosely-typed DTOs. */
 function field(obj: unknown, ...keys: string[]): string | undefined {
@@ -48,17 +56,26 @@ export function buildCatalog(deps: CatalogDeps = {}): Tool[] {
       requiresAuth: false,
       explain: "I searched available jobs",
       async execute(a): Promise<ToolResult> {
-        const page = await api.getJobs({ category: a.category, district: a.district, urgency: a.urgency, size: 5 });
+        const page = await api.getJobs({ category: a.category, district: a.district, urgency: a.urgency, size: 6 });
         const items = page?.content ?? [];
-        if (!items.length) return ok("No open jobs matched those filters.", []);
-        const brief = items.map(j => ({
-          title: field(j, "title", "categoryName", "category"),
-          category: field(j, "categoryName", "category"),
-          district: field(j, "district", "location"),
-          rate: field(j, "rate", "amount", "budget"),
-        }));
-        return ok(`Found ${page.totalElements ?? items.length} matching job(s). Top: ` +
-          brief.map(b => `${b.title ?? "Job"}${b.district ? " in " + b.district : ""}`).join("; "), brief);
+        if (!items.length) return ok("No open jobs matched those filters.", [], []);
+        const cards: ResultCard[] = items.map(j => {
+          const id = field(j, "id") ?? "";
+          const title = field(j, "title", "category") ?? "Job";
+          const cat = field(j, "category", "categoryName");
+          const district = field(j, "district");
+          return {
+            kind: "job" as const, id, title,
+            subtitle: [cat, district].filter(Boolean).join(" · ") || undefined,
+            meta: rwf(field(j, "workerPayout", "totalAmount", "ratePerHour")),
+            url: `/jobs/${id}`, cta: "View job",
+          };
+        }).filter(c => c.id);
+        return ok(
+          `Found ${page.totalElements ?? items.length} matching job(s): ` +
+            cards.map(c => `${c.title}${c.subtitle ? ` (${c.subtitle})` : ""}`).join("; "),
+          cards, cards,
+        );
       },
     },
 
@@ -71,17 +88,27 @@ export function buildCatalog(deps: CatalogDeps = {}): Tool[] {
       requiresAuth: false,
       explain: "I searched available workers",
       async execute(a): Promise<ToolResult> {
-        const page = await api.getWorkers({ category: a.category, size: 5 });
+        const page = await api.getWorkers({ category: a.category, size: 6 });
         const items = page?.content ?? [];
-        if (!items.length) return ok("No workers matched that category.", []);
-        const brief = items.map(w => ({
-          name: field(w, "name", "legalName"),
-          category: field(w, "category", "specialty"),
-          district: field(w, "district", "location"),
-          rating: field(w, "rating"),
-        }));
-        return ok(`Found ${page.totalElements ?? items.length} worker(s). ` +
-          brief.map(b => `${b.name ?? "Worker"}${b.rating ? ` (${b.rating}★)` : ""}`).join("; "), brief);
+        if (!items.length) return ok("No workers matched that category.", [], []);
+        const cards: ResultCard[] = items.map(w => {
+          const id = field(w, "id") ?? "";
+          const name = field(w, "name") ?? "Worker";
+          const cat = field(w, "categoryName", "category", "experienceType");
+          const loc = field(w, "district", "locationShort");
+          const rating = field(w, "rating");
+          return {
+            kind: "worker" as const, id, title: name,
+            subtitle: [cat, loc].filter(Boolean).join(" · ") || undefined,
+            meta: rating ? `${rating}★` : (field(w, "completedJobs") ? `${field(w, "completedJobs")} jobs` : undefined),
+            url: `/browse/${id}`, cta: "View profile",
+          };
+        }).filter(c => c.id);
+        return ok(
+          `Found ${page.totalElements ?? items.length} worker(s): ` +
+            cards.map(c => `${c.title}${c.meta ? ` (${c.meta})` : ""}`).join("; "),
+          cards, cards,
+        );
       },
     },
 

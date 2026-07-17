@@ -15,6 +15,12 @@ export interface SessionMemory {
   turns: ChatMessage[];
   /** Summaries of the most recent tool observations, for cross-turn context. */
   recentToolResults: string[];
+  /**
+   * Learned facts about this user, accumulated across turns — e.g.
+   * { category: "Electrical", location: "Kigali", role: "worker", name: "Eric" }.
+   * Injected into the prompt so the bot "remembers" and personalises answers.
+   */
+  profile: Record<string, string | number>;
   /** A short description of the task in progress, if any. */
   currentTask?: string;
   updatedAt: number;
@@ -34,8 +40,8 @@ export class KvMemoryStore implements MemoryStore {
   async get(sessionId: string): Promise<SessionMemory> {
     const kv = await getKV();
     const existing = await kv.getJSON<SessionMemory>(`sess:${sessionId}`);
-    if (existing) return existing;
-    return { sessionId, turns: [], recentToolResults: [], updatedAt: Date.now() };
+    if (existing) return { ...existing, profile: existing.profile ?? {} };
+    return { sessionId, turns: [], recentToolResults: [], profile: {}, updatedAt: Date.now() };
   }
 
   async save(mem: SessionMemory): Promise<void> {
@@ -55,4 +61,18 @@ export function recordTurn(mem: SessionMemory, turn: ChatMessage): void {
 }
 export function recordToolResult(mem: SessionMemory, summary: string): void {
   mem.recentToolResults.push(summary);
+}
+
+/** Merge newly-learned facts into the session profile (new values win). */
+export function mergeProfile(mem: SessionMemory, facts: Record<string, string | number>): void {
+  for (const [k, v] of Object.entries(facts)) {
+    if (v !== undefined && v !== null && v !== "") mem.profile[k] = v;
+  }
+}
+
+/** One-line, human-readable summary of what we remember — for prompt injection. */
+export function profileSummary(mem: SessionMemory): string {
+  const entries = Object.entries(mem.profile);
+  if (!entries.length) return "";
+  return entries.map(([k, v]) => `${k}=${v}`).join(", ");
 }
