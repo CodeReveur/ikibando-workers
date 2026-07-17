@@ -28,8 +28,12 @@ export function sanitizeReply(text: string): string {
   out = out.replace(/^\s*at\s+.*\(.*:\d+:\d+\)\s*$/gm, "").trim();
 
   // Strip a leading greeting so follow-up replies don't keep saying "Hello".
-  // Only removes an opening greeting clause, never mid-sentence text.
-  out = out.replace(/^(?:\*\*)?\s*(hello|hi|hey|hi there|greetings|good (morning|afternoon|evening))\b[^.!?\n]*[.!,]?\s*/i, "").trimStart();
+  // Covers the platform's languages (en/fr/sw/kinyy). Only removes an opening
+  // greeting clause, never mid-sentence text.
+  out = out.replace(
+    /^(?:\*\*)?\s*(hello|hi|hey|hi there|greetings|good (morning|afternoon|evening)|bonjour|salut|coucou|bonsoir|jambo|habari|hujambo|muraho|mwaramutse|mwiriwe)\b[^.!?\n]*[.!,]?\s*/i,
+    "",
+  ).trimStart();
   // Recapitalise if we trimmed into a lowercase word.
   if (out) out = out.charAt(0).toUpperCase() + out.slice(1);
 

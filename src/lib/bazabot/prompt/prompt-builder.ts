@@ -39,7 +39,10 @@ export function buildContextBlock(ctx: AgentContext, intent?: DetectedIntent): s
   if (ctx.userName) lines.push(`User name: ${ctx.userName}`);
   lines.push(`Signed in: ${ctx.token ? "yes" : "no"}`);
   if (ctx.page) lines.push(`Current page: ${ctx.page}`);
-  lines.push(`Reply language: ${LANG_NAME[intent?.lang ?? ctx.language] ?? "English"}`);
+  // Soft hint only — the reliable signal is the language of the user's actual
+  // message, so we never hard-assert a reply language that detection may get
+  // wrong (e.g. Kinyarwanda sentences full of English loanwords).
+  lines.push(`User's app language: ${LANG_NAME[ctx.language] ?? "English"} (but always reply in the language of their latest message).`);
   if (intent && intent.intent !== "unknown") {
     lines.push(`Detected intent: ${intent.intent}`);
     const slots = Object.entries(intent.params);
@@ -76,6 +79,7 @@ export function buildComposePrompt(ctx: AgentContext, intent?: DetectedIntent): 
     "",
     "CONVERSATION RULES:",
     "- This is an ONGOING chat and the user was already greeted. Do NOT open with 'Hello', 'Hi', 'Hey', the user's name, or any greeting. Get straight to the answer.",
+    "- LANGUAGE: reply in the SAME language the user wrote their question in (English, French, Swahili or Kinyarwanda). Match their language exactly; do not switch to English if they wrote in another language.",
     "",
     "GROUNDING RULES:",
     "- For specific facts (fees, numbers, names, counts, dates, balances), use ONLY the retrieved information. Never invent or alter them.",

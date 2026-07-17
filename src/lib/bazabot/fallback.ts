@@ -9,6 +9,7 @@
  */
 import { analyze, respond, type Lang, type Topic } from "@/components/support/bazabot-brain";
 import { matchKnowledge } from "@/components/support/bazabot-knowledge";
+import { looksKinyarwanda } from "./lang";
 import type { BazaBotConfig } from "./config";
 import type { AgentRequest, AgentResult, Suggestion } from "./types";
 import { analytics } from "./analytics/analytics";
@@ -37,7 +38,12 @@ export function runRuleEngine(req: AgentRequest, _cfg: BazaBotConfig): AgentResu
   const role = context.role;
   const userName = context.userName ?? "there";
 
-  const { topic, lang } = analyze(message, context.language as Lang);
+  const analyzed = analyze(message, context.language as Lang);
+  const topic = analyzed.topic;
+  // Force Kinyarwanda when our dedicated detector flags it — the generic keyword
+  // detector is fooled by English loanwords ("escrow", "platform") and would
+  // otherwise answer a Kinyarwanda question in English.
+  const lang: Lang = looksKinyarwanda(message) ? "kinyy" : analyzed.lang;
 
   const base = (reply: string, source: AgentResult["source"], escalate = false): AgentResult => {
     const latencyMs = Date.now() - started;

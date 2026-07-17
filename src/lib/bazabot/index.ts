@@ -17,9 +17,9 @@ import { buildRegistry } from "./tools";
 import { KnowledgeSearcher } from "./knowledge/knowledge";
 import { Agent } from "./agent/agent";
 import { runRuleEngine } from "./fallback";
-import { analyze, type Lang } from "@/components/support/bazabot-brain";
 import { sanitizeInput, checkRateLimit } from "./security/guard";
 import { wantsHuman } from "./escalation";
+import { looksKinyarwanda } from "./lang";
 import { analytics } from "./analytics/analytics";
 import { log } from "./logger";
 import type { AgentEmit, AgentMeta, AgentRequest, AgentResult } from "./types";
@@ -112,13 +112,13 @@ export async function runAgentStream(req: AgentRequest, emit: AgentEmit): Promis
     return { source: "rules", lang: req.context.language, actions: [], suggestions: [], escalate: false, latencyMs: 0 };
   }
 
-  // Language gate: lightweight local models produce poor output in low-resource
-  // languages (Kinyarwanda/Swahili), where the curated rule engine has accurate
-  // translations. Use AI for English; use rules otherwise. Override with
-  // BAZABOT_AI_ALL_LANGS=true once your model handles those languages well.
-  const detectedLang: Lang = analyze(clean, req.context.language as Lang).lang;
+  // Language gate: the AI handles English, French and Swahili well. No free
+  // hosted model reliably produces Kinyarwanda (they drift to Swahili), so
+  // Kinyarwanda turns go to the curated rule engine with real Kinyarwanda
+  // answers. Override with BAZABOT_AI_ALL_LANGS=true to force AI for every
+  // language once your model handles Kinyarwanda acceptably.
   const aiAllLangs = /^(1|true|yes|on)$/i.test(process.env.BAZABOT_AI_ALL_LANGS ?? "");
-  const languageOk = aiAllLangs || detectedLang === "en";
+  const languageOk = aiAllLangs || !looksKinyarwanda(clean);
 
   // AI mode when configured + language supported; otherwise fall back.
   if (isAiConfigured(cfg) && languageOk) {
