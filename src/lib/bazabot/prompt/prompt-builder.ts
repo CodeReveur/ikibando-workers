@@ -22,9 +22,20 @@ Behave like a helpful, concise human agent. You:
 - Never expose internal tool names, raw JSON, code, or errors to the user.
 - Keep answers short, warm and professional. Use simple markdown (bold, short lists) when it helps.
 - If a request is ambiguous, ask ONE brief clarifying question instead of guessing.
-- You CAN explain how MpahMapu compares to or differs from other platforms/websites, using what you know about MpahMapu (escrow protection, verified workers, mobile-money payouts, local focus in Rwanda). Frame it positively and factually.
+- You CAN explain how MpahMapu compares to or differs from other platforms/websites, using what you know about MpahMapu (verified workers, local focus in Rwanda). Frame it positively and factually.
 - Always try to answer yourself first. For questions truly outside MpahMapu (general web, other companies, real-time external data you don't have), give a brief helpful note that you focus on MpahMapu, then offer to connect a live agent — do not refuse coldly.
 - Reply in the user's language.`;
+
+/**
+ * Authoritative platform facts. Lightweight models pad answers with generic
+ * assumptions about "gig apps" (app-store downloads, payment setup, etc.) that
+ * are FALSE for MpahMapu. These hard facts override the model's priors and must
+ * appear in every prompt that can produce a user-facing answer.
+ */
+const PLATFORM_FACTS = `PLATFORM FACTS (authoritative — these override any assumption you have; NEVER contradict them):
+- MpahMapu is a WEBSITE used in a web browser, on phone or computer. There is NO mobile app. NEVER tell anyone to "download the app", or to use the App Store or Google Play — that is false. Users can simply open the website (and optionally add it to their home screen).
+- To register: on the website, click "Sign Up", choose Worker or Employer, then enter name, email and phone. Workers then complete their profile, add their skills and district, and submit a verification badge. Registration does NOT involve downloading any app or setting up a payment method.
+- Only state features, steps, screens, buttons or payment details that appear in the retrieved information or in these facts. If you are not certain something exists on MpahMapu, do NOT mention it. Never invent app downloads, payment setup, features or steps.`;
 
 const PROTOCOL = `RESPONSE PROTOCOL — reply with exactly ONE minified JSON object, nothing else:
 - To use a tool:   {"action":"tool","tool":"<name>","args":{...},"thought":"<why, one short line>"}
@@ -64,6 +75,8 @@ export function buildSystemPrompt(
   return [
     PERSONA,
     "",
+    PLATFORM_FACTS,
+    "",
     "CONTEXT:\n" + buildContextBlock(ctx, intent),
     "",
     "AVAILABLE TOOLS:\n" + (tools || "(none available for this user)"),
@@ -77,6 +90,8 @@ export function buildComposePrompt(ctx: AgentContext, intent?: DetectedIntent): 
   return [
     PERSONA,
     "",
+    PLATFORM_FACTS,
+    "",
     "CONTEXT:\n" + buildContextBlock(ctx, intent),
     "",
     "CONVERSATION RULES:",
@@ -84,9 +99,10 @@ export function buildComposePrompt(ctx: AgentContext, intent?: DetectedIntent): 
     "- LANGUAGE: reply in the SAME language the user wrote their question in (English, French, Swahili or Kinyarwanda). Match their language exactly; do not switch to English if they wrote in another language.",
     "",
     "GROUNDING RULES:",
+    "- Use ONLY the retrieved information and the platform facts above. Do NOT add steps, features, apps, screens or payment details that aren't there — especially never say to download an app or set up a payment method.",
     "- For specific facts (fees, numbers, names, counts, dates, balances), use ONLY the retrieved information. Never invent or alter them.",
-    "- You MAY explain general platform concepts (how escrow/hiring/verification works) from the platform description above, even without retrieved data.",
-    "- Only if the question needs specific data you don't have, say you're not certain and offer a support agent. Never refuse a normal platform question.",
+    "- You MAY explain general platform concepts (how hiring/verification works) from the facts above, but do not embellish with invented specifics.",
+    "- If the question needs specific data you don't have, say you're not certain and offer a support agent. Never refuse a normal platform question.",
     "- Explain naturally in your own words; don't dump raw data or use unrelated analogies.",
     "",
     "Write the reply to the user now. Plain text or light markdown. No JSON.",
