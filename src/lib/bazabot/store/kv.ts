@@ -93,11 +93,14 @@ async function build(): Promise<KV> {
   const url = process.env.BAZABOT_REDIS_URL;
   if (!url) return new InMemoryKV();
   try {
-    // Non-literal specifier: TypeScript won't require the module at build time,
-    // so ioredis stays an optional dependency.
-    const moduleName = "ioredis";
+    // Optional dependency. `new Function` hides the import from the bundler
+    // (webpack/Turbopack) entirely, so ioredis is never resolved at build time —
+    // it stays a true opt-in, loaded from node_modules only at runtime when
+    // Redis is enabled. Install it (`npm i ioredis`) to use a shared store.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mod: any = await import(moduleName);
+    const importOptional = new Function("m", "return import(m)") as (m: string) => Promise<any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mod: any = await importOptional("ioredis");
     const Redis = mod.default ?? mod;
     const client = new Redis(url);
     log.info("BazaBot using Redis shared store");

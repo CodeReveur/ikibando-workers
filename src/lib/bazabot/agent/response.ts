@@ -27,6 +27,12 @@ export function sanitizeReply(text: string): string {
   // Collapse raw stack-trace-looking lines.
   out = out.replace(/^\s*at\s+.*\(.*:\d+:\d+\)\s*$/gm, "").trim();
 
+  // Strip a leading greeting so follow-up replies don't keep saying "Hello".
+  // Only removes an opening greeting clause, never mid-sentence text.
+  out = out.replace(/^(?:\*\*)?\s*(hello|hi|hey|hi there|greetings|good (morning|afternoon|evening))\b[^.!?\n]*[.!,]?\s*/i, "").trimStart();
+  // Recapitalise if we trimmed into a lowercase word.
+  if (out) out = out.charAt(0).toUpperCase() + out.slice(1);
+
   // Collapse excessive blank lines.
   out = out.replace(/\n{3,}/g, "\n\n").trim();
 

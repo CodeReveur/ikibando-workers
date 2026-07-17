@@ -19,6 +19,7 @@ import { Agent } from "./agent/agent";
 import { runRuleEngine } from "./fallback";
 import { analyze, type Lang } from "@/components/support/bazabot-brain";
 import { sanitizeInput, checkRateLimit } from "./security/guard";
+import { wantsHuman } from "./escalation";
 import { analytics } from "./analytics/analytics";
 import { log } from "./logger";
 import type { AgentEmit, AgentMeta, AgentRequest, AgentResult } from "./types";
@@ -94,6 +95,13 @@ export async function runAgentStream(req: AgentRequest, emit: AgentEmit): Promis
   if (!clean) {
     await emitChunks(emit, "Did you want to ask me something? I'm here to help.");
     return { source: "rules", lang: req.context.language, actions: [], suggestions: [], escalate: false, latencyMs: 0 };
+  }
+
+  // Explicit request for a human → escalate immediately (no model call). The UI
+  // collects the user's name + email and creates the contact for the live agent.
+  if (wantsHuman(clean)) {
+    await emitChunks(emit, "Of course — I'll connect you with a live agent right here in this chat. One moment…");
+    return { source: "escalation", lang: req.context.language, actions: [], suggestions: [], escalate: true, latencyMs: 0 };
   }
 
   // Prompt-injection guard: deflect without invoking the model at all.

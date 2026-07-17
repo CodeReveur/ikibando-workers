@@ -21,7 +21,52 @@ interface Msg {
   streaming?: boolean;
   /** True if the turn errored — shows a Retry affordance. */
   error?: boolean;
+  /** Renders the name+email hand-off form inside this bubble. */
+  form?: boolean;
 }
+
+// ── Client-side session persistence ─────────────────────────────────────────
+// The visitor's chat is kept in localStorage and auto-cleared after 24h. The
+// server (admin) keeps the escalated conversation thread indefinitely, so this
+// only affects what the visitor sees in their own browser.
+const SESSION_KEY = "bazabot_session";
+const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
+
+interface StoredSession { createdAt: number; messages: Msg[] }
+
+function loadSession(fallbackWelcome: string): Msg[] {
+  if (typeof window === "undefined") return [{ sender: "bot", text: fallbackWelcome }];
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    if (raw) {
+      const s = JSON.parse(raw) as StoredSession;
+      if (s.createdAt && Date.now() - s.createdAt < SESSION_TTL_MS && Array.isArray(s.messages) && s.messages.length) {
+        return s.messages;
+      }
+      localStorage.removeItem(SESSION_KEY); // expired → clear
+    }
+  } catch {}
+  return [{ sender: "bot", text: fallbackWelcome }];
+}
+
+function saveSession(messages: Msg[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    let createdAt = Date.now();
+    const raw = localStorage.getItem(SESSION_KEY);
+    if (raw) { const s = JSON.parse(raw) as StoredSession; if (s.createdAt) createdAt = s.createdAt; }
+    if (Date.now() - createdAt >= SESSION_TTL_MS) createdAt = Date.now(); // roll over an expired session
+    // Persist finished messages only (no transient streaming/typing/form state).
+    const clean = messages
+      .filter(m => !m.streaming)
+      .map(({ streaming, form, ...m }) => { void streaming; void form; return m; });
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ createdAt, messages: clean } satisfies StoredSession));
+  } catch {}
+}
+
+/** The live-agent hand-off copy shown when BazaBot escalates. */
+const ESCALATION_INTRO =
+  "You're just a step away from speaking with a live agent!\n\nSince I couldn't fully answer your question, I'll log it and connect you with a live agent right here in this chat.";
 
 export type BazaBotRole = "owner" | "seeker" | "public";
 
@@ -157,6 +202,13 @@ const CSS = `
   .bb-chip { background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.22); border-radius:99px; padding:6px 12px; font-size:11px; color:#fb923c; cursor:pointer; transition:all .12s; }
   .bb-chip:hover { background:rgba(249,115,22,0.16); border-color:rgba(249,115,22,0.4); }
   .bb-retry { margin-top:6px; background:#2a1a12; border:1px solid #7c3a12; color:#fb923c; border-radius:8px; padding:4px 10px; font-size:11px; cursor:pointer; display:inline-flex; align-items:center; gap:5px; }
+  .bb-form { margin-top:10px; display:flex; flex-direction:column; gap:7px; }
+  .bb-form-input { background:#141414; border:1px solid #333; border-radius:8px; padding:8px 11px; font-size:12px; color:#fff; font-family:inherit; outline:none; }
+  .bb-form-input:focus { border-color:#f97316; }
+  .bb-form-input::placeholder { color:#666; }
+  .bb-form-btn { background:#f97316; color:#fff; border:none; border-radius:8px; padding:8px 12px; font-size:12px; font-weight:700; cursor:pointer; margin-top:2px; }
+  .bb-form-btn:hover { background:#ea580c; }
+  .bb-form-err { color:#f87171; font-size:10.5px; }
   .bb-typing { display:inline-flex; gap:4px; align-items:center; padding:3px 2px; }
   .bb-typing span { width:6px; height:6px; border-radius:99px; background:#fff; opacity:0.5; animation:bb-bounce 1.2s infinite ease-in-out; }
   .bb-typing span:nth-child(2){ animation-delay:.2s; } .bb-typing span:nth-child(3){ animation-delay:.4s; }
@@ -204,7 +256,7 @@ export function BazaBotChat({ role = "public", onClose, style }: {
   style?: React.CSSProperties;
 }) {
   const { t, language } = useLanguage();
-  const [identity] = useState<Identity>(() => resolveIdentity());
+  const [identity, setIdentity] = useState<Identity>(() => resolveIdentity());
   const userName = identity.name;
   const userEmail = identity.email;
 
@@ -212,7 +264,8 @@ export function BazaBotChat({ role = "public", onClose, style }: {
     () => t("bazabot.welcome", { userName }) || `Hello ${userName}! I am BazaBot, your platform assistant. How can I help you today?`,
     [t, userName],
   );
-  const [messages, setMessages] = useState<Msg[]>([{ sender: "bot", text: welcome() }]);
+  // Restore the visitor's chat from localStorage (auto-expires after 24h).
+  const [messages, setMessages] = useState<Msg[]>(() => loadSession(welcome()));
   const [inputText, setInputText] = useState("");
   const [botThinking, setBotThinking] = useState(false);
   const [statusText, setStatusText] = useState("");
@@ -224,6 +277,11 @@ export function BazaBotChat({ role = "public", onClose, style }: {
   const endRef = useRef<HTMLDivElement>(null);
   const wasEscalated = useRef(false);
   const lastUserMsg = useRef<string>("");
+  // The question awaiting a live agent once contact details are collected.
+  const pendingHandoff = useRef<string>("");
+
+  // Persist the chat client-side on every change (throttled by React batching).
+  useEffect(() => { saveSession(messages); }, [messages]);
 
   // Keep the welcome message in sync with the active language.
   useEffect(() => {
@@ -306,13 +364,62 @@ export function BazaBotChat({ role = "public", onClose, style }: {
     }, 3000);
   };
 
-  const forwardToAgent = (text: string) => {
+  const forwardToAgent = (text: string, who?: { name: string; email: string }) => {
+    const name = who?.name ?? userName;
+    const email = who?.email ?? userEmail;
     submitContact({
-      name: userName,
-      email: userEmail,
-      subject: `BazaBot chat from ${userName}`,
+      name,
+      email,
+      subject: `BazaBot chat from ${name}`,
       message: text,
     }).catch(() => {});
+  };
+
+  /**
+   * Start a live-agent hand-off. Signed-in users (real email) connect straight
+   * away; guests are shown an inline name+email form first.
+   */
+  const beginHandoff = (question: string) => {
+    pendingHandoff.current = question;
+    if (!identity.guest && userEmail) {
+      forwardToAgent(question);
+      setEscalated(true);
+      wasEscalated.current = true;
+      setMessages(prev => [...prev, {
+        sender: "bot",
+        text: `${ESCALATION_INTRO}\n\nPlease keep this tab open — an agent will respond within about 5 minutes.`,
+      }]);
+      return;
+    }
+    // Guest → collect real contact details before connecting.
+    setMessages(prev => [...prev, { sender: "bot", text: ESCALATION_INTRO, form: true }]);
+  };
+
+  /** Guest submitted the hand-off form: save contact, create the agent message. */
+  const submitHandoffForm = (name: string, email: string) => {
+    const nm = name.trim();
+    const em = email.trim();
+    if (nm.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) return false;
+
+    const next: Identity = { name: nm, email: em, guest: true, token: identity.token };
+    try { localStorage.setItem("bazabot_identity", JSON.stringify({ name: nm, email: em })); } catch {}
+    // Keep isInitialLoad false so the poll under the new email only APPENDS the
+    // agent's replies rather than rebuilding (and wiping) the visible chat.
+    setIdentity(next);
+
+    forwardToAgent(pendingHandoff.current || lastUserMsg.current, { name: nm, email: em });
+    setEscalated(true);
+    wasEscalated.current = true;
+
+    // Consume the form and confirm.
+    setMessages(prev => {
+      const cleared = prev.map(m => (m.form ? { ...m, form: false } : m));
+      return [...cleared, {
+        sender: "bot",
+        text: `Thanks, ${nm}! I've logged your question and connected you with a live agent. Please keep this tab open — an agent will respond within about 5 minutes.`,
+      }];
+    });
+    return true;
   };
 
   /** Ask the agent (streaming) and render the reply into a placeholder bubble. */
@@ -353,7 +460,7 @@ export function BazaBotChat({ role = "public", onClose, style }: {
           fill(m => ({ ...m, text: m.text + (data.text ?? ""), streaming: true }));
         } else if (event === "done") {
           fill(m => ({ ...m, streaming: false, actions: data.actions, suggestions: data.suggestions }));
-          if (data.escalate) { forwardToAgent(msg); setEscalated(true); wasEscalated.current = true; }
+          if (data.escalate) beginHandoff(msg);
         } else if (event === "status") {
           if (!started) { setBotThinking(true); if (data.text) setStatusText(data.text); }
         } else if (event === "error") {
@@ -451,6 +558,7 @@ export function BazaBotChat({ role = "public", onClose, style }: {
                     </span>
                   )
                   : (isUser || m.sender === "agent") ? m.text : <Markdown text={m.text} />}
+                {m.form && <HandoffForm onSubmit={submitHandoffForm} />}
                 {m.actions && m.actions.some(a => a.ok) && (
                   <div className="bb-note"><Sparkles size={11} /> {actionNote(m.actions)}</div>
                 )}
@@ -497,6 +605,38 @@ export function BazaBotChat({ role = "public", onClose, style }: {
           <Send size={14} />
         </button>
       </div>
+    </div>
+  );
+}
+
+/** Inline name+email form shown when a guest is handed off to a live agent. */
+function HandoffForm({ onSubmit }: { onSubmit: (name: string, email: string) => boolean }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  if (sent) return null;
+
+  const submit = () => {
+    const ok = onSubmit(name, email);
+    if (ok) setSent(true); else setError(true);
+  };
+
+  return (
+    <div className="bb-form" onClick={e => e.stopPropagation()}>
+      <input
+        className="bb-form-input" placeholder="Your name" value={name}
+        onChange={e => { setName(e.target.value); setError(false); }}
+        onKeyDown={e => e.key === "Enter" && submit()}
+      />
+      <input
+        className="bb-form-input" placeholder="Your email" type="email" value={email}
+        onChange={e => { setEmail(e.target.value); setError(false); }}
+        onKeyDown={e => e.key === "Enter" && submit()}
+      />
+      {error && <div className="bb-form-err">Please enter your name and a valid email.</div>}
+      <button className="bb-form-btn" onClick={submit}>Connect me with an agent</button>
     </div>
   );
 }
