@@ -13,11 +13,22 @@ export const SITE_LOGO = `${SITE_URL}/logo-512.png`;
  * Legitimate ways our own name gets written. Google spell-corrects unfamiliar brands, so it
  * needs the spacing/casing variants stated explicitly.
  *
- * Only genuine variants of OUR name belong here. Do NOT add "Mahmapu" or other near-misses
- * Google currently guesses at — that would be claiming a name that isn't ours, and would teach
+ * "Mpamapu" and its variants are ours: it is the spelling the backend itself uses (the Java
+ * package is rw.MPAMAPU.server), so people who have seen it internally, and anyone who drops the
+ * silent h, will search for it. Naming it here tells Google the two strings are one entity.
+ *
+ * Only genuine variants of OUR name belong here. Do NOT add "Mahmapuu" or the other near-misses
+ * Google currently guesses at — those belong to somebody else, and claiming them would teach
  * search engines the wrong entity rather than correcting them.
  */
-export const SITE_ALTERNATE_NAMES = ["Mpah Mapu", "Mpahmapu", "MPAHMAPU"];
+export const SITE_ALTERNATE_NAMES = [
+  "Mpah Mapu",
+  "Mpahmapu",
+  "MPAHMAPU",
+  "MpaMapu",
+  "Mpamapu",
+  "MPAMAPU",
+];
 
 /**
  * Profiles that prove this brand is a real, single entity. This is the strongest signal Google

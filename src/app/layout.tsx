@@ -26,8 +26,16 @@ export const metadata: Metadata = {
   },
   description:
     "Find verified workers instantly or get hired for a job today. Rwanda's trusted on-demand workforce platform for events, cleaning, security, driving, and more.",
+  /*
+   * Google has ignored the keywords meta tag since 2009, and Bing does too. It is kept because it
+   * costs nothing and a few smaller crawlers still read it — but nothing here affects ranking on
+   * Google, so it is not the place to fix a brand that does not surface. The name variants that
+   * actually carry weight are in SITE_ALTERNATE_NAMES, which feeds schema.org alternateName.
+   */
   keywords: [
     "MpahMapu",
+    "Mpamapu",
+    "Mpah Mapu",
     "Rwanda jobs",
     "Kigali jobs",
     "hire workers Rwanda",
