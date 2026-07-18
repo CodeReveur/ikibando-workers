@@ -6,8 +6,9 @@ import { OnboardingData, submitOnboarding, verifyEmailCode, resendOtpCode, AuthR
 import { AddressPicker, isAddressComplete } from "@/components/ui/address-picker";
 import { useToast } from "@/components/ui/toast";
 import { useLanguage } from "@/lib/language-context";
+import { BadgeSubmissionWizard } from "./badge-submission-wizard";
 
-type Step = "ROLE_SELECT" | "EMAIL_VERIFY" | "ACCOUNT_TYPE" | "EMPLOYER_DETAILS" | "PERSONAL" | "LOCATION_AVAILABILITY" | "EQUIPMENT" | "COMPLETED";
+type Step = "ROLE_SELECT" | "EMAIL_VERIFY" | "ACCOUNT_TYPE" | "EMPLOYER_DETAILS" | "PERSONAL" | "LOCATION_AVAILABILITY" | "EQUIPMENT" | "BADGE_OFFER" | "COMPLETED";
 
 const ACCOUNT_TYPES: { value: AccountType; label: string; icon: string; desc: string }[] = [
   { value: "INDIVIDUAL", label: "Individual", icon: "🧍", desc: "Just me, working solo" },
@@ -33,10 +34,14 @@ interface Props {
   onComplete: () => void;
 }
 
-/** Canonical step order, for the slide-mode progress bar. */
+/**
+ * Canonical step order for the slide-mode progress bar. In slide mode email
+ * verification happens near the END (at/after the location step) and the badge
+ * offer is last, so the order here reflects that for a monotonic progress %.
+ */
 const PROGRESS_STEPS: Step[] = [
-  "ROLE_SELECT", "EMAIL_VERIFY", "ACCOUNT_TYPE", "EMPLOYER_DETAILS",
-  "PERSONAL", "LOCATION_AVAILABILITY", "EQUIPMENT", "COMPLETED",
+  "ROLE_SELECT", "ACCOUNT_TYPE", "EMPLOYER_DETAILS", "PERSONAL",
+  "LOCATION_AVAILABILITY", "EQUIPMENT", "EMAIL_VERIFY", "BADGE_OFFER", "COMPLETED",
 ];
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -81,6 +86,9 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
   const { error: toastError, success: toastSuccess } = useToast();
   const [step, setStep] = useState<Step>(showRoleSelect ? "ROLE_SELECT" : "EMAIL_VERIFY");
   const [loading, setLoading] = useState(false);
+  // Slide mode defers email verification to the end and offers a badge last.
+  const [emailVerified, setEmailVerified] = useState<boolean>(!!authResult?.user?.emailVerified);
+  const [showBadge, setShowBadge] = useState(false);
   const [selectedRole, setSelectedRole] = useState<"WORKER" | "EMPLOYER">(
     (authResult?.user?.role as "WORKER" | "EMPLOYER") || "WORKER"
   );
@@ -307,7 +315,8 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
 
   const handleRoleSelectContinue = async () => {
     const u = authResult?.user;
-    if (!u?.emailVerified && !isLogin) {
+    // Slide mode collects everything first and verifies email near the end.
+    if (!slideMode && !u?.emailVerified && !isLogin) {
       setStep("EMAIL_VERIFY");
     } else {
       setStep("ACCOUNT_TYPE");
@@ -371,9 +380,15 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     setLoading(true);
     try {
       await verifyEmailCode(email, verifyCode);
-      setStep("ACCOUNT_TYPE");
-      // Load categories
-      getJobCategories().then(setCategories).catch(console.error);
+      setEmailVerified(true);
+      // Slide mode verifies at the END, so finalise the account now. The normal
+      // flow verifies early and continues collecting details.
+      if (slideMode) {
+        await finalizeOnboarding();
+      } else {
+        setStep("ACCOUNT_TYPE");
+        getJobCategories().then(setCategories).catch(console.error);
+      }
     } catch (e: any) {
       toastError(e?.response?.data?.message || t("onboarding.otp.invalid_code_error"), { title: t("onboarding.otp.error_title") });
     } finally {
@@ -409,7 +424,22 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     setStep("LOCATION_AVAILABILITY");
   };
 
+  // Triggered by the final button of the last data step. In slide mode, if the
+  // email hasn't been verified yet, verify first (near the location/end); then
+  // finalise. In the normal flow the email is already verified, so finalise now.
   const handleSubmit = async () => {
+    if (slideMode && !emailVerified) {
+      // Reached the end unverified → send a fresh code and verify now.
+      resendOtpCode(email).catch(() => {});
+      setStep("EMAIL_VERIFY");
+      return;
+    }
+    await finalizeOnboarding();
+  };
+
+  // Complete onboarding (finalize=true). In slide mode a worker is then offered
+  // the badge step; everyone else goes straight to the completed screen.
+  const finalizeOnboarding = async () => {
     setLoading(true);
     // Cancel any pending silent save; this final call finalises the account.
     if (silentSaveRef.current) clearTimeout(silentSaveRef.current);
@@ -419,14 +449,23 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
         authResult.user = updatedUser;
       }
       try { localStorage.removeItem(DRAFT_KEY); } catch {}
-      setStep("COMPLETED");
-      setTimeout(onComplete, 1500);
+      if (slideMode && !isEmployer) {
+        setStep("BADGE_OFFER");
+      } else {
+        setStep("COMPLETED");
+        setTimeout(onComplete, 1500);
+      }
     } catch (e: any) {
       toastError(e?.response?.data?.message || t("onboarding.equipment.onboarding_fail_generic"), { title: t("onboarding.equipment.onboarding_fail_title") });
     } finally {
       setLoading(false);
     }
   };
+
+  // Worker chose to generate their badge — hand off to the badge wizard.
+  if (showBadge && authResult) {
+    return <BadgeSubmissionWizard authResult={authResult} onComplete={onComplete} />;
+  }
 
   // Slide-mode progress: a percentage across the canonical step order.
   const progressPct = Math.min(100, Math.round(((PROGRESS_STEPS.indexOf(step) + 1) / PROGRESS_STEPS.length) * 100));
@@ -456,6 +495,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
               {step === "PERSONAL" && t("onboarding.headers.personal_title")}
               {step === "LOCATION_AVAILABILITY" && t("onboarding.headers.location_title")}
               {step === "EQUIPMENT" && t("onboarding.headers.equipment_title")}
+              {step === "BADGE_OFFER" && (t("onboarding.headers.badge_offer_title") || "One last thing — your working badge")}
               {step === "COMPLETED" && t("onboarding.headers.completed_title")}
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">
@@ -466,6 +506,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
               {step === "PERSONAL" && t("onboarding.headers.personal_subtitle")}
               {step === "LOCATION_AVAILABILITY" && t("onboarding.headers.location_subtitle")}
               {step === "EQUIPMENT" && t("onboarding.headers.equipment_subtitle")}
+              {step === "BADGE_OFFER" && (t("onboarding.headers.badge_offer_subtitle") || "A verified badge builds trust and gets you hired faster. You can also do it later.")}
               {step === "COMPLETED" && t("onboarding.headers.completed_subtitle")}
             </p>
           </div>
@@ -986,6 +1027,37 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
           )}
 
           {/* ── Done ── */}
+          {/* ── Badge offer (last step, workers) ── */}
+          {step === "BADGE_OFFER" && (
+            <div className="space-y-5">
+              <div className="flex flex-col items-center text-center gap-3 py-2">
+                <div className="w-16 h-16 bg-[#f97316]/15 text-[#f97316] rounded-full flex items-center justify-center">
+                  <span className="text-3xl">🪪</span>
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-base">
+                    {t("onboarding.badge_offer.question") || "Would you like to generate your working badge now?"}
+                  </h3>
+                  <p className="text-gray-500 text-xs mt-1 max-w-sm">
+                    {t("onboarding.badge_offer.desc") || "Your badge verifies your identity so employers can hire you with confidence — it only takes a minute."}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowBadge(true)}
+                className="w-full bg-[#f97316] hover:bg-[#ea6a0a] text-white text-sm font-bold py-3 rounded-xl transition-colors"
+              >
+                {t("onboarding.badge_offer.generate") || "Generate my badge"}
+              </button>
+              <button
+                onClick={onComplete}
+                className="w-full bg-transparent hover:bg-[#1f1f1f] text-gray-400 text-sm font-semibold py-3 rounded-xl transition-colors border border-[#2a2a2a]"
+              >
+                {t("onboarding.badge_offer.skip") || "Skip for now"}
+              </button>
+            </div>
+          )}
+
           {step === "COMPLETED" && (
             <div className="flex flex-col items-center justify-center py-10">
               <div className="w-16 h-16 bg-green-500/15 text-green-400 rounded-full flex items-center justify-center mb-4">
