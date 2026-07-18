@@ -34,6 +34,9 @@ export default function SignUpPage() {
   const [showWizard, setShowWizard] = useState(false);
   const [authResult, setAuthResult] = useState<any>(null);
   const [showRoleSelect, setShowRoleSelect] = useState(false);
+  // Manual (email/password) signups get the continuous slide flow; Google/Facebook
+  // keep the normal wizard.
+  const [slideMode, setSlideMode] = useState(false);
   const [referralCode, setReferralCode] = useState("");
   const fbReady = useRef(false);
 
@@ -132,6 +135,7 @@ export default function SignUpPage() {
         if (!result.user.onboardingCompleted) {
           setAuthResult(result);
           setShowRoleSelect(true);
+          setSlideMode(false); // Google → normal wizard
           setShowWizard(true);
         } else {
           saveAndRedirect(result);
@@ -220,6 +224,7 @@ export default function SignUpPage() {
       if (!result.user.onboardingCompleted) {
         setAuthResult(result);
         setShowRoleSelect(true);
+        setSlideMode(true); // manual signup → continuous slide flow
         setShowWizard(true);
       } else {
         saveAndRedirect(result);
@@ -662,6 +667,7 @@ export default function SignUpPage() {
           email={form.email || authResult?.user?.email || ""}
           authResult={authResult}
           showRoleSelect={showRoleSelect}
+          slideMode={slideMode}
           onComplete={() => saveAndRedirect(authResult)}
         />
       )}

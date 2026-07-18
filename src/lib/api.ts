@@ -323,12 +323,17 @@ export async function disableTotp(code: string, token: string): Promise<void> {
   await http.post("/api/auth/2fa/disable", { code }, { headers: authHeader(token) });
 }
 
-export async function submitOnboarding(data: OnboardingData, token: string): Promise<any> {
-  const { data: res } = await http.post("/api/users/onboarding", data, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+/**
+ * Save onboarding data. `finalize` false persists the fields silently (a per-step
+ * save in the sliding signup wizard) without promoting the account or notifying
+ * admins; the default true completes onboarding.
+ */
+export async function submitOnboarding(data: OnboardingData, token: string, finalize = true): Promise<any> {
+  const { data: res } = await http.post(
+    `/api/users/onboarding${finalize ? "" : "?finalize=false"}`,
+    data,
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
   return res.data;
 }
 

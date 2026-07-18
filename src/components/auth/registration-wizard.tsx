@@ -23,8 +23,21 @@ interface Props {
   authResult: AuthResult | null;
   isLogin?: boolean;
   showRoleSelect?: boolean;
+  /**
+   * Manual (email/password) signups run in "slide" mode: a continuous flow with
+   * a progress bar (no step markers), sliding transitions, and a silent
+   * per-step save to the server so nothing is lost and the account resumes where
+   * it left off. Google signups keep the normal wizard (slideMode falsy).
+   */
+  slideMode?: boolean;
   onComplete: () => void;
 }
+
+/** Canonical step order, for the slide-mode progress bar. */
+const PROGRESS_STEPS: Step[] = [
+  "ROLE_SELECT", "EMAIL_VERIFY", "ACCOUNT_TYPE", "EMPLOYER_DETAILS",
+  "PERSONAL", "LOCATION_AVAILABILITY", "EQUIPMENT", "COMPLETED",
+];
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const FULL_DAYS: Record<string, string> = {
@@ -63,7 +76,7 @@ function capitalize(str: string) {
     .join(" ");
 }
 
-export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect, onComplete }: Props) {
+export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect, slideMode, onComplete }: Props) {
   const { t } = useLanguage();
   const { error: toastError, success: toastSuccess } = useToast();
   const [step, setStep] = useState<Step>(showRoleSelect ? "ROLE_SELECT" : "EMAIL_VERIFY");
@@ -188,6 +201,27 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     restoredRef.current = true;
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // The onboarding payload from the current state — shared by the final submit
+  // and the silent per-step save.
+  const buildPayload = (): OnboardingData => ({
+    role: showRoleSelect ? selectedRole : undefined,
+    dob,
+    educationLevel: education,
+    experienceType: experiences[0] ?? "",
+    experienceTypes: experiences,
+    accountType,
+    tin: tin.trim() ? tin.trim() : undefined,
+    teamMembers: !isEmployer && isGroup ? memberEmails : [],
+    location: address ?? { country: "Rwanda" },
+    equipment: equipment.map((name) => ({ name, available: true })),
+    availability: availability.map((d) => FULL_DAYS[d]),
+  });
+
+  // Silent per-step save to the server (slide mode only). Debounced so rapid
+  // field edits don't spam the API. Only runs once we're past the first slide
+  // (a real data-collection step) and a token is available.
+  const silentSaveRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // Pre-save the current data whenever a field changes or the user advances a
   // step, so nothing is lost between slides or across a reload.
   useEffect(() => {
@@ -198,6 +232,17 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
         accountType, memberEmails, tin, selectedRole, step,
       }));
     } catch {}
+
+    // Server-side per-step save — resumes the account from where it left off,
+    // even on another device. Skipped on the first slide(s) (role/verify).
+    const token = authResult?.accessToken;
+    if (slideMode && token && DATA_STEPS.includes(step)) {
+      if (silentSaveRef.current) clearTimeout(silentSaveRef.current);
+      silentSaveRef.current = setTimeout(() => {
+        submitOnboarding(buildPayload(), token, false).catch(() => { /* silent */ });
+      }, 800);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dob, education, experiences, address, availability, equipment, accountType, memberEmails, tin, selectedRole, step]);
 
   // Calculate initial step and state
@@ -366,21 +411,10 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
 
   const handleSubmit = async () => {
     setLoading(true);
-    const payload: OnboardingData = {
-      role: showRoleSelect ? selectedRole : undefined,
-      dob,
-      educationLevel: education,
-      experienceType: experiences[0] ?? "",
-      experienceTypes: experiences,
-      accountType,
-      tin: tin.trim() ? tin.trim() : undefined,
-      teamMembers: !isEmployer && isGroup ? memberEmails : [],
-      location: address ?? { country: "Rwanda" },
-      equipment: equipment.map((name) => ({ name, available: true })),
-      availability: availability.map((d) => FULL_DAYS[d]),
-    };
+    // Cancel any pending silent save; this final call finalises the account.
+    if (silentSaveRef.current) clearTimeout(silentSaveRef.current);
     try {
-      const updatedUser = await submitOnboarding(payload, authResult?.accessToken || "");
+      const updatedUser = await submitOnboarding(buildPayload(), authResult?.accessToken || "");
       if (authResult) {
         authResult.user = updatedUser;
       }
@@ -394,15 +428,25 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     }
   };
 
+  // Slide-mode progress: a percentage across the canonical step order.
+  const progressPct = Math.min(100, Math.round(((PROGRESS_STEPS.indexOf(step) + 1) / PROGRESS_STEPS.length) * 100));
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
       <div className="bg-[#141414] border border-[#2a2a2a] rounded-2xl w-full max-w-xl shadow-2xl flex flex-col overflow-hidden">
+
+        {/* Slide-mode progress line (no clickable step markers). */}
+        {slideMode && (
+          <div className="h-1 w-full bg-[#2a2a2a]">
+            <div className="h-full bg-[#f97316] transition-all duration-500 ease-out" style={{ width: `${progressPct}%` }} />
+          </div>
+        )}
 
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-[#2a2a2a] flex items-start justify-between">
           <div>
             <span className="text-[10px] font-bold text-[#f97316] uppercase tracking-wider block mb-0.5">
-              {STEP_NUMBER_LOCALIZED[step]}
+              {slideMode ? `${progressPct}% complete` : STEP_NUMBER_LOCALIZED[step]}
             </span>
             <h2 className="text-lg font-bold text-white leading-tight">
               {step === "ROLE_SELECT" && t("onboarding.headers.role_select_title")}
@@ -427,8 +471,13 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
           </div>
         </div>
 
-        {/* Body */}
-        <div className="p-6 overflow-y-auto max-h-[80vh] space-y-6">
+        {/* Body — in slide mode each step animates in as the user advances. */}
+        {slideMode && <style>{`@keyframes wizSlide{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}`}</style>}
+        <div
+          key={slideMode ? step : undefined}
+          className="p-6 overflow-y-auto max-h-[80vh] space-y-6"
+          style={slideMode ? { animation: "wizSlide .28s ease" } : undefined}
+        >
           {/* ── Role Select ── */}
           {step === "ROLE_SELECT" && (
             <div className="space-y-4">
