@@ -4,6 +4,7 @@ import { useState } from "react";
 import { SessionProvider } from "./session-ctx";
 import { Sidebar, SB_WIDTH } from "./sidebar";
 import { Topbar, TB_HEIGHT } from "./topbar";
+import { NotificationPrompt } from "./notification-prompt";
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -76,6 +77,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         }}>
           {children}
         </main>
+        <NotificationPrompt />
       </div>
     </SessionProvider>
   );
