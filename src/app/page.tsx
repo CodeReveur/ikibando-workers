@@ -138,7 +138,8 @@ export default function Home() {
   const fmt = (n: number) => t("common.general.currency_pattern", { amount: n.toLocaleString() });
 
   useEffect(() => {
-    getWorkers({ size: 16 }).then(p => setWorkers(p.content)).catch(() => {});
+    // 18 fills the workers grid to complete rows (3-per-row) instead of leaving a lone last card.
+    getWorkers({ size: 18 }).then(p => setWorkers(p.content)).catch(() => {});
     getJobs({ size: 16 }).then(p => setJobs(p.content)).catch(() => {});
   }, []);
 
