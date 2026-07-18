@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Mail, Phone, FileText, ChevronRight } from "lucide-react";
 import { SectionHead } from "@/components/dashboard/ui";
 import { useLanguage } from "@/lib/language-context";
 import { BazaBotChat } from "@/components/support/bazabot";
+import { getPricingConfig, DEFAULT_PRICING, type PricingConfig } from "@/lib/api";
+import { feePercents } from "@/lib/help-content";
 
 function WhatsAppIcon({ size = 18, color = "#25d366" }: { size?: number; color?: string }) {
   return (
@@ -41,10 +43,13 @@ const CSS = `
 export default function SeekerHelp() {
   const { t } = useLanguage();
   const [open, setOpen] = useState<number | null>(null);
+  const [pricing, setPricing] = useState<PricingConfig>(DEFAULT_PRICING);
+  useEffect(() => { getPricingConfig().then(setPricing).catch(() => {}); }, []);
+  const f = feePercents(pricing);
 
   const FAQS = [
     { q: t("seeker_help.faq1_q") || "How do I get paid?",                a: t("seeker_help.faq1_a") || "Your earnings are held in escrow when a job starts and are released directly to your wallet as soon as the employer marks the job complete. You can transfer wallet funds to your MTN MoMo or Airtel Money account anytime." },
-    { q: t("seeker_help.faq2_q") || "What is the platform fee?",          a: t("seeker_help.faq2_a") || "We deduct a 25% platform fee from worker earnings to maintain the service, verify users, and process MTN MoMo transactions." },
+    { q: t("seeker_help.faq2_q") || "What is the platform fee?",          a: `A ${f.worker}% commission is deducted from worker earnings to run the service, verify users and process payments — so you keep ${f.workerKeeps}% of the job amount. The exact figure is always shown before you accept a job.` },
     { q: t("seeker_help.faq3_q") || "How do I get jobs?",                 a: t("seeker_help.faq3_a") || "Make sure your profile details, specialties, education, and district are complete. Employers can find you in 'Browse Workers' or you can apply to open jobs listed in the marketplace." },
     { q: t("seeker_help.faq4_q") || "How do I verify completion?",        a: t("seeker_help.faq4_a") || "Once you finish the job, ask the employer to scan your worker badge or mark the job complete from their dashboard to release your payout." },
     { q: t("seeker_help.faq5_q") || "What happens if there is a dispute?", a: t("seeker_help.faq5_a") || "If an employer refuses to release payment or opens a dispute, our support team reviews the case within 2 hours. We will contact both parties to resolve the issue based on work evidence." },
@@ -54,7 +59,7 @@ export default function SeekerHelp() {
     { icon:WhatsAppIcon, label: t("owner_help.live_chat") || "Live Chat",     sub: t("owner_help.live_chat_sub") || "Usually replies in 5 min",  color:"#25d366", href: "https://wa.me/250781121117" },
     { icon:Mail,          label: t("owner_help.email_support") || "Email Support", sub:"info@mpahmapu.com",          color:"#f97316", href: "mailto:info@mpahmapu.com" },
     { icon:Phone,         label: t("owner_help.call_us") || "Call Us",       sub:"+250 781 121 117",           color:"#22c55e", href: "tel:+250781121117" },
-    { icon:FileText,      label: t("owner_help.user_guide") || "User Guide",    sub: t("owner_guide.user_guide_sub") || "Read the full docs",         color:"#a78bfa", href: "/about" },
+    { icon:FileText,      label: t("owner_help.user_guide") || "Help Center",    sub: t("owner_guide.user_guide_sub") || "Browse all articles",         color:"#a78bfa", href: "/help" },
   ];
 
   return (

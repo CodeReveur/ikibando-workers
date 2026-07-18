@@ -2061,7 +2061,7 @@
     "faq1_q": "Comment suis-je payé ?",
     "faq1_a": "Vos gains sont bloqués en dépôt fiduciaire (escrow) au début du travail et sont versés directement sur votre portefeuille dès que l'employeur marque la mission comme terminée. Vous pouvez transférer vos fonds vers votre compte MTN MoMo ou Airtel Money à tout moment.",
     "faq2_q": "Quels sont les frais de plateforme ?",
-    "faq2_a": "Nous déduisons des frais de plateforme de 25 % sur les gains des travailleurs pour maintenir le service, vérifier les utilisateurs et traiter les transactions MoMo.",
+    "faq2_a": "Une commission de service est déduite des gains des travailleurs pour faire fonctionner le service, vérifier les utilisateurs et traiter les paiements — le taux exact est fixé par MpahMapu et affiché avant que vous acceptiez une mission.",
     "faq3_q": "Comment obtenir des missions ?",
     "faq3_a": "Assurez-vous que les détails de votre profil, vos spécialités, votre éducation et votre district sont complets. Les employeurs peuvent vous trouver dans la recherche ou vous pouvez postuler aux offres publiées.",
     "faq4_q": "Comment valider la fin d'un travail ?",
@@ -2099,7 +2099,7 @@
       "process": "Ouvrez votre Portefeuille, cliquez sur 'Retrait', saisissez le montant et votre numéro MTN MoMo ou Airtel Money, puis confirmez. Les fonds sont envoyés sur votre compte mobile money, généralement en quelques minutes.",
       "guidelines": "Vérifiez bien le montant et le numéro de téléphone avant de confirmer. Si un retrait n'arrive pas, consultez son statut dans les transactions de votre portefeuille ou contactez le support et nous le suivrons.",
       "seeker": {
-        "overview": "Vos gains arrivent dans votre portefeuille MpahMapu après chaque mission terminée — vous conservez 75% une fois les frais de service de 25% appliqués. De là, vous pouvez encaisser vers Mobile Money quand vous le souhaitez."
+        "overview": "Vos gains arrivent dans votre portefeuille MpahMapu après chaque mission terminée — vous conservez votre part après la commission de service, et le montant exact est affiché avant que vous acceptiez. De là, vous pouvez encaisser vers Mobile Money quand vous le souhaitez."
       },
       "owner": {
         "overview": "Tout solde restant dans votre portefeuille employeur — par exemple un remboursement après l'annulation d'une mission ou une recharge non utilisée — peut être retiré vers votre compte Mobile Money."
@@ -2131,13 +2131,13 @@
     },
     "fee": {
       "overview": "Pour maintenir notre infrastructure de transaction ultra-rapide et nos systèmes de contrôle de sécurité, MpahMapu applique des frais de service. Ces frais nous permettent de proposer des profils vérifiés, de traiter instantanément les transferts MTN MoMo et de fournir un support client de médiation.",
-      "process": "Les travailleurs paient des frais de service de {fee} sur leurs gains bruts. Par exemple, si une mission rapporte 10 000 RWF, 2 500 RWF sont automatiquement déduits lors de la libération du paiement, et 7 500 RWF sont versés dans votre portefeuille. Les employeurs ne paient qu'un frais mineur de 5% lors du dépôt.",
+      "process": "Les travailleurs paient une commission de service sur leurs gains. Le taux exact est fixé par MpahMapu et affiché avant que vous acceptiez une mission ainsi que sur votre paiement, vous savez donc toujours ce qui arrive dans votre portefeuille. Les employeurs paient de petits frais de séquestre lors du dépôt, affichés avant la confirmation.",
       "guidelines": "Toutes les déductions de frais de plateforme figurent clairement sur la facture disponible dans votre onglet Mes Gains. Les frais de service ne sont pas remboursables car ils couvrent les coûts de paiement mobile et la gestion des serveurs. Des reçus détaillés vous sont envoyés par e-mail.",
       "owner": {
         "process": "En tant qu'employeur, vous ne payez que 5% de frais de gestion en plus du montant convenu pour les travailleurs, affichés clairement avant confirmation. Par exemple, pour une mission de 10 000 RWF, vous payez 10 500 RWF au total. Aucun autre frais pour embaucher."
       },
       "seeker": {
-        "process": "En tant que travailleur, des frais de service de {fee} sont déduits de vos gains, vous recevez donc 75%. Par exemple, si une mission rapporte 10 000 RWF, 2 500 RWF sont déduits et 7 500 RWF arrivent dans votre portefeuille."
+        "process": "En tant que travailleur, une commission de service est déduite de vos gains. Le taux exact et le montant que vous recevez sont toujours affichés avant que vous acceptiez une mission, il n'y a donc aucune surprise au paiement."
       }
     },
     "job": {

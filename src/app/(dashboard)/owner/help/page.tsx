@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Mail, Phone, FileText, ChevronRight } from "lucide-react";
 import { SectionHead } from "@/components/dashboard/ui";
 import { useLanguage } from "@/lib/language-context";
 import { BazaBotChat } from "@/components/support/bazabot";
+import { getPricingConfig, DEFAULT_PRICING, type PricingConfig } from "@/lib/api";
+import { feePercents } from "@/lib/help-content";
 
 function WhatsAppIcon({ size = 18, color = "#25d366" }: { size?: number; color?: string }) {
   return (
@@ -41,11 +43,14 @@ const CSS = `
 export default function OwnerHelp() {
   const { t } = useLanguage();
   const [open, setOpen] = useState<number | null>(null);
+  const [pricing, setPricing] = useState<PricingConfig>(DEFAULT_PRICING);
+  useEffect(() => { getPricingConfig().then(setPricing).catch(() => {}); }, []);
+  const f = feePercents(pricing);
 
   const FAQS = [
     { q: t("owner_help.faq1_q") || "How does escrow work?",              a: t("owner_help.faq1_a") || "Your payment is locked in escrow as soon as you confirm a booking. It is only released to the worker after you mark the job complete. You have 24 hours post-completion to raise a dispute." },
     { q: t("owner_help.faq2_q") || "How do I raise a dispute?",          a: t("owner_help.faq2_a") || "Go to the relevant completed job and click \"Raise Dispute\". Our team reviews all disputes within 2 business hours and will contact both parties." },
-    { q: t("owner_help.faq3_q") || "Can I cancel a booking?",            a: t("owner_help.faq3_a") || "Yes. Free cancellation is available up to 2 hours before the scheduled start time. Late cancellations may incur a 10% fee to compensate the worker." },
+    { q: t("owner_help.faq3_q") || "Can I cancel a booking?",            a: `Yes. Free cancellation is available up to 2 hours before the scheduled start time. Late cancellations may incur a ${f.cancel}% fee to compensate the worker.` },
     { q: t("owner_help.faq4_q") || "How are workers verified?",          a: t("owner_help.faq4_a") || "All workers on MpahMapu go through ID verification and reference checks before being listed on the platform. Verified badges indicate completed checks." },
     { q: t("owner_help.faq5_q") || "What payment methods are supported?", a: t("owner_help.faq5_a") || "We currently support MTN MoMo and Airtel Money. Bank transfers are coming soon." },
   ];
@@ -54,7 +59,7 @@ export default function OwnerHelp() {
     { icon:WhatsAppIcon, label: t("owner_help.live_chat") || "Live Chat",     sub: t("owner_help.live_chat_sub") || "Usually replies in 5 min",  color:"#25d366", href: "https://wa.me/250781121117" },
     { icon:Mail,          label: t("owner_help.email_support") || "Email Support", sub:"info@mpahmapu.com",          color:"#f97316", href: "mailto:info@mpahmapu.com" },
     { icon:Phone,         label: t("owner_help.call_us") || "Call Us",       sub:"+250 781 121 117",           color:"#22c55e", href: "tel:+250781121117" },
-    { icon:FileText,      label: t("owner_help.user_guide") || "User Guide",    sub: t("owner_guide.user_guide_sub") || "Read the full docs",         color:"#a78bfa", href: "/about" },
+    { icon:FileText,      label: t("owner_help.user_guide") || "Help Center",    sub: t("owner_guide.user_guide_sub") || "Browse all articles",         color:"#a78bfa", href: "/help" },
   ];
 
   return (

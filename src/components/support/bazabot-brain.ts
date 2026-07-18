@@ -200,7 +200,7 @@ export function respond(topic: Topic, lang: Lang, userName: string, role: Role =
       .filter(Boolean).join("\n\n");
   }
   const starter = tr(lang, `starter${1 + Math.floor(Math.random() * 5)}`);
-  const vars = { name: userName, time: new Date().toLocaleTimeString(), fee: topic === "fee" ? "25%" : "5%" };
+  const vars = { name: userName, time: new Date().toLocaleTimeString(), fee: "a" };
   const body = ["overview", "process", "guidelines"]
     .map(p => pick(lang, [`${topic}.${role}.${p}`, `${topic}.${p}`], vars))
     .filter(Boolean).join("\n\n");

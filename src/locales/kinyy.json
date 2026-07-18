@@ -2061,7 +2061,7 @@
     "faq1_q": "Nishyurwa nte?",
     "faq1_a": "Amafaranga yawe afungirwa muri escrow iyo akazi gatangiye maze agahita yoherezwa kuri wallet yawe iyo umukoresha yemeje ko akazi karangiye. Ushobora kuyakura kuri wallet ukayohereza kuri MTN MoMo cyangwa Airtel Money umunsi wose.",
     "faq2_q": "Ni ayahe mafaranga ya platform (fee)?",
-    "faq2_a": "Dukata 25% ku mafaranga umukozi yorejwe kugira ngo tubashe kubungabunga platform, kugenzura abakoresha n'abakozi, ndetse no kwishyura MoMo transactions.",
+    "faq2_a": "Komisiyo ikatwa ku mafaranga umukozi yinjije kugira ngo dukomeze serivisi, kugenzura abakoresha n'abakozi no kwishyura — igipimo nyacyo gishyirwaho na MpahMapu kandi kigaragazwa mbere yo kwemera akazi.",
     "faq3_q": "Nabonera nte akazi?",
     "faq3_a": "Emeza ko umwirondoro wawe, ubumenyi, amashuri, ndetse n'akarere utuyemo byuzuye neza. Abakoresha bashobora kugushakira ahabonetse abakozi cyangwa nawe ugasaba akazi katangajwe mu isoko ry'imirimo.",
     "faq4_q": "Nemeza nte ko akazi karangiye?",
@@ -2099,7 +2099,7 @@
       "process": "Fungura Wallet yawe, ukande 'Withdraw', wandike umubare w'amafaranga na numero yawe ya MTN MoMo cyangwa Airtel Money, hanyuma wemeze. Amafaranga akoherezwa kuri konti yawe ya mobile money, akenshi mu minota mike.",
       "guidelines": "Genzura neza umubare w'amafaranga na numero ya telefone mbere yo kwemeza. Niba amafaranga adageze, reba aho ageze kuri transactions za wallet yawe cyangwa uvugane na support tuyakurikirane.",
       "seeker": {
-        "overview": "Umushahara wawe ugera kuri wallet yawe ya MpahMapu nyuma ya buri kazi urangije — usigarana 75% nyuma yo gukatwa 25% ya platform fee. Uhereye aho ushobora gukura amafaranga ukayohereza kuri Mobile Money igihe cyose."
+        "overview": "Umushahara wawe ugera kuri wallet yawe ya MpahMapu nyuma ya buri kazi urangije — usigarana umugabane wawe nyuma ya komisiyo ya serivisi, kandi umubare nyawo ugaragazwa mbere yo kwemera. Uhereye aho ushobora gukura amafaranga ukayohereza kuri Mobile Money igihe cyose."
       },
       "owner": {
         "overview": "Amafaranga asigaye kuri wallet yawe y'umukoresha — nk'ayakuwe mu kazi kahagaritswe cyangwa top-up utakoresheje — ushobora kuyakura ukayasubiza kuri konti yawe ya Mobile Money."
@@ -2131,13 +2131,13 @@
     },
     "fee": {
       "overview": "Kugira ngo tubashe gukomeza kubungabunga platform, kohereza ubwishyu mu buryo bwihuse, ndetse n'umutekano w'abakoresha n'abakozi, MpahMapu yaka amafaranga ya service fee. Iyi fee idufasha kugenzura profiles, kwishyura MTN MoMo transactions, ndetse no gukemura impaka.",
-      "process": "Abakozi bakatwa {fee} kuri buri mushahara bahawe. Nk'urugero, niba akazi kishyuwe RWF 10,000, RWF 2,500 ihita ikatwa ku buryo bwikora, maze RWF 7,500 ikoherezwa kuri wallet yawe. Abakoresha bo bishyura gusa 5% ya transaction fee mu gihe cyo gufunga escrow.",
+      "process": "Abakozi bakatirwa komisiyo ya serivisi ku mafaranga binjiye. Igipimo nyacyo gishyirwaho na MpahMapu kandi kigaragazwa mbere yo kwemera akazi no ku bwishyu, bityo buri gihe uba uzi ibigera kuri wallet yawe. Abakoresha bishyura amafaranga make ya escrow igihe cyo gufunga, agaragazwa mbere yo kwemeza.",
       "guidelines": "Amafaranga yose yashyizweho na platform agaragara mu mucyo kuri fagitire yawe munsi ya tab ya My Earnings. Iyi service fee ntishobora gusubizwa kuko ikoreshwa mu kwishyura payment processors ndetse no gupayisha server. Inyandiko zose zoherezwa kuri email yawe.",
       "owner": {
         "process": "Nk'umukoresha wishyura gusa 5% ya service fee yiyongera ku mafaranga yumvikanyweho y'abakozi, igaragazwa mu mucyo mbere yo kwemeza. Nk'urugero, ku kazi ka RWF 10,000 wishyura RWF 10,500 muri rusange. Nta yandi mafaranga yo guha akazi."
       },
       "seeker": {
-        "process": "Nk'umukozi, {fee} ya service fee ikatwa ku mushahara wawe, bityo uhabwa 75%. Nk'urugero, niba akazi kishyuwe RWF 10,000, RWF 2,500 ikatwa naho RWF 7,500 ikagera kuri wallet yawe."
+        "process": "Nk'umukozi, komisiyo ya serivisi ikatwa ku mafaranga yawe. Igipimo nyacyo n'amafaranga wakira bigaragazwa mbere yo kwemera akazi, bityo nta gitangaza kiba ku bwishyu."
       }
     },
     "job": {

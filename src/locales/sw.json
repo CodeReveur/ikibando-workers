@@ -2061,7 +2061,7 @@
     "faq1_q": "Je, ninalipwaje?",
     "faq1_a": "Mapato yako yanashikiliwa kwenye escrow wakati kazi inapoanza na yanatolewa moja kwa moja kwenye wallet yako mara tu mwajiri anapoweka alama ya kazi kuwa imekamilika. Unaweza kuhamisha fedha hizo kwenda MTN MoMo au Airtel Money wakati wowote.",
     "faq2_q": "Ada ya jukwaa ni kiasi gani?",
-    "faq2_a": "Tunatoa ada ya jukwaa ya 25% kutoka kwa mapato ya mfanyakazi ili kudumisha huduma, kuhakiki watumiaji, na kushughulikia miamala ya MTN MoMo.",
+    "faq2_a": "Kamisheni hukatwa kwenye mapato ya mfanyakazi ili kuendesha huduma, kuhakiki watumiaji na kushughulikia malipo — kiwango kamili kimewekwa na MpahMapu na kinaonyeshwa kabla ya kukubali kazi.",
     "faq3_q": "Ninapataje kazi?",
     "faq3_a": "Hakikisha maelezo ya wasifu wako, ujuzi wako maalum, elimu na wilaya yako vimekamilika. Waajiri wanaweza kukupata kwenye ukurasa wa kutafuta wafanyakazi au unaweza kuomba kazi zilizoorodheshwa.",
     "faq4_q": "Ninathibitishaje kukamilika kwa kazi?",
@@ -2099,7 +2099,7 @@
       "process": "Fungua Mkoba wako, bofya 'Toa', weka kiasi na nambari yako ya MTN MoMo au Airtel Money, kisha thibitisha. Fedha zinatumwa kwenye akaunti yako ya mobile money, kwa kawaida ndani ya dakika chache.",
       "guidelines": "Hakiki mara mbili kiasi na nambari ya simu kabla ya kuthibitisha. Ikiwa utoaji hautafika, angalia hali yake kwenye miamala ya mkoba wako au wasiliana na usaidizi na tutaufuatilia.",
       "seeker": {
-        "overview": "Mapato yako yanaingia kwenye mkoba wako wa MpahMapu baada ya kila kazi iliyokamilika — unabaki na 75% baada ya ada ya jukwaa ya 25% kukatwa. Kutoka hapo unaweza kutoa kwenda Mobile Money wakati wowote."
+        "overview": "Mapato yako yanaingia kwenye mkoba wako wa MpahMapu baada ya kila kazi iliyokamilika — unabaki na sehemu yako baada ya kamisheni ya huduma, na kiasi kamili huonyeshwa kabla ya kukubali. Kutoka hapo unaweza kutoa kwenda Mobile Money wakati wowote."
       },
       "owner": {
         "overview": "Salio lolote lililobaki kwenye mkoba wako wa mwajiri — kwa mfano urejeshaji kutoka kazi iliyoghairiwa au ongezeko usilotumia — linaweza kutolewa kurudi kwenye akaunti yako ya Mobile Money."
@@ -2131,13 +2131,13 @@
     },
     "fee": {
       "overview": "Ili kudumisha miundombinu yetu ya miamala ya kasi ya juu na mifumo ya ukaguzi wa usalama, MpahMapu inatoza ada ya huduma. Ada hii inatuwezesha kutoa wasifu uliothibitishwa, kushughulikia miamala ya MTN MoMo papo hapo, na kutoa usaidizi wa usuluhishi wa migogoro.",
-      "process": "Wafanyakazi wanatozwa ada ya huduma ya {fee} kwenye mapato yao ghafi. Kwa mfano, ikiwa kazi inalipa RWF 10,000, RWF 2,500 inakatwa kiotomatiki wakati wa malipo, na RWF 7,500 inatumwa kwenye mkoba wako. Waajiri wanalipa ada ndogo ya 5% ya muamala wa escrow wanapoweka nafasi ya kazi.",
+      "process": "Wafanyakazi hutozwa kamisheni ya huduma kwenye mapato yao. Kiwango kamili kimewekwa na MpahMapu na kinaonyeshwa kabla ya kukubali kazi na wakati wa malipo, hivyo unajua kila wakati kinachofika kwenye mkoba wako. Waajiri hulipa ada ndogo ya escrow wanapoweka nafasi, inayoonyeshwa kabla ya kuthibitisha.",
       "guidelines": "Makato yote ya ada ya jukwaa yanaonyeshwa wazi kwenye ankara chini ya tab ya Mapato Yangu. Ada hii hairejeshwi kwa kuwa inagharamia wasindikaji wa malipo na usimamizi vya mfumo wetu. Risiti za kina za ada hiyo zinatumwa kwa barua pepe kwa ajili ya kumbukumbu.",
       "owner": {
         "process": "Kama mwajiri unalipa tu ada ya usimamizi ya 5% juu ya kiasi kilichokubaliwa cha wafanyakazi, kinachoonyeshwa wazi kabla ya kuthibitisha. Kwa mfano, kwa kazi ya RWF 10,000 unalipa jumla ya RWF 10,500. Hakuna gharama nyingine za kuajiri."
       },
       "seeker": {
-        "process": "Kama mfanyakazi, ada ya huduma ya {fee} inakatwa kwenye mapato yako, hivyo unapokea 75%. Kwa mfano, ikiwa kazi inalipa RWF 10,000, RWF 2,500 inakatwa na RWF 7,500 inafika kwenye mkoba wako."
+        "process": "Kama mfanyakazi, kamisheni ya huduma inakatwa kwenye mapato yako. Kiwango kamili na kiasi unachopokea huonyeshwa kabla ya kukubali kazi, hivyo hakuna mshangao wakati wa malipo."
       }
     },
     "job": {

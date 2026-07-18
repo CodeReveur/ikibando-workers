@@ -2062,7 +2062,7 @@
     "faq1_q": "How do I get paid?",
     "faq1_a": "Your earnings are held in escrow when a job starts and are released directly to your wallet as soon as the employer marks the job complete. You can transfer wallet funds to your MTN MoMo or Airtel Money account anytime.",
     "faq2_q": "What is the platform fee?",
-    "faq2_a": "We deduct a 25% platform fee from worker earnings to maintain the service, verify users, and process MTN MoMo transactions.",
+    "faq2_a": "A commission is deducted from worker earnings to run the service, verify users and process payments — the exact rate is set by MpahMapu and shown before you accept a job.",
     "faq3_q": "How do I get jobs?",
     "faq3_a": "Make sure your profile details, specialties, education, and district are complete. Employers can find you in 'Browse Workers' or you can apply to open jobs listed in the marketplace.",
     "faq4_q": "How do I verify completion?",
@@ -2104,7 +2104,7 @@
       "process": "Open your Wallet, tap 'Withdraw', enter the amount and your MTN MoMo or Airtel Money number, then confirm. The funds are sent to your mobile money account, usually within minutes.",
       "guidelines": "Double-check the amount and the phone number before confirming. If a withdrawal doesn't arrive, check its status in your wallet transactions or contact support and we'll trace it.",
       "seeker": {
-        "overview": "Your earnings land in your MpahMapu wallet after each completed job — you keep 75% once the 25% platform fee is applied. From there you can cash out to Mobile Money whenever you like."
+        "overview": "Your earnings land in your MpahMapu wallet after each completed job — you keep your share after the platform commission, and the exact amount is shown before you accept. From there you can cash out to Mobile Money whenever you like."
       },
       "owner": {
         "overview": "Any spare balance in your employer wallet — for example a refund from a cancelled job or a top-up you didn't use — can be withdrawn back to your Mobile Money account."
@@ -2136,13 +2136,13 @@
     },
     "fee": {
       "overview": "To sustain our high-speed transaction infrastructure and safety check systems, MpahMapu charges a service fee. This fee allows us to provide verified profiles, process MTN MoMo transactions instantly, and offer live support mediation.",
-      "process": "Workers are charged a {fee} service fee on their gross earnings. For example, if a job pays RWF 10,000, RWF 2,500 is automatically deducted at payout time, and RWF 7,500 is sent to your wallet. Employers only pay a minor 5% escrow transaction fee at booking.",
+      "process": "Workers are charged a service commission on their gross earnings. The exact rate is set by MpahMapu and shown before you accept a job and on your payout, so you always know what reaches your wallet. Employers pay a small escrow service fee at booking, shown before they confirm.",
       "guidelines": "All platform fee deductions are displayed clearly on the invoice under your My Earnings tab. The service fee is non-refundable as it covers payment processor costs and system overhead. Detailed fee receipts are emailed for accounting.",
       "owner": {
         "process": "As an employer you pay only a 5% escrow handling fee on top of the workers' agreed amount, shown clearly before you confirm. For example, on a 10,000 RWF job you pay 10,500 RWF total. There are no other charges to hire."
       },
       "seeker": {
-        "process": "As a worker, a {fee} service fee is deducted from your earnings, so you receive 75%. For example, if a job pays 10,000 RWF, 2,500 RWF is deducted and 7,500 RWF reaches your wallet."
+        "process": "As a worker, a service commission is deducted from your earnings. The exact rate and your take-home amount are always shown before you accept a job, so there are no surprises at payout."
       }
     },
     "job": {
