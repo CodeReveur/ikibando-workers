@@ -217,7 +217,9 @@ export default function Navbar() {
           .desktop-links   { display: none !important; }
           .desktop-right   { display: none !important; }
           .mobile-controls { display: flex !important; }
-          .nav-logo img    { width: 120px !important; height: 48px !important; }
+          /* Size by height with width:auto so the logo keeps its aspect ratio
+             (native 480x105) instead of being stretched to a fixed box. */
+          .nav-logo img    { height: 30px !important; width: auto !important; }
         }
       `}</style>
 
