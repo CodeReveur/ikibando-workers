@@ -398,6 +398,9 @@ export function BazaBotChat({ role = "public", onClose, style }: {
       email,
       subject: `BazaBot chat from ${name}`,
       message: text,
+      // Chat handoff: the visitor is on the site reading replies in the widget, so
+      // agent replies are shown here, never emailed (unlike the contact form).
+      source: "BOT",
     }).catch(() => {});
   };
 

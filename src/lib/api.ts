@@ -1276,6 +1276,9 @@ export async function getProductUpdates(): Promise<BlogPost[]> {
 // ── Contact ───────────────────────────────────────────────────────────────────
 export async function submitContact(payload: {
   name: string; email: string; subject: string; message: string;
+  // "FORM" = contact form (visitor is email-eligible), "BOT" = BazaBot chat
+  // handoff (chat-only, never emailed). Absent is treated as FORM by the server.
+  source?: "FORM" | "BOT";
 }): Promise<void> {
   await http.post("/api/contact", payload);
 }
