@@ -471,23 +471,30 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
   const progressPct = Math.min(100, Math.round(((PROGRESS_STEPS.indexOf(step) + 1) / PROGRESS_STEPS.length) * 100));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <div className="bg-[#141414] border border-[#2a2a2a] rounded-2xl w-full max-w-xl shadow-2xl flex flex-col overflow-hidden">
+    <div className={slideMode
+      ? "fixed inset-0 z-50 bg-[#0d0d0d] overflow-y-auto"
+      : "fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"}>
 
-        {/* Slide-mode progress line (no clickable step markers). */}
-        {slideMode && (
-          <div className="h-1 w-full bg-[#2a2a2a]">
-            <div className="h-full bg-[#f97316] transition-all duration-500 ease-out" style={{ width: `${progressPct}%` }} />
-          </div>
-        )}
+      {/* Slide mode: a full-width progress line pinned to the top of the page. */}
+      {slideMode && (
+        <div className="sticky top-0 left-0 h-1 w-full bg-[#1f1f1f] z-10">
+          <div className="h-full bg-[#f97316] transition-all duration-500 ease-out" style={{ width: `${progressPct}%` }} />
+        </div>
+      )}
+
+      <div className={slideMode
+        ? "mx-auto w-full max-w-xl px-4 sm:px-6 pt-8 pb-14 flex flex-col"
+        : "bg-[#141414] border border-[#2a2a2a] rounded-2xl w-full max-w-xl shadow-2xl flex flex-col overflow-hidden"}>
 
         {/* Header */}
-        <div className="px-6 pt-6 pb-4 border-b border-[#2a2a2a] flex items-start justify-between">
+        <div className={slideMode
+          ? "pb-5 flex items-start justify-between"
+          : "px-6 pt-6 pb-4 border-b border-[#2a2a2a] flex items-start justify-between"}>
           <div>
             <span className="text-[10px] font-bold text-[#f97316] uppercase tracking-wider block mb-0.5">
               {slideMode ? `${progressPct}% complete` : STEP_NUMBER_LOCALIZED[step]}
             </span>
-            <h2 className="text-lg font-bold text-white leading-tight">
+            <h2 className={`${slideMode ? "text-2xl" : "text-lg"} font-bold text-white leading-tight`}>
               {step === "ROLE_SELECT" && t("onboarding.headers.role_select_title")}
               {step === "EMAIL_VERIFY" && t("onboarding.headers.email_verify_title")}
               {step === "ACCOUNT_TYPE" && t("onboarding.headers.account_type_title")}
@@ -516,7 +523,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
         {slideMode && <style>{`@keyframes wizSlide{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}`}</style>}
         <div
           key={slideMode ? step : undefined}
-          className="p-6 overflow-y-auto max-h-[80vh] space-y-6"
+          className={slideMode ? "space-y-6" : "p-6 overflow-y-auto max-h-[80vh] space-y-6"}
           style={slideMode ? { animation: "wizSlide .28s ease" } : undefined}
         >
           {/* ── Role Select ── */}
