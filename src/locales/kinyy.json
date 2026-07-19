@@ -1119,7 +1119,8 @@
     "sort": {
       "recommended": "Ibyifuzwa",
       "name": "Izina (A–Z)"
-    }
+    },
+    "load_more": "Reba abandi bakozi"
   },
   "worker_detail": {
     "not_found": "Umukozi ntashobora kuboneka",

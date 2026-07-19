@@ -267,25 +267,30 @@ function BrowsePageInner() {
     getJobs({ size: 100 }).then(p => setJobs(p.content)).catch(() => {}).finally(() => setLoadingData(false));
   }, []);
 
-  // Fetch the next page of workers from the server. `initial` skips the 1s pause
-  // and replaces (rather than appends). Guarded so a page is never loaded twice.
-  const loadWorkers = useCallback(async (initial: boolean) => {
+  // Fetch the next page of workers from the server. `initial` skips the pause and
+  // replaces (rather than appends); `immediate` skips the pause for the explicit
+  // "Load more" button. Guarded so a page is never loaded twice.
+  const loadWorkers = useCallback(async (initial: boolean, immediate = false) => {
     if (workersBusyRef.current) return;
     if (!initial && !workersHasMoreRef.current) return;
     workersBusyRef.current = true;
     if (initial) setWorkersLoading(true); else setWorkersLoadingMore(true);
-    if (!initial) await new Promise((r) => setTimeout(r, 1000)); // deliberate pause before next batch
+    if (!initial && !immediate) await new Promise((r) => setTimeout(r, 1000)); // pause before auto-loaded batch
     try {
       const p = await getWorkers({ page: workersPageRef.current, size: WORKERS_PAGE_SIZE });
       const content = p.content || [];
       setWorkers((prev) => (initial ? content : [...prev, ...content]));
       workersPageRef.current += 1;
-      const more = p.number + 1 < p.totalPages;
+      // Belt and braces: trust totalPages when present, but a FULL page also means
+      // "probably more" — so a missing/odd meta shape can never kill pagination again.
+      const more = (Number.isFinite(p.totalPages) && p.totalPages > 0)
+        ? p.number + 1 < p.totalPages
+        : content.length === WORKERS_PAGE_SIZE;
       workersHasMoreRef.current = more;
       setWorkersHasMore(more);
     } catch {
-      workersHasMoreRef.current = false;
-      setWorkersHasMore(false);
+      // Network hiccup: keep hasMore so the "Load more" button lets the user retry.
+      setWorkersHasMore(workersHasMoreRef.current);
     } finally {
       workersBusyRef.current = false;
       if (initial) setWorkersLoading(false); else setWorkersLoadingMore(false);
@@ -566,7 +571,7 @@ function BrowsePageInner() {
           {tab === "workers"
             ? (workersLoading
                 ? (t("jobs_page.loading") || "Loading…")
-                : `${filteredWorkers.length}${workersHasMore ? "+" : ""} ${t("browse_page.workers_word") || "workers"}`)
+                : (t("browse_page.workers_found", { count: filteredWorkers.length }) || `${filteredWorkers.length} workers found`) + (workersHasMore ? " +" : ""))
             : (loadingData
                 ? (t("jobs_page.loading") || "Loading…")
                 : (t("jobs_page.found_count", { count: filteredJobs.length }) || `${filteredJobs.length} jobs found`))}
@@ -665,18 +670,33 @@ function BrowsePageInner() {
         )}
         {tab === "workers" && !workersLoading && workersHasMore && (
           <div ref={workersSentinelRef} style={{
-            display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
-            padding: "26px 0", color: "#666", fontSize: 13, minHeight: 30,
+            display: "flex", flexDirection: "column", alignItems: "center", gap: 12,
+            padding: "26px 0 8px", minHeight: 60,
           }}>
-            <span style={{
-              width: 16, height: 16, borderRadius: "50%", flexShrink: 0,
-              border: "2px solid #333", borderTopColor: "#f97316",
-              animation: "spin 0.8s linear infinite",
-              opacity: workersLoadingMore ? 1 : 0.45,
-            }} />
-            <span>{workersLoadingMore
-              ? (t("jobs_page.loading_more") || "Loading more…")
-              : (t("browse_page.scroll_for_more") || "Scroll for more")}</span>
+            {workersLoadingMore ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 10, color: "#888", fontSize: 13 }}>
+                <span style={{
+                  width: 16, height: 16, borderRadius: "50%", flexShrink: 0,
+                  border: "2px solid #333", borderTopColor: "#f97316",
+                  animation: "spin 0.8s linear infinite",
+                }} />
+                <span>{t("jobs_page.loading_more") || "Loading more…"}</span>
+              </div>
+            ) : (
+              /* Always-visible manual fallback: if auto-load ever misses, one tap works. */
+              <button
+                onClick={() => loadWorkers(false, true)}
+                style={{
+                  display: "flex", alignItems: "center", gap: 8,
+                  background: "rgba(249,115,22,0.1)", border: "1px solid rgba(249,115,22,0.4)",
+                  color: "#f97316", borderRadius: 999, padding: "11px 26px",
+                  fontSize: 13.5, fontWeight: 700, cursor: "pointer",
+                }}
+              >
+                <ChevronDown size={15} />
+                {t("browse_page.load_more") || "Load more workers"}
+              </button>
+            )}
             <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
           </div>
         )}

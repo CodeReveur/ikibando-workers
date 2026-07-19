@@ -1119,7 +1119,8 @@
     "sort": {
       "recommended": "Recommandé",
       "name": "Nom (A–Z)"
-    }
+    },
+    "load_more": "Voir plus de travailleurs"
   },
   "worker_detail": {
     "not_found": "Travailleur non trouvé",

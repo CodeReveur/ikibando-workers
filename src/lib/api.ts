@@ -546,6 +546,25 @@ export interface Page<T> {
   size: number;
 }
 
+/**
+ * Flatten Spring's VIA_DTO page shape. The server serializes Page as
+ * {content, page:{number,size,totalElements,totalPages}} — the meta lives under
+ * `page`, NOT at the top level. Reading `p.totalPages` off that raw shape gives
+ * undefined, which silently killed pagination ("has more" always false). Every
+ * paged endpoint funnels through here so callers get the flat shape they expect.
+ */
+function normalizePage<T>(raw: any): Page<T> {
+  const meta = raw?.page ?? raw ?? {};
+  const content: T[] = raw?.content ?? [];
+  return {
+    content,
+    totalElements: Number(meta.totalElements ?? content.length),
+    totalPages:    Number(meta.totalPages ?? (content.length ? 1 : 0)),
+    number:        Number(meta.number ?? 0),
+    size:          Number(meta.size ?? content.length),
+  };
+}
+
 // ── Domain DTOs ───────────────────────────────────────────────────────────────
 export interface JobDto {
   id: string;
@@ -810,7 +829,7 @@ export interface NotificationDto {
 
 export async function getNotifications(token: string, page = 0, size = 20): Promise<Page<NotificationDto>> {
   const { data } = await http.get("/api/notifications", { params: { page, size }, headers: authHeader(token) });
-  return data.data;
+  return normalizePage(data.data);
 }
 
 /**
@@ -921,7 +940,7 @@ export async function getJobs(params?: {
   page?: number; size?: number; category?: string; district?: string; urgency?: string;
 }): Promise<Page<JobDto>> {
   const { data } = await http.get("/api/jobs", { params });
-  return data.data;
+  return normalizePage(data.data);
 }
 
 export async function getJob(id: string): Promise<JobDto> {
@@ -1132,7 +1151,7 @@ export async function getWorkers(params?: {
   page?: number; size?: number; category?: string;
 }): Promise<Page<WorkerProfileDto>> {
   const { data } = await http.get("/api/workers", { params });
-  return data.data;
+  return normalizePage(data.data);
 }
 
 export interface BadgeVerification {
@@ -1259,7 +1278,7 @@ export async function getBlogPosts(params?: {
   size?: number;
 }): Promise<Page<BlogPost>> {
   const { data } = await http.get("/api/blog", { params });
-  return data.data;
+  return normalizePage(data.data);
 }
 
 export async function getBlogPost(slug: string): Promise<BlogPost> {

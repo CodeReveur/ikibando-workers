@@ -1120,7 +1120,8 @@
     "sort": {
       "recommended": "Recommended",
       "name": "Name (A–Z)"
-    }
+    },
+    "load_more": "Load more workers"
   },
   "worker_detail": {
     "not_found": "Worker not found",

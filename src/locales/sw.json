@@ -1119,7 +1119,8 @@
     "sort": {
       "recommended": "Inayopendekezwa",
       "name": "Jina (A–Z)"
-    }
+    },
+    "load_more": "Tazama wafanyakazi zaidi"
   },
   "worker_detail": {
     "not_found": "Mfanyakazi hajapatikana",
