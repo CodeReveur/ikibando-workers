@@ -525,7 +525,8 @@
       "phone_req": "Le numéro de téléphone est obligatoire.",
       "phone_invalid": "Format de numéro de téléphone invalide.",
       "password_req": "Le mot de passe est obligatoire.",
-      "password_min": "Le mot de passe doit comporter au moins 8 caractères."
+      "password_min": "Le mot de passe doit comporter au moins 8 caractères.",
+      "name_two_words": "Entrez votre nom complet (au moins deux noms)"
     },
     "toasts": {
       "google_fail_desc": "Échec de l'inscription Google. Veuillez réessayer.",

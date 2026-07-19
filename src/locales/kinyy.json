@@ -525,7 +525,8 @@
       "phone_req": "Numero ya telefone irakenewe.",
       "phone_invalid": "Numero ya telefone ntiboneye.",
       "password_req": "Ijambo ry'ibanga rirakenewe.",
-      "password_min": "Ijambo ry'ibanga rigomba kugira inyuguti zitari munsi ya 8."
+      "password_min": "Ijambo ry'ibanga rigomba kugira inyuguti zitari munsi ya 8.",
+      "name_two_words": "Andika amazina yawe yose (nibura amazina abiri)"
     },
     "toasts": {
       "google_fail_desc": "Kwiyandikisha na Google byanze. Ongera ugerageze.",

@@ -46,9 +46,43 @@ export default function SignUpPage() {
     if (ref) setReferralCode(ref.trim().toUpperCase());
   }, []);
 
+  /** One rule set for blur, live typing and submit. Returns "" when the value is valid. */
+  const validateField = (field: keyof typeof form, value: string): string => {
+    if (field === "name") {
+      if (!value.trim()) return t("signup.errors.name_req");
+      // A real full name: at least two words (first + last name).
+      if (value.trim().split(/\s+/).length < 2)
+        return t("signup.errors.name_two_words") || "Enter your full name (at least two names)";
+    }
+    if (field === "email") {
+      if (!value) return t("signup.errors.email_req");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return t("signup.errors.email_invalid");
+    }
+    if (field === "phone") {
+      if (!value.trim() || value.trim() === "+250") return t("signup.errors.phone_req");
+      if (!/^\+\d{1,4}\s?\d{6,14}$/.test(value.replace(/[\s-]/g, ""))) return t("signup.errors.phone_invalid");
+    }
+    if (field === "password") {
+      if (!value) return t("signup.errors.password_req");
+      if (value.length < 8) return t("signup.errors.password_min");
+    }
+    return "";
+  };
+
+  // Live validation: each field is checked 1s after the user stops typing in it.
+  const validateTimers = useRef<Partial<Record<keyof typeof form, ReturnType<typeof setTimeout>>>>({});
+  const queueValidate = (k: keyof typeof form, value: string) => {
+    clearTimeout(validateTimers.current[k]);
+    validateTimers.current[k] = setTimeout(() => {
+      setFieldErrors((f) => ({ ...f, [k]: validateField(k, value) }));
+    }, 1000);
+  };
+
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm((f) => ({ ...f, [k]: e.target.value }));
+    const value = e.target.value;
+    setForm((f) => ({ ...f, [k]: value }));
     if (fieldErrors[k]) setFieldErrors((f) => ({ ...f, [k]: "" }));
+    queueValidate(k, value);
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,24 +106,13 @@ export default function SignUpPage() {
 
     setForm((f) => ({ ...f, phone: formatted }));
     if (fieldErrors.phone) setFieldErrors((f) => ({ ...f, phone: "" }));
+    queueValidate("phone", formatted);
   };
 
+  /** Leaving a field validates it immediately (and cancels any pending 1s check). */
   const handleBlur = (field: keyof typeof form) => {
-    let err = "";
-    if (field === "name" && !form.name.trim()) err = t("signup.errors.name_req");
-    if (field === "email") {
-      if (!form.email) err = t("signup.errors.email_req");
-      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) err = t("signup.errors.email_invalid");
-    }
-    if (field === "phone") {
-      if (!form.phone) err = t("signup.errors.phone_req");
-      else if (!/^\+\d{1,4}\s?\d{6,14}$/.test(form.phone.replace(/[\s-]/g, ""))) err = t("signup.errors.phone_invalid");
-    }
-    if (field === "password") {
-      if (!form.password) err = t("signup.errors.password_req");
-      else if (form.password.length < 8) err = t("signup.errors.password_min");
-    }
-    setFieldErrors((f) => ({ ...f, [field]: err }));
+    clearTimeout(validateTimers.current[field]);
+    setFieldErrors((f) => ({ ...f, [field]: validateField(field, form[field]) }));
   };
 
   /* ── Facebook SDK bootstrap (Disabled for v1) ────────────────────────── */
@@ -203,14 +226,14 @@ export default function SignUpPage() {
 
   /* ── Email / password handler ───────────────────────────────────────── */
   const handleSubmit = async () => {
-    // Validate all
-    let hasError = false;
-    const newErrors = { name: "", email: "", phone: "", password: "" };
-
-    if (!form.name.trim()) { newErrors.name = t("signup.errors.name_req"); hasError = true; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) { newErrors.email = t("signup.errors.email_invalid"); hasError = true; }
-    if (!/^\+\d{1,4}\s?\d{6,14}$/.test(form.phone.replace(/[\s-]/g, ""))) { newErrors.phone = t("signup.errors.phone_invalid"); hasError = true; }
-    if (form.password.length < 8) { newErrors.password = t("signup.errors.password_min"); hasError = true; }
+    // Validate all with the same rules used on typing/blur.
+    const newErrors = {
+      name:     validateField("name", form.name),
+      email:    validateField("email", form.email),
+      phone:    validateField("phone", form.phone),
+      password: validateField("password", form.password),
+    };
+    const hasError = Object.values(newErrors).some(Boolean);
 
     setFieldErrors(newErrors);
     if (hasError) {
