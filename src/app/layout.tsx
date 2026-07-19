@@ -7,6 +7,7 @@ import { Providers } from "@/components/providers";
 import { BazaBotWidget } from "@/components/support/bazabot-widget";
 import { VisitorTracker } from "@/components/analytics/visitor-tracker";
 import { LiveNavOverlay } from "@/components/nav/live-nav";
+import { ConsoleGuard } from "@/components/security/console-guard";
 import {
   OrganizationSchema,
   WebSiteSchema,
@@ -129,6 +130,7 @@ export default function RootLayout({
           <ContentWrapper>{children}</ContentWrapper>
           <BazaBotWidget />
           <LiveNavOverlay />
+          <ConsoleGuard />
         </Providers>
       </body>
     </html>
