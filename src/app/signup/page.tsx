@@ -59,12 +59,18 @@ export default function SignUpPage() {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return t("signup.errors.email_invalid");
     }
     if (field === "phone") {
-      if (!value.trim() || value.trim() === "+250") return t("signup.errors.phone_req");
-      if (!/^\+\d{1,4}\s?\d{6,14}$/.test(value.replace(/[\s-]/g, ""))) return t("signup.errors.phone_invalid");
+      const digits = value.replace(/[\s-]/g, "");
+      // A bare "+" or just a country code (any country, e.g. +250, +1, +44) counts as empty.
+      if (!digits || /^\+?\d{0,3}$/.test(digits)) return t("signup.errors.phone_req");
+      // E.164 international format: "+", non-zero country code, 8-15 digits total. Any country.
+      if (!/^\+[1-9]\d{7,14}$/.test(digits)) return t("signup.errors.phone_invalid");
     }
     if (field === "password") {
       if (!value) return t("signup.errors.password_req");
-      if (value.length < 8) return t("signup.errors.password_min");
+      // Strong password: 8+ chars with uppercase, lowercase, a number and a symbol.
+      if (value.length < 8 || !/[a-z]/.test(value) || !/[A-Z]/.test(value)
+          || !/\d/.test(value) || !/[^A-Za-z0-9]/.test(value))
+        return t("signup.errors.password_weak");
     }
     return "";
   };

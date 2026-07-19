@@ -508,7 +508,7 @@
       "email_label": "Barua Pepe",
       "phone_label": "Nambari ya Simu",
       "password_label": "Nenosiri",
-      "password_placeholder": "Herufi zisizopungua 8",
+      "password_placeholder": "Herufi 8+, Aa, 0-9 na alama",
       "referral_label": "Nambari ya Marejeleo (hiari)"
     },
     "footer": {
@@ -526,7 +526,8 @@
       "phone_invalid": "Umbizo la nambari ya simu si sahihi.",
       "password_req": "Nenosiri linahitajika.",
       "password_min": "Nenosiri lazima liwe na angalau herufi 8.",
-      "name_two_words": "Andika majina yako kamili (angalau majina mawili)"
+      "name_two_words": "Andika majina yako kamili (angalau majina mawili)",
+      "password_weak": "Tumia nenosiri imara: herufi 8+, kubwa na ndogo, namba na alama."
     },
     "toasts": {
       "google_fail_desc": "Kujisajili na Google kumeshindwa. Tafadhali jaribu tena.",
