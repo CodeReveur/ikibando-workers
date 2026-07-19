@@ -294,18 +294,32 @@ function BrowsePageInner() {
 
   useEffect(() => { loadWorkers(true); }, [loadWorkers]);
 
-  // Observe the sentinel placed after the grid; pull the next batch when it enters view.
+  // Scroll-position detection — NOT an IntersectionObserver. An observer only
+  // fires on visibility *crossings*, which silently never happens when it attaches
+  // at the wrong moment; a plain scroll listener re-checks the indicator's actual
+  // position on every scroll/resize tick, so reaching the bottom always triggers.
+  const workersSentinelRef = useCallback((el: HTMLDivElement | null) => setWorkersSentinel(el), []);
   useEffect(() => {
     if (!workersSentinel) return;
-    const io = new IntersectionObserver(
-      (entries) => { if (entries[0].isIntersecting) loadWorkers(false); },
-      { rootMargin: "200px" }
-    );
-    io.observe(workersSentinel);
-    return () => io.disconnect();
+    const check = () => {
+      if (workersBusyRef.current || !workersHasMoreRef.current) return;
+      const rect = workersSentinel.getBoundingClientRect();
+      const viewH = window.innerHeight || document.documentElement.clientHeight;
+      // Indicator within 300px below the viewport bottom (or above it) → load next rows.
+      if (rect.top <= viewH + 300) loadWorkers(false);
+    };
+    window.addEventListener("scroll", check, { passive: true });
+    window.addEventListener("resize", check);
+    document.addEventListener("scroll", check, { passive: true, capture: true }); // inner scroll containers too
+    check(); // page taller than content? load immediately until it fills
+    const iv = setInterval(check, 1500); // belt-and-braces: recheck even without scroll events
+    return () => {
+      window.removeEventListener("scroll", check);
+      window.removeEventListener("resize", check);
+      document.removeEventListener("scroll", check, { capture: true } as EventListenerOptions);
+      clearInterval(iv);
+    };
   }, [workersSentinel, loadWorkers]);
-
-  const workersSentinelRef = useCallback((el: HTMLDivElement | null) => setWorkersSentinel(el), []);
 
   useEffect(() => {
     const cat = searchParams.get('category');
@@ -650,8 +664,20 @@ function BrowsePageInner() {
               </div>
         )}
         {tab === "workers" && !workersLoading && workersHasMore && (
-          <div ref={workersSentinelRef} style={{ textAlign: "center", padding: "24px 0", color: "#555", fontSize: 13, minHeight: 24 }}>
-            {workersLoadingMore ? (t("jobs_page.loading_more") || "Loading more…") : ""}
+          <div ref={workersSentinelRef} style={{
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+            padding: "26px 0", color: "#666", fontSize: 13, minHeight: 30,
+          }}>
+            <span style={{
+              width: 16, height: 16, borderRadius: "50%", flexShrink: 0,
+              border: "2px solid #333", borderTopColor: "#f97316",
+              animation: "spin 0.8s linear infinite",
+              opacity: workersLoadingMore ? 1 : 0.45,
+            }} />
+            <span>{workersLoadingMore
+              ? (t("jobs_page.loading_more") || "Loading more…")
+              : (t("browse_page.scroll_for_more") || "Scroll for more")}</span>
+            <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
           </div>
         )}
 
