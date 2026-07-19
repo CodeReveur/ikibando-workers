@@ -39,8 +39,13 @@ export default function SignInPage() {
   const [gateResult, setGateResult] = useState<any>(null);
   const fbReady = useRef(false);
 
+  /* Whether the resumed wizard uses the sliding full-page flow (email logins)
+     or the classic modal (social logins keep their original wizard). */
+  const [slideResume, setSlideResume] = useState(false);
+
   /* Post-authentication routing (shared by email + social + gate resolution). */
-  const proceed = (result: any) => {
+  const proceed = (result: any, slide = false) => {
+    setSlideResume(slide);
     if (!result.user.onboardingCompleted) {
       setAuthResult(result);
       setShowWizard(true);
@@ -169,7 +174,7 @@ export default function SignInPage() {
       if (result.requiresEmailVerification || result.requires2fa || result.requires2faSetup) {
         setGateResult(result);
       } else {
-        proceed(result);
+        proceed(result, true);
       }
     } catch (e: unknown) {
       const { msg, action } = signInError(e, t("signin.toasts.invalid_creds_desc"));
@@ -588,7 +593,7 @@ export default function SignInPage() {
           result={gateResult}
           email={email}
           password={password}
-          onResolved={(final) => { setGateResult(null); proceed(final); }}
+          onResolved={(final) => { setGateResult(null); proceed(final, true); }}
         />
       )}
       {showWizard && authResult && (
@@ -596,6 +601,7 @@ export default function SignInPage() {
           email={authResult.user.email}
           authResult={authResult}
           isLogin={true}
+          slideMode={slideResume}
           onComplete={() => {
             if (authResult.user.role === "WORKER" && !authResult.user.badgeSubmitted) {
               setShowWizard(false);

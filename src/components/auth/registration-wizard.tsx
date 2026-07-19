@@ -209,8 +209,8 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     restoredRef.current = true;
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // The onboarding payload from the current state — shared by the final submit
-  // and the silent per-step save.
+  // The onboarding payload from the current state — used by the FINAL submit,
+  // where defaults are fine because the user has walked every step.
   const buildPayload = (): OnboardingData => ({
     role: showRoleSelect ? selectedRole : undefined,
     dob,
@@ -224,6 +224,28 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     equipment: equipment.map((name) => ({ name, available: true })),
     availability: availability.map((d) => FULL_DAYS[d]),
   });
+
+  // Partial payload for the SILENT per-step saves: only fields the user actually
+  // provided. Sending defaults (location {country}, equipment []) from the first
+  // slide made a barely-started profile look complete server-side, so a returning
+  // login jumped to the badge step instead of resuming at the missing step.
+  const buildDraftPayload = (): OnboardingData => {
+    const p: Record<string, unknown> = {};
+    if (showRoleSelect && selectedRole) p.role = selectedRole;
+    if (dob) p.dob = dob;
+    if (education) p.educationLevel = education;
+    if (experiences.length) {
+      p.experienceType = experiences[0];
+      p.experienceTypes = experiences;
+    }
+    if (accountType) p.accountType = accountType;
+    if (tin.trim()) p.tin = tin.trim();
+    if (!isEmployer && isGroup && memberEmails.length) p.teamMembers = memberEmails;
+    if (address) p.location = address;
+    if (equipment.length) p.equipment = equipment.map((name) => ({ name, available: true }));
+    if (availability.length) p.availability = availability.map((d) => FULL_DAYS[d]);
+    return p as unknown as OnboardingData;
+  };
 
   // Silent per-step save to the server (slide mode only). Debounced so rapid
   // field edits don't spam the API. Only runs once we're past the first slide
@@ -247,7 +269,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     if (slideMode && token && DATA_STEPS.includes(step)) {
       if (silentSaveRef.current) clearTimeout(silentSaveRef.current);
       silentSaveRef.current = setTimeout(() => {
-        submitOnboarding(buildPayload(), token, false).catch(() => { /* silent */ });
+        submitOnboarding(buildDraftPayload(), token, false).catch(() => { /* silent */ });
       }, 800);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -303,10 +325,14 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
         next = "EQUIPMENT";
       }
 
-      // Resume at the saved draft step, but only once the prerequisites for that
-      // phase are met (the natural next step is itself a data-collection step).
+      // Resume at the saved draft step, but never AHEAD of the first incomplete
+      // step: if the server says dob is still missing, the wizard must show the
+      // personal step, not a later one the local draft happened to be on.
       if (next && draftStepRef.current && DATA_STEPS.includes(next)) {
-        next = draftStepRef.current;
+        const draft = draftStepRef.current;
+        if (PROGRESS_STEPS.indexOf(draft) <= PROGRESS_STEPS.indexOf(next)) {
+          next = draft;
+        }
         getJobCategories().then(setCategories).catch(console.error);
       }
       if (next) setStep(next);
