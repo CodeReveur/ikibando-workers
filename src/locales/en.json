@@ -1252,13 +1252,15 @@
       "legal_name_label": "Legal Name (Registered Name)",
       "address_label": "Registered Address",
       "photo_on_profile_label": "Use this photo as my profile picture",
-      "photo_on_profile_hint": "Employers will see it on your public profile. It stays on your badge either way, and you can change this later in Settings."
+      "photo_on_profile_hint": "Employers will see it on your public profile. It stays on your badge either way, and you can change this later in Settings.",
+      "take_photo": "Take a photo with the camera"
     },
     "toasts": {
       "photo_success": "Photo uploaded successfully",
       "photo_failed": "Failed to upload photo",
       "validation_error": "All identity fields are required.",
-      "submit_failed": "Failed to submit badge information."
+      "submit_failed": "Failed to submit badge information.",
+      "no_face": "No face detected in this photo. Use a clear, well-lit photo of your face."
     },
     "status": {
       "uploading": "Uploading...",
@@ -1273,7 +1275,10 @@
     "submit_btn": "Submit & Generate Badge",
     "badge_id_label": "Badge ID:",
     "view_badge_btn": "View My Badge",
-    "close_btn": "Close"
+    "close_btn": "Close",
+    "errors": {
+      "national_id_min": "The ID number must have at least 10 digits."
+    }
   },
   "titles": {
     "home": "MpahMapu - Hire Verified Workers in Kigali, Rwanda",

@@ -7,6 +7,7 @@ import { AuthResult, BadgeSubmissionData, submitBadge, uploadFile, getProfile, A
 import { formatAddress } from "@/components/ui/address-picker";
 import { useToast } from "@/components/ui/toast";
 import { useLanguage } from "@/lib/language-context";
+import { detectFaceInFile } from "@/lib/face-check";
 
 interface Props {
   authResult: AuthResult;
@@ -55,9 +56,43 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
     ? (savedAddress.label || formatAddress(savedAddress))
     : "";
 
+  /** National ID must carry at least 10 digits (separators/spaces don't count). */
+  const idDigits = nationalId.replace(/\D/g, "").length;
+  const idValid = idDigits >= 10;
+
+  /**
+   * Shared by the picker and the camera input. The photo is face-checked BEFORE
+   * it is uploaded to storage: no face → rejected on the spot, nothing uploaded.
+   * If no detection engine can run (old browser + CDN unreachable) the photo is
+   * allowed through rather than locking the user out of getting a badge.
+   */
+  const handlePhotoFile = async (file: File) => {
+    setUploadingPhoto(true);
+    try {
+      const verdict = await detectFaceInFile(file);
+      if (verdict === "no-face") {
+        toastError(t("badge_wizard.toasts.no_face")
+          || "No face detected in this photo. Use a clear, well-lit photo of your face.");
+        return;
+      }
+      const url = await uploadFile(file, authResult.accessToken);
+      setPhotoUrl(url);
+      toastSuccess(t("badge_wizard.toasts.photo_success"));
+    } catch (err) {
+      toastError(t("badge_wizard.toasts.photo_failed"));
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
   const handleIdentitySubmit = () => {
     if (!photoUrl || !nationalId || !legalName) {
       toastError(t("badge_wizard.toasts.validation_error"));
+      return;
+    }
+    if (!idValid) {
+      toastError(t("badge_wizard.errors.national_id_min")
+        || "The ID number must have at least 10 digits.");
       return;
     }
     setStep("LOCATION");
@@ -130,19 +165,11 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
                     accept="image/*"
                     disabled={uploadingPhoto}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
-                    onChange={async (e) => {
+                    onChange={(e) => {
                       if (!e.target.files?.length) return;
                       const file = e.target.files[0];
-                      setUploadingPhoto(true);
-                      try {
-                        const url = await uploadFile(file, authResult.accessToken);
-                        setPhotoUrl(url);
-                        toastSuccess(t("badge_wizard.toasts.photo_success"));
-                      } catch (err) {
-                        toastError(t("badge_wizard.toasts.photo_failed"));
-                      } finally {
-                        setUploadingPhoto(false);
-                      }
+                      e.target.value = ""; // rejecting then re-picking the same file must re-fire
+                      handlePhotoFile(file);
                     }}
                   />
                   <div className={`w-full bg-[#1a1a1a] border-2 border-dashed ${photoUrl ? 'border-green-500/50' : 'border-[#2a2a2a] group-hover:border-[#f97316]/50'} rounded-xl px-4 py-6 text-center transition-colors flex flex-col items-center justify-center min-h-[120px]`}>
@@ -167,6 +194,28 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
                     )}
                   </div>
                 </div>
+
+                {/* Direct camera capture: opens the device camera (front-facing) on phones. */}
+                <label className={`mt-2 flex items-center justify-center gap-2 w-full border border-[#2a2a2a] rounded-xl py-2.5 text-xs font-semibold transition-colors ${uploadingPhoto ? "text-gray-600 cursor-not-allowed" : "text-gray-300 hover:border-[#f97316]/60 hover:text-white cursor-pointer"}`}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    capture="user"
+                    disabled={uploadingPhoto}
+                    className="hidden"
+                    onChange={(e) => {
+                      if (!e.target.files?.length) return;
+                      const file = e.target.files[0];
+                      e.target.value = "";
+                      handlePhotoFile(file);
+                    }}
+                  />
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  {t("badge_wizard.fields.take_photo") || "Take a photo with the camera"}
+                </label>
 
                 {/* Consent for this photo to double as the public profile picture. */}
                 {photoUrl && (
@@ -196,11 +245,17 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
                 </label>
                 <input
                   type="text"
+                  inputMode="numeric"
                   placeholder="1 19... "
                   value={nationalId}
                   onChange={(e) => setNationalId(e.target.value)}
-                  className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-[#f97316] transition-colors"
+                  className={`w-full bg-[#1a1a1a] border rounded-xl px-4 py-3 text-sm text-white outline-none transition-colors ${nationalId && !idValid ? "border-red-500/60 focus:border-red-500" : "border-[#2a2a2a] focus:border-[#f97316]"}`}
                 />
+                {nationalId && !idValid && (
+                  <p className="text-[11px] text-red-400 mt-1.5">
+                    {t("badge_wizard.errors.national_id_min") || "The ID number must have at least 10 digits."}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -217,7 +272,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
 
               <button
                 onClick={handleIdentitySubmit}
-                disabled={!photoUrl || !nationalId || !legalName}
+                disabled={!photoUrl || !idValid || !legalName}
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors mt-2"
               >
                 {t("badge_wizard.continue_btn")}

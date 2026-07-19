@@ -1251,13 +1251,15 @@
       "legal_name_label": "Izina ry'amategeko (Izina ryiyandikishije)",
       "address_label": "Aho utuye handitswe",
       "photo_on_profile_label": "Koresha iyi foto nk'ifoto ya profile yanjye",
-      "photo_on_profile_hint": "Abakoresha bazayibona kuri profile yawe rusange. Isigara ku ikarita yawe uko byagenda kose, kandi ushobora guhindura ibi nyuma muri Igenamiterere."
+      "photo_on_profile_hint": "Abakoresha bazayibona kuri profile yawe rusange. Isigara ku ikarita yawe uko byagenda kose, kandi ushobora guhindura ibi nyuma muri Igenamiterere.",
+      "take_photo": "Fata ifoto ukoresheje kamera"
     },
     "toasts": {
       "photo_success": "Ifoto yashyizweho neza",
       "photo_failed": "Gushyiraho ifoto byanze",
       "validation_error": "Ibisabwa byose by'umwirondoro ni ngombwa.",
-      "submit_failed": "Kwohereza amakuru y'ikirango byanze."
+      "submit_failed": "Kwohereza amakuru y'ikirango byanze.",
+      "no_face": "Nta maso agaragara kuri iyi foto. Koresha ifoto igaragaza neza mu maso hawe."
     },
     "status": {
       "uploading": "Gushyiraho...",
@@ -1272,7 +1274,10 @@
     "submit_btn": "Emeza & Kora ikirango",
     "badge_id_label": "ID y'ikirango:",
     "view_badge_btn": "Reba ikirango cyanjye",
-    "close_btn": "Funga"
+    "close_btn": "Funga",
+    "errors": {
+      "national_id_min": "Nimero y’indangamuntu igomba kugira imibare nibura 10."
+    }
   },
   "titles": {
     "home": "MpahMapu - Guhuza abakozi b'abanyamyuga bashyizweho ikimenyetso i Kigali",

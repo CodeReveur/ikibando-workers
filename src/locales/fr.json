@@ -1251,13 +1251,15 @@
       "legal_name_label": "Nom légal (nom enregistré)",
       "address_label": "Adresse enregistrée",
       "photo_on_profile_label": "Utiliser cette photo comme photo de profil",
-      "photo_on_profile_hint": "Les employeurs la verront sur votre profil public. Elle reste sur votre badge dans tous les cas, et vous pourrez changer cela plus tard dans les Paramètres."
+      "photo_on_profile_hint": "Les employeurs la verront sur votre profil public. Elle reste sur votre badge dans tous les cas, et vous pourrez changer cela plus tard dans les Paramètres.",
+      "take_photo": "Prendre une photo avec la caméra"
     },
     "toasts": {
       "photo_success": "Photo téléchargée avec succès",
       "photo_failed": "Échec du téléchargement de la photo",
       "validation_error": "Tous les champs d'identité sont obligatoires.",
-      "submit_failed": "Échec de la soumission des informations du badge."
+      "submit_failed": "Échec de la soumission des informations du badge.",
+      "no_face": "Aucun visage détecté sur cette photo. Utilisez une photo claire et bien éclairée de votre visage."
     },
     "status": {
       "uploading": "Téléchargement...",
@@ -1272,7 +1274,10 @@
     "submit_btn": "Soumettre et générer le badge",
     "badge_id_label": "ID du badge :",
     "view_badge_btn": "Voir mon badge",
-    "close_btn": "Fermer"
+    "close_btn": "Fermer",
+    "errors": {
+      "national_id_min": "Le numéro d’identité doit comporter au moins 10 chiffres."
+    }
   },
   "titles": {
     "home": "MpahMapu - Recrutez des travailleurs vérifiés à Kigali, Rwanda",

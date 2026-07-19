@@ -1251,13 +1251,15 @@
       "legal_name_label": "Jina la Kisheria (Jina lililosajiliwa)",
       "address_label": "Anwani Iliyosajiliwa",
       "photo_on_profile_label": "Tumia picha hii kama picha yangu ya wasifu",
-      "photo_on_profile_hint": "Waajiri wataiona kwenye wasifu wako wa umma. Itabaki kwenye beji yako vyovyote vile, na unaweza kubadilisha hili baadaye katika Mipangilio."
+      "photo_on_profile_hint": "Waajiri wataiona kwenye wasifu wako wa umma. Itabaki kwenye beji yako vyovyote vile, na unaweza kubadilisha hili baadaye katika Mipangilio.",
+      "take_photo": "Piga picha kwa kamera"
     },
     "toasts": {
       "photo_success": "Picha imepakiwa kwa mafanikio",
       "photo_failed": "Imeshindwa kupakia picha",
       "validation_error": "Mengine yote ya utambulisho yanahitajika.",
-      "submit_failed": "Imeshindwa kutuma taarifa za beji."
+      "submit_failed": "Imeshindwa kutuma taarifa za beji.",
+      "no_face": "Hakuna uso uliotambuliwa kwenye picha hii. Tumia picha wazi inayoonyesha uso wako."
     },
     "status": {
       "uploading": "Inapakia...",
@@ -1272,7 +1274,10 @@
     "submit_btn": "Tuma na Utengeneze Beji",
     "badge_id_label": "Beji ID:",
     "view_badge_btn": "Angalia Beji Yangu",
-    "close_btn": "Funga"
+    "close_btn": "Funga",
+    "errors": {
+      "national_id_min": "Namba ya kitambulisho lazima iwe na tarakimu angalau 10."
+    }
   },
   "titles": {
     "home": "MpahMapu - Ajiri Wafanyakazi Waliothibitishwa Kigali, Rwanda",
