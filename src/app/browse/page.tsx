@@ -599,7 +599,7 @@ function BrowsePageInner() {
                     <a key={w.id} href={`/browse/${w.id}`} className="bcard" style={{
                       background: "#1c1c1c", border: "1px solid #272727", borderRadius: 14,
                       padding: "16px", display: "flex", flexDirection: "column", gap: 12,
-                      textDecoration: "none",
+                      textDecoration: "none", overflow: "hidden",
                     }}>
                       {/* top row — availability shows as a green dot on the avatar, never over the name */}
                       <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
@@ -622,9 +622,11 @@ function BrowsePageInner() {
                             }} />
                           )}
                         </div>
-                        <div style={{ minWidth: 0 }}>
-                          <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0" }}>{w.name}</p>
-                          <p title={catLabels.join(", ")} style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{localizedWCat}</p>
+                        {/* flex:1 + minWidth:0 keeps the text inside the card; wrap instead of
+                            ellipsis so long names/categories show in full, never cut to "…". */}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ margin: 0, fontWeight: 700, fontSize: 13, color: "#f0f0f0", overflowWrap: "anywhere", wordBreak: "break-word", lineHeight: 1.3 }}>{w.name}</p>
+                          <p style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2, overflowWrap: "anywhere", wordBreak: "break-word", lineHeight: 1.35 }}>{localizedWCat}</p>
                         </div>
                       </div>
 
@@ -642,9 +644,9 @@ function BrowsePageInner() {
                           );
                         })()}
                         {(w.locationShort ?? w.district) && (
-                          <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                            <MapPin size={11} color="#555" />
-                            <span style={{ fontSize: 11, color: "#555" }}>{w.locationShort ?? w.district}</span>
+                          <span style={{ display: "flex", alignItems: "center", gap: 5, minWidth: 0 }}>
+                            <MapPin size={11} color="#555" style={{ flexShrink: 0 }} />
+                            <span style={{ fontSize: 11, color: "#555", overflowWrap: "anywhere", wordBreak: "break-word" }}>{w.locationShort ?? w.district}</span>
                           </span>
                         )}
                       </div>
@@ -656,6 +658,7 @@ function BrowsePageInner() {
                             <span key={eq} style={{
                               fontSize: 9, fontWeight: 600, borderRadius: 999, padding: "2px 7px",
                               background: "rgba(249,115,22,0.07)", color: "#f97316",
+                              overflowWrap: "anywhere", wordBreak: "break-word", maxWidth: "100%",
                             }}>{eq}</span>
                           ))}
                           {w.equipment.length > 3 && (

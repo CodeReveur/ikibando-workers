@@ -285,7 +285,7 @@ export default function Home() {
                       const text = catLabels.slice(0, MAXW).join(", ")
                         + (catLabels.length > MAXW ? ` +${catLabels.length - MAXW} ${t("worker_detail.more") || "more"}` : "");
                       return (
-                        <p title={catLabels.join(", ")} style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        <p style={{ margin: 0, fontSize: 11, color: "#555", marginTop: 2, overflowWrap: "anywhere", wordBreak: "break-word", lineHeight: 1.35 }}>
                           {text}
                         </p>
                       );
@@ -306,7 +306,7 @@ export default function Home() {
                 {(w.locationShort ?? w.district) && (
                   <div style={{ display: "flex", alignItems: "center", gap: 4, minWidth: 0 }}>
                     <MapPin size={11} color="#555" style={{ flexShrink: 0 }} />
-                    <span style={{ fontSize: 11, color: "#555", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{w.locationShort ?? w.district}</span>
+                    <span style={{ fontSize: 11, color: "#555", overflowWrap: "anywhere", wordBreak: "break-word" }}>{w.locationShort ?? w.district}</span>
                   </div>
                 )}
               </a>
