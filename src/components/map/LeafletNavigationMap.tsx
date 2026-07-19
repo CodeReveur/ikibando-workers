@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { MapContainer, TileLayer, Marker, Polyline, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Polyline, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {
@@ -32,6 +32,11 @@ interface Props {
 
 const KIGALI: [number, number] = [-1.9441, 30.0619];
 
+// A GPS fix worse than this (metres) is almost certainly network/IP-based, not a
+// real satellite fix — on a desktop or with GPS off the browser can be hundreds
+// of km wrong. We refuse to draw driving directions from such a point.
+const COARSE_ACCURACY_M = 1500;
+
 // Live-location marker: a pulsing blue dot (distinct from the red destination pin).
 const liveIcon = L.divIcon({
   className: "nav-live-icon",
@@ -53,6 +58,12 @@ function Follow({ pos, follow }: { pos: [number, number] | null; follow: boolean
   useEffect(() => {
     if (follow && pos) map.setView(pos, Math.max(map.getZoom(), 16), { animate: true });
   }, [pos, follow, map]);
+  return null;
+}
+
+/** While picking, a tap on the map sets the user's start point. */
+function ClickToSet({ enabled, onSet }: { enabled: boolean; onSet: (lat: number, lng: number) => void }) {
+  useMapEvents({ click(e) { if (enabled) onSet(e.latlng.lat, e.latlng.lng); } });
   return null;
 }
 
@@ -80,6 +91,11 @@ export default function LeafletNavigationMap({ destination }: Props) {
   const [stepsOpen, setStepsOpen] = useState(false);
   const [bannerOpen, setBannerOpen] = useState(true);
   const [locating, setLocating] = useState(false);
+  // Manual start point: when GPS is unreliable the user drops their own pin, and
+  // routing uses that instead of the (wrong) device fix. This is the override for
+  // "the location it says I'm at is 700 km off".
+  const [manualPos, setManualPos] = useState<[number, number] | null>(null);
+  const [picking, setPicking] = useState(false);
 
   const watchId = useRef<number | null>(null);
   const lastRoutedFrom = useRef<LatLng | null>(null);
@@ -112,6 +128,7 @@ export default function LeafletNavigationMap({ destination }: Props) {
   const resetGps = () => {
     if (watchId.current !== null) { navigator.geolocation.clearWatch(watchId.current); watchId.current = null; }
     setPos(null); setAccuracy(null); setRoute(null); setStepIdx(0);
+    setManualPos(null); setPicking(false); // back to real GPS
     lastRoutedFrom.current = null; announcedStep.current = -1;
     setFollow(true);
     setGpsError(null);
@@ -153,10 +170,15 @@ export default function LeafletNavigationMap({ destination }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── (Re)route when we first get a fix, or drift >40 m from the routed origin ──
+  // The point we navigate FROM: a manual pin if the user set one, else the live
+  // GPS fix — but only when that fix is accurate enough to trust.
+  const gpsReliable = pos != null && (accuracy == null || accuracy <= COARSE_ACCURACY_M);
+  const origin: [number, number] | null = manualPos ?? (gpsReliable ? pos : null);
+
+  // ── (Re)route when we first get an origin, or drift >40 m from the routed one ──
   useEffect(() => {
-    if (!pos) return;
-    const from: LatLng = { latitude: pos[0], longitude: pos[1] };
+    if (!origin) return;
+    const from: LatLng = { latitude: origin[0], longitude: origin[1] };
     const drifted = !lastRoutedFrom.current || haversineM(lastRoutedFrom.current, from) > 40;
     if (!drifted || routing) return;
     lastRoutedFrom.current = from;
@@ -165,12 +187,12 @@ export default function LeafletNavigationMap({ destination }: Props) {
       .then((r) => { if (r) setRoute(r); })
       .finally(() => setRouting(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pos]);
+  }, [origin]);
 
   // ── Track the current step + speak the upcoming maneuver ─────────────────
   useEffect(() => {
-    if (!pos || !route || route.steps.length === 0) return;
-    const cur: LatLng = { latitude: pos[0], longitude: pos[1] };
+    if (!origin || !route || route.steps.length === 0) return;
+    const cur: LatLng = { latitude: origin[0], longitude: origin[1] };
 
     // The upcoming maneuver is the nearest step ahead of us.
     let bestIdx = 0, bestDist = Infinity;
@@ -191,7 +213,7 @@ export default function LeafletNavigationMap({ destination }: Props) {
       } catch { /* ignore */ }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pos, route]);
+  }, [origin, route]);
 
   useEffect(() => {
     // Silence any queued speech when voice is switched off.
@@ -199,10 +221,18 @@ export default function LeafletNavigationMap({ destination }: Props) {
   }, [voice]);
 
   const straightLine = haversineM(
-    pos ? { latitude: pos[0], longitude: pos[1] } : dest, dest
+    origin ? { latitude: origin[0], longitude: origin[1] } : dest, dest
   );
   const upcoming = route?.steps[stepIdx];
-  const center: [number, number] = pos ?? [dest.latitude, dest.longitude];
+  const center: [number, number] = origin ?? pos ?? [dest.latitude, dest.longitude];
+  const coarse = pos != null && accuracy != null && accuracy > COARSE_ACCURACY_M;
+
+  const setManual = (lat: number, lng: number) => {
+    setManualPos([lat, lng]);
+    setPicking(false);
+    lastRoutedFrom.current = null; // force a re-route from the new start
+    setFollow(false);
+  };
 
   const polyline = useMemo<[number, number][]>(() => route?.coordinates ?? [], [route]);
 
@@ -256,9 +286,12 @@ export default function LeafletNavigationMap({ destination }: Props) {
             <Polyline positions={polyline} pathOptions={{ color: "#f97316", weight: 5, opacity: 0.95 }} />
           </>
         )}
-        {pos && <Marker position={pos} icon={liveIcon} />}
+        {/* Live GPS dot (only when it's a fix we trust); manual pin otherwise. */}
+        {gpsReliable && pos && !manualPos && <Marker position={pos} icon={liveIcon} />}
+        {manualPos && <Marker position={manualPos} icon={liveIcon} />}
         <Marker position={[dest.latitude, dest.longitude]} icon={destIcon} />
-        <Follow pos={pos} follow={follow} />
+        <Follow pos={origin} follow={follow} />
+        <ClickToSet enabled={picking} onSet={setManual} />
       </MapContainer>
 
       {/* Controls */}
@@ -269,6 +302,9 @@ export default function LeafletNavigationMap({ destination }: Props) {
         <button className="nav-btn" title={voice ? "Voice on — tap to mute" : "Voice off — tap to hear directions"} onClick={toggleVoice}>
           {voice ? <Volume2 size={18} color="#22c55e" /> : <VolumeX size={18} color="#888" />}
         </button>
+        <button className="nav-btn" title={manualPos || picking ? "Change your start point" : "Set your start point on the map"} onClick={() => setPicking(p => !p)}>
+          <MapPin size={18} color={picking || manualPos ? "#f97316" : "#ccc"} />
+        </button>
         <button className="nav-btn" title="Reset my location (fresh GPS, no cache)" onClick={resetGps}>
           <RotateCcw size={18} color={locating ? "#f59e0b" : "#60a5fa"} className={locating ? "nav-spin" : ""} />
         </button>
@@ -278,10 +314,39 @@ export default function LeafletNavigationMap({ destination }: Props) {
       <div className="nav-status" style={{ bottom: stepsOpen ? 272 : 64 }}>
         {gpsError
           ? <span style={{ color: "#ef4444" }}>{gpsError}</span>
-          : pos
-            ? <span style={{ color: "#22c55e" }}><LocateFixed size={11} /> Live GPS{accuracy != null ? ` · ±${Math.round(accuracy)}m` : ""}</span>
-            : <span style={{ color: "#f59e0b" }}><Loader2 size={11} className="nav-spin" /> Acquiring your location…</span>}
+          : manualPos
+            ? <span style={{ color: "#f97316" }}><MapPin size={11} /> Start point set manually</span>
+            : coarse
+              ? <span style={{ color: "#f59e0b" }}><MapPin size={11} /> Approximate only · ±{Math.round(accuracy! / 1000)}km</span>
+              : pos
+                ? <span style={{ color: "#22c55e" }}><LocateFixed size={11} /> Live GPS{accuracy != null ? ` · ±${Math.round(accuracy)}m` : ""}</span>
+                : <span style={{ color: "#f59e0b" }}><Loader2 size={11} className="nav-spin" /> Acquiring your location…</span>}
       </div>
+
+      {/* Poor-fix warning — the device gave a network/IP location (can be far off),
+          so we don't route from it. The user places their real start point. */}
+      {(coarse || picking) && !manualPos && (
+        <div className="nav-warn">
+          <p className="nav-warn-title">
+            {picking ? "Tap the map where you actually are" : "GPS isn't accurate here"}
+          </p>
+          <p className="nav-warn-sub">
+            {picking
+              ? "Your tap becomes the starting point for directions."
+              : `Your device reported an approximate location (±${Math.round(accuracy! / 1000)} km) — likely from Wi-Fi/IP, not satellites. Turn on precise GPS, or set your start point.`}
+          </p>
+          <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+            {!picking && (
+              <button className="nav-warn-btn primary" onClick={() => setPicking(true)}>
+                {`Set my location on the map`}
+              </button>
+            )}
+            <button className="nav-warn-btn" onClick={() => { setPicking(false); resetGps(); }}>
+              Retry GPS
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Turn-by-turn steps — collapsed by default (tap the header to open),
           so the route list never covers the map unless you ask for it. */}
@@ -336,6 +401,13 @@ const CSS = `
     display: inline-flex; align-items: center; gap: 5px; background: rgba(17,17,17,0.94); border: 1px solid #2a2a2a; border-radius: 99px; padding: 5px 11px; }
   .nav-spin { animation: navspin 1s linear infinite; }
   @keyframes navspin { to { transform: rotate(360deg); } }
+  .nav-warn { position: absolute; top: 70px; left: 12px; right: 12px; z-index: 1001;
+    background: rgba(30,20,5,0.96); border: 1px solid rgba(245,158,11,0.5); border-radius: 12px; padding: 12px 14px; backdrop-filter: blur(6px); }
+  .nav-warn-title { margin: 0 0 3px; font-size: 13px; font-weight: 800; color: #f59e0b; }
+  .nav-warn-sub { margin: 0; font-size: 12px; color: #cbb; line-height: 1.45; }
+  .nav-warn-btn { flex: 1; padding: 8px 10px; border-radius: 9px; font-size: 12px; font-weight: 700; cursor: pointer;
+    background: transparent; border: 1px solid #3a3a3a; color: #ccc; }
+  .nav-warn-btn.primary { background: #f97316; border-color: #f97316; color: #fff; }
   .nav-steps { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 1000; overflow: hidden;
     background: rgba(17,17,17,0.96); border: 1px solid #2a2a2a; border-radius: 12px; backdrop-filter: blur(6px); }
   .nav-steps-head { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
