@@ -472,8 +472,20 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
 
   return (
     <div className={slideMode
-      ? "fixed inset-0 z-50 bg-[#0d0d0d] overflow-y-auto"
+      ? "fixed inset-0 z-50 bg-[#0d0d0d]"
       : "fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"}>
+
+      {/* Slide mode scrolls an INNER div, not the fixed layer itself — mobile Safari
+          often refuses touch-scrolling on a position:fixed element, which made tall
+          steps (DOB / education) unreachable below the fold on phones. */}
+      <div
+        className={slideMode ? "h-full w-full overflow-y-auto" : "contents"}
+        style={slideMode ? {
+          WebkitOverflowScrolling: "touch",
+          overscrollBehavior: "contain",
+          touchAction: "pan-y",
+        } as React.CSSProperties : undefined}
+      >
 
       {/* Slide mode: a full-width progress line pinned to the top of the page. */}
       {slideMode && (
@@ -1075,6 +1087,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   );
