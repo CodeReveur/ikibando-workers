@@ -540,6 +540,7 @@ export default function SignInPage() {
                 <input
                   type="email" placeholder="you@example.com" value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter" && !loading) handleSubmit(); }}
                   className="auth-input"
                 />
               </InputRow>
@@ -559,6 +560,7 @@ export default function SignInPage() {
                 <input
                   type={showPassword ? "text" : "password"} placeholder="••••••••" value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter" && !loading) handleSubmit(); }}
                   className="auth-input"
                 />
               </InputRow>
