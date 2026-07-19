@@ -475,7 +475,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
       ? "fixed inset-0 z-50 bg-[#0d0d0d]"
       : "fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"}>
 
-      {/* Slide mode scrolls an INNER div, not the fixed layer itself — mobile Safari
+      {/* Slide mode scrolls an INNER div, not the fixed layer itself: mobile Safari
           often refuses touch-scrolling on a position:fixed element, which made tall
           steps (DOB / education) unreachable below the fold on phones. */}
       <div
@@ -514,7 +514,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
               {step === "PERSONAL" && t("onboarding.headers.personal_title")}
               {step === "LOCATION_AVAILABILITY" && t("onboarding.headers.location_title")}
               {step === "EQUIPMENT" && t("onboarding.headers.equipment_title")}
-              {step === "BADGE_OFFER" && (t("onboarding.headers.badge_offer_title") || "One last thing — your working badge")}
+              {step === "BADGE_OFFER" && (t("onboarding.headers.badge_offer_title") || "One last thing: your working badge")}
               {step === "COMPLETED" && t("onboarding.headers.completed_title")}
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">
@@ -1058,7 +1058,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                     {t("onboarding.badge_offer.question") || "Would you like to generate your working badge now?"}
                   </h3>
                   <p className="text-gray-500 text-xs mt-1 max-w-sm">
-                    {t("onboarding.badge_offer.desc") || "Your badge verifies your identity so employers can hire you with confidence — it only takes a minute."}
+                    {t("onboarding.badge_offer.desc") || "Your badge verifies your identity so employers can hire you with confidence. It only takes a minute."}
                   </p>
                 </div>
               </div>

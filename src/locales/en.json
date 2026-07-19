@@ -590,7 +590,9 @@
       "equipment_title": "Your equipment",
       "equipment_subtitle": "List tools or devices you have access to",
       "completed_title": "All set!",
-      "completed_subtitle": "Taking you to your dashboard…"
+      "completed_subtitle": "Taking you to your dashboard…",
+      "badge_offer_title": "One last thing: your working badge",
+      "badge_offer_subtitle": "A verified badge builds trust and gets you hired faster. You can also do it later."
     },
     "roles": {
       "worker_label": "Find Work",
@@ -696,6 +698,12 @@
       "power_tools": "Power Tools",
       "camera": "Camera",
       "tablet": "Tablet"
+    },
+    "badge_offer": {
+      "question": "Would you like to generate your working badge now?",
+      "desc": "Your badge verifies your identity so employers can hire you with confidence. It only takes a minute.",
+      "generate": "Generate my badge",
+      "skip": "Skip for now"
     }
   },
   "privacy": {

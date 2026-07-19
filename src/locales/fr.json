@@ -589,7 +589,9 @@
       "equipment_title": "Votre équipement",
       "equipment_subtitle": "Listez les outils ou appareils auxquels vous avez accès",
       "completed_title": "Tout est prêt !",
-      "completed_subtitle": "Nous vous redirigeons vers votre tableau de bord…"
+      "completed_subtitle": "Nous vous redirigeons vers votre tableau de bord…",
+      "badge_offer_title": "Une dernière chose : votre badge de travail",
+      "badge_offer_subtitle": "Un badge vérifié inspire confiance et vous fait embaucher plus vite. Vous pouvez aussi le faire plus tard."
     },
     "roles": {
       "worker_label": "Trouver du travail",
@@ -695,6 +697,12 @@
       "power_tools": "Outils électriques",
       "camera": "Appareil photo",
       "tablet": "Tablette"
+    },
+    "badge_offer": {
+      "question": "Voulez-vous générer votre badge de travail maintenant ?",
+      "desc": "Votre badge vérifie votre identité pour que les employeurs vous embauchent en toute confiance. Cela ne prend qu’une minute.",
+      "generate": "Générer mon badge",
+      "skip": "Passer pour l’instant"
     }
   },
   "privacy": {

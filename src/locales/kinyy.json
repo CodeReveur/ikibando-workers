@@ -589,7 +589,9 @@
       "equipment_title": "Ibikoresho byawe",
       "equipment_subtitle": "Orodhesha ibikoresho cyangwa zana ufite",
       "completed_title": "Byose byamaze gutungana!",
-      "completed_subtitle": "Turakugeza ahabanza hawe…"
+      "completed_subtitle": "Turakugeza ahabanza hawe…",
+      "badge_offer_title": "Ikintu cya nyuma: ikarita yawe y’akazi",
+      "badge_offer_subtitle": "Ikarita yemejwe yongera icyizere kandi ituma ubona akazi vuba. Ushobora no kuyikora nyuma."
     },
     "roles": {
       "worker_label": "Shaka akazi",
@@ -695,6 +697,12 @@
       "power_tools": "Ibikoresho by'amashanyarazi",
       "camera": "Kamera",
       "tablet": "Tabuleti"
+    },
+    "badge_offer": {
+      "question": "Urashaka gukora ikarita yawe y’akazi nonaha?",
+      "desc": "Ikarita yawe yemeza umwirondoro wawe kugira ngo abakoresha baguhe akazi bafite icyizere. Bifata umunota umwe gusa.",
+      "generate": "Kora ikarita yanjye",
+      "skip": "Bireke ubu"
     }
   },
   "privacy": {
