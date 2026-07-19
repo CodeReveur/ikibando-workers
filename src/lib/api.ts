@@ -1197,6 +1197,32 @@ export async function getWorkerReviews(id: string): Promise<WorkerReview[]> {
   return data.data;
 }
 
+// ── Live location sharing (worker en route → employer follows) ────────────────
+export interface LiveWorkerLocation {
+  userId: string; name: string;
+  latitude: number; longitude: number;
+  accuracy?: number | null; heading?: number | null; speed?: number | null;
+  updatedAt: string;
+}
+
+/** Worker: publish the current GPS fix for a job while navigating. */
+export async function shareJobLocation(jobId: string, fix: {
+  latitude: number; longitude: number; accuracy?: number; heading?: number; speed?: number;
+}, token: string): Promise<void> {
+  await http.post(`/api/jobs/${jobId}/location`, fix, { headers: authHeader(token) });
+}
+
+/** Worker: stop sharing (arrived or cancelled navigation). */
+export async function stopJobLocation(jobId: string, token: string): Promise<void> {
+  await http.delete(`/api/jobs/${jobId}/location`, { headers: authHeader(token) });
+}
+
+/** Employer (or engaged worker): latest live fixes of the job's workers. */
+export async function getJobLocations(jobId: string, token: string): Promise<LiveWorkerLocation[]> {
+  const { data } = await http.get(`/api/jobs/${jobId}/locations`, { headers: authHeader(token) });
+  return data.data;
+}
+
 // ── Browser push ───────────────────────────────────────────────────────────────
 /** VAPID public key the browser needs to subscribe. Empty string → push is disabled server-side. */
 export async function getVapidPublicKey(): Promise<string> {

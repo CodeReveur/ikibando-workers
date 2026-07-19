@@ -7,6 +7,7 @@ import { getJob, type JobDto } from "@/lib/api";
 import { forwardGeocode } from "@/lib/geocoding";
 import { NavigationMap, type NavigationDestination } from "@/components/map/NavigationMap";
 import { useLanguage } from "@/lib/language-context";
+import { startWorkerNav } from "@/components/nav/live-nav";
 
 export default function NavigateToJob() {
   const { id } = useParams<{ id: string }>();
@@ -34,6 +35,9 @@ export default function NavigateToJob() {
         if (j.latitude != null && j.longitude != null) {
           setDest({ latitude: j.latitude, longitude: j.longitude, label });
           setStatus("ready");
+          // Live session: stream GPS to the employer and keep the floating
+          // overlay (destination + remaining distance) on every page.
+          startWorkerNav(id, label, j.latitude, j.longitude);
           return;
         }
         const query = [j.street, j.village, j.cell, j.sector, j.district, j.province, "Rwanda"]
@@ -43,6 +47,7 @@ export default function NavigateToJob() {
         if (hit) {
           setDest({ latitude: hit.latitude, longitude: hit.longitude, label });
           setStatus("ready");
+          startWorkerNav(id, label, hit.latitude, hit.longitude);
         } else {
           setStatus("no-location");
         }

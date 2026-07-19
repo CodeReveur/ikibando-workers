@@ -2072,7 +2072,8 @@
     "title_ph": "Job title",
     "edit_locked_notice": "Workers have already applied, so the date, hours, number of workers and urgency are locked. You can still update the title, location, description and requirements.",
     "accept_failed": "Could not update the application.",
-    "job_full": "All workers hired"
+    "job_full": "All workers hired",
+    "track_worker": "Track worker live"
   },
   "seeker_help": {
     "faq1_q": "How do I get paid?",

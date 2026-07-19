@@ -16,6 +16,7 @@ import { RWANDA_PROVINCES } from "@/lib/constants";
 import { fmt } from "@/lib/dashboard-data";
 import { ratingLabel } from "@/lib/rating";
 import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
+import { startEmployerTracking } from "@/components/nav/live-nav";
 import { useLanguage } from "@/lib/language-context";
 import { useToast } from "@/components/ui/toast";
 import { PaymentPanel } from "@/components/payments/payment-panel";
@@ -337,18 +338,35 @@ export default function OwnerJobDetail() {
       label: `${t("owner_analytics.workers_hired") || "Workers Hired"} (${accepted.length})`,
       date: accepted.length > 0 && accepted[0].respondedAt ? d(accepted[0].respondedAt, currentLocale) : undefined,
       content: hasAccepted ? (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-          {accepted.map(a => (
-            <div key={a.id} style={{ display: "flex", alignItems: "center", gap: 6, background: "#0e0e0e", border: "1px solid #1a1a1a", borderRadius: 8, padding: "6px 10px" }}>
-              <div style={{ width: 24, height: 24, borderRadius: 99, background: "rgba(249,115,22,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <User size={12} color="#f97316" />
+        <div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {accepted.map(a => (
+              <div key={a.id} style={{ display: "flex", alignItems: "center", gap: 6, background: "#0e0e0e", border: "1px solid #1a1a1a", borderRadius: 8, padding: "6px 10px" }}>
+                <div style={{ width: 24, height: 24, borderRadius: 99, background: "rgba(249,115,22,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <User size={12} color="#f97316" />
+                </div>
+                <div>
+                  <p style={{ margin: 0, fontSize: 11, fontWeight: 700, color: "#d0d0d0" }}>{a.workerName}</p>
+                  {a.workerDistrict && <p style={{ margin: 0, fontSize: 10, color: "#444" }}>{a.workerDistrict}</p>}
+                </div>
               </div>
-              <div>
-                <p style={{ margin: 0, fontSize: 11, fontWeight: 700, color: "#d0d0d0" }}>{a.workerName}</p>
-                {a.workerDistrict && <p style={{ margin: 0, fontSize: 10, color: "#444" }}>{a.workerDistrict}</p>}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          {!isCompleted && (
+            <button
+              onClick={() => {
+                startEmployerTracking(job.id, accepted[0]?.workerName || job.title, job.latitude ?? undefined, job.longitude ?? undefined);
+              }}
+              style={{
+                marginTop: 10, display: "flex", alignItems: "center", gap: 6,
+                background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.35)",
+                color: "#22c55e", borderRadius: 999, padding: "7px 14px",
+                fontSize: 11.5, fontWeight: 700, cursor: "pointer",
+              }}
+            >
+              <MapPin size={12} /> {t("owner_jobs.track_worker") || "Track worker live"}
+            </button>
+          )}
         </div>
       ) : null,
     },

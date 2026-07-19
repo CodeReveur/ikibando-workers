@@ -2071,7 +2071,8 @@
     "title_ph": "Kichwa cha kazi",
     "edit_locked_notice": "Wafanyakazi tayari wameomba, kwa hivyo tarehe, saa, idadi ya wafanyakazi na dharura zimefungwa. Bado unaweza kusasisha kichwa, mahali, maelezo na mahitaji.",
     "accept_failed": "Imeshindwa kusasisha ombi.",
-    "job_full": "Wafanyakazi wote wameajiriwa"
+    "job_full": "Wafanyakazi wote wameajiriwa",
+    "track_worker": "Fuatilia mfanyakazi moja kwa moja"
   },
   "seeker_help": {
     "faq1_q": "Je, ninalipwaje?",

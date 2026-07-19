@@ -6,6 +6,7 @@ import { ContentWrapper } from "@/components/layout/content-wrapper";
 import { Providers } from "@/components/providers";
 import { BazaBotWidget } from "@/components/support/bazabot-widget";
 import { VisitorTracker } from "@/components/analytics/visitor-tracker";
+import { LiveNavOverlay } from "@/components/nav/live-nav";
 import {
   OrganizationSchema,
   WebSiteSchema,
@@ -127,6 +128,7 @@ export default function RootLayout({
           <Navbar />
           <ContentWrapper>{children}</ContentWrapper>
           <BazaBotWidget />
+          <LiveNavOverlay />
         </Providers>
       </body>
     </html>

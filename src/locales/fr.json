@@ -2071,7 +2071,8 @@
     "title_ph": "Titre de l'emploi",
     "edit_locked_notice": "Des travailleurs ont déjà postulé : la date, les heures, le nombre de travailleurs et l'urgence sont verrouillés. Vous pouvez encore modifier le titre, le lieu, la description et les exigences.",
     "accept_failed": "Impossible de mettre à jour la candidature.",
-    "job_full": "Tous les travailleurs sont recrutés"
+    "job_full": "Tous les travailleurs sont recrutés",
+    "track_worker": "Suivre le travailleur en direct"
   },
   "seeker_help": {
     "faq1_q": "Comment suis-je payé ?",

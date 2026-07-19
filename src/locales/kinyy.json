@@ -2071,7 +2071,8 @@
     "title_ph": "Umutwe w'akazi",
     "edit_locked_notice": "Abakozi bamaze gusaba, bityo itariki, amasaha, umubare w'abakozi n'ihutirwa byafunzwe. Uracyashobora guhindura umutwe, aho biherereye, ibisobanuro n'ibisabwa.",
     "accept_failed": "Ntibyashobotse kuvugurura ubusabe.",
-    "job_full": "Abakozi bose barahawe akazi"
+    "job_full": "Abakozi bose barahawe akazi",
+    "track_worker": "Kurikirana umukozi aho ari"
   },
   "seeker_help": {
     "faq1_q": "Nishyurwa nte?",
