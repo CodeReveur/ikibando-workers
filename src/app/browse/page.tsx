@@ -1,7 +1,7 @@
 "use client";
 
 import Footer from "@/components/layout/footer";
-import { useState, useMemo, useEffect, Suspense } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { getWorkers, getJobs, daysAgo, type WorkerProfileDto, type JobDto } from "@/lib/api";
 import { useInfiniteReveal } from "@/lib/use-infinite-reveal";
@@ -235,7 +235,19 @@ function BrowsePageInner() {
   const [showFilters, setShowFilters] = useState(false);
   const [workers, setWorkers] = useState<WorkerProfileDto[]>([]);
   const [jobs, setJobs] = useState<JobDto[]>([]);
-  const [loadingData, setLoadingData] = useState(true);
+  const [loadingData, setLoadingData] = useState(true);   // jobs initial load
+
+  // Workers paginate from the server: 16 (4 rows x 4) per batch, the next batch
+  // fetched only when the sentinel scrolls into view (after a 1s pause) — never
+  // preloaded. Refs mirror the state the observer/loader read without stale closures.
+  const WORKERS_PAGE_SIZE = 16;
+  const [workersLoading, setWorkersLoading] = useState(true);        // first page
+  const [workersLoadingMore, setWorkersLoadingMore] = useState(false);
+  const [workersHasMore, setWorkersHasMore] = useState(true);
+  const [workersSentinel, setWorkersSentinel] = useState<HTMLDivElement | null>(null);
+  const workersPageRef = useRef(0);
+  const workersHasMoreRef = useRef(true);
+  const workersBusyRef = useRef(false);
 
   // shared
   const [filterCategory, setFilterCategory] = useState("");
@@ -250,12 +262,50 @@ function BrowsePageInner() {
   const [filterMaxAmount, setFilterMaxAmount] = useState("");
   const [sortJob, setSortJob] = useState<SortJob>("newest");
 
+  // Jobs still load in one shot (client-side reveal). Workers paginate — see loadWorkers.
   useEffect(() => {
-    Promise.all([
-      getWorkers({ size: 100 }).then(p => setWorkers(p.content)),
-      getJobs({ size: 100 }).then(p => setJobs(p.content)),
-    ]).catch(() => {}).finally(() => setLoadingData(false));
+    getJobs({ size: 100 }).then(p => setJobs(p.content)).catch(() => {}).finally(() => setLoadingData(false));
   }, []);
+
+  // Fetch the next page of workers from the server. `initial` skips the 1s pause
+  // and replaces (rather than appends). Guarded so a page is never loaded twice.
+  const loadWorkers = useCallback(async (initial: boolean) => {
+    if (workersBusyRef.current) return;
+    if (!initial && !workersHasMoreRef.current) return;
+    workersBusyRef.current = true;
+    if (initial) setWorkersLoading(true); else setWorkersLoadingMore(true);
+    if (!initial) await new Promise((r) => setTimeout(r, 1000)); // deliberate pause before next batch
+    try {
+      const p = await getWorkers({ page: workersPageRef.current, size: WORKERS_PAGE_SIZE });
+      const content = p.content || [];
+      setWorkers((prev) => (initial ? content : [...prev, ...content]));
+      workersPageRef.current += 1;
+      const more = p.number + 1 < p.totalPages;
+      workersHasMoreRef.current = more;
+      setWorkersHasMore(more);
+    } catch {
+      workersHasMoreRef.current = false;
+      setWorkersHasMore(false);
+    } finally {
+      workersBusyRef.current = false;
+      if (initial) setWorkersLoading(false); else setWorkersLoadingMore(false);
+    }
+  }, []);
+
+  useEffect(() => { loadWorkers(true); }, [loadWorkers]);
+
+  // Observe the sentinel placed after the grid; pull the next batch when it enters view.
+  useEffect(() => {
+    if (!workersSentinel) return;
+    const io = new IntersectionObserver(
+      (entries) => { if (entries[0].isIntersecting) loadWorkers(false); },
+      { rootMargin: "200px" }
+    );
+    io.observe(workersSentinel);
+    return () => io.disconnect();
+  }, [workersSentinel, loadWorkers]);
+
+  const workersSentinelRef = useCallback((el: HTMLDivElement | null) => setWorkersSentinel(el), []);
 
   useEffect(() => {
     const cat = searchParams.get('category');
@@ -330,9 +380,8 @@ function BrowsePageInner() {
     return list;
   }, [jobs, search, filterCategory, filterLocation, filterMinAmount, filterMaxAmount, sortJob]);
 
-  // Infinite scroll: reveal 28 at a time (≈7 rows × 4 columns) as the user scrolls.
-  const workersReveal = useInfiniteReveal(filteredWorkers, 28);
-  const jobsReveal     = useInfiniteReveal(filteredJobs, 28);
+  // Jobs use the client-side reveal (loaded whole); workers paginate server-side above.
+  const jobsReveal = useInfiniteReveal(filteredJobs, 28);
 
   const S: React.CSSProperties = { fontFamily: "Inter, DM Sans, system-ui, sans-serif" };
 
@@ -500,20 +549,22 @@ function BrowsePageInner() {
 
         {/* RESULTS COUNT */}
         <p style={{ fontSize: 12, color: "#444", marginBottom: 14, fontWeight: 600 }}>
-          {loadingData
-            ? (t("jobs_page.loading") || "Loading…")
-            : tab === "workers"
-              ? (t("browse_page.workers_found", { count: filteredWorkers.length }) || `${filteredWorkers.length} workers found`)
-              : (t("jobs_page.found_count", { count: filteredJobs.length }) || `${filteredJobs.length} jobs found`)}
+          {tab === "workers"
+            ? (workersLoading
+                ? (t("jobs_page.loading") || "Loading…")
+                : `${filteredWorkers.length}${workersHasMore ? "+" : ""} ${t("browse_page.workers_word") || "workers"}`)
+            : (loadingData
+                ? (t("jobs_page.loading") || "Loading…")
+                : (t("jobs_page.found_count", { count: filteredJobs.length }) || `${filteredJobs.length} jobs found`))}
         </p>
 
-        {/* WORKERS GRID */}
+        {/* WORKERS GRID — paginated from the server, 16 per batch */}
         {tab === "workers" && (
-          loadingData ? <BrowseLoading />
-          : filteredWorkers.length === 0
+          workersLoading ? <BrowseLoading />
+          : filteredWorkers.length === 0 && !workersHasMore
             ? <Empty label={t("browse_page.empty.workers") || "No workers match your filters."} />
             : <div className="browse-grid">
-                {workersReveal.visible.map((w: WorkerProfileDto) => {
+                {filteredWorkers.map((w: WorkerProfileDto) => {
                   const catSlugs = (w.experienceTypes && w.experienceTypes.length > 0)
                     ? w.experienceTypes
                     : (w.experienceType ? [w.experienceType] : []);
@@ -598,9 +649,9 @@ function BrowsePageInner() {
                 })}
               </div>
         )}
-        {tab === "workers" && !loadingData && workersReveal.hasMore && (
-          <div ref={workersReveal.sentinelRef} style={{ textAlign: "center", padding: "24px 0", color: "#555", fontSize: 13 }}>
-            {t("jobs_page.loading_more") || "Loading more…"}
+        {tab === "workers" && !workersLoading && workersHasMore && (
+          <div ref={workersSentinelRef} style={{ textAlign: "center", padding: "24px 0", color: "#555", fontSize: 13, minHeight: 24 }}>
+            {workersLoadingMore ? (t("jobs_page.loading_more") || "Loading more…") : ""}
           </div>
         )}
 
