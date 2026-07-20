@@ -108,6 +108,8 @@ export function LiveNavOverlay() {
   const [workerFix, setWorkerFix] = useState<LiveWorkerLocation | null>(null);
   const [gpsError, setGpsError] = useState(false);
   const [shareError, setShareError] = useState<string | null>(null);
+  // Seconds since the worker's last successful upload — proof the push is firing.
+  const [sentAgo, setSentAgo] = useState<number | null>(null);
   const watchRef = useRef<number | null>(null);
   const lastSentRef = useRef(0);
   const lastCoordsRef = useRef<GeolocationCoordinates | null>(null);
@@ -150,7 +152,7 @@ export function LiveNavOverlay() {
         heading: c.heading ?? undefined,
         speed: c.speed ?? undefined,
       }, token)
-        .then(() => setShareError(null))
+        .then(() => { setShareError(null); setSentAgo(0); })
         .catch((e) => {
           // Don't fail silently: the worker needs to know the employer can't see them.
           const status = e?.response?.status;
@@ -183,11 +185,16 @@ export function LiveNavOverlay() {
     // Heartbeat: re-send the last known fix even when stationary, so the employer's
     // "updated Ns ago" stays fresh instead of going stale or never appearing.
     const beat = sharing ? setInterval(push, 10000) : null;
+    // Tick the "sent Ns ago" readout so the worker can see uploads are happening.
+    const tick = sharing ? setInterval(() => {
+      if (lastSentRef.current) setSentAgo(Math.round((Date.now() - lastSentRef.current) / 1000));
+    }, 1000) : null;
 
     return () => {
       if (watchRef.current != null) navigator.geolocation.clearWatch(watchRef.current);
       watchRef.current = null;
       if (beat) clearInterval(beat);
+      if (tick) clearInterval(tick);
     };
   }, [session?.jobId, session?.role, session?.share]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -201,12 +208,24 @@ export function LiveNavOverlay() {
       try {
         const fixes = await getJobLocations(session.jobId, token);
         if (stopped) return;
+        setShareError(null);
         const fix = fixes[0] ?? null;
         setWorkerFix(fix);
         if (fix && session.destLat != null && session.destLng != null) {
           setDistance(distanceM(fix.latitude, fix.longitude, session.destLat, session.destLng));
         }
-      } catch { /* keep last known */ }
+      } catch (e: any) {
+        if (stopped) return;
+        // Never fail silently: an employer stuck on "no live fix yet" needs to know
+        // whether the worker simply hasn't shared, or the request itself is failing.
+        const status = e?.response?.status;
+        setShareError(
+          status === 403 ? "You don't have permission to track this job."
+            : status === 401 ? "Your session expired. Sign in again."
+            : status === 404 ? "This job no longer exists."
+            : "Can't reach the server to read the location.",
+        );
+      }
     };
     poll();
     const iv = setInterval(poll, 10000);
@@ -265,10 +284,14 @@ export function LiveNavOverlay() {
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
             <span style={{ fontSize: 18, fontWeight: 800, color: "#f97316" }}>{fmtDist(distance)}</span>
-            <span style={{ fontSize: 10.5, color: "#666" }}>
+            <span style={{ fontSize: 10.5, color: shareError && !isWorker ? "#ef4444" : "#666" }}>
               {isWorker
-                ? (gpsError ? "GPS unavailable, check location permission" : "to destination")
-                : (workerFix ? `away · updated ${agoSec}s ago` : "no live fix yet")}
+                ? (gpsError ? "GPS unavailable, check location permission"
+                   : session.share && sentAgo != null ? `to destination · sent ${sentAgo}s ago`
+                   : "to destination")
+                : (shareError ? shareError
+                   : workerFix ? `away · updated ${agoSec}s ago`
+                   : "no live fix yet")}
             </span>
           </div>
 
