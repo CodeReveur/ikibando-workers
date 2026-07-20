@@ -14,11 +14,11 @@ export const SB_WIDTH = 260;
 
 const SEEKER_NAV = [
   { href:"/seeker",              label:"Dashboard",       icon:Home },
-  { href:"/seeker/applications", label:"My Applications", icon:FileText  },
-  { href:"/seeker/jobs",         label:"My Jobs",         icon:Briefcase },
+  // Applications and jobs are one journey, so they live under a single entry;
+  // notifications are reachable from the bell dropdown's "See all".
+  { href:"/seeker/jobs",         label:"Jobs",            icon:Briefcase },
   { href:"/seeker/earnings",     label:"My Earnings",     icon:Wallet    },
   { href:"/seeker/bonuses",      label:"Bonuses",         icon:Gift      },
-  { href:"/seeker/notifications", label:"Notifications",  icon:Bell      },
 { href:"/seeker/analytics",   label:"Analytics",       icon:BarChart2 },
   { href:"/seeker/settings",    label:"Settings",        icon:Settings  },
   { href:"/seeker/help",        label:"Help",            icon:HelpCircle },

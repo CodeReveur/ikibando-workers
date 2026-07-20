@@ -110,6 +110,14 @@ export default function SeekerJobs() {
             {label}
           </button>
         ))}
+        {/* Applications live under Jobs now (one sidebar entry for the whole
+            journey: you apply, then you work). */}
+        <a href="/seeker/applications" style={{
+          padding: "7px 18px", borderRadius: 7, fontSize: 12, fontWeight: 700,
+          textDecoration: "none", color: "#444", transition: "all 0.12s",
+        }}>
+          {t("common.nav.applications") || "Applications"}
+        </a>
       </div>
 
       {loading && <PageLoader />}

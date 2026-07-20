@@ -107,8 +107,10 @@ export function LiveNavOverlay() {
   const [distance, setDistance] = useState<number | null>(null);
   const [workerFix, setWorkerFix] = useState<LiveWorkerLocation | null>(null);
   const [gpsError, setGpsError] = useState(false);
+  const [shareError, setShareError] = useState<string | null>(null);
   const watchRef = useRef<number | null>(null);
   const lastSentRef = useRef(0);
+  const lastCoordsRef = useRef<GeolocationCoordinates | null>(null);
 
   // Pick up the stored session on mount + whenever a page starts/stops one.
   useEffect(() => {
@@ -119,36 +121,73 @@ export function LiveNavOverlay() {
     return () => { window.removeEventListener(EVT, sync); window.removeEventListener("storage", sync); };
   }, []);
 
-  // Worker: stream GPS fixes (throttled to ~8s) and keep the remaining distance fresh.
+  // Worker: track position, and while sharing is ON push it to the server on a
+  // steady heartbeat. Transmitting only from the GPS callback was the bug behind
+  // "no live fix yet": watchPosition fires on MOVEMENT, so a worker standing still
+  // (or waiting to set off) never sent anything and the employer saw nothing.
   useEffect(() => {
     if (!session || session.role !== "worker") return;
     if (!("geolocation" in navigator)) { setGpsError(true); return; }
     const token = localStorage.getItem("access_token") || "";
+    const jobId = session.jobId;
+    const sharing = !!session.share;
+
+    const remember = (c: GeolocationCoordinates) => {
+      lastCoordsRef.current = c;
+      setGpsError(false);
+      if (session.destLat != null && session.destLng != null) {
+        setDistance(distanceM(c.latitude, c.longitude, session.destLat, session.destLng));
+      }
+    };
+
+    const push = () => {
+      const c = lastCoordsRef.current;
+      if (!sharing || !token || !c) return;
+      lastSentRef.current = Date.now();
+      shareJobLocation(jobId, {
+        latitude: c.latitude, longitude: c.longitude,
+        accuracy: c.accuracy ?? undefined,
+        heading: c.heading ?? undefined,
+        speed: c.speed ?? undefined,
+      }, token)
+        .then(() => setShareError(null))
+        .catch((e) => {
+          // Don't fail silently: the worker needs to know the employer can't see them.
+          const status = e?.response?.status;
+          setShareError(
+            status === 403 ? "You must be accepted on this job to share your location."
+              : status === 401 ? "Your session expired. Sign in again to keep sharing."
+              : "Couldn't reach the server. Retrying…",
+          );
+        });
+    };
+
+    // Immediate fix the moment sharing starts — don't wait for the first movement.
+    if (sharing) {
+      navigator.geolocation.getCurrentPosition(
+        (p) => { remember(p.coords); push(); },
+        () => setGpsError(true),
+        { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 },
+      );
+    }
+
     watchRef.current = navigator.geolocation.watchPosition(
-      (pos) => {
-        setGpsError(false);
-        const { latitude, longitude, accuracy, heading, speed } = pos.coords;
-        if (session.destLat != null && session.destLng != null) {
-          setDistance(distanceM(latitude, longitude, session.destLat, session.destLng));
-        }
-        const now = Date.now();
-        // Only ever transmit when the worker has explicitly agreed to be followed.
-        if (session.share && token && now - lastSentRef.current > 8000) {
-          lastSentRef.current = now;
-          shareJobLocation(session.jobId, {
-            latitude, longitude,
-            accuracy: accuracy ?? undefined,
-            heading: heading ?? undefined,
-            speed: speed ?? undefined,
-          }, token).catch(() => {});
-        }
+      (p) => {
+        remember(p.coords);
+        if (sharing && Date.now() - lastSentRef.current > 8000) push();
       },
       () => setGpsError(true),
       { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 },
     );
+
+    // Heartbeat: re-send the last known fix even when stationary, so the employer's
+    // "updated Ns ago" stays fresh instead of going stale or never appearing.
+    const beat = sharing ? setInterval(push, 10000) : null;
+
     return () => {
       if (watchRef.current != null) navigator.geolocation.clearWatch(watchRef.current);
       watchRef.current = null;
+      if (beat) clearInterval(beat);
     };
   }, [session?.jobId, session?.role, session?.share]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -257,8 +296,10 @@ export function LiveNavOverlay() {
                 <span style={{ display: "block", fontSize: 11.5, fontWeight: 700, color: session.share ? "#22c55e" : "#bbb" }}>
                   {session.share ? "Employer can see you" : "Let employer track me"}
                 </span>
-                <span style={{ display: "block", fontSize: 10, color: "#666", marginTop: 1 }}>
-                  {session.share ? "Sharing your live position on the way" : "Off — your location stays private"}
+                <span style={{ display: "block", fontSize: 10, color: shareError ? "#ef4444" : "#666", marginTop: 1 }}>
+                  {shareError
+                    ? shareError
+                    : session.share ? "Sharing your live position on the way" : "Off — your location stays private"}
                 </span>
               </span>
             </button>
