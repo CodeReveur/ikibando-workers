@@ -26,6 +26,7 @@ export function ImageCropper({
   size?: number;
 }) {
   const [img, setImg] = useState<HTMLImageElement | null>(null);
+  const [imgUrl, setImgUrl] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -34,20 +35,21 @@ export function ImageCropper({
   const boxRef = useRef<HTMLDivElement | null>(null);
 
   // Decode the file whenever a new one arrives, and reset the transform.
+  // The object URL must stay alive for as long as the preview <img> uses it —
+  // revoking it as soon as the image decoded left the box rendering black.
   useEffect(() => {
-    if (!open || !file) { setImg(null); return; }
-    let url: string | null = URL.createObjectURL(file);
+    if (!open || !file) { setImg(null); setImgUrl(null); return; }
+    const url = URL.createObjectURL(file);
+    setImgUrl(url);
     const image = new Image();
     image.onload = () => {
       setImg(image);
       setZoom(1);
       setRotation(0);
       setOffset({ x: 0, y: 0 });
-      if (url) { URL.revokeObjectURL(url); url = null; }
     };
-    image.onerror = () => { if (url) { URL.revokeObjectURL(url); url = null; } };
     image.src = url;
-    return () => { if (url) URL.revokeObjectURL(url); };
+    return () => URL.revokeObjectURL(url);   // only once the cropper closes
   }, [open, file]);
 
   const onPointerDown = (e: React.PointerEvent) => {
@@ -102,8 +104,6 @@ export function ImageCropper({
 
   if (!open || !file) return null;
 
-  const base = img ? Math.max(1 / (img.naturalWidth || 1), 1 / (img.naturalHeight || 1)) : 1;
-
   return (
     <div style={{
       position: "fixed", inset: 0, zIndex: 1300, background: "rgba(0,0,0,0.9)",
@@ -131,19 +131,21 @@ export function ImageCropper({
           border: "1px solid #2a2a2a", touchAction: "none", cursor: "grab",
         }}
       >
-        {img && (
+        {imgUrl && (
+          // Sized to COVER the square box via min-width/height, then zoomed with a
+          // transform. The canvas below reproduces exactly this: cover-scale, then
+          // scale → rotate → translate, so the export matches what is framed here.
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={img.src}
+            src={imgUrl}
             alt=""
             draggable={false}
             style={{
               position: "absolute", left: "50%", top: "50%",
-              width: img.naturalWidth * Math.max(380 / img.naturalWidth, 380 / img.naturalHeight) * zoom,
-              transform: `translate(-50%,-50%) translate(${offset.x}px, ${offset.y}px) rotate(${rotation}deg)`,
+              minWidth: "100%", minHeight: "100%", width: "auto", height: "auto", maxWidth: "none",
+              transform: `translate(-50%,-50%) translate(${offset.x}px, ${offset.y}px) rotate(${rotation}deg) scale(${zoom})`,
               transformOrigin: "center",
               userSelect: "none", pointerEvents: "none",
-              maxWidth: "none",
             }}
           />
         )}

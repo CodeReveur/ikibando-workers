@@ -68,12 +68,13 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
   const idValid = idDigits >= 10;
 
   /**
-   * Shared by the picker and the camera. Each failure gets its OWN message so the
-   * user knows what to fix, instead of a blanket "upload failed":
-   *   format → face quality → size (compressed first) → upload/network.
-   * The photo is checked BEFORE upload, so a bad one never reaches storage.
+   * Step 1 — accept or reject the photo BEFORE the cropper opens.
+   *
+   * Checking after cropping meant someone could carefully frame a picture and only
+   * then be told it has no usable face. Format, size and face are settled first;
+   * only an accepted photo reaches the aligner.
    */
-  const handlePhotoFile = async (file: File) => {
+  const acceptPhoto = async (file: File) => {
     setUploadingPhoto(true);
     try {
       if (!isSupportedImage(file)) {
@@ -81,9 +82,6 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
           || "That file isn't a supported image. Use a JPG or PNG photo.");
         return;
       }
-
-      // Shrink first: phone photos are several MB and the API proxy rejects large
-      // bodies with a 413 that carries no CORS headers (an unreadable failure).
       let ready = file;
       try {
         ready = await compressImage(file);
@@ -115,6 +113,27 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
         return;
       }
 
+      // Accepted — now let them position it.
+      setCropFile(ready);
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  /**
+   * Step 2 — upload the cropped result. Format, size and face were already settled
+   * in acceptPhoto, and the crop re-encodes to a small square JPEG, so this only
+   * needs a final size guard before sending.
+   */
+  const handlePhotoFile = async (file: File) => {
+    setUploadingPhoto(true);
+    try {
+      const ready = file.size > MAX_UPLOAD_BYTES ? await compressImage(file) : file;
+      if (ready.size > MAX_UPLOAD_BYTES) {
+        toastError(t("badge_wizard.errors.too_large")
+          || "This photo is too large even after compression. Try another one.");
+        return;
+      }
       const url = await uploadFile(ready, authResult.accessToken);
       setPhotoUrl(url);
       toastSuccess(t("badge_wizard.toasts.photo_success"));
@@ -202,7 +221,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
       <CameraCapture
         open={cameraOpen}
         onClose={() => setCameraOpen(false)}
-        onCapture={(f) => setCropFile(f)}
+        onCapture={(f) => acceptPhoto(f)}
         title={t("badge_wizard.fields.take_photo") || "Take your photo"}
       />
       <ImageCropper
@@ -248,7 +267,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
                       if (!e.target.files?.length) return;
                       const file = e.target.files[0];
                       e.target.value = ""; // rejecting then re-picking the same file must re-fire
-                      setCropFile(file);   // align it before any checks or upload
+                      acceptPhoto(file); // validate first; the cropper opens only if accepted
                     }}
                   />
                   <div className={`w-full bg-[#1a1a1a] border-2 border-dashed ${photoUrl ? 'border-green-500/50' : 'border-[#2a2a2a] group-hover:border-[#f97316]/50'} rounded-xl px-4 py-6 text-center transition-colors flex flex-col items-center justify-center min-h-[120px]`}>
