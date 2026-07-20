@@ -20,33 +20,106 @@ export interface PlannedCall {
 }
 
 // Occupations users name when they mean a WORKER (or their own trade).
-const OCCUPATIONS = "cleaner|electrician|plumber|guard|driver|cook|maid|nanny|technician|carpenter|painter|mason|waiter|waitress|security|mechanic|gardener|tailor|welder|labou?rer|housekeeper|babysitter";
+const OCCUPATIONS = "cleaner|electrician|plumber|guard|driver|cook|maid|nanny|technician|carpenter|painter|mason|waiter|waitress|security|mechanic|gardener|tailor|welder|labou?rer|housekeeper|babysitter"
+  // Kinyarwanda / Swahili / French trades people actually type.
+  + "|umwubatsi|umushoferi|umuforomo|umubaji|umucuzi|umuriro|dereva|mlinzi|mpishi|fundi"
+  + "|chauffeur|ma[çc]on|menuisier|jardinier|cuisinier|gardien|plombier|[ée]lectricien";
 
-/** True when the message is asking to find jobs or workers. */
+/**
+ * The platform is bilingual in practice (Kinyarwanda, English, plus French and
+ * Swahili), and users mix languages inside one sentence. Matching only English
+ * meant "ndashaka akazi" ("I want a job") looked like small talk, so the bot had
+ * to ask which side the person was on instead of just searching.
+ *
+ * These sets are matched all at once — no language detection first, which would
+ * fail on mixed sentences.
+ */
+const JOB_NOUNS =
+  "jobs?|works?|gigs?|vacanc\\w*|employment"
+  + "|akazi|imirimo|umurimo|kazi|ajira|nafasi"          // rw / sw
+  + "|emplois?|travail|boulot|poste";                    // fr
+
+const WORKER_NOUNS =
+  "workers?|staff|employees?|personnel"
+  + "|umukozi|abakozi|umukozikazi"                       // rw
+  + "|mfanyakazi|wafanyakazi|mfanyikazi"                 // sw
+  + "|travailleu\\w*|employe\\w*|ouvrier\\w*";           // fr (accents stripped)
+
+const SEARCH_VERBS =
+  "want|need|find|get|looking|search|show|give|hire|hiring|recruit|apply|post"
+  + "|shaka|ndashaka|nshaka|gushaka|nkeneye|kubona|tanga|gutanga|nditanga|gukora"  // rw
+  + "|nataka|tafuta|kutafuta|ninahitaji|ajiri|kuajiri|natafuta"                    // sw
+  + "|veux|cherche|chercher|besoin|trouver|embaucher|recruter";                    // fr
+
+/**
+ * Phrases that settle WHICH SIDE the speaker is on, checked before bare nouns
+ * because the same noun appears on both sides: in Kinyarwanda "gushaka akazi"
+ * (seeking work) and "gutanga akazi" (giving work) share the word "akazi", so
+ * the verb, not the noun, carries the meaning.
+ */
+const WANTS_TO_HIRE = new RegExp(
+  "\\b(hire|hiring|recruit|employ|i am an employer|post a job)\\b"
+  + "|gutanga akazi|gutanga imirimo|guha akazi|gukoresha|ndi umukoresha|shaka umukozi|gushaka umukozi|ndashaka umukozi"
+  + "|kuajiri|ninaajiri|nataka mfanyakazi|natafuta mfanyakazi"
+  + "|embaucher|recruter|je suis employeur|cherche un travailleur",
+);
+
+const WANTS_WORK = new RegExp(
+  "\\b(get hired|find work|looking for work|need work|want work|i need a job|i want a job)\\b"
+  + "|gushaka akazi|ndashaka akazi|nshaka akazi|ndashaka gukora|nshaka gukora|ndi umukozi|nkeneye akazi"
+  + "|nataka kazi|natafuta kazi|ninahitaji kazi|mimi ni mfanyakazi"
+  + "|cherche du travail|cherche un emploi|je veux un emploi|je suis travailleur",
+);
+
+/** Lowercase, strip accents and punctuation so "employé" and "employe" both match. */
+function normalize(message: string): string {
+  return ` ${message
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^\p{L}\s]/gu, " ")
+    .replace(/\s+/g, " ")} `;
+}
+
+/** "I am a driver" / "ndi umushoferi" — naming your own trade is a request for jobs. */
+const DECLARES_TRADE = new RegExp(
+  `\\b(i am|i m|am|ndi|ndimwe|mimi ni|je suis)\\s+(a|an|umu\\w*|mu\\w*|un|une)?\\s*(${OCCUPATIONS})\\b`,
+);
+
+/** True when the message is asking to find jobs or workers, in any language. */
 export function isSearchRequest(message: string): boolean {
-  const m = ` ${message.toLowerCase()} `;
-  const verb = /\b(want|need|find|get|looking|search|show|give|hire|hiring|recruit|apply)\b/.test(m);
-  const noun = new RegExp(`\\b(job|jobs|work|works|gig|gigs|worker|workers|staff|employee|vacanc\\w*|${OCCUPATIONS})\\b`).test(m);
-  return verb && noun;
+  const m = normalize(message);
+  const verb = new RegExp(`\\b(${SEARCH_VERBS})\\b`).test(m);
+  const noun = new RegExp(`\\b(${JOB_NOUNS}|${WORKER_NOUNS}|${OCCUPATIONS})\\b`).test(m);
+  // An unambiguous phrase, or naming your own trade, is a search on its own —
+  // neither needs a search verb to be present.
+  return (verb && noun) || WANTS_TO_HIRE.test(m) || WANTS_WORK.test(m) || DECLARES_TRADE.test(m);
 }
 
 /**
  * Decide whether the user wants a WORKER (employer hiring) or a JOB (worker
- * seeking). This is the fix for "I want a worker" wrongly searching jobs: the
- * word "worker" and hiring verbs mean workers; "job"/"get hired"/"I am a …" mean
- * jobs; otherwise fall back to the role (employer→worker, seeker/guest→job).
+ * seeking), in any of the four languages.
+ *
+ * Order matters: side-declaring phrases first (the verb disambiguates a shared
+ * noun), then bare nouns, then the account role as a last resort.
  */
 export function resolveSearchTarget(message: string, role: string): "worker" | "job" {
-  const m = ` ${message.toLowerCase().replace(/[^\p{L}\s]/gu, " ")} `;
-  const hasWorker = /\bworkers?\b|\bstaff\b|\bemployees?\b/.test(m);
-  const hasJob = /\b(jobs?|gigs?|vacanc\w*)\b/.test(m);
+  const m = normalize(message);
+
+  // 1. Explicit "I want to hire" / "I want work" wins over any noun present.
+  const hiring = WANTS_TO_HIRE.test(m);
+  const seeking = WANTS_WORK.test(m);
+  if (hiring && !seeking) return "worker";
+  if (seeking && !hiring) return "job";
+
+  // 2. Bare nouns: only one side named.
+  const hasWorker = new RegExp(`\\b(${WORKER_NOUNS})\\b`).test(m);
+  const hasJob = new RegExp(`\\b(${JOB_NOUNS})\\b`).test(m);
   if (hasWorker && !hasJob) return "worker";
   if (hasJob && !hasWorker) return "job";
 
-  // "I am a <trade>" / "looking for work" => the speaker is a worker wanting jobs.
-  if (/\b(i am|i'?m|am)\s+(a|an)\b/.test(m) || /\b(get hired|find work|looking for work|need work|want work)\b/.test(m)) return "job";
-  // Hiring verbs => employer wanting a worker.
-  if (/\b(hire|hiring|recruit)\b/.test(m)) return "worker";
+  // 3. "I am a <trade>" — the speaker is describing themselves, so they want jobs.
+  if (/\b(i am|i m|am)\s+(a|an)\b/.test(m) || /\bndi\b|\bmimi ni\b|\bje suis\b/.test(m)) return "job";
 
   return role === "owner" ? "worker" : "job";
 }
