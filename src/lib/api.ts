@@ -565,6 +565,22 @@ function normalizePage<T>(raw: any): Page<T> {
   };
 }
 
+/**
+ * Drops the filters that are not set before they reach the query string, so an untouched
+ * filter panel produces a bare `?page=0&size=24` rather than a wall of empty params.
+ * `page: 0` and other falsy-but-meaningful numbers are kept; only undefined, null, empty
+ * strings and `false` (the server's own default for every flag) are removed.
+ */
+function pruneParams<T extends object>(params?: T): Partial<T> | undefined {
+  if (!params) return undefined;
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(params)) {
+    if (v === undefined || v === null || v === "" || v === false) continue;
+    out[k] = v;
+  }
+  return out as Partial<T>;
+}
+
 // ── Domain DTOs ───────────────────────────────────────────────────────────────
 export interface JobDto {
   id: string;
@@ -936,10 +952,39 @@ export async function getPendingApplicationCount(token: string): Promise<number>
 }
 
 // ── Jobs ──────────────────────────────────────────────────────────────────────
-export async function getJobs(params?: {
-  page?: number; size?: number; category?: string; district?: string; urgency?: string;
-}): Promise<Page<JobDto>> {
-  const { data } = await http.get("/api/jobs", { params });
+
+/**
+ * Filters accepted by the public job feed. All are optional and applied server-side, so a
+ * filter narrows the whole catalogue rather than only the rows already fetched.
+ */
+export interface JobSearchParams {
+  page?: number;
+  size?: number;
+  /** Free text over title, description and category. */
+  q?: string;
+  /** One category slug, or several comma-separated. */
+  category?: string;
+  province?: string;
+  district?: string;
+  sector?: string;
+  urgency?: "IMMEDIATE" | "SAME_DAY" | "SCHEDULED";
+  rateType?: "PER_HOUR" | "PER_DAY" | "PER_WEEK" | "PER_MONTH" | "PER_YEAR";
+  /** Bounds on the posted rate, in RWF. */
+  minRate?: number;
+  maxRate?: number;
+  /** Bounds on the shift length, in hours. */
+  minDuration?: number;
+  maxDuration?: number;
+  postedWithinDays?: number;
+  minHeadcount?: number;
+  /** Hide postings that have already filled every slot. */
+  openOnly?: boolean;
+  sort?: "newest" | "oldest" | "rate_asc" | "rate_desc"
+       | "duration_asc" | "duration_desc" | "starting_soon";
+}
+
+export async function getJobs(params?: JobSearchParams): Promise<Page<JobDto>> {
+  const { data } = await http.get("/api/jobs", { params: pruneParams(params) });
   return normalizePage(data.data);
 }
 
@@ -1147,10 +1192,37 @@ export async function updateApplicationStatus(
 }
 
 // ── Workers ───────────────────────────────────────────────────────────────────
-export async function getWorkers(params?: {
-  page?: number; size?: number; category?: string;
-}): Promise<Page<WorkerProfileDto>> {
-  const { data } = await http.get("/api/workers", { params });
+
+/**
+ * Filters accepted by the public worker directory. All are optional and applied server-side,
+ * so a filter narrows the whole directory rather than only the rows already fetched.
+ */
+export interface WorkerSearchParams {
+  page?: number;
+  size?: number;
+  /** Free text over name, categories, education and area. */
+  q?: string;
+  /** One category slug, or several comma-separated. */
+  category?: string;
+  province?: string;
+  district?: string;
+  sector?: string;
+  /** Minimum average rating, 0–5. */
+  minRating?: number;
+  minCompletedJobs?: number;
+  accountType?: "INDIVIDUAL" | "TEAM" | "COMPANY" | "CREW";
+  /** Only workers who have set their availability. */
+  availableOnly?: boolean;
+  /** Only workers holding a verification badge. */
+  verifiedOnly?: boolean;
+  /** Only workers who listed their own equipment. */
+  withEquipment?: boolean;
+  withPhoto?: boolean;
+  sort?: "recommended" | "rating" | "jobs" | "newest" | "oldest" | "name";
+}
+
+export async function getWorkers(params?: WorkerSearchParams): Promise<Page<WorkerProfileDto>> {
+  const { data } = await http.get("/api/workers", { params: pruneParams(params) });
   return normalizePage(data.data);
 }
 

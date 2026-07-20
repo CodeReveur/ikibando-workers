@@ -1,138 +1,31 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useCallback } from "react";
 import Footer from "@/components/layout/footer";
 import { PostJobModal } from "@/components/jobs/post-job-modal";
-import { getJobs, daysAgo, workerNetHourly, type JobDto } from "@/lib/api";
-import { useInfiniteReveal } from "@/lib/use-infinite-reveal";
+import { getJobs, daysAgo, workerNetHourly, type JobDto, type JobSearchParams } from "@/lib/api";
+import { usePagedResults } from "@/lib/use-paged-results";
+import { CATEGORIES, categoryParam, keyForSlug } from "@/lib/browse-taxonomy";
+import {
+  ActiveChip, SelectField, NumberField, ToggleField,
+  AreaFilter, EMPTY_AREA, areaIsSet, areaLabel, type AreaValue,
+} from "@/components/browse/filter-controls";
 import { useLanguage } from "@/lib/language-context";
 import {
-  UtensilsCrossed, Sparkles, Shield, Car, Zap, Wrench, Leaf,
-  MapPin, ChevronRight, Briefcase, Star, Search, SlidersHorizontal, ChevronDown,
-  X, Clock, Plus, ArrowRight, Home, HardHat,
-  Baby,
-  BadgeDollarSign,
-  Bed,
-  Bike,
-  BookOpen,
-  Building2,
-  Calculator,
-  Camera,
-  ChefHat,
-  ClipboardList,
-  Code2,
-  Coffee,
-  Cog,
-  Dog,
-  Drill,
-  Flower,
-  Globe,
-  GraduationCap,
-  Hammer,
-  Headphones,
-  HeartHandshake,
-  KeyRound,
-  Languages,
-  Laptop,
-  Megaphone,
-  Mic,
-  MonitorSmartphone,
-  Music,
-  Package,
-  PackageCheck,
-  Paintbrush,
-  Palette,
-  PartyPopper,
-  PenSquare,
-  PenTool,
-  PhoneCall,
-  Scale,
-  Scissors,
-  Shirt,
-  ShirtIcon,
-  ShoppingBag,
-  Smartphone,
-  Stethoscope,
-  Store,
-  Trees,
-  TrendingUp,
-  Truck,
-  UserCheck,
-  Users,
-  Video,
-  Wifi,
-  House,
+  MapPin, Briefcase, Search, SlidersHorizontal, Clock, Plus, ArrowRight,
 } from "lucide-react";
 import { BreadcrumbSchema } from "@/components/seo/json-ld";
 
-// ── data ───────────────────────────────────────────────────────────────────
-const CATEGORIES = [
-  { icon: UtensilsCrossed, label: "Waiters", key: "waiters", apiValues: ["waiter"] },
-  { icon: Coffee, label: "Baristas", key: "baristas", apiValues: ["bartender"] },
-  { icon: Sparkles, label: "Cleaners", key: "cleaners", apiValues: ["cleaner"] },
-  { icon: Shield, label: "Security Guards", key: "security_guards", apiValues: ["security"] },
-  { icon: Car, label: "Drivers", key: "drivers", apiValues: ["driver"] },
-  { icon: Truck, label: "Delivery Drivers", key: "delivery_drivers", apiValues: ["delivery_rider"] },
-  { icon: Bike, label: "Courier Riders", key: "courier_riders", apiValues: ["delivery_rider"] },
-  { icon: Zap, label: "Electricians", key: "electricians", apiValues: ["electrician"] },
-  { icon: Wrench, label: "Plumbers", key: "plumbers", apiValues: ["plumber"] },
-  { icon: Hammer, label: "Carpenters", key: "carpenters", apiValues: ["carpenter"] },
-  { icon: Paintbrush, label: "Painters", key: "painters", apiValues: ["painter"] },
-  { icon: HardHat, label: "Construction Workers", key: "construction_workers", apiValues: ["construction_worker"] },
-  { icon: Drill, label: "Technicians", key: "technicians", apiValues: ["it_support"] },
-  { icon: Cog, label: "Mechanics", key: "mechanics", apiValues: ["mechanic"] },
-  { icon: Leaf, label: "Gardeners", key: "gardeners", apiValues: ["gardener"] },
-  { icon: Trees, label: "Landscapers", key: "landscapers", apiValues: ["gardener"] },
-  { icon: House, label: "Housekeepers", key: "housekeepers", apiValues: ["housekeeper"] },
-  { icon: Bed, label: "Hotel Staff", key: "hotel_staff", apiValues: ["housekeeper", "waiter"] },
-  { icon: ShoppingBag, label: "Shop Attendants", key: "shop_attendants", apiValues: ["sales_agent"] },
-  { icon: Store, label: "Cashiers", key: "cashiers", apiValues: ["cashier"] },
-  { icon: Package, label: "Warehouse Staff", key: "warehouse_staff", apiValues: ["warehouse_worker"] },
-  { icon: PackageCheck, label: "Packers", key: "packers", apiValues: ["packer"] },
-  { icon: ClipboardList, label: "Supervisors", key: "supervisors", apiValues: ["office_assistant"] },
-  { icon: UserCheck, label: "Receptionists", key: "receptionists", apiValues: ["receptionist"] },
-  { icon: PhoneCall, label: "Call Center Agents", key: "call_center_agents", apiValues: ["customer_support"] },
-  { icon: Headphones, label: "Customer Support", key: "customer_support", apiValues: ["customer_support"] },
-  { icon: Briefcase, label: "Office Assistants", key: "office_assistants", apiValues: ["office_assistant"] },
-  { icon: GraduationCap, label: "Tutors", key: "tutors", apiValues: ["tutor"] },
-  { icon: BookOpen, label: "Teachers", key: "teachers", apiValues: ["tutor"] },
-  { icon: HeartHandshake, label: "Caregivers", key: "caregivers", apiValues: ["caregiver"] },
-  { icon: Stethoscope, label: "Nurses", key: "nurses", apiValues: ["caregiver"] },
-  { icon: Baby, label: "Babysitters", key: "babysitters", apiValues: ["nanny"] },
-  { icon: Dog, label: "Pet Care", key: "pet_care", apiValues: ["other"] },
-  { icon: Camera, label: "Photographers", key: "photographers", apiValues: ["photographer"] },
-  { icon: Video, label: "Videographers", key: "videographers", apiValues: ["videographer"] },
-  { icon: Music, label: "DJs", key: "djs", apiValues: ["dj"] },
-  { icon: Mic, label: "MCs", key: "mcs", apiValues: ["mc"] },
-  { icon: PartyPopper, label: "Event Planners", key: "event_planners", apiValues: ["promoter"] },
-  { icon: Flower, label: "Florists", key: "florists", apiValues: ["gardener"] },
-  { icon: Scissors, label: "Barbers", key: "barbers", apiValues: ["hairdresser"] },
-  { icon: Sparkles, label: "Hair Stylists", key: "hair_stylists", apiValues: ["hairdresser"] },
-  { icon: Palette, label: "Makeup Artists", key: "makeup_artists", apiValues: ["beautician"] },
-  { icon: Shirt, label: "Tailors", key: "tailors", apiValues: ["tailor"] },
-  { icon: ShirtIcon, label: "Laundry Services", key: "laundry_services", apiValues: ["housekeeper"] },
-  { icon: Smartphone, label: "Phone Repair", key: "phone_repair", apiValues: ["it_support"] },
-  { icon: Laptop, label: "Computer Repair", key: "computer_repair", apiValues: ["it_support"] },
-  { icon: Wifi, label: "Network Technicians", key: "network_technicians", apiValues: ["it_support"] },
-  { icon: MonitorSmartphone, label: "IT Support", key: "it_support", apiValues: ["it_support"] },
-  { icon: Globe, label: "Web Developers", key: "web_developers", apiValues: ["web_developer"] },
-  { icon: Code2, label: "Software Developers", key: "software_developers", apiValues: ["software_engineer"] },
-  { icon: PenTool, label: "Graphic Designers", key: "graphic_designers", apiValues: ["graphic_designer"] },
-  { icon: PenSquare, label: "Content Writers", key: "content_writers", apiValues: ["data_entry"] },
-  { icon: Languages, label: "Translators", key: "translators", apiValues: ["translator"] },
-  { icon: Calculator, label: "Accountants", key: "accountants", apiValues: ["accountant"] },
-  { icon: Scale, label: "Legal Advisors", key: "legal_advisors", apiValues: ["other"] },
-  { icon: Building2, label: "Real Estate Agents", key: "real_estate_agents", apiValues: ["sales_agent"] },
-  { icon: KeyRound, label: "Property Managers", key: "property_managers", apiValues: ["office_assistant"] },
-  { icon: Users, label: "HR Professionals", key: "hr_professionals", apiValues: ["office_assistant"] },
-  { icon: TrendingUp, label: "Marketing Specialists", key: "marketing_specialists", apiValues: ["marketing_agent"] },
-  { icon: Megaphone, label: "Sales Representatives", key: "sales_representatives", apiValues: ["sales_agent"] },
-  { icon: BadgeDollarSign, label: "Financial Advisors", key: "financial_advisors", apiValues: ["accountant"] },
+type SortKey = NonNullable<JobSearchParams["sort"]>;
+
+const SORTS: SortKey[] = [
+  "newest", "oldest", "rate_desc", "rate_asc", "duration_asc", "duration_desc", "starting_soon",
 ];
+const URGENCIES = ["IMMEDIATE", "SAME_DAY", "SCHEDULED"] as const;
+const RATE_TYPES = ["PER_HOUR", "PER_DAY", "PER_WEEK", "PER_MONTH", "PER_YEAR"] as const;
+const POSTED_WITHIN = ["1", "3", "7", "14", "30"];
 
-const LOCATIONS = ["Kacyiru", "Nyamirambo", "Kimihurura", "Remera", "Gisozi", "Kicukiro", "Gikondo", "Kanombe"];
-
-type SortKey = "newest" | "amount_asc" | "amount_desc";
+const PAGE_SIZE = 24;
 
 const fmt = (n: number) => `RWF ${n.toLocaleString()}`;
 const postedLabel = (d: number) => d === 0 ? "Today" : `${d}d ago`;
@@ -161,61 +54,85 @@ const CSS = `
 
 export default function JobsPage() {
   const { t } = useLanguage();
-  const [jobs, setJobs]                  = useState<JobDto[]>([]);
-  const [loadingJobs, setLoadingJobs]    = useState(true);
-  const [search, setSearch]              = useState("");
+  const [search, setSearch]             = useState("");
   const [filterCategory, setFilterCat]  = useState("");
-  const [filterLocation, setFilterLoc]  = useState("");
-  const [filterUrgent, setFilterUrgent] = useState(false);
+  const [area, setArea]                 = useState<AreaValue>(EMPTY_AREA);
+  const [filterUrgency, setUrgency]     = useState("");
+  const [filterRateType, setRateType]   = useState("");
   const [filterMinAmt, setFilterMinAmt] = useState("");
-  const [sort, setSort]                  = useState<SortKey>("newest");
+  const [filterMaxAmt, setFilterMaxAmt] = useState("");
+  const [filterMinHours, setMinHours]   = useState("");
+  const [filterMaxHours, setMaxHours]   = useState("");
+  const [filterPosted, setFilterPosted] = useState("");
+  const [filterTeam, setFilterTeam]     = useState(false);   // jobs hiring more than one worker
+  const [filterOpenOnly, setOpenOnly]   = useState(false);
+  const [sort, setSort]                 = useState<SortKey>("newest");
   const [showFilters, setShowFilters]   = useState(false);
   const [showPostJob, setShowPostJob]   = useState(false);
 
-  useEffect(() => {
-    getJobs({ size: 100 })
-      .then(page => setJobs(page.content))
-      .catch(() => setJobs([]))
-      .finally(() => setLoadingJobs(false));
-  }, []);
+  // Every filter goes to the server, so results are drawn from the whole catalogue rather
+  // than from one preloaded slab of rows.
+  const num = (v: string) => (v.trim() === "" ? undefined : Number(v));
+  const fetchPage = useCallback(
+    (page: number) => getJobs({
+      page, size: PAGE_SIZE,
+      q: search.trim() || undefined,
+      category: categoryParam(filterCategory),
+      province: area.province || undefined,
+      district: area.district || undefined,
+      sector: area.sector || undefined,
+      urgency: (filterUrgency || undefined) as JobSearchParams["urgency"],
+      rateType: (filterRateType || undefined) as JobSearchParams["rateType"],
+      minRate: num(filterMinAmt),
+      maxRate: num(filterMaxAmt),
+      minDuration: num(filterMinHours),
+      maxDuration: num(filterMaxHours),
+      postedWithinDays: num(filterPosted),
+      minHeadcount: filterTeam ? 2 : undefined,
+      openOnly: filterOpenOnly,
+      sort,
+    }),
+    [search, filterCategory, area, filterUrgency, filterRateType, filterMinAmt, filterMaxAmt,
+     filterMinHours, filterMaxHours, filterPosted, filterTeam, filterOpenOnly, sort],
+  );
+
+  const { items: jobs, total, loading: loadingJobs, loadingMore, hasMore, sentinelRef } =
+    usePagedResults<JobDto>(fetchPage, [
+      search, filterCategory, area.province, area.district, area.sector, filterUrgency,
+      filterRateType, filterMinAmt, filterMaxAmt, filterMinHours, filterMaxHours,
+      filterPosted, filterTeam, filterOpenOnly, sort,
+    ]);
+
+  // A single day reads as "Last 24 hours" rather than "Last 1 days".
+  const postedWithinLabel = (d: string) => d === "1"
+    ? (t("jobs_page.filters.posted_24h") || "Last 24 hours")
+    : (t("jobs_page.filters.posted_days", { count: Number(d) }) || `Last ${d} days`);
+
+  const urgencyLabel = (u: string) => t("jobs_page.urgency." + u.toLowerCase()) || u.replace(/_/g, " ");
+  const rateTypeLabel = (r: string) => t("jobs_page.rate_type." + r.toLowerCase()) || r.replace("PER_", "Per ").toLowerCase();
 
   const activeFilters = [
     filterCategory && {
       label: t("common.categories." + filterCategory) || filterCategory,
-      clear: () => setFilterCat("")
+      clear: () => setFilterCat(""),
     },
-    filterLocation && { label: filterLocation,                     clear: () => setFilterLoc("") },
-    filterUrgent   && { label: t("jobs_page.filters.urgent") || "Urgent only", clear: () => setFilterUrgent(false) },
+    areaIsSet(area) && { label: areaLabel(area), clear: () => setArea(EMPTY_AREA) },
+    filterUrgency  && { label: urgencyLabel(filterUrgency), clear: () => setUrgency("") },
+    filterRateType && { label: rateTypeLabel(filterRateType), clear: () => setRateType("") },
     filterMinAmt   && { label: `${t("jobs_page.filters.min") || "Min"} ${fmt(Number(filterMinAmt))}`, clear: () => setFilterMinAmt("") },
+    filterMaxAmt   && { label: `${t("jobs_page.filters.max") || "Max"} ${fmt(Number(filterMaxAmt))}`, clear: () => setFilterMaxAmt("") },
+    filterMinHours && { label: `${filterMinHours}h+`, clear: () => setMinHours("") },
+    filterMaxHours && { label: `≤ ${filterMaxHours}h`, clear: () => setMaxHours("") },
+    filterPosted   && { label: postedWithinLabel(filterPosted), clear: () => setFilterPosted("") },
+    filterTeam     && { label: t("jobs_page.filters.team_jobs") || "Hiring 2+", clear: () => setFilterTeam(false) },
+    filterOpenOnly && { label: t("jobs_page.filters.still_open") || "Still open", clear: () => setOpenOnly(false) },
   ].filter(Boolean) as { label: string; clear: () => void }[];
 
-  const clearAll = () => { setFilterCat(""); setFilterLoc(""); setFilterUrgent(false); setFilterMinAmt(""); };
-
-  const filtered = useMemo(() => {
-    let list = jobs.filter((j: JobDto) => {
-      const q = search.toLowerCase();
-      if (q && !j.title.toLowerCase().includes(q) && !j.category.toLowerCase().includes(q)) return false;
-      if (filterCategory) {
-        const catObj = CATEGORIES.find(c => c.key === filterCategory);
-        if (catObj) {
-          if (!catObj.apiValues.includes(j.category.toLowerCase())) return false;
-        } else {
-          if (j.category.toLowerCase() !== filterCategory.toLowerCase()) return false;
-        }
-      }
-      if (filterLocation && j.district.toLowerCase() !== filterLocation.toLowerCase()) return false;
-      if (filterUrgent && j.urgency !== "IMMEDIATE") return false;
-      if (filterMinAmt && j.ratePerHour < Number(filterMinAmt)) return false;
-      return true;
-    });
-    if (sort === "amount_asc")  list = [...list].sort((a, b) => a.ratePerHour - b.ratePerHour);
-    if (sort === "amount_desc") list = [...list].sort((a, b) => b.ratePerHour - a.ratePerHour);
-    if (sort === "newest")      list = [...list].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    return list;
-  }, [jobs, search, filterCategory, filterLocation, filterUrgent, filterMinAmt, sort]);
-
-  // Infinite scroll: reveal 28 at a time (≈7 rows × 4 columns) as the user scrolls.
-  const { visible, hasMore, sentinelRef } = useInfiniteReveal(filtered, 28);
+  const clearAll = () => {
+    setFilterCat(""); setArea(EMPTY_AREA); setUrgency(""); setRateType("");
+    setFilterMinAmt(""); setFilterMaxAmt(""); setMinHours(""); setMaxHours("");
+    setFilterPosted(""); setFilterTeam(false); setOpenOnly(false);
+  };
 
   return (
     <main style={{ background: "#111", minHeight: "100vh", color: "#f5f5f5", fontFamily: "Inter, DM Sans, system-ui, sans-serif" }}>
@@ -314,34 +231,92 @@ export default function JobsPage() {
             borderRadius: 14, padding: "20px", marginBottom: 14,
             display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 14,
           }}>
-            <SelectField label={t("jobs_page.filters.location") || "Location"} value={filterLocation} onChange={setFilterLoc} options={LOCATIONS} />
-            <SelectField label={t("jobs_page.filters.min_pay") || "Min pay (RWF)"} value={filterMinAmt} onChange={setFilterMinAmt}
-              options={["5000", "8000", "10000", "15000", "20000"]} />
-            <SelectField label={t("jobs_page.filters.sort_by") || "Sort by"} value={sort} onChange={v => setSort(v as SortKey)}
-              options={["newest", "amount_asc", "amount_desc"]}
+            <SelectField
+              label={t("jobs_page.filters.categories") || "Category"}
+              value={filterCategory}
+              onChange={setFilterCat}
+              options={CATEGORIES.map(c => c.key)}
+              labels={CATEGORIES.map(c => t("common.categories." + c.key) || c.label)}
+            />
+
+            <AreaFilter
+              value={area}
+              onChange={setArea}
+              labels={{
+                province: t("jobs_page.filters.province") || "Province",
+                district: t("jobs_page.filters.district") || "District",
+                sector:   t("jobs_page.filters.sector")   || "Sector",
+              }}
+            />
+
+            <SelectField
+              label={t("jobs_page.filters.urgency") || "Urgency"}
+              value={filterUrgency}
+              onChange={setUrgency}
+              options={[...URGENCIES]}
+              labels={URGENCIES.map(urgencyLabel)}
+            />
+            <SelectField
+              label={t("jobs_page.filters.rate_type") || "Rate type"}
+              value={filterRateType}
+              onChange={setRateType}
+              options={[...RATE_TYPES]}
+              labels={RATE_TYPES.map(rateTypeLabel)}
+            />
+
+            <NumberField
+              label={t("jobs_page.filters.min_pay") || "Min pay (RWF)"}
+              value={filterMinAmt} onChange={setFilterMinAmt} placeholder="5,000" step={1000}
+            />
+            <NumberField
+              label={t("jobs_page.filters.max_pay") || "Max pay (RWF)"}
+              value={filterMaxAmt} onChange={setFilterMaxAmt} placeholder="50,000" step={1000}
+            />
+
+            <NumberField
+              label={t("jobs_page.filters.min_hours") || "Min hours"}
+              value={filterMinHours} onChange={setMinHours} placeholder="1" step={1}
+            />
+            <NumberField
+              label={t("jobs_page.filters.max_hours") || "Max hours"}
+              value={filterMaxHours} onChange={setMaxHours} placeholder="12" step={1}
+            />
+
+            <SelectField
+              label={t("jobs_page.filters.posted") || "Posted"}
+              value={filterPosted}
+              onChange={setFilterPosted}
+              options={POSTED_WITHIN}
+              labels={POSTED_WITHIN.map(postedWithinLabel)}
+              allLabel={t("jobs_page.filters.any_time") || "Any time"}
+            />
+            <SelectField
+              label={t("jobs_page.filters.sort_by") || "Sort by"}
+              value={sort}
+              onChange={v => setSort((v || "newest") as SortKey)}
+              options={SORTS}
               labels={[
-                t("jobs_page.sort_options.newest") || "Newest first",
-                t("jobs_page.sort_options.pay_asc") || "Pay: low → high",
-                t("jobs_page.sort_options.pay_desc") || "Pay: high → low"
-              ]} />
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <label style={{ fontSize: 11, fontWeight: 700, color: "#666", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                {t("jobs_page.filters.urgent_only") || "Urgent only"}
-              </label>
-              <div
-                onClick={() => setFilterUrgent(u => !u)}
-                style={{
-                  width: 36, height: 20, borderRadius: 999, position: "relative", cursor: "pointer",
-                  background: filterUrgent ? "#f97316" : "#2a2a2a", transition: "background 0.2s", marginTop: 6,
-                }}
-              >
-                <div style={{
-                  position: "absolute", top: 2, left: filterUrgent ? 18 : 2,
-                  width: 16, height: 16, borderRadius: 999, background: "#fff",
-                  transition: "left 0.2s",
-                }} />
-              </div>
-            </div>
+                t("jobs_page.sort_options.newest")        || "Newest first",
+                t("jobs_page.sort_options.oldest")        || "Oldest first",
+                t("jobs_page.sort_options.pay_desc")      || "Pay: high → low",
+                t("jobs_page.sort_options.pay_asc")       || "Pay: low → high",
+                t("jobs_page.sort_options.hours_asc")     || "Shortest shift",
+                t("jobs_page.sort_options.hours_desc")    || "Longest shift",
+                t("jobs_page.sort_options.starting_soon") || "Starting soonest",
+              ]}
+              hideAll
+            />
+
+            <ToggleField
+              label={t("jobs_page.filters.team_jobs") || "Hiring 2+"}
+              value={filterTeam}
+              onChange={setFilterTeam}
+            />
+            <ToggleField
+              label={t("jobs_page.filters.still_open") || "Still open"}
+              value={filterOpenOnly}
+              onChange={setOpenOnly}
+            />
           </div>
         )}
 
@@ -359,20 +334,19 @@ export default function JobsPage() {
 
         {/* COUNT */}
         <p style={{ fontSize: 12, color: "#444", marginBottom: 14, fontWeight: 600 }}>
-          {loadingJobs ? (t("jobs_page.loading") || "Loading…") : t("jobs_page.found_count", { count: filtered.length })}
+          {loadingJobs ? (t("jobs_page.loading") || "Loading…") : t("jobs_page.found_count", { count: total })}
         </p>
 
         {/* GRID */}
         {loadingJobs
           ? <LoadingGrid />
-          : filtered.length === 0
+          : jobs.length === 0
           ? <Empty />
           : (
             <div className="jobs-grid">
-              {visible.map((j: JobDto) => {
+              {jobs.map((j: JobDto) => {
                 const posted = daysAgo(j.createdAt);
-                const catKey = CATEGORIES.find(c => c.apiValues.includes(j.category.toLowerCase()))?.key || j.category;
-                const localizedCat = t("common.categories." + catKey) || j.category;
+                const localizedCat = t("common.categories." + keyForSlug(j.category)) || j.category;
                 return (
                   <a key={j.id} href={`/jobs/${j.id}`} className="jcard" style={{
                     display: "flex", flexDirection: "column", gap: 12,
@@ -440,10 +414,12 @@ export default function JobsPage() {
               })}
             </div>
           )}
-        {/* Infinite-scroll sentinel + loading indicator */}
+        {/* Infinite-scroll sentinel: reaching it fetches the next page from the server. */}
         {!loadingJobs && hasMore && (
           <div ref={sentinelRef} style={{ textAlign: "center", padding: "24px 0", color: "#555", fontSize: 13 }}>
-            {t("jobs_page.loading_more") || "Loading more…"}
+            {loadingMore
+              ? (t("jobs_page.loading_more") || "Loading more…")
+              : (t("jobs_page.scroll_for_more") || "Scroll for more")}
           </div>
         )}
 
@@ -495,47 +471,6 @@ function LoadingGrid() {
         ))}
       </div>
     </>
-  );
-}
-
-function ActiveChip({ label, onRemove }: { label: string; onRemove: () => void }) {
-  return (
-    <span style={{
-      display: "inline-flex", alignItems: "center", gap: 5,
-      background: "rgba(249,115,22,0.12)", border: "1px solid rgba(249,115,22,0.3)",
-      borderRadius: 999, padding: "3px 10px 3px 12px", fontSize: 11, fontWeight: 600, color: "#f97316",
-    }}>
-      {label}
-      <button onClick={onRemove} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", display: "flex", color: "#f97316" }}>
-        <X size={11} />
-      </button>
-    </span>
-  );
-}
-
-function SelectField({ label, value, onChange, options, labels }: {
-  label: string; value: string; onChange: (v: string) => void;
-  options: string[]; labels?: string[];
-}) {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <label style={{ fontSize: 11, fontWeight: 700, color: "#666", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-        {label}
-      </label>
-      <div style={{ position: "relative" }}>
-        <select value={value} onChange={e => onChange(e.target.value)}
-          style={{
-            width: "100%", background: "#1c1c1c", border: "1px solid #2a2a2a",
-            borderRadius: 10, padding: "9px 32px 9px 12px", fontSize: 13,
-            color: value ? "#f0f0f0" : "#555", cursor: "pointer", outline: "none",
-          }}
-        >
-          <option value="">All</option>
-          {options.map((o, i) => <option key={o} value={o}>{labels ? labels[i] : o}</option>)}
-        </select>
-        <ChevronDown size={13} color="#555" style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
-      </div>
-    </div>
   );
 }
 

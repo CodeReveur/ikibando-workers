@@ -1080,12 +1080,30 @@
       "urgent_only": "Ibyihutirwa gusa",
       "urgent": "Ibyihutirwa gusa",
       "min": "Gito",
-      "max_pay": "Ikiguzi kinini (RWF)"
+      "max_pay": "Ikiguzi kinini (RWF)",
+      "province": "Intara",
+      "district": "Akarere",
+      "sector": "Umurenge",
+      "urgency": "Ubwihutirwe",
+      "rate_type": "Ubwoko bw'igipimo",
+      "min_hours": "Amasaha make",
+      "max_hours": "Amasaha menshi",
+      "posted": "Byatangajwe",
+      "posted_days": "Iminsi {count} ishize",
+      "any_time": "Igihe icyo ari cyo cyose",
+      "team_jobs": "Bashaka 2+",
+      "still_open": "Bikiri gufunguye",
+      "max": "Hejuru",
+      "posted_24h": "Amasaha 24 ashize"
     },
     "sort_options": {
       "newest": "Ibishya mbanziriza",
       "pay_asc": "Igiciro: hasi → hejuru",
-      "pay_desc": "Igiciro: hejuru → hasi"
+      "pay_desc": "Igiciro: hejuru → hasi",
+      "oldest": "Ibishaje mbere",
+      "hours_asc": "Igihe gito",
+      "hours_desc": "Igihe kirekire",
+      "starting_soon": "Bitangira vuba"
     },
     "loading": "Birimo gushaka…",
     "found_count": "Akazi {count} kabonetse",
@@ -1106,7 +1124,20 @@
       "desc": "Shyiraho akazi mu gihe kitageze ku minota 2, uhuzwe n'abakozi bafite imyirondoro yizewe mu gace kawe.",
       "button": "Shyiraho akazi"
     },
-    "loading_more": "Gukomeza gutangiza…"
+    "loading_more": "Gukomeza gutangiza…",
+    "urgency": {
+      "immediate": "Ako kanya",
+      "same_day": "Uwo munsi",
+      "scheduled": "Byateganyijwe"
+    },
+    "rate_type": {
+      "per_hour": "Ku isaha",
+      "per_day": "Ku munsi",
+      "per_week": "Ku cyumweru",
+      "per_month": "Ku kwezi",
+      "per_year": "Ku mwaka"
+    },
+    "scroll_for_more": "Manura urebe ibindi"
   },
   "browse_page": {
     "hero": {
@@ -1128,9 +1159,29 @@
     },
     "sort": {
       "recommended": "Ibyifuzwa",
-      "name": "Izina (A–Z)"
+      "name": "Izina (A–Z)",
+      "rating": "Bafite amanota menshi",
+      "jobs": "Imirimo myinshi",
+      "newest": "Abanyamuryango bashya"
     },
-    "load_more": "Reba abandi bakozi"
+    "load_more": "Reba abandi bakozi",
+    "filters": {
+      "min_rating": "Amanota make",
+      "any_rating": "Amanota ayo ari yo yose",
+      "jobs_completed": "Imirimo yarangiye",
+      "jobs_done": "Imirimo {count}+",
+      "any_experience": "Byose",
+      "account_type": "Ubwoko bw'umukozi",
+      "available": "Araboneka",
+      "verified": "Abemejwe gusa",
+      "has_equipment": "Afite ibikoresho"
+    },
+    "account_type": {
+      "individual": "Umuntu ku giti cye",
+      "team": "Itsinda",
+      "company": "Ikigo",
+      "crew": "Itsinda ry'abakozi"
+    }
   },
   "worker_detail": {
     "not_found": "Umukozi ntashobora kuboneka",

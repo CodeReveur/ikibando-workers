@@ -1081,12 +1081,30 @@
       "urgent": "Urgent only",
       "min": "Min",
       "max_pay": "Max pay (RWF)",
-      "categories": "Category"
+      "categories": "Category",
+      "province": "Province",
+      "district": "District",
+      "sector": "Sector",
+      "urgency": "Urgency",
+      "rate_type": "Rate type",
+      "min_hours": "Min hours",
+      "max_hours": "Max hours",
+      "posted": "Posted",
+      "posted_days": "Last {count} days",
+      "any_time": "Any time",
+      "team_jobs": "Hiring 2+",
+      "still_open": "Still open",
+      "max": "Max",
+      "posted_24h": "Last 24 hours"
     },
     "sort_options": {
       "newest": "Newest first",
       "pay_asc": "Pay: low → high",
-      "pay_desc": "Pay: high → low"
+      "pay_desc": "Pay: high → low",
+      "oldest": "Oldest first",
+      "hours_asc": "Shortest shift",
+      "hours_desc": "Longest shift",
+      "starting_soon": "Starting soonest"
     },
     "loading": "Loading…",
     "found_count": "{count} jobs found",
@@ -1107,7 +1125,20 @@
       "desc": "Post a job in under 2 minutes and get matched with ID-verified workers in your area.",
       "button": "Post a job"
     },
-    "loading_more": "Loading more…"
+    "loading_more": "Loading more…",
+    "urgency": {
+      "immediate": "Immediate",
+      "same_day": "Same day",
+      "scheduled": "Scheduled"
+    },
+    "rate_type": {
+      "per_hour": "Per hour",
+      "per_day": "Per day",
+      "per_week": "Per week",
+      "per_month": "Per month",
+      "per_year": "Per year"
+    },
+    "scroll_for_more": "Scroll for more"
   },
   "browse_page": {
     "hero": {
@@ -1129,9 +1160,29 @@
     },
     "sort": {
       "recommended": "Recommended",
-      "name": "Name (A–Z)"
+      "name": "Name (A–Z)",
+      "rating": "Highest rated",
+      "jobs": "Most jobs done",
+      "newest": "Newest members"
     },
-    "load_more": "Load more workers"
+    "load_more": "Load more workers",
+    "filters": {
+      "min_rating": "Min rating",
+      "any_rating": "Any rating",
+      "jobs_completed": "Jobs completed",
+      "jobs_done": "{count}+ jobs",
+      "any_experience": "Any",
+      "account_type": "Worker type",
+      "available": "Available now",
+      "verified": "Verified only",
+      "has_equipment": "Has equipment"
+    },
+    "account_type": {
+      "individual": "Individual",
+      "team": "Team",
+      "company": "Company",
+      "crew": "Crew"
+    }
   },
   "worker_detail": {
     "not_found": "Worker not found",

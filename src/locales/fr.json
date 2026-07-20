@@ -1080,12 +1080,30 @@
       "urgent": "Urgent uniquement",
       "min": "Min",
       "max_pay": "Salaire max (RWF)",
-      "categories": "Catégorie"
+      "categories": "Catégorie",
+      "province": "Province",
+      "district": "District",
+      "sector": "Secteur",
+      "urgency": "Urgence",
+      "rate_type": "Type de tarif",
+      "min_hours": "Heures min",
+      "max_hours": "Heures max",
+      "posted": "Publié",
+      "posted_days": "{count} derniers jours",
+      "any_time": "À tout moment",
+      "team_jobs": "Recrute 2+",
+      "still_open": "Encore ouvert",
+      "max": "Max",
+      "posted_24h": "Dernières 24 heures"
     },
     "sort_options": {
       "newest": "Le plus récent",
       "pay_asc": "Salaire : croissant",
-      "pay_desc": "Salaire : décroissant"
+      "pay_desc": "Salaire : décroissant",
+      "oldest": "Plus anciens d'abord",
+      "hours_asc": "Poste le plus court",
+      "hours_desc": "Poste le plus long",
+      "starting_soon": "Débutant le plus tôt"
     },
     "loading": "Chargement…",
     "found_count": "{count} emplois trouvés",
@@ -1106,7 +1124,20 @@
       "desc": "Publiez un emploi en moins de 2 minutes et trouvez des travailleurs vérifiés dans votre région.",
       "button": "Publier un emploi"
     },
-    "loading_more": "Chargement…"
+    "loading_more": "Chargement…",
+    "urgency": {
+      "immediate": "Immédiat",
+      "same_day": "Le jour même",
+      "scheduled": "Planifié"
+    },
+    "rate_type": {
+      "per_hour": "Par heure",
+      "per_day": "Par jour",
+      "per_week": "Par semaine",
+      "per_month": "Par mois",
+      "per_year": "Par an"
+    },
+    "scroll_for_more": "Faites défiler pour plus"
   },
   "browse_page": {
     "hero": {
@@ -1128,9 +1159,29 @@
     },
     "sort": {
       "recommended": "Recommandé",
-      "name": "Nom (A–Z)"
+      "name": "Nom (A–Z)",
+      "rating": "Mieux notés",
+      "jobs": "Plus de missions",
+      "newest": "Nouveaux membres"
     },
-    "load_more": "Voir plus de travailleurs"
+    "load_more": "Voir plus de travailleurs",
+    "filters": {
+      "min_rating": "Note min",
+      "any_rating": "Toute note",
+      "jobs_completed": "Missions terminées",
+      "jobs_done": "{count}+ missions",
+      "any_experience": "Tous",
+      "account_type": "Type de profil",
+      "available": "Disponible",
+      "verified": "Vérifiés",
+      "has_equipment": "Avec équipement"
+    },
+    "account_type": {
+      "individual": "Individuel",
+      "team": "Équipe",
+      "company": "Entreprise",
+      "crew": "Groupe"
+    }
   },
   "worker_detail": {
     "not_found": "Travailleur non trouvé",

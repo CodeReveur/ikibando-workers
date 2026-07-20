@@ -1,140 +1,42 @@
 "use client";
 
 import Footer from "@/components/layout/footer";
-import { useState, useMemo, useEffect, useRef, useCallback, Suspense } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { getWorkers, getJobs, daysAgo, type WorkerProfileDto, type JobDto } from "@/lib/api";
-import { useInfiniteReveal } from "@/lib/use-infinite-reveal";
+import {
+  getWorkers, getJobs, daysAgo,
+  type WorkerProfileDto, type JobDto, type JobSearchParams, type WorkerSearchParams,
+} from "@/lib/api";
+import { usePagedResults } from "@/lib/use-paged-results";
+import { CATEGORIES, categoryParam, keyForSlug } from "@/lib/browse-taxonomy";
+import {
+  ActiveChip, SelectField, NumberField, ToggleField,
+  AreaFilter, EMPTY_AREA, areaIsSet, areaLabel, type AreaValue,
+} from "@/components/browse/filter-controls";
 import { ratingInfo } from "@/lib/rating";
 import { useLanguage } from "@/lib/language-context";
 import {
-  UtensilsCrossed, Sparkles, Shield, Car, Zap, Wrench, Leaf,
-  Camera, Package, Home, HardHat, Search, SlidersHorizontal,
-  MapPin, Briefcase, Users, X, ChevronDown, Star,
-  Baby,
-  BadgeDollarSign,
-  Bed,
-  Bike,
-  BookOpen,
-  Building2,
-  Calculator,
-  ChefHat,
-  ClipboardList,
-  Code2,
-  Coffee,
-  Cog,
-  Dog,
-  Drill,
-  Flower,
-  Globe,
-  GraduationCap,
-  Hammer,
-  Headphones,
-  HeartHandshake,
-  KeyRound,
-  Languages,
-  Laptop,
-  Megaphone,
-  Mic,
-  MonitorSmartphone,
-  Music,
-  PackageCheck,
-  Paintbrush,
-  Palette,
-  PartyPopper,
-  PenSquare,
-  PenTool,
-  PhoneCall,
-  Scale,
-  Scissors,
-  Shirt,
-  ShirtIcon,
-  ShoppingBag,
-  Smartphone,
-  Stethoscope,
-  Store,
-  Trees,
-  TrendingUp,
-  Truck,
-  UserCheck,
-  Video,
-  Wifi,
-  House,
+  Search, SlidersHorizontal, MapPin, Briefcase, Users, Star, ChevronDown,
 } from "lucide-react";
 import { BreadcrumbSchema, ServiceSchema } from "@/components/seo/json-ld";
 
 // ── types ──────────────────────────────────────────────────────────────────
 type Tab = "workers" | "jobs";
-type SortWorker = "recommended" | "name";
-type SortJob = "amount_asc" | "amount_desc" | "newest";
+type SortWorker = NonNullable<WorkerSearchParams["sort"]>;
+type SortJob = NonNullable<JobSearchParams["sort"]>;
 
 // ── data ───────────────────────────────────────────────────────────────────
-const CATEGORIES = [
-  { icon: UtensilsCrossed, label: "Waiters", key: "waiters", apiValues: ["waiter"] },
-  { icon: Coffee, label: "Baristas", key: "baristas", apiValues: ["bartender"] },
-  { icon: Sparkles, label: "Cleaners", key: "cleaners", apiValues: ["cleaner"] },
-  { icon: Shield, label: "Security Guards", key: "security_guards", apiValues: ["security"] },
-  { icon: Car, label: "Drivers", key: "drivers", apiValues: ["driver"] },
-  { icon: Truck, label: "Delivery Drivers", key: "delivery_drivers", apiValues: ["delivery_rider"] },
-  { icon: Bike, label: "Courier Riders", key: "courier_riders", apiValues: ["delivery_rider"] },
-  { icon: Zap, label: "Electricians", key: "electricians", apiValues: ["electrician"] },
-  { icon: Wrench, label: "Plumbers", key: "plumbers", apiValues: ["plumber"] },
-  { icon: Hammer, label: "Carpenters", key: "carpenters", apiValues: ["carpenter"] },
-  { icon: Paintbrush, label: "Painters", key: "painters", apiValues: ["painter"] },
-  { icon: HardHat, label: "Construction Workers", key: "construction_workers", apiValues: ["construction_worker"] },
-  { icon: Drill, label: "Technicians", key: "technicians", apiValues: ["it_support"] },
-  { icon: Cog, label: "Mechanics", key: "mechanics", apiValues: ["mechanic"] },
-  { icon: Leaf, label: "Gardeners", key: "gardeners", apiValues: ["gardener"] },
-  { icon: Trees, label: "Landscapers", key: "landscapers", apiValues: ["gardener"] },
-  { icon: House, label: "Housekeepers", key: "housekeepers", apiValues: ["housekeeper"] },
-  { icon: Bed, label: "Hotel Staff", key: "hotel_staff", apiValues: ["housekeeper", "waiter"] },
-  { icon: ShoppingBag, label: "Shop Attendants", key: "shop_attendants", apiValues: ["sales_agent"] },
-  { icon: Store, label: "Cashiers", key: "cashiers", apiValues: ["cashier"] },
-  { icon: Package, label: "Warehouse Staff", key: "warehouse_staff", apiValues: ["warehouse_worker"] },
-  { icon: PackageCheck, label: "Packers", key: "packers", apiValues: ["packer"] },
-  { icon: ClipboardList, label: "Supervisors", key: "supervisors", apiValues: ["office_assistant"] },
-  { icon: UserCheck, label: "Receptionists", key: "receptionists", apiValues: ["receptionist"] },
-  { icon: PhoneCall, label: "Call Center Agents", key: "call_center_agents", apiValues: ["customer_support"] },
-  { icon: Headphones, label: "Customer Support", key: "customer_support", apiValues: ["customer_support"] },
-  { icon: Briefcase, label: "Office Assistants", key: "office_assistants", apiValues: ["office_assistant"] },
-  { icon: GraduationCap, label: "Tutors", key: "tutors", apiValues: ["tutor"] },
-  { icon: BookOpen, label: "Teachers", key: "teachers", apiValues: ["tutor"] },
-  { icon: HeartHandshake, label: "Caregivers", key: "caregivers", apiValues: ["caregiver"] },
-  { icon: Stethoscope, label: "Nurses", key: "nurses", apiValues: ["caregiver"] },
-  { icon: Baby, label: "Babysitters", key: "babysitters", apiValues: ["nanny"] },
-  { icon: Dog, label: "Pet Care", key: "pet_care", apiValues: ["other"] },
-  { icon: Camera, label: "Photographers", key: "photographers", apiValues: ["photographer"] },
-  { icon: Video, label: "Videographers", key: "videographers", apiValues: ["videographer"] },
-  { icon: Music, label: "DJs", key: "djs", apiValues: ["dj"] },
-  { icon: Mic, label: "MCs", key: "mcs", apiValues: ["mc"] },
-  { icon: PartyPopper, label: "Event Planners", key: "event_planners", apiValues: ["promoter"] },
-  { icon: Flower, label: "Florists", key: "florists", apiValues: ["gardener"] },
-  { icon: Scissors, label: "Barbers", key: "barbers", apiValues: ["hairdresser"] },
-  { icon: Sparkles, label: "Hair Stylists", key: "hair_stylists", apiValues: ["hairdresser"] },
-  { icon: Palette, label: "Makeup Artists", key: "makeup_artists", apiValues: ["beautician"] },
-  { icon: Shirt, label: "Tailors", key: "tailors", apiValues: ["tailor"] },
-  { icon: ShirtIcon, label: "Laundry Services", key: "laundry_services", apiValues: ["housekeeper"] },
-  { icon: Smartphone, label: "Phone Repair", key: "phone_repair", apiValues: ["it_support"] },
-  { icon: Laptop, label: "Computer Repair", key: "computer_repair", apiValues: ["it_support"] },
-  { icon: Wifi, label: "Network Technicians", key: "network_technicians", apiValues: ["it_support"] },
-  { icon: MonitorSmartphone, label: "IT Support", key: "it_support", apiValues: ["it_support"] },
-  { icon: Globe, label: "Web Developers", key: "web_developers", apiValues: ["web_developer"] },
-  { icon: Code2, label: "Software Developers", key: "software_developers", apiValues: ["software_engineer"] },
-  { icon: PenTool, label: "Graphic Designers", key: "graphic_designers", apiValues: ["graphic_designer"] },
-  { icon: PenSquare, label: "Content Writers", key: "content_writers", apiValues: ["data_entry"] },
-  { icon: Languages, label: "Translators", key: "translators", apiValues: ["translator"] },
-  { icon: Calculator, label: "Accountants", key: "accountants", apiValues: ["accountant"] },
-  { icon: Scale, label: "Legal Advisors", key: "legal_advisors", apiValues: ["other"] },
-  { icon: Building2, label: "Real Estate Agents", key: "real_estate_agents", apiValues: ["sales_agent"] },
-  { icon: KeyRound, label: "Property Managers", key: "property_managers", apiValues: ["office_assistant"] },
-  { icon: Users, label: "HR Professionals", key: "hr_professionals", apiValues: ["office_assistant"] },
-  { icon: TrendingUp, label: "Marketing Specialists", key: "marketing_specialists", apiValues: ["marketing_agent"] },
-  { icon: Megaphone, label: "Sales Representatives", key: "sales_representatives", apiValues: ["sales_agent"] },
-  { icon: BadgeDollarSign, label: "Financial Advisors", key: "financial_advisors", apiValues: ["accountant"] },
+const WORKER_SORTS: SortWorker[] = ["recommended", "rating", "jobs", "newest", "name"];
+const JOB_SORTS: SortJob[] = [
+  "newest", "oldest", "rate_desc", "rate_asc", "duration_asc", "duration_desc", "starting_soon",
 ];
+const URGENCIES = ["IMMEDIATE", "SAME_DAY", "SCHEDULED"] as const;
+const ACCOUNT_TYPES = ["INDIVIDUAL", "TEAM", "COMPANY", "CREW"] as const;
+const MIN_RATINGS = ["3", "3.5", "4", "4.5"];
+const MIN_JOBS = ["1", "5", "10", "25"];
+const POSTED_WITHIN = ["1", "3", "7", "14", "30"];
 
-const LOCATIONS = ["Kacyiru", "Nyamirambo", "Kimihurura", "Remera", "Gisozi", "Kicukiro", "Gikondo", "Kanombe", "Kigali-wide"];
-
+const PAGE_SIZE = 16;
 
 
 // ── styles ─────────────────────────────────────────────────────────────────
@@ -184,48 +86,6 @@ function isAvailable(w: WorkerProfileDto): boolean {
   return Array.isArray(w.availability) && w.availability.length > 0;
 }
 
-function ActiveChip({ label, onRemove }: { label: string; onRemove: () => void }) {
-  return (
-    <span style={{
-      display: "inline-flex", alignItems: "center", gap: 5,
-      background: "rgba(249,115,22,0.12)", border: "1px solid rgba(249,115,22,0.3)",
-      borderRadius: 999, padding: "3px 10px 3px 12px", fontSize: 11, fontWeight: 600, color: "#f97316",
-    }}>
-      {label}
-      <button onClick={onRemove} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", display: "flex", color: "#f97316" }}>
-        <X size={11} />
-      </button>
-    </span>
-  );
-}
-
-function SelectField({ label, value, onChange, options, labels }: {
-  label: string; value: string; onChange: (v: string) => void; options: string[]; labels?: string[];
-}) {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <label style={{ fontSize: 11, fontWeight: 700, color: "#666", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-        {label}
-      </label>
-      <div style={{ position: "relative" }}>
-        <select
-          value={value}
-          onChange={e => onChange(e.target.value)}
-          style={{
-            width: "100%", background: "#1c1c1c", border: "1px solid #2a2a2a",
-            borderRadius: 10, padding: "9px 32px 9px 12px", fontSize: 13,
-            color: value ? "#f0f0f0" : "#555", cursor: "pointer", outline: "none",
-          }}
-        >
-          <option value="">All</option>
-          {options.map((o, i) => <option key={o} value={o}>{labels ? labels[i] : o}</option>)}
-        </select>
-        <ChevronDown size={13} color="#555" style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
-      </div>
-    </div>
-  );
-}
-
 // ── main page ──────────────────────────────────────────────────────────────
 function BrowsePageInner() {
   const { t } = useLanguage();
@@ -233,174 +93,160 @@ function BrowsePageInner() {
   const [tab, setTab] = useState<Tab>("workers");
   const [search, setSearch] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-  const [workers, setWorkers] = useState<WorkerProfileDto[]>([]);
-  const [jobs, setJobs] = useState<JobDto[]>([]);
-  const [loadingData, setLoadingData] = useState(true);   // jobs initial load
 
-  // Workers paginate from the server: 16 (4 rows x 4) per batch, the next batch
-  // fetched only when the sentinel scrolls into view (after a 1s pause) — never
-  // preloaded. Refs mirror the state the observer/loader read without stale closures.
-  const WORKERS_PAGE_SIZE = 16;
-  const [workersLoading, setWorkersLoading] = useState(true);        // first page
-  const [workersLoadingMore, setWorkersLoadingMore] = useState(false);
-  const [workersHasMore, setWorkersHasMore] = useState(true);
-  const [workersSentinel, setWorkersSentinel] = useState<HTMLDivElement | null>(null);
-  const workersPageRef = useRef(0);
-  const workersHasMoreRef = useRef(true);
-  const workersBusyRef = useRef(false);
-
-  // shared
+  // shared by both tabs
   const [filterCategory, setFilterCategory] = useState("");
-  const [filterLocation, setFilterLocation] = useState("");
+  const [area, setArea] = useState<AreaValue>(EMPTY_AREA);
 
   // workers
-  // Default keeps the server ranking: rating → completed jobs → profile completion → newest.
+  // "recommended" keeps the server ranking: rating → completed jobs → profile completion → newest.
   const [sortWorker, setSortWorker] = useState<SortWorker>("recommended");
+  const [minRating, setMinRating] = useState("");
+  const [minJobs, setMinJobs] = useState("");
+  const [accountType, setAccountType] = useState("");
+  const [availableOnly, setAvailableOnly] = useState(false);
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [withEquipment, setWithEquipment] = useState(false);
 
   // jobs
   const [filterMinAmount, setFilterMinAmount] = useState("");
   const [filterMaxAmount, setFilterMaxAmount] = useState("");
+  const [filterUrgency, setFilterUrgency] = useState("");
+  const [filterPosted, setFilterPosted] = useState("");
+  const [filterOpenOnly, setFilterOpenOnly] = useState(false);
   const [sortJob, setSortJob] = useState<SortJob>("newest");
 
-  // Jobs still load in one shot (client-side reveal). Workers paginate — see loadWorkers.
-  useEffect(() => {
-    getJobs({ size: 100 }).then(p => setJobs(p.content)).catch(() => {}).finally(() => setLoadingData(false));
-  }, []);
+  const num = (v: string) => (v.trim() === "" ? undefined : Number(v));
 
-  // Fetch the next page of workers from the server. `initial` skips the pause and
-  // replaces (rather than appends); `immediate` skips the pause for the explicit
-  // "Load more" button. Guarded so a page is never loaded twice.
-  const loadWorkers = useCallback(async (initial: boolean, immediate = false) => {
-    if (workersBusyRef.current) return;
-    if (!initial && !workersHasMoreRef.current) return;
-    workersBusyRef.current = true;
-    if (initial) setWorkersLoading(true); else setWorkersLoadingMore(true);
-    if (!initial && !immediate) await new Promise((r) => setTimeout(r, 1000)); // pause before auto-loaded batch
-    try {
-      const p = await getWorkers({ page: workersPageRef.current, size: WORKERS_PAGE_SIZE });
-      const content = p.content || [];
-      setWorkers((prev) => (initial ? content : [...prev, ...content]));
-      workersPageRef.current += 1;
-      // Belt and braces: trust totalPages when present, but a FULL page also means
-      // "probably more" — so a missing/odd meta shape can never kill pagination again.
-      const more = (Number.isFinite(p.totalPages) && p.totalPages > 0)
-        ? p.number + 1 < p.totalPages
-        : content.length === WORKERS_PAGE_SIZE;
-      workersHasMoreRef.current = more;
-      setWorkersHasMore(more);
-    } catch {
-      // Network hiccup: keep hasMore so the "Load more" button lets the user retry.
-      setWorkersHasMore(workersHasMoreRef.current);
-    } finally {
-      workersBusyRef.current = false;
-      if (initial) setWorkersLoading(false); else setWorkersLoadingMore(false);
-    }
-  }, []);
+  // An empty result for the tab that is not on screen, so only the visible tab hits the network.
+  const idlePage = <T,>() =>
+    Promise.resolve({ content: [] as T[], totalElements: 0, totalPages: 0, number: 0, size: PAGE_SIZE });
 
-  useEffect(() => { loadWorkers(true); }, [loadWorkers]);
+  // Both tabs filter server-side, so a filter narrows the whole catalogue rather than only the
+  // rows already fetched. `tab` is in the dep lists, so switching tabs loads that tab's results.
+  const fetchWorkers = useCallback(
+    (page: number) => tab !== "workers" ? idlePage<WorkerProfileDto>() : getWorkers({
+      page, size: PAGE_SIZE,
+      q: search.trim() || undefined,
+      category: categoryParam(filterCategory),
+      province: area.province || undefined,
+      district: area.district || undefined,
+      sector: area.sector || undefined,
+      minRating: num(minRating),
+      minCompletedJobs: num(minJobs),
+      accountType: (accountType || undefined) as WorkerSearchParams["accountType"],
+      availableOnly, verifiedOnly, withEquipment,
+      sort: sortWorker,
+    }),
+    [tab, search, filterCategory, area, minRating, minJobs, accountType,
+     availableOnly, verifiedOnly, withEquipment, sortWorker],
+  );
 
-  // Scroll-position detection — NOT an IntersectionObserver. An observer only
-  // fires on visibility *crossings*, which silently never happens when it attaches
-  // at the wrong moment; a plain scroll listener re-checks the indicator's actual
-  // position on every scroll/resize tick, so reaching the bottom always triggers.
-  const workersSentinelRef = useCallback((el: HTMLDivElement | null) => setWorkersSentinel(el), []);
-  useEffect(() => {
-    if (!workersSentinel) return;
-    const check = () => {
-      if (workersBusyRef.current || !workersHasMoreRef.current) return;
-      const rect = workersSentinel.getBoundingClientRect();
-      const viewH = window.innerHeight || document.documentElement.clientHeight;
-      // Indicator within 300px below the viewport bottom (or above it) → load next rows.
-      if (rect.top <= viewH + 300) loadWorkers(false);
-    };
-    window.addEventListener("scroll", check, { passive: true });
-    window.addEventListener("resize", check);
-    document.addEventListener("scroll", check, { passive: true, capture: true }); // inner scroll containers too
-    check(); // page taller than content? load immediately until it fills
-    const iv = setInterval(check, 1500); // belt-and-braces: recheck even without scroll events
-    return () => {
-      window.removeEventListener("scroll", check);
-      window.removeEventListener("resize", check);
-      document.removeEventListener("scroll", check, { capture: true } as EventListenerOptions);
-      clearInterval(iv);
-    };
-  }, [workersSentinel, loadWorkers]);
+  const fetchJobs = useCallback(
+    (page: number) => tab !== "jobs" ? idlePage<JobDto>() : getJobs({
+      page, size: PAGE_SIZE,
+      q: search.trim() || undefined,
+      category: categoryParam(filterCategory),
+      province: area.province || undefined,
+      district: area.district || undefined,
+      sector: area.sector || undefined,
+      urgency: (filterUrgency || undefined) as JobSearchParams["urgency"],
+      minRate: num(filterMinAmount),
+      maxRate: num(filterMaxAmount),
+      postedWithinDays: num(filterPosted),
+      openOnly: filterOpenOnly,
+      sort: sortJob,
+    }),
+    [tab, search, filterCategory, area, filterUrgency, filterMinAmount, filterMaxAmount,
+     filterPosted, filterOpenOnly, sortJob],
+  );
+
+  const workersView = usePagedResults<WorkerProfileDto>(fetchWorkers, [
+    tab, search, filterCategory, area.province, area.district, area.sector,
+    minRating, minJobs, accountType, availableOnly, verifiedOnly, withEquipment, sortWorker,
+  ]);
+  const jobsView = usePagedResults<JobDto>(fetchJobs, [
+    tab, search, filterCategory, area.province, area.district, area.sector,
+    filterUrgency, filterMinAmount, filterMaxAmount, filterPosted, filterOpenOnly, sortJob,
+  ]);
+
+  const workers = workersView.items;
+  const jobs = jobsView.items;
 
   useEffect(() => {
     const cat = searchParams.get('category');
-    const tab = searchParams.get('tab');
+    const tabParam = searchParams.get('tab');
     if (cat) {
       const match = CATEGORIES.find(c => c.key === cat.toLowerCase() || c.label.toLowerCase() === cat.toLowerCase());
-      if (match) setFilterCategory(match.key);
-      else setFilterCategory(cat);
+      setFilterCategory(match ? match.key : cat);
     }
-    if (tab === 'jobs') setTab('jobs');
-    if (tab === 'workers') setTab('workers');
+    if (tabParam === 'jobs') setTab('jobs');
+    if (tabParam === 'workers') setTab('workers');
   }, [searchParams]);
 
-  // active filter chips
+  // A single day reads as "Last 24 hours" rather than "Last 1 days".
+  const postedWithinLabel = (d: string) => d === "1"
+    ? (t("jobs_page.filters.posted_24h") || "Last 24 hours")
+    : (t("jobs_page.filters.posted_days", { count: Number(d) }) || `Last ${d} days`);
+
+  const urgencyLabel = (u: string) => t("jobs_page.urgency." + u.toLowerCase()) || u.replace(/_/g, " ");
+  const accountTypeLabel = (a: string) =>
+    t("browse_page.account_type." + a.toLowerCase()) || a.charAt(0) + a.slice(1).toLowerCase();
+
+  // Active chips list only the filters that apply to the tab being viewed.
   const activeFilters = [
-    filterCategory  && {
+    filterCategory && {
       label: t("common.categories." + filterCategory) || filterCategory,
-      clear: () => setFilterCategory("")
+      clear: () => setFilterCategory(""),
     },
-    filterLocation  && { label: filterLocation,  clear: () => setFilterLocation("") },
-    filterMinAmount && tab === "jobs" && { label: `Min RWF ${Number(filterMinAmount).toLocaleString()}`, clear: () => setFilterMinAmount("") },
-    filterMaxAmount && tab === "jobs" && { label: `Max RWF ${Number(filterMaxAmount).toLocaleString()}`, clear: () => setFilterMaxAmount("") },
+    areaIsSet(area) && { label: areaLabel(area), clear: () => setArea(EMPTY_AREA) },
+
+    tab === "workers" && minRating && {
+      label: `${minRating}★+`, clear: () => setMinRating(""),
+    },
+    tab === "workers" && minJobs && {
+      label: t("browse_page.filters.jobs_done", { count: Number(minJobs) }) || `${minJobs}+ jobs`,
+      clear: () => setMinJobs(""),
+    },
+    tab === "workers" && accountType && {
+      label: accountTypeLabel(accountType), clear: () => setAccountType(""),
+    },
+    tab === "workers" && availableOnly && {
+      label: t("browse_page.filters.available") || "Available", clear: () => setAvailableOnly(false),
+    },
+    tab === "workers" && verifiedOnly && {
+      label: t("browse_page.filters.verified") || "Verified", clear: () => setVerifiedOnly(false),
+    },
+    tab === "workers" && withEquipment && {
+      label: t("browse_page.filters.has_equipment") || "Has equipment", clear: () => setWithEquipment(false),
+    },
+
+    tab === "jobs" && filterUrgency && {
+      label: urgencyLabel(filterUrgency), clear: () => setFilterUrgency(""),
+    },
+    tab === "jobs" && filterMinAmount && {
+      label: `${t("jobs_page.filters.min") || "Min"} ${fmt(Number(filterMinAmount))}`,
+      clear: () => setFilterMinAmount(""),
+    },
+    tab === "jobs" && filterMaxAmount && {
+      label: `${t("jobs_page.filters.max") || "Max"} ${fmt(Number(filterMaxAmount))}`,
+      clear: () => setFilterMaxAmount(""),
+    },
+    tab === "jobs" && filterPosted && {
+      label: postedWithinLabel(filterPosted), clear: () => setFilterPosted(""),
+    },
+    tab === "jobs" && filterOpenOnly && {
+      label: t("jobs_page.filters.still_open") || "Still open", clear: () => setFilterOpenOnly(false),
+    },
   ].filter(Boolean) as { label: string; clear: () => void }[];
 
   const clearAll = () => {
-    setFilterCategory(""); setFilterLocation(""); setFilterMinAmount(""); setFilterMaxAmount("");
+    setFilterCategory(""); setArea(EMPTY_AREA);
+    setMinRating(""); setMinJobs(""); setAccountType("");
+    setAvailableOnly(false); setVerifiedOnly(false); setWithEquipment(false);
+    setFilterMinAmount(""); setFilterMaxAmount(""); setFilterUrgency("");
+    setFilterPosted(""); setFilterOpenOnly(false);
   };
-
-  // filtered workers
-  const filteredWorkers = useMemo(() => {
-    let list = workers.filter((w: WorkerProfileDto) => {
-      const expType = (w.experienceType ?? "").toLowerCase();
-      if (search && !w.name.toLowerCase().includes(search.toLowerCase())
-        && !expType.includes(search.toLowerCase())) return false;
-      if (filterCategory) {
-        const catObj = CATEGORIES.find(c => c.key === filterCategory);
-        if (catObj) {
-          if (!catObj.apiValues.includes(expType)) return false;
-        } else {
-          if (expType !== filterCategory.toLowerCase()) return false;
-        }
-      }
-      if (filterLocation && (w.district ?? "").toLowerCase() !== filterLocation.toLowerCase()) return false;
-      return true;
-    });
-    if (sortWorker === "name") list = [...list].sort((a, b) => a.name.localeCompare(b.name));
-    return list;
-  }, [workers, search, filterCategory, filterLocation, sortWorker]);
-
-  // filtered jobs
-  const filteredJobs = useMemo(() => {
-    let list = jobs.filter((j: JobDto) => {
-      const jobCat = j.category.toLowerCase();
-      if (search && !j.title.toLowerCase().includes(search.toLowerCase())
-        && !jobCat.includes(search.toLowerCase())) return false;
-      if (filterCategory) {
-        const catObj = CATEGORIES.find(c => c.key === filterCategory);
-        if (catObj) {
-          if (!catObj.apiValues.includes(jobCat)) return false;
-        } else {
-          if (jobCat !== filterCategory.toLowerCase()) return false;
-        }
-      }
-      if (filterLocation && j.district.toLowerCase() !== filterLocation.toLowerCase()) return false;
-      if (filterMinAmount && j.ratePerHour < Number(filterMinAmount)) return false;
-      if (filterMaxAmount && j.ratePerHour > Number(filterMaxAmount)) return false;
-      return true;
-    });
-    if (sortJob === "amount_asc")  list = [...list].sort((a, b) => a.ratePerHour - b.ratePerHour);
-    if (sortJob === "amount_desc") list = [...list].sort((a, b) => b.ratePerHour - a.ratePerHour);
-    if (sortJob === "newest")      list = [...list].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    return list;
-  }, [jobs, search, filterCategory, filterLocation, filterMinAmount, filterMaxAmount, sortJob]);
-
-  // Jobs use the client-side reveal (loaded whole); workers paginate server-side above.
-  const jobsReveal = useInfiniteReveal(filteredJobs, 28);
 
   const S: React.CSSProperties = { fontFamily: "Inter, DM Sans, system-ui, sans-serif" };
 
@@ -501,49 +347,112 @@ function BrowsePageInner() {
                 options={CATEGORIES.map(c => c.key)}
                 labels={CATEGORIES.map(c => t("common.categories." + c.key) || c.label)}
               />
-              <SelectField
-                label={t("jobs_page.filters.location") || "Location"}
-                value={filterLocation}
-                onChange={setFilterLocation}
-                options={LOCATIONS}
+              <AreaFilter
+                value={area}
+                onChange={setArea}
+                labels={{
+                  province: t("jobs_page.filters.province") || "Province",
+                  district: t("jobs_page.filters.district") || "District",
+                  sector:   t("jobs_page.filters.sector")   || "Sector",
+                }}
               />
 
-              {tab === "workers" && (
+              {tab === "workers" && <>
+                <SelectField
+                  label={t("browse_page.filters.min_rating") || "Min rating"}
+                  value={minRating}
+                  onChange={setMinRating}
+                  options={MIN_RATINGS}
+                  labels={MIN_RATINGS.map(r => `${r}★ +`)}
+                  allLabel={t("browse_page.filters.any_rating") || "Any rating"}
+                />
+                <SelectField
+                  label={t("browse_page.filters.jobs_completed") || "Jobs completed"}
+                  value={minJobs}
+                  onChange={setMinJobs}
+                  options={MIN_JOBS}
+                  labels={MIN_JOBS.map(n =>
+                    t("browse_page.filters.jobs_done", { count: Number(n) }) || `${n}+ jobs`)}
+                  allLabel={t("browse_page.filters.any_experience") || "Any"}
+                />
+                <SelectField
+                  label={t("browse_page.filters.account_type") || "Worker type"}
+                  value={accountType}
+                  onChange={setAccountType}
+                  options={[...ACCOUNT_TYPES]}
+                  labels={ACCOUNT_TYPES.map(accountTypeLabel)}
+                />
                 <SelectField
                   label={t("jobs_page.filters.sort_by") || "Sort by"}
                   value={sortWorker}
                   onChange={v => setSortWorker((v || "recommended") as SortWorker)}
-                  options={["recommended", "name"]}
+                  options={WORKER_SORTS}
                   labels={[
                     t("browse_page.sort.recommended") || "Recommended",
-                    t("browse_page.sort.name") || "Name (A–Z)",
+                    t("browse_page.sort.rating")      || "Highest rated",
+                    t("browse_page.sort.jobs")        || "Most jobs done",
+                    t("browse_page.sort.newest")      || "Newest members",
+                    t("browse_page.sort.name")        || "Name (A–Z)",
                   ]}
+                  hideAll
                 />
-              )}
+                <ToggleField
+                  label={t("browse_page.filters.available") || "Available now"}
+                  value={availableOnly} onChange={setAvailableOnly}
+                />
+                <ToggleField
+                  label={t("browse_page.filters.verified") || "Verified only"}
+                  value={verifiedOnly} onChange={setVerifiedOnly}
+                />
+                <ToggleField
+                  label={t("browse_page.filters.has_equipment") || "Has equipment"}
+                  value={withEquipment} onChange={setWithEquipment}
+                />
+              </>}
 
               {tab === "jobs" && <>
                 <SelectField
+                  label={t("jobs_page.filters.urgency") || "Urgency"}
+                  value={filterUrgency}
+                  onChange={setFilterUrgency}
+                  options={[...URGENCIES]}
+                  labels={URGENCIES.map(urgencyLabel)}
+                />
+                <NumberField
                   label={t("jobs_page.filters.min_pay") || "Min pay (RWF)"}
-                  value={filterMinAmount}
-                  onChange={setFilterMinAmount}
-                  options={["5000", "8000", "10000", "15000"]}
+                  value={filterMinAmount} onChange={setFilterMinAmount} placeholder="5,000" step={1000}
+                />
+                <NumberField
+                  label={t("jobs_page.filters.max_pay") || "Max pay (RWF)"}
+                  value={filterMaxAmount} onChange={setFilterMaxAmount} placeholder="50,000" step={1000}
                 />
                 <SelectField
-                  label={t("jobs_page.filters.max_pay") || "Max pay (RWF)"}
-                  value={filterMaxAmount}
-                  onChange={setFilterMaxAmount}
-                  options={["10000", "15000", "20000", "30000"]}
+                  label={t("jobs_page.filters.posted") || "Posted"}
+                  value={filterPosted}
+                  onChange={setFilterPosted}
+                  options={POSTED_WITHIN}
+                  labels={POSTED_WITHIN.map(postedWithinLabel)}
+                  allLabel={t("jobs_page.filters.any_time") || "Any time"}
                 />
                 <SelectField
                   label={t("jobs_page.filters.sort_by") || "Sort by"}
                   value={sortJob}
-                  onChange={v => setSortJob(v as SortJob)}
-                  options={["newest", "amount_asc", "amount_desc"]}
+                  onChange={v => setSortJob((v || "newest") as SortJob)}
+                  options={JOB_SORTS}
                   labels={[
-                    t("jobs_page.sort_options.newest") || "Newest first",
-                    t("jobs_page.sort_options.pay_asc") || "Pay: low → high",
-                    t("jobs_page.sort_options.pay_desc") || "Pay: high → low"
+                    t("jobs_page.sort_options.newest")        || "Newest first",
+                    t("jobs_page.sort_options.oldest")        || "Oldest first",
+                    t("jobs_page.sort_options.pay_desc")      || "Pay: high → low",
+                    t("jobs_page.sort_options.pay_asc")       || "Pay: low → high",
+                    t("jobs_page.sort_options.hours_asc")     || "Shortest shift",
+                    t("jobs_page.sort_options.hours_desc")    || "Longest shift",
+                    t("jobs_page.sort_options.starting_soon") || "Starting soonest",
                   ]}
+                  hideAll
+                />
+                <ToggleField
+                  label={t("jobs_page.filters.still_open") || "Still open"}
+                  value={filterOpenOnly} onChange={setFilterOpenOnly}
                 />
               </>}
             </div>
@@ -569,28 +478,26 @@ function BrowsePageInner() {
         {/* RESULTS COUNT */}
         <p style={{ fontSize: 12, color: "#444", marginBottom: 14, fontWeight: 600 }}>
           {tab === "workers"
-            ? (workersLoading
+            ? (workersView.loading
                 ? (t("jobs_page.loading") || "Loading…")
-                : (t("browse_page.workers_found", { count: filteredWorkers.length }) || `${filteredWorkers.length} workers found`) + (workersHasMore ? " +" : ""))
-            : (loadingData
+                : (t("browse_page.workers_found", { count: workersView.total }) || `${workersView.total} workers found`))
+            : (jobsView.loading
                 ? (t("jobs_page.loading") || "Loading…")
-                : (t("jobs_page.found_count", { count: filteredJobs.length }) || `${filteredJobs.length} jobs found`))}
+                : (t("jobs_page.found_count", { count: jobsView.total }) || `${jobsView.total} jobs found`))}
         </p>
 
-        {/* WORKERS GRID — paginated from the server, 16 per batch */}
+        {/* WORKERS GRID: filtered and paginated by the server, 16 per batch */}
         {tab === "workers" && (
-          workersLoading ? <BrowseLoading />
-          : filteredWorkers.length === 0 && !workersHasMore
+          workersView.loading ? <BrowseLoading />
+          : workers.length === 0
             ? <Empty label={t("browse_page.empty.workers") || "No workers match your filters."} />
             : <div className="browse-grid">
-                {filteredWorkers.map((w: WorkerProfileDto) => {
+                {workers.map((w: WorkerProfileDto) => {
                   const catSlugs = (w.experienceTypes && w.experienceTypes.length > 0)
                     ? w.experienceTypes
                     : (w.experienceType ? [w.experienceType] : []);
-                  const catLabels = catSlugs.map((s, i) => {
-                    const key = CATEGORIES.find(c => c.apiValues.includes((s ?? "").toLowerCase()))?.key || (s ?? "").toLowerCase();
-                    return t("common.categories." + key) || w.categoryNames?.[i] || s;
-                  });
+                  const catLabels = catSlugs.map((s, i) =>
+                    t("common.categories." + keyForSlug(s ?? "")) || w.categoryNames?.[i] || s);
                   if (catLabels.length === 0) catLabels.push(t("common.general.worker"));
                   const MAXW = 2;
                   const localizedWCat = catLabels.slice(0, MAXW).join(", ")
@@ -671,12 +578,12 @@ function BrowsePageInner() {
                 })}
               </div>
         )}
-        {tab === "workers" && !workersLoading && workersHasMore && (
-          <div ref={workersSentinelRef} style={{
+        {tab === "workers" && !workersView.loading && workersView.hasMore && (
+          <div ref={workersView.sentinelRef} style={{
             display: "flex", flexDirection: "column", alignItems: "center", gap: 12,
             padding: "26px 0 8px", minHeight: 60,
           }}>
-            {workersLoadingMore ? (
+            {workersView.loadingMore ? (
               <div style={{ display: "flex", alignItems: "center", gap: 10, color: "#888", fontSize: 13 }}>
                 <span style={{
                   width: 16, height: 16, borderRadius: "50%", flexShrink: 0,
@@ -688,7 +595,7 @@ function BrowsePageInner() {
             ) : (
               /* Always-visible manual fallback: if auto-load ever misses, one tap works. */
               <button
-                onClick={() => loadWorkers(false, true)}
+                onClick={() => workersView.loadMore()}
                 style={{
                   display: "flex", alignItems: "center", gap: 8,
                   background: "rgba(249,115,22,0.1)", border: "1px solid rgba(249,115,22,0.4)",
@@ -706,14 +613,13 @@ function BrowsePageInner() {
 
         {/* JOBS GRID */}
         {tab === "jobs" && (
-          loadingData ? <BrowseLoading />
-          : filteredJobs.length === 0
+          jobsView.loading ? <BrowseLoading />
+          : jobs.length === 0
             ? <Empty label={t("jobs_page.empty.title") || "No jobs match your filters."} />
             : <div className="browse-grid">
-                {jobsReveal.visible.map((j: JobDto) => {
+                {jobs.map((j: JobDto) => {
                   const posted = daysAgo(j.createdAt);
-                  const jCatKey = CATEGORIES.find(c => c.apiValues.includes(j.category.toLowerCase()))?.key || j.category;
-                  const localizedJCat = t("common.categories." + jCatKey) || j.category;
+                  const localizedJCat = t("common.categories." + keyForSlug(j.category)) || j.category;
                   return (
                     <a key={j.id} href={`/jobs/${j.id}`} className="bcard" style={{
                       display: "flex", flexDirection: "column", gap: 12,
@@ -747,9 +653,11 @@ function BrowsePageInner() {
                 })}
               </div>
         )}
-        {tab === "jobs" && !loadingData && jobsReveal.hasMore && (
-          <div ref={jobsReveal.sentinelRef} style={{ textAlign: "center", padding: "24px 0", color: "#555", fontSize: 13 }}>
-            {t("jobs_page.loading_more") || "Loading more…"}
+        {tab === "jobs" && !jobsView.loading && jobsView.hasMore && (
+          <div ref={jobsView.sentinelRef} style={{ textAlign: "center", padding: "24px 0", color: "#555", fontSize: 13 }}>
+            {jobsView.loadingMore
+              ? (t("jobs_page.loading_more") || "Loading more…")
+              : (t("jobs_page.scroll_for_more") || "Scroll for more")}
           </div>
         )}
 

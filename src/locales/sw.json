@@ -1080,12 +1080,30 @@
       "urgent": "Haraka pekee",
       "min": "Kiwango cha chini",
       "max_pay": "Malipo ya juu (RWF)",
-      "categories": "Kategoria"
+      "categories": "Kategoria",
+      "province": "Mkoa",
+      "district": "Wilaya",
+      "sector": "Kata",
+      "urgency": "Uharaka",
+      "rate_type": "Aina ya malipo",
+      "min_hours": "Saa za chini",
+      "max_hours": "Saa za juu",
+      "posted": "Iliwekwa",
+      "posted_days": "Siku {count} zilizopita",
+      "any_time": "Wakati wowote",
+      "team_jobs": "Waajiri 2+",
+      "still_open": "Bado wazi",
+      "max": "Juu",
+      "posted_24h": "Saa 24 zilizopita"
     },
     "sort_options": {
       "newest": "Mpya zaidi kwanza",
       "pay_asc": "Malipo: chini → juu",
-      "pay_desc": "Malipo: juu → chini"
+      "pay_desc": "Malipo: juu → chini",
+      "oldest": "Za zamani kwanza",
+      "hours_asc": "Zamu fupi",
+      "hours_desc": "Zamu ndefu",
+      "starting_soon": "Zinazoanza karibuni"
     },
     "loading": "Inapakia…",
     "found_count": "Kazi {count} zimepatikana",
@@ -1106,7 +1124,20 @@
       "desc": "Weka kazi kwa chini ya dakika 2 na ulinganishwe na wafanyakazi walioidhinishwa katika eneo lako.",
       "button": "Weka kazi"
     },
-    "loading_more": "Inapakia zaidi…"
+    "loading_more": "Inapakia zaidi…",
+    "urgency": {
+      "immediate": "Haraka",
+      "same_day": "Siku hiyo hiyo",
+      "scheduled": "Iliyopangwa"
+    },
+    "rate_type": {
+      "per_hour": "Kwa saa",
+      "per_day": "Kwa siku",
+      "per_week": "Kwa wiki",
+      "per_month": "Kwa mwezi",
+      "per_year": "Kwa mwaka"
+    },
+    "scroll_for_more": "Sogeza kuona zaidi"
   },
   "browse_page": {
     "hero": {
@@ -1128,9 +1159,29 @@
     },
     "sort": {
       "recommended": "Inayopendekezwa",
-      "name": "Jina (A–Z)"
+      "name": "Jina (A–Z)",
+      "rating": "Waliokadiriwa juu",
+      "jobs": "Kazi nyingi zaidi",
+      "newest": "Wanachama wapya"
     },
-    "load_more": "Tazama wafanyakazi zaidi"
+    "load_more": "Tazama wafanyakazi zaidi",
+    "filters": {
+      "min_rating": "Kiwango cha chini",
+      "any_rating": "Kiwango chochote",
+      "jobs_completed": "Kazi zilizokamilika",
+      "jobs_done": "Kazi {count}+",
+      "any_experience": "Yoyote",
+      "account_type": "Aina ya mfanyakazi",
+      "available": "Anapatikana",
+      "verified": "Waliothibitishwa",
+      "has_equipment": "Ana vifaa"
+    },
+    "account_type": {
+      "individual": "Mtu binafsi",
+      "team": "Timu",
+      "company": "Kampuni",
+      "crew": "Kikosi"
+    }
   },
   "worker_detail": {
     "not_found": "Mfanyakazi hajapatikana",
