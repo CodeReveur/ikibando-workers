@@ -40,13 +40,31 @@ function lookup(dict: unknown, key: string): string | null {
  * Translate outside React - usable from generateMetadata, where hooks and context do not exist.
  * Mirrors the context's t(): English is the fallback, and an unresolvable key returns itself.
  */
+/**
+ * "common.categories.hotel_staff" → "Hotel staff". Used only when a key is missing,
+ * so an untranslated string degrades to plain English rather than exposing the key.
+ */
+function humanizeKey(key: string): string {
+  const last = String(key).split(".").pop() || key;
+  const words = last.replace(/[_-]+/g, " ").trim();
+  if (!words) return key;
+  if (process.env.NODE_ENV !== "production") {
+    console.warn(`[i18n] missing translation key: ${key}`);
+  }
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
 export function translate(
   language: Language,
   key: string,
   variables?: Record<string, string | number>,
 ): string {
   const text = lookup(dictionaries[language], key) ?? lookup(dictionaries.en, key);
-  if (text == null) return key;
+  // A missing key must never be shown to a user as a raw dotted path
+  // ("common.categories.hotel staff"). Fall back to a readable version of the last
+  // segment instead, so the worst case is imperfect wording, not a broken-looking
+  // screen. Callers that supply their own fallback still read fine.
+  if (text == null) return humanizeKey(key);
   if (!variables) return text;
   return Object.entries(variables).reduce(
     (acc, [k, v]) => acc.replace(new RegExp(`{${k}}`, "g"), String(v)),

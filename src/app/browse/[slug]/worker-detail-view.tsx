@@ -38,14 +38,18 @@ export default function WorkerDetailView({
   const { t } = useLanguage();
   const [showHire, setShowHire] = useState(false);
 
+  // Category keys are slugs ("hotel_staff"); a stored value may arrive as a display
+  // name ("Hotel Staff"), so normalise spaces to underscores or the lookup misses.
+  const catKey      = (s: string | null | undefined) =>
+    "common.categories." + (s ?? "").toLowerCase().trim().replace(/\s+/g, "_");
   const expType     = (worker.experienceType ?? "").toLowerCase();
-  const catLabel    = t("common.categories." + expType) || worker.categoryName || worker.experienceType || t("common.general.worker");
+  const catLabel    = t(catKey(expType)) || worker.categoryName || worker.experienceType || t("common.general.worker");
   // All categories the worker practises, localized. Falls back to the single one.
   const catSlugs    = (worker.experienceTypes && worker.experienceTypes.length > 0)
     ? worker.experienceTypes
     : (worker.experienceType ? [worker.experienceType] : []);
   const catLabels   = catSlugs.map((s, i) =>
-    t("common.categories." + (s ?? "").toLowerCase()) || worker.categoryNames?.[i] || s);
+    t(catKey(s)) || worker.categoryNames?.[i] || s);
   if (catLabels.length === 0) catLabels.push(t("common.general.worker"));
   // Keep the stat card compact — a couple of categories then "+N" (full list on hover).
   const CAT_MAX   = 2;
