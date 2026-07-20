@@ -27,6 +27,7 @@ export function ImageCropper({
 }) {
   const [img, setImg] = useState<HTMLImageElement | null>(null);
   const [imgUrl, setImgUrl] = useState<string | null>(null);
+  const [boxSize, setBoxSize] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -52,16 +53,38 @@ export function ImageCropper({
     return () => URL.revokeObjectURL(url);   // only once the cropper closes
   }, [open, file]);
 
+  // The frame is square but photos rarely are, so measure it and size the image
+  // ourselves rather than leaving it to CSS.
+  useEffect(() => {
+    if (!open) return;
+    const el = boxRef.current;
+    if (!el) return;
+    const measure = () => setBoxSize(el.clientWidth);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [open, imgUrl]);
+
+  // Scale that makes the photo cover the square frame; the overflow is what the
+  // user pans through. Zoom multiplies it.
+  const cover = img && boxSize
+    ? Math.max(boxSize / img.naturalWidth, boxSize / img.naturalHeight)
+    : 1;
+  const dispW = img ? img.naturalWidth * cover * zoom : 0;
+  const dispH = img ? img.naturalHeight * cover * zoom : 0;
+
   /**
-   * Keep the photo covering the frame. At zoom z the element is box*z wide, so it
-   * can travel box*(z-1)/2 in each direction before an edge would expose a blank
-   * corner — which would then be baked into the saved badge.
+   * Pan limits: half of however much the photo overflows the frame on each axis.
+   * A tall photo overflows vertically even at zoom 1, which is exactly the slack
+   * needed to move a face into the circle; clamping stops a blank edge being
+   * dragged in and baked into the badge.
    */
-  const clamp = useCallback((p: { x: number; y: number }, z: number) => {
-    const box = boxRef.current?.clientWidth || 0;
-    const max = Math.max(0, (box * z - box) / 2);
-    return { x: Math.max(-max, Math.min(max, p.x)), y: Math.max(-max, Math.min(max, p.y)) };
-  }, []);
+  const clamp = useCallback((p: { x: number; y: number }, w: number, h: number) => {
+    const maxX = Math.max(0, (w - boxSize) / 2);
+    const maxY = Math.max(0, (h - boxSize) / 2);
+    return { x: Math.max(-maxX, Math.min(maxX, p.x)), y: Math.max(-maxY, Math.min(maxY, p.y)) };
+  }, [boxSize]);
 
   const onPointerDown = (e: React.PointerEvent) => {
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
@@ -70,14 +93,17 @@ export function ImageCropper({
   const onPointerMove = (e: React.PointerEvent) => {
     const d = dragRef.current;
     if (!d) return;
-    setOffset(clamp({ x: d.ox + (e.clientX - d.x), y: d.oy + (e.clientY - d.y) }, zoom));
+    setOffset(clamp({ x: d.ox + (e.clientX - d.x), y: d.oy + (e.clientY - d.y) }, dispW, dispH));
   };
   const onPointerUp = () => { dragRef.current = null; };
 
   // Zooming back out must pull the photo back into frame too.
   const changeZoom = (z: number) => {
     setZoom(z);
-    setOffset((o) => clamp(o, z));
+    if (!img) return;
+    const w = img.naturalWidth * cover * z;
+    const h = img.naturalHeight * cover * z;
+    setOffset((o) => clamp(o, w, h));
   };
 
   /**
@@ -89,7 +115,7 @@ export function ImageCropper({
     if (!img || !file) return;
     setBusy(true);
     try {
-      const box = boxRef.current?.clientWidth || 280;
+      const box = boxSize || boxRef.current?.clientWidth || 280;
       const scale = size / box;                    // preview px → output px
       const canvas = document.createElement("canvas");
       canvas.width = size;
@@ -117,7 +143,7 @@ export function ImageCropper({
     } finally {
       setBusy(false);
     }
-  }, [img, file, size, zoom, rotation, offset, onCropped]);
+  }, [img, file, size, zoom, rotation, offset, boxSize, onCropped]);
 
   if (!open || !file) return null;
 
@@ -160,9 +186,9 @@ export function ImageCropper({
             alt=""
             draggable={false}
             style={{
-              position: "absolute", inset: 0,
-              width: "100%", height: "100%", objectFit: "cover",
-              transform: `translate(${offset.x}px, ${offset.y}px) rotate(${rotation}deg) scale(${zoom})`,
+              position: "absolute", left: "50%", top: "50%",
+              width: dispW || undefined, height: dispH || undefined, maxWidth: "none",
+              transform: `translate(-50%,-50%) translate(${offset.x}px, ${offset.y}px) rotate(${rotation}deg)`,
               transformOrigin: "center",
               userSelect: "none", pointerEvents: "none",
             }}
