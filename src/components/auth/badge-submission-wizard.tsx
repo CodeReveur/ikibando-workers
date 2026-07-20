@@ -8,6 +8,8 @@ import { formatAddress } from "@/components/ui/address-picker";
 import { useToast } from "@/components/ui/toast";
 import { useLanguage } from "@/lib/language-context";
 import { detectFaceInFile } from "@/lib/face-check";
+import { compressImage, isSupportedImage, MAX_UPLOAD_BYTES } from "@/lib/image";
+import { CameraCapture } from "@/components/ui/camera-capture";
 
 interface Props {
   authResult: AuthResult;
@@ -25,6 +27,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
   // Identity fields
   const [photoUrl, setPhotoUrl] = useState("");
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [cameraOpen, setCameraOpen] = useState(false);
   // Defaults to accepted — the badge photo doubles as the profile picture unless declined.
   const [usePhotoOnProfile, setUsePhotoOnProfile] = useState(true);
   const [nationalId, setNationalId] = useState("");
@@ -61,28 +64,88 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
   const idValid = idDigits >= 10;
 
   /**
-   * Shared by the picker and the camera input. The photo is face-checked BEFORE
-   * it is uploaded to storage: no face → rejected on the spot, nothing uploaded.
-   * If no detection engine can run (old browser + CDN unreachable) the photo is
-   * allowed through rather than locking the user out of getting a badge.
+   * Shared by the picker and the camera. Each failure gets its OWN message so the
+   * user knows what to fix, instead of a blanket "upload failed":
+   *   format → face quality → size (compressed first) → upload/network.
+   * The photo is checked BEFORE upload, so a bad one never reaches storage.
    */
   const handlePhotoFile = async (file: File) => {
     setUploadingPhoto(true);
     try {
-      const verdict = await detectFaceInFile(file);
+      if (!isSupportedImage(file)) {
+        toastError(t("badge_wizard.errors.bad_format")
+          || "That file isn't a supported image. Use a JPG or PNG photo.");
+        return;
+      }
+
+      // Shrink first: phone photos are several MB and the API proxy rejects large
+      // bodies with a 413 that carries no CORS headers (an unreadable failure).
+      let ready = file;
+      try {
+        ready = await compressImage(file);
+      } catch {
+        toastError(t("badge_wizard.errors.bad_format")
+          || "That file isn't a supported image. Use a JPG or PNG photo.");
+        return;
+      }
+      if (ready.size > MAX_UPLOAD_BYTES) {
+        toastError(t("badge_wizard.errors.too_large")
+          || "This photo is too large even after compression. Try another one.");
+        return;
+      }
+
+      const verdict = await detectFaceInFile(ready);
       if (verdict === "no-face") {
         toastError(t("badge_wizard.toasts.no_face")
           || "No face detected in this photo. Use a clear, well-lit photo of your face.");
         return;
       }
-      const url = await uploadFile(file, authResult.accessToken);
+      if (verdict === "unclear") {
+        toastError(t("badge_wizard.errors.face_unclear")
+          || "Your face isn't clear enough. Move closer, hold still and use good lighting.");
+        return;
+      }
+      if (verdict === "multiple") {
+        toastError(t("badge_wizard.errors.face_multiple")
+          || "More than one face is in this photo. Use a photo of just you.");
+        return;
+      }
+
+      const url = await uploadFile(ready, authResult.accessToken);
       setPhotoUrl(url);
       toastSuccess(t("badge_wizard.toasts.photo_success"));
-    } catch (err) {
-      toastError(t("badge_wizard.toasts.photo_failed"));
+    } catch (err: any) {
+      toastError(uploadErrorMessage(err));
     } finally {
       setUploadingPhoto(false);
     }
+  };
+
+  /** Turn an upload failure into something the user can act on. */
+  const uploadErrorMessage = (err: any): string => {
+    const status = err?.response?.status;
+    if (status === 413) {
+      return t("badge_wizard.errors.too_large")
+        || "This photo is too large even after compression. Try another one.";
+    }
+    if (status === 401 || status === 403) {
+      return t("badge_wizard.errors.session")
+        || "Your session expired. Please sign in again and retry.";
+    }
+    if (status && status >= 500) {
+      return t("badge_wizard.errors.server")
+        || "Our server couldn't save the photo. Please try again in a moment.";
+    }
+    if (!err?.response) {
+      // No response at all: offline, or the proxy rejected the body before CORS
+      // headers were added (the classic opaque 413).
+      return typeof navigator !== "undefined" && navigator.onLine === false
+        ? (t("badge_wizard.errors.offline") || "You appear to be offline. Check your connection and try again.")
+        : (t("badge_wizard.errors.network") || "Upload failed — the photo may be too large or the connection dropped. Try again.");
+    }
+    return err?.response?.data?.message
+      || t("badge_wizard.toasts.photo_failed")
+      || "Photo upload failed. Please try again.";
   };
 
   const handleIdentitySubmit = () => {
@@ -132,6 +195,12 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+      <CameraCapture
+        open={cameraOpen}
+        onClose={() => setCameraOpen(false)}
+        onCapture={handlePhotoFile}
+        title={t("badge_wizard.fields.take_photo") || "Take your photo"}
+      />
       <div className="bg-[#141414] border border-[#2a2a2a] rounded-2xl w-full max-w-xl shadow-2xl flex flex-col overflow-hidden">
         
         {/* Header */}
@@ -195,27 +264,20 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
                   </div>
                 </div>
 
-                {/* Direct camera capture: opens the device camera (front-facing) on phones. */}
-                <label className={`mt-2 flex items-center justify-center gap-2 w-full border border-[#2a2a2a] rounded-xl py-2.5 text-xs font-semibold transition-colors ${uploadingPhoto ? "text-gray-600 cursor-not-allowed" : "text-gray-300 hover:border-[#f97316]/60 hover:text-white cursor-pointer"}`}>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    capture="user"
-                    disabled={uploadingPhoto}
-                    className="hidden"
-                    onChange={(e) => {
-                      if (!e.target.files?.length) return;
-                      const file = e.target.files[0];
-                      e.target.value = "";
-                      handlePhotoFile(file);
-                    }}
-                  />
+                {/* Real in-app camera (getUserMedia) — works on desktop and mobile,
+                    unlike <input capture> which many browsers ignore. */}
+                <button
+                  type="button"
+                  disabled={uploadingPhoto}
+                  onClick={() => setCameraOpen(true)}
+                  className={`mt-2 flex items-center justify-center gap-2 w-full border border-[#2a2a2a] rounded-xl py-2.5 text-xs font-semibold transition-colors ${uploadingPhoto ? "text-gray-600 cursor-not-allowed" : "text-gray-300 hover:border-[#f97316]/60 hover:text-white cursor-pointer"}`}
+                >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                   {t("badge_wizard.fields.take_photo") || "Take a photo with the camera"}
-                </label>
+                </button>
 
                 {/* Consent for this photo to double as the public profile picture. */}
                 {photoUrl && (

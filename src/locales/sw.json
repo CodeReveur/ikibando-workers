@@ -1276,7 +1276,15 @@
     "view_badge_btn": "Angalia Beji Yangu",
     "close_btn": "Funga",
     "errors": {
-      "national_id_min": "Namba ya kitambulisho lazima iwe na tarakimu angalau 10."
+      "national_id_min": "Namba ya kitambulisho lazima iwe na tarakimu angalau 10.",
+      "bad_format": "Faili hii si picha inayokubalika. Tumia picha ya JPG au PNG.",
+      "too_large": "Picha hii ni kubwa mno hata baada ya kupunguzwa. Jaribu nyingine.",
+      "face_unclear": "Uso wako hauonekani vizuri. Sogea karibu, tulia na tumia mwanga wa kutosha.",
+      "face_multiple": "Kuna nyuso zaidi ya moja kwenye picha hii. Tumia picha yako pekee.",
+      "session": "Kipindi chako kimeisha. Ingia tena kisha ujaribu.",
+      "server": "Seva yetu haikuweza kuhifadhi picha. Jaribu tena baada ya muda.",
+      "offline": "Inaonekana huna mtandao. Angalia muunganisho wako kisha ujaribu tena.",
+      "network": "Kupakia kumeshindikana. Picha huenda ni kubwa au muunganisho umekatika."
     }
   },
   "titles": {

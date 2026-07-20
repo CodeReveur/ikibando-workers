@@ -1276,7 +1276,15 @@
     "view_badge_btn": "Voir mon badge",
     "close_btn": "Fermer",
     "errors": {
-      "national_id_min": "Le numéro d’identité doit comporter au moins 10 chiffres."
+      "national_id_min": "Le numéro d’identité doit comporter au moins 10 chiffres.",
+      "bad_format": "Ce fichier n'est pas une image prise en charge. Utilisez une photo JPG ou PNG.",
+      "too_large": "Cette photo est trop lourde même après compression. Essayez-en une autre.",
+      "face_unclear": "Votre visage n'est pas assez net. Rapprochez-vous, ne bougez pas et éclairez bien.",
+      "face_multiple": "Plusieurs visages figurent sur cette photo. Utilisez une photo de vous seul.",
+      "session": "Votre session a expiré. Reconnectez-vous et réessayez.",
+      "server": "Notre serveur n'a pas pu enregistrer la photo. Réessayez dans un instant.",
+      "offline": "Vous semblez hors ligne. Vérifiez votre connexion et réessayez.",
+      "network": "Échec de l'envoi. La photo est peut-être trop lourde ou la connexion a été interrompue."
     }
   },
   "titles": {

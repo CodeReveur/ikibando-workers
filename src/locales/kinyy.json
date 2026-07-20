@@ -1276,7 +1276,15 @@
     "view_badge_btn": "Reba ikirango cyanjye",
     "close_btn": "Funga",
     "errors": {
-      "national_id_min": "Nimero y’indangamuntu igomba kugira imibare nibura 10."
+      "national_id_min": "Nimero y’indangamuntu igomba kugira imibare nibura 10.",
+      "bad_format": "Iyi dosiye si ifoto yemewe. Koresha ifoto ya JPG cyangwa PNG.",
+      "too_large": "Iyi foto iracyaremereye cyane. Gerageza indi.",
+      "face_unclear": "Mu maso hawe ntibigaragara neza. Egera hafi, guma utuje kandi ukoreshe urumuri ruhagije.",
+      "face_multiple": "Kuri iyi foto hari abantu barenze umwe. Koresha ifoto yawe wenyine.",
+      "session": "Igihe cyo kwinjira cyarangiye. Ongera winjire hanyuma ugerageze.",
+      "server": "Seriveri yacu ntiyashoboye kubika ifoto. Ongera ugerageze mu kanya.",
+      "offline": "Usa nk'utari kuri interineti. Reba umurongo wawe hanyuma ugerageze.",
+      "network": "Kohereza byanze. Ifoto ishobora kuba iremereye cyangwa umurongo waracitse."
     }
   },
   "titles": {

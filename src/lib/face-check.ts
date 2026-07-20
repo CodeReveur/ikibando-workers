@@ -9,7 +9,19 @@
  * through rather than lock everyone out of badges.
  */
 
-export type FaceCheckResult = "face" | "no-face" | "unavailable";
+/**
+ * "face"       usable portrait
+ * "no-face"    nothing face-like found
+ * "unclear"    a face, but too small / too low-confidence to identify
+ * "multiple"   more than one person in frame
+ * "unavailable" no detector could run — caller should let the photo through
+ */
+export type FaceCheckResult = "face" | "no-face" | "unclear" | "multiple" | "unavailable";
+
+// A usable passport photo: the face fills a reasonable share of the frame and the
+// detector is confident about it. Below these it is "unclear", not "no face".
+const MIN_FACE_RATIO = 0.10;   // face width vs image width
+const MIN_CONFIDENCE = 0.5;
 
 const MP_VERSION = "0.10.14";
 const MP_URL = `https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${MP_VERSION}`;
@@ -66,8 +78,14 @@ export async function detectFaceInFile(file: File): Promise<FaceCheckResult> {
 
     const mp = await mediaPipeDetector();
     if (mp) {
-      const res = mp.detect(canvas);
-      return res?.detections?.length ? "face" : "no-face";
+      const dets = mp.detect(canvas)?.detections ?? [];
+      if (dets.length === 0) return "no-face";
+      if (dets.length > 1) return "multiple";
+      const box = dets[0].boundingBox;
+      const score = dets[0].categories?.[0]?.score ?? 1;
+      const ratio = box ? box.width / canvas.width : 1;
+      if (ratio < MIN_FACE_RATIO || score < MIN_CONFIDENCE) return "unclear";
+      return "face";
     }
 
     // Fallback: native FaceDetector (Chrome/Edge on some platforms only).
@@ -75,7 +93,11 @@ export async function detectFaceInFile(file: File): Promise<FaceCheckResult> {
     if (FD) {
       try {
         const faces = await new FD({ fastMode: true, maxDetectedFaces: 3 }).detect(canvas);
-        return faces && faces.length ? "face" : "no-face";
+        if (!faces || faces.length === 0) return "no-face";
+        if (faces.length > 1) return "multiple";
+        const bb = faces[0].boundingBox;
+        if (bb && bb.width / canvas.width < MIN_FACE_RATIO) return "unclear";
+        return "face";
       } catch {
         /* engine present but failed on this image → treat as unavailable */
       }
