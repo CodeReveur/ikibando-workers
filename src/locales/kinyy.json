@@ -1627,7 +1627,9 @@
     "pays_on_time": "Yishyura ku gihe",
     "good_instructor": "Umwigisha mwiza",
     "gives_tips": "Atanga inkunga",
-    "needs_improvement": "Bikeneye kunozwa"
+    "needs_improvement": "Bikeneye kunozwa",
+    "share_location": "Emerera umukoresha kunkurikirana mu nzira",
+    "share_started": "Umukoresha ashobora none gukurikirana urugendo rwawe. Ushobora kubihagarika igihe icyo ari cyo cyose."
   },
   "seeker_applications": {
     "total_applied": "Dosiye zose",

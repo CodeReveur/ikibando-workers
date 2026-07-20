@@ -20,6 +20,7 @@ import { useToast } from "@/components/ui/toast";
 import { PaymentPanel } from "@/components/payments/payment-panel";
 import { JobEvidence } from "@/components/jobs/job-evidence";
 import { PaymentModeInfo } from "@/components/payments/payment-mode-info";
+import { startWorkerNav } from "@/components/nav/live-nav";
 
 type Stage = { done: boolean; active: boolean; label: string; date?: string | null; content: React.ReactNode };
 
@@ -509,6 +510,28 @@ export default function SeekerJobDetail() {
             >
               <Navigation size={15} /> {t("seeker_job_detail.track_the_way") || "Track the way — live navigation"}
             </button>
+
+            {/* Consent: only an accepted worker can let the employer follow the trip,
+                and only if they choose to. Off by default. */}
+            {isAccepted && (
+              <button
+                onClick={() => {
+                  const label = job.address || [job.village, job.sector, job.district].filter(Boolean).join(", ") || job.district;
+                  startWorkerNav(job.id, label, job.latitude ?? undefined, job.longitude ?? undefined, true);
+                  toastSuccess(
+                    t("seeker_job_detail.share_started") ||
+                    "Your employer can now follow your trip. Turn it off any time from the tracking card.");
+                }}
+                style={{
+                  width: "100%", marginTop: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  background: "transparent", color: "#22c55e", border: "1px solid rgba(34,197,94,0.4)",
+                  borderRadius: 10, padding: "11px", fontSize: 12.5, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
+                }}
+              >
+                <MapPin size={14} />
+                {t("seeker_job_detail.share_location") || "Let the employer track me on the way"}
+              </button>
+            )}
           </div>
 
           {/* Earnings */}

@@ -1627,7 +1627,9 @@
     "pays_on_time": "Paie à temps",
     "good_instructor": "Bon encadrant",
     "gives_tips": "Donne des pourboires",
-    "needs_improvement": "À améliorer"
+    "needs_improvement": "À améliorer",
+    "share_location": "Autoriser l employeur a me suivre en route",
+    "share_started": "Votre employeur peut maintenant suivre votre trajet. Desactivez-le a tout moment depuis la carte de suivi."
   },
   "seeker_applications": {
     "total_applied": "Total postulé",

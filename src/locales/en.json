@@ -1628,7 +1628,9 @@
     "pays_on_time": "Pays on time",
     "good_instructor": "Good instructor",
     "gives_tips": "Gives tips",
-    "needs_improvement": "Needs improvement"
+    "needs_improvement": "Needs improvement",
+    "share_location": "Let the employer track me on the way",
+    "share_started": "Your employer can now follow your trip. Turn it off any time from the tracking card."
   },
   "seeker_applications": {
     "total_applied": "Total Applied",

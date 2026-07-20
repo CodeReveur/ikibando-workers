@@ -1627,7 +1627,9 @@
     "pays_on_time": "Analipa kwa wakati",
     "good_instructor": "Mwalimu mzuri",
     "gives_tips": "Anatoa bakshishi",
-    "needs_improvement": "Inahitaji maboresho"
+    "needs_improvement": "Inahitaji maboresho",
+    "share_location": "Mruhusu mwajiri anifuatilie njiani",
+    "share_started": "Mwajiri wako sasa anaweza kufuatilia safari yako. Zima wakati wowote kwenye kadi ya ufuatiliaji."
   },
   "seeker_applications": {
     "total_applied": "Jumla ya Maombi",

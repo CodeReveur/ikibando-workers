@@ -27,6 +27,12 @@ export interface LiveNavSession {
   destLat?: number;
   destLng?: number;
   startedAt: number;
+  /**
+   * Worker only: whether the employer may follow this trip. OFF by default —
+   * navigating for yourself must never broadcast your position without consent.
+   * The worker turns it on (and can turn it off) from the overlay or the job page.
+   */
+  share?: boolean;
 }
 
 const KEY = "live_nav_session";
@@ -47,8 +53,24 @@ function setSession(s: LiveNavSession | null) {
   window.dispatchEvent(new Event(EVT));
 }
 
-export function startWorkerNav(jobId: string, label: string, destLat?: number, destLng?: number) {
-  setSession({ jobId, role: "worker", label, destLat, destLng, startedAt: Date.now() });
+export function startWorkerNav(
+  jobId: string, label: string, destLat?: number, destLng?: number, share = false,
+) {
+  const prev = getLiveNavSession();
+  // Keep an existing consent if the worker re-opens the map mid-trip.
+  const keep = prev && prev.jobId === jobId && prev.role === "worker" ? !!prev.share : false;
+  setSession({ jobId, role: "worker", label, destLat, destLng, startedAt: Date.now(), share: share || keep });
+}
+
+/** Worker turns employer tracking on/off. Turning it off clears the server row. */
+export function setLiveNavShare(share: boolean) {
+  const s = getLiveNavSession();
+  if (!s || s.role !== "worker") return;
+  if (!share) {
+    const token = localStorage.getItem("access_token") || "";
+    if (token) stopJobLocation(s.jobId, token).catch(() => {});
+  }
+  setSession({ ...s, share });
 }
 
 export function startEmployerTracking(jobId: string, label: string, destLat?: number, destLng?: number) {
@@ -110,7 +132,8 @@ export function LiveNavOverlay() {
           setDistance(distanceM(latitude, longitude, session.destLat, session.destLng));
         }
         const now = Date.now();
-        if (token && now - lastSentRef.current > 8000) {
+        // Only ever transmit when the worker has explicitly agreed to be followed.
+        if (session.share && token && now - lastSentRef.current > 8000) {
           lastSentRef.current = now;
           shareJobLocation(session.jobId, {
             latitude, longitude,
@@ -127,7 +150,7 @@ export function LiveNavOverlay() {
       if (watchRef.current != null) navigator.geolocation.clearWatch(watchRef.current);
       watchRef.current = null;
     };
-  }, [session?.jobId, session?.role]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [session?.jobId, session?.role, session?.share]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Employer: poll the worker's live position every 10s.
   useEffect(() => {
@@ -176,7 +199,7 @@ export function LiveNavOverlay() {
           <span style={{ position: "absolute", inset: 2, borderRadius: 999, background: "#22c55e" }} />
         </span>
         <span style={{ fontSize: 12, fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-          {isWorker ? "Navigating" : "Tracking worker"}
+          {isWorker ? (session.share ? "Navigating · shared" : "Navigating") : "Tracking worker"}
         </span>
         <span style={{ flex: 1 }} />
         <button onClick={() => setMinimized(m => !m)} aria-label="Minimize"
@@ -194,17 +217,52 @@ export function LiveNavOverlay() {
           <div style={{ display: "flex", alignItems: "flex-start", gap: 7, marginBottom: 8 }}>
             <MapPin size={13} color="#f97316" style={{ flexShrink: 0, marginTop: 2 }} />
             <span style={{ fontSize: 12, color: "#bbb", lineHeight: 1.4, overflowWrap: "anywhere" }}>
-              {isWorker ? session.label : (workerFix ? `${workerFix.name} is on the way` : `Waiting for ${session.label}…`)}
+              {isWorker
+                ? session.label
+                : (workerFix
+                    ? `${workerFix.name} is on the way`
+                    : `Waiting for ${session.label} to share their location…`)}
             </span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
             <span style={{ fontSize: 18, fontWeight: 800, color: "#f97316" }}>{fmtDist(distance)}</span>
             <span style={{ fontSize: 10.5, color: "#666" }}>
               {isWorker
-                ? (gpsError ? "GPS unavailable — check location permission" : "to destination · sharing live")
+                ? (gpsError ? "GPS unavailable, check location permission" : "to destination")
                 : (workerFix ? `away · updated ${agoSec}s ago` : "no live fix yet")}
             </span>
           </div>
+
+          {/* Worker consent: the employer can only follow this trip when this is ON. */}
+          {isWorker && (
+            <button
+              onClick={() => setLiveNavShare(!session.share)}
+              style={{
+                width: "100%", display: "flex", alignItems: "center", gap: 8, marginBottom: 10,
+                background: session.share ? "rgba(34,197,94,0.1)" : "transparent",
+                border: `1px solid ${session.share ? "rgba(34,197,94,0.4)" : "#333"}`,
+                borderRadius: 10, padding: "8px 10px", cursor: "pointer", textAlign: "left",
+              }}
+            >
+              <span style={{
+                width: 30, height: 17, borderRadius: 999, flexShrink: 0, position: "relative",
+                background: session.share ? "#22c55e" : "#3a3a3a", transition: "background .15s",
+              }}>
+                <span style={{
+                  position: "absolute", top: 2, left: session.share ? 15 : 2,
+                  width: 13, height: 13, borderRadius: 999, background: "#fff", transition: "left .15s",
+                }} />
+              </span>
+              <span style={{ minWidth: 0 }}>
+                <span style={{ display: "block", fontSize: 11.5, fontWeight: 700, color: session.share ? "#22c55e" : "#bbb" }}>
+                  {session.share ? "Employer can see you" : "Let employer track me"}
+                </span>
+                <span style={{ display: "block", fontSize: 10, color: "#666", marginTop: 1 }}>
+                  {session.share ? "Sharing your live position on the way" : "Off — your location stays private"}
+                </span>
+              </span>
+            </button>
+          )}
           <div style={{ display: "flex", gap: 8 }}>
             {mapsHref && (
               <a href={mapsHref} target={isWorker ? undefined : "_blank"}
