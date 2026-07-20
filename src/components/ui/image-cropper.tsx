@@ -52,6 +52,17 @@ export function ImageCropper({
     return () => URL.revokeObjectURL(url);   // only once the cropper closes
   }, [open, file]);
 
+  /**
+   * Keep the photo covering the frame. At zoom z the element is box*z wide, so it
+   * can travel box*(z-1)/2 in each direction before an edge would expose a blank
+   * corner — which would then be baked into the saved badge.
+   */
+  const clamp = useCallback((p: { x: number; y: number }, z: number) => {
+    const box = boxRef.current?.clientWidth || 0;
+    const max = Math.max(0, (box * z - box) / 2);
+    return { x: Math.max(-max, Math.min(max, p.x)), y: Math.max(-max, Math.min(max, p.y)) };
+  }, []);
+
   const onPointerDown = (e: React.PointerEvent) => {
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
     dragRef.current = { x: e.clientX, y: e.clientY, ox: offset.x, oy: offset.y };
@@ -59,9 +70,15 @@ export function ImageCropper({
   const onPointerMove = (e: React.PointerEvent) => {
     const d = dragRef.current;
     if (!d) return;
-    setOffset({ x: d.ox + (e.clientX - d.x), y: d.oy + (e.clientY - d.y) });
+    setOffset(clamp({ x: d.ox + (e.clientX - d.x), y: d.oy + (e.clientY - d.y) }, zoom));
   };
   const onPointerUp = () => { dragRef.current = null; };
+
+  // Zooming back out must pull the photo back into frame too.
+  const changeZoom = (z: number) => {
+    setZoom(z);
+    setOffset((o) => clamp(o, z));
+  };
 
   /**
    * Render the current view into a square canvas. The preview box and the canvas
@@ -132,18 +149,20 @@ export function ImageCropper({
         }}
       >
         {imgUrl && (
-          // Sized to COVER the square box via min-width/height, then zoomed with a
-          // transform. The canvas below reproduces exactly this: cover-scale, then
-          // scale → rotate → translate, so the export matches what is framed here.
+          // object-fit:cover on a box-sized element is the honest way to preview this.
+          // min-width/height with auto sizing rendered the image at its INTRINSIC pixel
+          // size (a 1280px photo inside a ~570px box), so the preview looked roughly
+          // twice as zoomed as the exported crop. The canvas below applies the same
+          // cover-scale then scale → rotate → translate, so export matches preview.
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={imgUrl}
             alt=""
             draggable={false}
             style={{
-              position: "absolute", left: "50%", top: "50%",
-              minWidth: "100%", minHeight: "100%", width: "auto", height: "auto", maxWidth: "none",
-              transform: `translate(-50%,-50%) translate(${offset.x}px, ${offset.y}px) rotate(${rotation}deg) scale(${zoom})`,
+              position: "absolute", inset: 0,
+              width: "100%", height: "100%", objectFit: "cover",
+              transform: `translate(${offset.x}px, ${offset.y}px) rotate(${rotation}deg) scale(${zoom})`,
               transformOrigin: "center",
               userSelect: "none", pointerEvents: "none",
             }}
@@ -166,7 +185,7 @@ export function ImageCropper({
           <ZoomIn size={15} />
           <input
             type="range" min={1} max={3} step={0.01} value={zoom}
-            onChange={(e) => setZoom(Number(e.target.value))}
+            onChange={(e) => changeZoom(Number(e.target.value))}
             style={{ flex: 1 }}
           />
         </label>
