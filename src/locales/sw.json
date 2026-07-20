@@ -1304,7 +1304,8 @@
       "address_label": "Anwani Iliyosajiliwa",
       "photo_on_profile_label": "Tumia picha hii kama picha yangu ya wasifu",
       "photo_on_profile_hint": "Waajiri wataiona kwenye wasifu wako wa umma. Itabaki kwenye beji yako vyovyote vile, na unaweza kubadilisha hili baadaye katika Mipangilio.",
-      "take_photo": "Piga picha kwa kamera"
+      "take_photo": "Piga picha kwa kamera",
+      "edit_photo": "Rekebisha au punguza picha hii"
     },
     "toasts": {
       "photo_success": "Picha imepakiwa kwa mafanikio",
@@ -1336,7 +1337,8 @@
       "session": "Kipindi chako kimeisha. Ingia tena kisha ujaribu.",
       "server": "Seva yetu haikuweza kuhifadhi picha. Jaribu tena baada ya muda.",
       "offline": "Inaonekana huna mtandao. Angalia muunganisho wako kisha ujaribu tena.",
-      "network": "Kupakia kumeshindikana. Picha huenda ni kubwa au muunganisho umekatika."
+      "network": "Kupakia kumeshindikana. Picha huenda ni kubwa au muunganisho umekatika.",
+      "reedit": "Imeshindikana kufungua picha hiyo kuihariri. Ichukue tena."
     }
   },
   "titles": {

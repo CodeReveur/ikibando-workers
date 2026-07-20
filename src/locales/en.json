@@ -1305,7 +1305,8 @@
       "address_label": "Registered Address",
       "photo_on_profile_label": "Use this photo as my profile picture",
       "photo_on_profile_hint": "Employers will see it on your public profile. It stays on your badge either way, and you can change this later in Settings.",
-      "take_photo": "Take a photo with the camera"
+      "take_photo": "Take a photo with the camera",
+      "edit_photo": "Reposition or crop this photo"
     },
     "toasts": {
       "photo_success": "Photo uploaded successfully",
@@ -1337,7 +1338,8 @@
       "session": "Your session expired. Please sign in again and retry.",
       "server": "Our server couldn't save the photo. Please try again in a moment.",
       "offline": "You appear to be offline. Check your connection and try again.",
-      "network": "Upload failed. The photo may be too large or the connection dropped. Try again."
+      "network": "Upload failed. The photo may be too large or the connection dropped. Try again.",
+      "reedit": "Couldn't open that photo for editing. Pick or take it again."
     }
   },
   "titles": {

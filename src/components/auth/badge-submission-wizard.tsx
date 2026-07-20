@@ -10,6 +10,7 @@ import { useLanguage } from "@/lib/language-context";
 import { detectFaceInFile } from "@/lib/face-check";
 import { compressImage, isSupportedImage, MAX_UPLOAD_BYTES } from "@/lib/image";
 import { CameraCapture } from "@/components/ui/camera-capture";
+import { ImageCropper } from "@/components/ui/image-cropper";
 
 interface Props {
   authResult: AuthResult;
@@ -28,6 +29,9 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
   const [photoUrl, setPhotoUrl] = useState("");
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [cameraOpen, setCameraOpen] = useState(false);
+  // Every photo is aligned in the cropper before it is checked and uploaded, so a
+  // badge always prints a square, centred portrait.
+  const [cropFile, setCropFile] = useState<File | null>(null);
   // Defaults to accepted — the badge photo doubles as the profile picture unless declined.
   const [usePhotoOnProfile, setUsePhotoOnProfile] = useState(true);
   const [nationalId, setNationalId] = useState("");
@@ -198,8 +202,14 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
       <CameraCapture
         open={cameraOpen}
         onClose={() => setCameraOpen(false)}
-        onCapture={handlePhotoFile}
+        onCapture={(f) => setCropFile(f)}
         title={t("badge_wizard.fields.take_photo") || "Take your photo"}
+      />
+      <ImageCropper
+        open={!!cropFile}
+        file={cropFile}
+        onCancel={() => setCropFile(null)}
+        onCropped={(cropped) => { setCropFile(null); handlePhotoFile(cropped); }}
       />
       <div className="bg-[#141414] border border-[#2a2a2a] rounded-2xl w-full max-w-xl shadow-2xl flex flex-col overflow-hidden">
         
@@ -238,7 +248,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
                       if (!e.target.files?.length) return;
                       const file = e.target.files[0];
                       e.target.value = ""; // rejecting then re-picking the same file must re-fire
-                      handlePhotoFile(file);
+                      setCropFile(file);   // align it before any checks or upload
                     }}
                   />
                   <div className={`w-full bg-[#1a1a1a] border-2 border-dashed ${photoUrl ? 'border-green-500/50' : 'border-[#2a2a2a] group-hover:border-[#f97316]/50'} rounded-xl px-4 py-6 text-center transition-colors flex flex-col items-center justify-center min-h-[120px]`}>
@@ -278,6 +288,29 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
                   </svg>
                   {t("badge_wizard.fields.take_photo") || "Take a photo with the camera"}
                 </button>
+
+                {/* Re-open the aligner on the photo already chosen, without re-picking it. */}
+                {photoUrl && !uploadingPhoto && (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const res = await fetch(photoUrl);
+                        const blob = await res.blob();
+                        setCropFile(new File([blob], "badge-photo.jpg", { type: blob.type || "image/jpeg" }));
+                      } catch {
+                        toastError(t("badge_wizard.errors.reedit")
+                          || "Couldn't open that photo for editing. Pick or take it again.");
+                      }
+                    }}
+                    className="mt-2 flex items-center justify-center gap-2 w-full border border-[#2a2a2a] rounded-xl py-2.5 text-xs font-semibold text-gray-300 hover:border-[#f97316]/60 hover:text-white transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    {t("badge_wizard.fields.edit_photo") || "Reposition or crop this photo"}
+                  </button>
+                )}
 
                 {/* Consent for this photo to double as the public profile picture. */}
                 {photoUrl && (

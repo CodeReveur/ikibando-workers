@@ -1304,7 +1304,8 @@
       "address_label": "Adresse enregistrée",
       "photo_on_profile_label": "Utiliser cette photo comme photo de profil",
       "photo_on_profile_hint": "Les employeurs la verront sur votre profil public. Elle reste sur votre badge dans tous les cas, et vous pourrez changer cela plus tard dans les Paramètres.",
-      "take_photo": "Prendre une photo avec la caméra"
+      "take_photo": "Prendre une photo avec la caméra",
+      "edit_photo": "Repositionner ou recadrer cette photo"
     },
     "toasts": {
       "photo_success": "Photo téléchargée avec succès",
@@ -1336,7 +1337,8 @@
       "session": "Votre session a expiré. Reconnectez-vous et réessayez.",
       "server": "Notre serveur n'a pas pu enregistrer la photo. Réessayez dans un instant.",
       "offline": "Vous semblez hors ligne. Vérifiez votre connexion et réessayez.",
-      "network": "Échec de l'envoi. La photo est peut-être trop lourde ou la connexion a été interrompue."
+      "network": "Échec de l'envoi. La photo est peut-être trop lourde ou la connexion a été interrompue.",
+      "reedit": "Impossible d'ouvrir cette photo pour la modifier. Reprenez-la."
     }
   },
   "titles": {
