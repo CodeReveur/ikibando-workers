@@ -8,6 +8,7 @@ import {
 } from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
 import { useLanguage } from "@/lib/language-context";
+import { ReasonModal } from "@/components/ui/reason-modal";
 import { Countdown } from "./countdown";
 
 const fmt = (n: number) => `RWF ${Number(n || 0).toLocaleString()}`;
@@ -23,6 +24,8 @@ export function PaymentApprovalModal() {
   const [reqs, setReqs] = useState<PaymentRequestDto[]>([]);
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
+  // Reasons are collected in an in-app modal, not window.prompt.
+  const [reasonFor, setReasonFor] = useState<{ id: string; kind: "decline" | "dispute" } | null>(null);
 
   const load = useCallback(async () => {
     const token = localStorage.getItem("access_token");
@@ -113,14 +116,11 @@ export function PaymentApprovalModal() {
                       style={{ flex: 1, background: "#22c55e", color: "#000", border: "none", borderRadius: 8, padding: "9px 0", fontSize: 12.5, fontWeight: 800, cursor: "pointer" }}>
                       {t("payments.approve_btn") || "Approve"}
                     </button>
-                    <button disabled={busy === r.id} onClick={() => act(() => declinePaymentRequest(r.id, window.prompt(t("payments.decline_prompt") || "Reason (optional):") ?? "", token()), r.id, t("payments.toast_declined") || "Declined")}
+                    <button disabled={busy === r.id} onClick={() => setReasonFor({ id: r.id, kind: "decline" })}
                       style={{ flex: 1, background: "#1a1a1a", color: "#ef4444", border: "1px solid #2a2a2a", borderRadius: 8, padding: "9px 0", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>
                       {t("payments.decline_btn") || "Decline"}
                     </button>
-                    <button disabled={busy === r.id} onClick={() => {
-                        const reason = window.prompt(t("payments.complaint_prompt") || "Complaint — the money will be frozen until an agent reviews it:");
-                        if (reason !== null) act(() => disputePaymentRequest(r.id, reason, token()), r.id, t("payments.toast_complaint") || "Complaint submitted");
-                      }}
+                    <button disabled={busy === r.id} onClick={() => setReasonFor({ id: r.id, kind: "dispute" })}
                       style={{ background: "#1a1a1a", color: "#aaa", border: "1px solid #2a2a2a", borderRadius: 8, padding: "9px 12px", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>
                       {t("payments.complaint_btn") || "Complaint"}
                     </button>
@@ -131,6 +131,37 @@ export function PaymentApprovalModal() {
           </div>
         </div>
       )}
+
+      <ReasonModal
+        open={!!reasonFor}
+        danger={reasonFor?.kind === "dispute"}
+        required={reasonFor?.kind === "dispute"}
+        busy={!!busy}
+        title={reasonFor?.kind === "dispute"
+          ? (t("payments.complaint_title") || "Raise a complaint")
+          : (t("payments.decline_title") || "Decline this payment")}
+        description={reasonFor?.kind === "dispute"
+          ? (t("payments.complaint_prompt") || "Describe your complaint. The money stays frozen until an agent reviews it.")
+          : (t("payments.decline_prompt") || "Tell the worker why, so they can fix it and resubmit. Optional.")}
+        placeholder={reasonFor?.kind === "dispute"
+          ? (t("payments.complaint_placeholder") || "What went wrong?")
+          : (t("payments.decline_placeholder") || "Reason (optional)")}
+        confirmLabel={reasonFor?.kind === "dispute"
+          ? (t("payments.complaint_btn") || "Submit complaint")
+          : (t("payments.decline_btn") || "Decline")}
+        cancelLabel={t("common.general.cancel") || "Cancel"}
+        onConfirm={(reason) => {
+          if (!reasonFor) return;
+          const { id, kind } = reasonFor;
+          setReasonFor(null);
+          if (kind === "decline") {
+            act(() => declinePaymentRequest(id, reason, token()), id, t("payments.toast_declined") || "Declined");
+          } else {
+            act(() => disputePaymentRequest(id, reason, token()), id, t("payments.toast_complaint") || "Complaint submitted");
+          }
+        }}
+        onCancel={() => setReasonFor(null)}
+      />
     </>
   );
 }

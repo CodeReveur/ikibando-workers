@@ -222,7 +222,8 @@
       "optional_message": "Message facultatif…",
       "pending": "En attente",
       "select": "Sélectionner…",
-      "withdrawn": "Retiré"
+      "withdrawn": "Retiré",
+      "cancel": "Annuler"
     },
     "provinces": {
       "city_of_kigali": "Ville de Kigali",
@@ -2302,7 +2303,11 @@
     "state_CANCELLED": "Annulé",
     "state_APPROVED": "Approuvé",
     "state_AUTO_APPROVED": "Approuvé auto",
-    "escalates_in": "un dossier support s ouvre dans"
+    "escalates_in": "un dossier support s ouvre dans",
+    "complaint_title": "Déposer une réclamation",
+    "complaint_placeholder": "Que s’est-il passé ?",
+    "decline_title": "Refuser ce paiement",
+    "decline_placeholder": "Motif (facultatif)"
   },
   "navigate": {
     "title": "Naviguer vers l'emploi",

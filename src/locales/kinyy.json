@@ -222,7 +222,8 @@
       "optional_message": "Ubutumwa bwihitiwemo…",
       "pending": "Bitegereje",
       "select": "Hitamo…",
-      "withdrawn": "Byakuweho"
+      "withdrawn": "Byakuweho",
+      "cancel": "Hagarika"
     },
     "provinces": {
       "city_of_kigali": "Umujyi wa Kigali",
@@ -2302,7 +2303,11 @@
     "state_CANCELLED": "Byahagaritswe",
     "state_APPROVED": "Byemejwe",
     "state_AUTO_APPROVED": "Byemejwe ako kanya",
-    "escalates_in": "urubanza rufungurwa mu"
+    "escalates_in": "urubanza rufungurwa mu",
+    "complaint_title": "Tanga ikibazo",
+    "complaint_placeholder": "Ni iki kitagenze neza?",
+    "decline_title": "Anga ubu bwishyu",
+    "decline_placeholder": "Impamvu (si ngombwa)"
   },
   "navigate": {
     "title": "Yobora ugana ku murimo",

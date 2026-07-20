@@ -223,7 +223,8 @@
       "optional_message": "Optional message…",
       "pending": "Pending",
       "select": "Select…",
-      "withdrawn": "Withdrawn"
+      "withdrawn": "Withdrawn",
+      "cancel": "Cancel"
     },
     "provinces": {
       "city_of_kigali": "City of Kigali",
@@ -2303,7 +2304,11 @@
     "state_CANCELLED": "Cancelled",
     "state_APPROVED": "Approved",
     "state_AUTO_APPROVED": "Auto-approved",
-    "escalates_in": "support case opens in"
+    "escalates_in": "support case opens in",
+    "complaint_title": "Raise a complaint",
+    "complaint_placeholder": "What went wrong?",
+    "decline_title": "Decline this payment",
+    "decline_placeholder": "Reason (optional)"
   },
   "navigate": {
     "title": "Navigate to job",

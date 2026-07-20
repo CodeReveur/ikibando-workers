@@ -10,6 +10,7 @@ import {
 } from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
 import { useLanguage } from "@/lib/language-context";
+import { ReasonModal } from "@/components/ui/reason-modal";
 import { Countdown } from "./countdown";
 
 const CURRENCY = "RWF";
@@ -102,19 +103,33 @@ export function PaymentPanel({ jobId, role, token }: {
     try { await approvePaymentRequest(id, token); success(t("payments.toast_approved") || "Payment approved & released"); await load(); }
     catch (e) { toastError(apiError(e, t("payments.err_approve") || "Couldn't approve")); } finally { setBusy(null); }
   }
-  async function doDecline(id: string) {
-    const reason = window.prompt(t("payments.decline_prompt") || "Reason for declining (optional):") ?? "";
-    setBusy(`dc-${id}`);
-    try { await declinePaymentRequest(id, reason, token); success(t("payments.toast_declined") || "Payment declined"); await load(); }
-    catch (e) { toastError(apiError(e, t("payments.err_decline") || "Couldn't decline")); } finally { setBusy(null); }
+  // Reason prompts render as an in-app modal (see ReasonModal) rather than
+  // window.prompt, which shows a bare "www.mpahmapu.com says" browser dialog.
+  const [reasonFor, setReasonFor] = useState<{ id: string; kind: "decline" | "dispute" } | null>(null);
+
+  async function submitReason(reason: string) {
+    if (!reasonFor) return;
+    const { id, kind } = reasonFor;
+    setBusy(kind === "decline" ? `dc-${id}` : `di-${id}`);
+    try {
+      if (kind === "decline") {
+        await declinePaymentRequest(id, reason, token);
+        success(t("payments.toast_declined") || "Payment declined");
+      } else {
+        await disputePaymentRequest(id, reason, token);
+        success(t("payments.toast_complaint") || "Complaint submitted — payment frozen");
+      }
+      setReasonFor(null);
+      await load();
+    } catch (e) {
+      toastError(apiError(e, kind === "decline"
+        ? (t("payments.err_decline") || "Couldn't decline")
+        : (t("payments.err_complaint") || "Couldn't submit complaint")));
+    } finally { setBusy(null); }
   }
-  async function doDispute(id: string) {
-    const reason = window.prompt(t("payments.complaint_prompt") || "Describe your complaint. The money will be frozen until an agent reviews it:");
-    if (reason === null) return;
-    setBusy(`di-${id}`);
-    try { await disputePaymentRequest(id, reason, token); success(t("payments.toast_complaint") || "Complaint submitted — payment frozen"); await load(); }
-    catch (e) { toastError(apiError(e, t("payments.err_complaint") || "Couldn't submit complaint")); } finally { setBusy(null); }
-  }
+
+  function doDecline(id: string) { setReasonFor({ id, kind: "decline" }); }
+  function doDispute(id: string) { setReasonFor({ id, kind: "dispute" }); }
 
   if (loading) return <div style={{ ...card, color: "#666", fontSize: 13 }}>{t("payments.loading") || "Loading payments…"}</div>;
   if (!schedule) return null;
@@ -191,6 +206,28 @@ export function PaymentPanel({ jobId, role, token }: {
 
       {/* Activity timeline */}
       <JobTimeline activity={activity} title={t("payments.activity_title") || "Activity history"} />
+
+      <ReasonModal
+        open={!!reasonFor}
+        danger={reasonFor?.kind === "dispute"}
+        required={reasonFor?.kind === "dispute"}
+        busy={!!busy}
+        title={reasonFor?.kind === "dispute"
+          ? (t("payments.complaint_title") || "Raise a complaint")
+          : (t("payments.decline_title") || "Decline this payment")}
+        description={reasonFor?.kind === "dispute"
+          ? (t("payments.complaint_prompt") || "Describe your complaint. The money stays frozen until an agent reviews it.")
+          : (t("payments.decline_prompt") || "Tell the worker why, so they can fix it and resubmit. Optional.")}
+        placeholder={reasonFor?.kind === "dispute"
+          ? (t("payments.complaint_placeholder") || "What went wrong?")
+          : (t("payments.decline_placeholder") || "Reason (optional)")}
+        confirmLabel={reasonFor?.kind === "dispute"
+          ? (t("payments.complaint_btn") || "Submit complaint")
+          : (t("payments.decline_btn") || "Decline")}
+        cancelLabel={t("common.general.cancel") || "Cancel"}
+        onConfirm={submitReason}
+        onCancel={() => setReasonFor(null)}
+      />
     </>
   );
 }
@@ -216,6 +253,7 @@ export function JobTimeline({ activity, title }: { activity: ActivityLogDto[]; t
           </div>
         ))}
       </div>
+
     </div>
   );
 }

@@ -222,7 +222,8 @@
       "optional_message": "Ujumbe wa hiari…",
       "pending": "Inasubiri",
       "select": "Chagua…",
-      "withdrawn": "Imeondolewa"
+      "withdrawn": "Imeondolewa",
+      "cancel": "Ghairi"
     },
     "provinces": {
       "city_of_kigali": "Jiji la Kigali",
@@ -2302,7 +2303,11 @@
     "state_CANCELLED": "Imeghairiwa",
     "state_APPROVED": "Imeidhinishwa",
     "state_AUTO_APPROVED": "Imeidhinishwa kiotomatiki",
-    "escalates_in": "kesi ya usaidizi hufunguliwa baada ya"
+    "escalates_in": "kesi ya usaidizi hufunguliwa baada ya",
+    "complaint_title": "Wasilisha malalamiko",
+    "complaint_placeholder": "Nini kilienda vibaya?",
+    "decline_title": "Kataa malipo haya",
+    "decline_placeholder": "Sababu (si lazima)"
   },
   "navigate": {
     "title": "Elekea kazini",
