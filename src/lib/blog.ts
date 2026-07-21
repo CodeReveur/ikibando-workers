@@ -9,8 +9,12 @@ import type { BlogCategory, BlogPost, Page } from "@/lib/api";
  */
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8088";
 
-/** Posts change rarely; an hour of staleness is invisible to readers and cheap for the server. */
-const REVALIDATE_SECONDS = 3600;
+/**
+ * A short revalidation window so a freshly published post appears almost right
+ * away. An hour made the blog look frozen: publishing from the admin took up to
+ * 60 minutes to show. Two minutes is invisible to readers and still cheap.
+ */
+const REVALIDATE_SECONDS = 120;
 
 async function getJson<T>(path: string): Promise<T | null> {
   try {
