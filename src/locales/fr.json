@@ -2343,5 +2343,15 @@
   "descriptions": {
     "worker_detail": "Recrutez {name}, {category} verifie a {location}. {completed} missions accomplies sur MpahMapu, la plateforme de main-d'oeuvre a la demande du Rwanda.",
     "job_detail": "{employer} recrute pour {title} a {district}, Rwanda. Postulez des aujourd'hui sur MpahMapu et soyez paye par MoMo."
+  },
+  "categories_page": {
+    "title": "Catégories",
+    "search": "Rechercher des catégories…",
+    "sort_workers": "Plus de travailleurs disponibles",
+    "sort_jobs": "Plus d’offres ouvertes",
+    "sort_name": "Nom (A–Z)",
+    "empty": "Aucune catégorie ne correspond.",
+    "workers_word": "travailleurs",
+    "jobs_word": "offres"
   }
 }

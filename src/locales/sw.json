@@ -2343,5 +2343,15 @@
   "descriptions": {
     "worker_detail": "Ajiri {name}, {category} aliyethibitishwa {location}. Kazi {completed} zilizokamilika kwenye MpahMapu, jukwaa la wafanyakazi la Rwanda.",
     "job_detail": "{employer} anaajiri {title} {district}, Rwanda. Omba leo kwenye MpahMapu na ulipwe kwa MoMo."
+  },
+  "categories_page": {
+    "title": "Kategoria",
+    "search": "Tafuta kategoria…",
+    "sort_workers": "Wafanyakazi wengi waliopo",
+    "sort_jobs": "Kazi nyingi zilizo wazi",
+    "sort_name": "Jina (A–Z)",
+    "empty": "Hakuna kategoria inayolingana.",
+    "workers_word": "wafanyakazi",
+    "jobs_word": "kazi"
   }
 }

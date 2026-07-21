@@ -391,6 +391,12 @@ export interface JobCategoryMeta {
   typicalRateMax: number | null;
 }
 
+/** Active-worker and open-job counts per experience slug, for the browse cards. */
+export async function getCategoryStats(): Promise<Record<string, { workers: number; jobs: number }>> {
+  const { data } = await http.get("/api/jobs/categories/stats");
+  return data.data || {};
+}
+
 export async function getJobCategories(): Promise<JobCategoryMeta[]> {
   const { data } = await http.get("/api/jobs/categories");
   return data.data;

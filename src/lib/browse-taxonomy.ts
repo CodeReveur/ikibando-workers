@@ -109,3 +109,22 @@ export function keyForSlug(slug: string): string {
   const s = (slug ?? "").toLowerCase();
   return CATEGORIES.find(c => c.apiValues.includes(s))?.key ?? slug;
 }
+
+export type CategoryStats = Record<string, { workers: number; jobs: number }>;
+
+/**
+ * Sum a stats map (keyed by experience slug) across a category's apiValues.
+ * De-duplicates because several display categories share a slug (gardener), so a
+ * category with two apiValues pointing at the same slug must not double-count.
+ */
+export function countsForCategory(cat: BrowseCategory, stats: CategoryStats): { workers: number; jobs: number } {
+  const seen = new Set<string>();
+  let workers = 0, jobs = 0;
+  for (const slug of cat.apiValues) {
+    if (seen.has(slug)) continue;
+    seen.add(slug);
+    const s = stats[slug];
+    if (s) { workers += s.workers || 0; jobs += s.jobs || 0; }
+  }
+  return { workers, jobs };
+}

@@ -2343,5 +2343,15 @@
   "descriptions": {
     "worker_detail": "Haka {name}, {category} wemejwe i {location}. Imirimo {completed} yarangiye kuri MpahMapu, urubuga rw'abakozi mu Rwanda.",
     "job_detail": "{employer} arashaka {title} i {district}, mu Rwanda. Saba uyu munsi kuri MpahMapu wishyurwe na MoMo."
+  },
+  "categories_page": {
+    "title": "Ibyiciro",
+    "search": "Shakisha ibyiciro…",
+    "sort_workers": "Abakozi benshi bahari",
+    "sort_jobs": "Akazi kenshi gafunguye",
+    "sort_name": "Izina (A–Z)",
+    "empty": "Nta cyiciro gihuye n’ubushakashatsi bwawe.",
+    "workers_word": "abakozi",
+    "jobs_word": "akazi"
   }
 }

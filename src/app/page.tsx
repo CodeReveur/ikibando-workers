@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import Footer from "@/components/layout/footer";
 import { PostJobModal } from "@/components/jobs/post-job-modal";
-import { getWorkers, getJobs, daysAgo, workerNetHourly, type WorkerProfileDto, type JobDto } from "@/lib/api";
+import { getWorkers, getJobs, getCategoryStats, daysAgo, workerNetHourly, type WorkerProfileDto, type JobDto } from "@/lib/api";
 import { ratingInfo } from "@/lib/rating";
+import { CATEGORIES, countsForCategory, type CategoryStats } from "@/lib/browse-taxonomy";
 import { useLanguage } from "@/lib/language-context";
 import {
   UtensilsCrossed, Sparkles, Shield, Car, Zap, Wrench, Leaf,
@@ -134,6 +135,7 @@ export default function Home() {
   const [showPostJob, setShowPostJob] = useState(false);
   const [workers, setWorkers] = useState<WorkerProfileDto[]>([]);
   const [jobs, setJobs] = useState<JobDto[]>([]);
+  const [catStats, setCatStats] = useState<CategoryStats>({});
 
   const fmt = (n: number) => t("common.general.currency_pattern", { amount: n.toLocaleString() });
 
@@ -141,7 +143,17 @@ export default function Home() {
     // 18 fills the workers grid to complete rows (3-per-row) instead of leaving a lone last card.
     getWorkers({ size: 18 }).then(p => setWorkers(p.content)).catch(() => {});
     getJobs({ size: 16 }).then(p => setJobs(p.content)).catch(() => {});
+    getCategoryStats().then(setCatStats).catch(() => {});
   }, []);
+
+  // Category chips carry their live active-worker count and lead with the busiest.
+  const categoryCards = [...categories]
+    .map((c) => {
+      const meta = CATEGORIES.find((x) => x.key === c.key);
+      const workersCount = meta ? countsForCategory(meta, catStats).workers : 0;
+      return { ...c, workersCount };
+    })
+    .sort((a, b) => b.workersCount - a.workersCount);
 
   return (
     <main style={{ background: "#111", minHeight: "100vh", fontFamily: "Inter, DM Sans, system-ui, sans-serif", color: "#f5f5f5" }}>
@@ -218,22 +230,26 @@ export default function Home() {
 
       {/* CATEGORIES */}
       <section id="categories" style={{ maxWidth: 760, margin: "0 auto", padding: "0 20px 20px" }}>
-        <SectionHeader title={t("home.sections.categories")} href="/browse" />
+        <SectionHeader title={t("home.sections.categories")} href="/categories" />
         <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 4, scrollbarWidth: "none" }}>
-          {categories.map(({ icon: Icon, label, key }) => (
+          {categoryCards.map(({ icon: Icon, key, workersCount }) => (
             <a
-              key={label}
-              href={`/browse?category=${label.toLowerCase()}`}
+              key={key}
+              href={`/browse?category=${key}`}
               style={{
-                flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 10,
+                flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
                 background: "#1c1c1c", border: "1px solid #272727", borderRadius: 16,
-                padding: "18px 20px", textDecoration: "none", minWidth: 84,
+                padding: "16px 18px", textDecoration: "none", minWidth: 88,
               }}
               onMouseEnter={e => (e.currentTarget.style.borderColor = "#f97316")}
               onMouseLeave={e => (e.currentTarget.style.borderColor = "#272727")}
             >
               <Icon size={22} color="#f97316" strokeWidth={1.75} />
               <span style={{ fontSize: 11, fontWeight: 600, color: "#aaa", whiteSpace: "nowrap" }}>{t("common.categories." + key)}</span>
+              {/* Live availability: green when workers are online, muted otherwise. */}
+              <span style={{ fontSize: 10, fontWeight: 700, color: workersCount > 0 ? "#22c55e" : "#555", whiteSpace: "nowrap" }}>
+                {workersCount.toLocaleString()} {t("categories_page.workers_word") || "workers"}
+              </span>
             </a>
           ))}
         </div>

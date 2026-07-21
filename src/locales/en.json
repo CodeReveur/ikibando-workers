@@ -2344,5 +2344,15 @@
   "descriptions": {
     "worker_detail": "Hire {name}, a verified {category} in {location}. {completed} jobs completed on MpahMapu, Rwanda's trusted on-demand workforce platform.",
     "job_detail": "{employer} is hiring for {title} in {district}, Rwanda. Apply today on MpahMapu and get paid by MoMo."
+  },
+  "categories_page": {
+    "title": "Categories",
+    "search": "Search categories…",
+    "sort_workers": "Most available workers",
+    "sort_jobs": "Most open jobs",
+    "sort_name": "Name (A–Z)",
+    "empty": "No categories match your search.",
+    "workers_word": "workers",
+    "jobs_word": "jobs"
   }
 }
