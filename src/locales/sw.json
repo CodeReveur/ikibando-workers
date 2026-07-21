@@ -190,7 +190,9 @@
       "hr_professional": "Mtaalamu wa rasilimali watu",
       "marketing_specialist": "Mtaalamu wa masoko",
       "sales_representative": "Mwakilishi wa mauzo",
-      "financial_advisor": "Mshauri wa fedha"
+      "financial_advisor": "Mshauri wa fedha",
+      "helpers": "Wasaidizi",
+      "manpower": "Nguvukazi"
     },
     "buttons": {
       "more": "Zaidi",

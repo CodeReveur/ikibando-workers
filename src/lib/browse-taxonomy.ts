@@ -87,6 +87,8 @@ export const CATEGORIES: BrowseCategory[] = [
   { icon: TrendingUp, label: "Marketing Specialists", key: "marketing_specialists", apiValues: ["marketing_agent"] },
   { icon: Megaphone, label: "Sales Representatives", key: "sales_representatives", apiValues: ["sales_agent"] },
   { icon: BadgeDollarSign, label: "Financial Advisors", key: "financial_advisors", apiValues: ["accountant"] },
+  { icon: HeartHandshake, label: "Helpers", key: "helpers", apiValues: ["helper"] },
+  { icon: Users, label: "Man Power", key: "manpower", apiValues: ["manpower"] },
 ];
 
 /** The category entry for a picker key, if it is one of ours. */

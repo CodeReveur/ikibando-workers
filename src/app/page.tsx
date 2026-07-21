@@ -128,6 +128,8 @@ const categories = [
   { icon: TrendingUp, label: "Marketing Specialists", key: "marketing_specialists" },
   { icon: Megaphone, label: "Sales Representatives", key: "sales_representatives" },
   { icon: BadgeDollarSign, label: "Financial Advisors", key: "financial_advisors" },
+  { icon: HeartHandshake, label: "Helpers", key: "helpers" },
+  { icon: Users, label: "Man Power", key: "manpower" },
 ];
 
 export default function Home() {

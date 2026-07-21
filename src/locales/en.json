@@ -191,7 +191,9 @@
       "hr_professional": "HR Professional",
       "marketing_specialist": "Marketing Specialist",
       "sales_representative": "Sales Representative",
-      "financial_advisor": "Financial Advisor"
+      "financial_advisor": "Financial Advisor",
+      "helpers": "Helpers",
+      "manpower": "Man Power"
     },
     "buttons": {
       "more": "More",

@@ -190,7 +190,9 @@
       "hr_professional": "Professionnel des RH",
       "marketing_specialist": "Spécialiste en marketing",
       "sales_representative": "Représentant commercial",
-      "financial_advisor": "Conseiller financier"
+      "financial_advisor": "Conseiller financier",
+      "helpers": "Aides",
+      "manpower": "Main-d’œuvre"
     },
     "buttons": {
       "more": "Plus",
