@@ -161,14 +161,16 @@ function BrowsePageInner() {
      filterPosted, filterOpenOnly, sortJob],
   );
 
+  // 3s pause before each scroll-loaded batch of 16, so results arrive at a
+  // deliberate pace rather than the instant the sentinel scrolls into view.
   const workersView = usePagedResults<WorkerProfileDto>(fetchWorkers, [
     tab, search, filterCategory, area.province, area.district, area.sector,
     minRating, minJobs, accountType, availableOnly, verifiedOnly, withEquipment, sortWorker,
-  ]);
+  ], { autoLoadDelayMs: 3000 });
   const jobsView = usePagedResults<JobDto>(fetchJobs, [
     tab, search, filterCategory, area.province, area.district, area.sector,
     filterUrgency, filterMinAmount, filterMaxAmount, filterPosted, filterOpenOnly, sortJob,
-  ]);
+  ], { autoLoadDelayMs: 3000 });
 
   const workers = workersView.items;
   const jobs = jobsView.items;
@@ -595,7 +597,7 @@ function BrowsePageInner() {
             ) : (
               /* Always-visible manual fallback: if auto-load ever misses, one tap works. */
               <button
-                onClick={() => workersView.loadMore()}
+                onClick={() => workersView.loadMore(true)}
                 style={{
                   display: "flex", alignItems: "center", gap: 8,
                   background: "rgba(249,115,22,0.1)", border: "1px solid rgba(249,115,22,0.4)",

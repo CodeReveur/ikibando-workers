@@ -30,7 +30,7 @@ export interface PageLike<T> {
 export function usePagedResults<T>(
   fetchPage: (page: number) => Promise<PageLike<T>>,
   deps: readonly unknown[],
-  { debounceMs = 350 }: { debounceMs?: number } = {},
+  { debounceMs = 350, autoLoadDelayMs = 0 }: { debounceMs?: number; autoLoadDelayMs?: number } = {},
 ) {
   const [items, setItems]             = useState<T[]>([]);
   const [total, setTotal]             = useState(0);
@@ -82,12 +82,22 @@ export function usePagedResults<T>(
     return () => clearTimeout(timer);
   }, [key, debounceMs]);
 
-  const loadMore = useCallback(async () => {
+  /**
+   * Fetch the next page. Scroll-triggered loads (immediate=false) wait
+   * autoLoadDelayMs first so batches arrive at a deliberate pace instead of
+   * firing the instant the sentinel appears; an explicit "Load more" click
+   * passes immediate=true to skip the wait.
+   */
+  const loadMore = useCallback(async (immediate = false) => {
     if (busyRef.current || !hasMoreRef.current) return;
     busyRef.current = true;
     const ticket = seqRef.current;   // the filter set this page belongs to
     setLoadingMore(true);
     try {
+      if (!immediate && autoLoadDelayMs > 0) {
+        await new Promise((r) => setTimeout(r, autoLoadDelayMs));
+        if (seqRef.current !== ticket) return;   // filters changed during the pause
+      }
       const next = pageRef.current + 1;
       const p = await fetchRef.current(next);
       if (seqRef.current !== ticket) return;   // filters changed mid-flight: these rows are stale
@@ -102,7 +112,7 @@ export function usePagedResults<T>(
       busyRef.current = false;
       setLoadingMore(false);
     }
-  }, []);
+  }, [autoLoadDelayMs]);
 
   const sentinelRef = useCallback((el: HTMLDivElement | null) => setSentinel(el), []);
 
