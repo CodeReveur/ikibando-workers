@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { Bot, X } from "lucide-react";
+import { Bot, X, HandCoins } from "lucide-react";
 import { BazaBotChat } from "./bazabot";
+import { DonationModal } from "@/components/donate/donation-modal";
+import { useLanguage } from "@/lib/language-context";
 
 /**
  * Floating BazaBot launcher, mounted globally so any visitor (logged-in or not)
@@ -11,7 +13,9 @@ import { BazaBotChat } from "./bazabot";
  */
 export function BazaBotWidget() {
   const [open, setOpen] = useState(false);
+  const [donateOpen, setDonateOpen] = useState(false);
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   // Close on Escape.
   useEffect(() => {
@@ -25,7 +29,10 @@ export function BazaBotWidget() {
   if (pathname?.startsWith("/owner") || pathname?.startsWith("/seeker")) return null;
 
   return (
-    <div style={{ position: "fixed", right: 20, bottom: 20, zIndex: 1000, fontFamily: "Inter, system-ui, sans-serif" }}>
+    <div style={{
+      position: "fixed", right: 20, bottom: 20, zIndex: 1000, fontFamily: "Inter, system-ui, sans-serif",
+      display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 12,
+    }}>
       {open && (
         <div
           style={{
@@ -40,6 +47,25 @@ export function BazaBotWidget() {
         </div>
       )}
 
+      {/* Small money icon, stacked just above BazaBot — opens the donation flow. Hidden while chat is open. */}
+      {!open && (
+        <button
+          onClick={() => setDonateOpen(true)}
+          aria-label={t("donate.cta")}
+          title={t("donate.cta")}
+          style={{
+            width: 44, height: 44, borderRadius: 99, border: "1px solid rgba(249,115,22,0.5)", cursor: "pointer",
+            background: "#161616", color: "#f97316",
+            boxShadow: "0 6px 18px rgba(0,0,0,0.4)",
+            display: "flex", alignItems: "center", justifyContent: "center", transition: "transform 0.15s",
+          }}
+          onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.08)")}
+          onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
+        >
+          <HandCoins size={20} />
+        </button>
+      )}
+
       <button
         onClick={() => setOpen(o => !o)}
         aria-label={open ? "Close chat" : "Chat with BazaBot"}
@@ -48,13 +74,15 @@ export function BazaBotWidget() {
           background: "linear-gradient(135deg, #fb8c3c, #f97316)",
           boxShadow: "0 8px 24px rgba(249,115,22,0.4)",
           display: "flex", alignItems: "center", justifyContent: "center",
-          color: "#fff", marginLeft: "auto", transition: "transform 0.15s",
+          color: "#fff", transition: "transform 0.15s",
         }}
         onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.06)")}
         onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
       >
         {open ? <X size={24} /> : <Bot size={26} />}
       </button>
+
+      <DonationModal open={donateOpen} onClose={() => setDonateOpen(false)} />
 
       <style>{`@keyframes bb-pop { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }`}</style>
     </div>

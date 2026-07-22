@@ -805,7 +805,7 @@ export async function getBonuses(token: string): Promise<BonusSummary> {
 
 export interface TransferDto {
   id: string;
-  type: "TOPUP" | "WITHDRAWAL";
+  type: "TOPUP" | "WITHDRAWAL" | "DONATION";
   amountRwf: number;
   method: string;
   phoneNumber: string;
@@ -1147,6 +1147,37 @@ export async function getGuestPaymentStatus(topupId: string): Promise<TransferDt
  */
 export async function postGuestJob(payload: GuestJobPayload): Promise<JobDto> {
   const { data } = await http.post("/api/jobs/guest", payload);
+  return data.data;
+}
+
+// ── Donations ─────────────────────────────────────────────────────────────────
+export interface DonationPayload {
+  amount: number;
+  paymentMethod: "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD";
+  phoneNumber?: string;
+  name?: string;
+  email?: string;
+  message?: string;
+  anonymous?: boolean;
+  /** Where XentriPay returns the browser after a hosted card payment. */
+  redirectUrl?: string;
+}
+
+/**
+ * Start a donation collection (public — works signed in or as a guest). Mobile money pushes a
+ * USSD prompt; card returns a hosted-checkout redirectUrl. Poll getDonationStatus with the
+ * returned id until it settles. When a bearer token is present it is attached so the donation
+ * is linked to the account; otherwise it is anonymous/guest.
+ */
+export async function initiateDonation(payload: DonationPayload, token?: string): Promise<TransferDto> {
+  const cfg = token ? { headers: authHeader(token) } : undefined;
+  const { data } = await http.post("/api/donations/initiate", payload, cfg);
+  return data.data;
+}
+
+/** Poll a donation's settlement status (public). */
+export async function getDonationStatus(id: string): Promise<TransferDto> {
+  const { data } = await http.get(`/api/donations/status/${id}`);
   return data.data;
 }
 

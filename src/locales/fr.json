@@ -2355,5 +2355,30 @@
     "empty": "Aucune catégorie ne correspond.",
     "workers_word": "travailleurs",
     "jobs_word": "offres"
+  },
+  "donate": {
+    "cta": "Faire un don",
+    "title": "Soutenez MpahMapu",
+    "subtitle": "Votre don fait vivre la plateforme",
+    "amount": "Montant",
+    "custom_amount": "Ou saisissez un autre montant (RWF)",
+    "method": "Moyen de paiement",
+    "phone": "Numéro mobile money",
+    "name_optional": "Votre nom (facultatif)",
+    "message_optional": "Laissez un message (facultatif)",
+    "anonymous": "Faire un don anonymement",
+    "give": "Donner",
+    "secure_note": "Paiement sécurisé via MTN, Airtel ou carte.",
+    "processing_momo": "Vérifiez votre téléphone",
+    "processing_card": "Terminez le paiement dans le nouvel onglet",
+    "processing_hint": "Approuvez l'invite pour finaliser votre don.",
+    "thanks_title": "Merci !",
+    "thanks_body": "Nous avons reçu votre don de",
+    "done": "Terminé",
+    "err_amount": "Veuillez saisir au moins 100 RWF.",
+    "err_phone": "Saisissez un numéro mobile money valide.",
+    "err_failed": "Le paiement n'a pas abouti. Veuillez réessayer.",
+    "err_pending": "Toujours en attente. Si le montant a été débité, il apparaîtra bientôt.",
+    "err_generic": "Une erreur s'est produite. Veuillez réessayer."
   }
 }

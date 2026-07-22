@@ -2356,5 +2356,30 @@
     "empty": "No categories match your search.",
     "workers_word": "workers",
     "jobs_word": "jobs"
+  },
+  "donate": {
+    "cta": "Donate",
+    "title": "Support MpahMapu",
+    "subtitle": "Your gift keeps the platform running",
+    "amount": "Amount",
+    "custom_amount": "Or enter another amount (RWF)",
+    "method": "Payment method",
+    "phone": "Mobile money number",
+    "name_optional": "Your name (optional)",
+    "message_optional": "Leave a message (optional)",
+    "anonymous": "Donate anonymously",
+    "give": "Give",
+    "secure_note": "Secure payment via MTN, Airtel or card.",
+    "processing_momo": "Check your phone",
+    "processing_card": "Complete payment in the new tab",
+    "processing_hint": "Approve the prompt to finish your donation.",
+    "thanks_title": "Thank you!",
+    "thanks_body": "We received your donation of",
+    "done": "Done",
+    "err_amount": "Please enter at least 100 RWF.",
+    "err_phone": "Enter a valid mobile money number.",
+    "err_failed": "The payment didn't go through. Please try again.",
+    "err_pending": "Still pending. If money was taken it will reflect shortly.",
+    "err_generic": "Something went wrong. Please try again."
   }
 }

@@ -2355,5 +2355,30 @@
     "empty": "Hakuna kategoria inayolingana.",
     "workers_word": "wafanyakazi",
     "jobs_word": "kazi"
+  },
+  "donate": {
+    "cta": "Changia",
+    "title": "Saidia MpahMapu",
+    "subtitle": "Mchango wako unaendesha jukwaa hili",
+    "amount": "Kiasi",
+    "custom_amount": "Au weka kiasi kingine (RWF)",
+    "method": "Njia ya malipo",
+    "phone": "Namba ya mobile money",
+    "name_optional": "Jina lako (hiari)",
+    "message_optional": "Acha ujumbe (hiari)",
+    "anonymous": "Changia bila kujulikana",
+    "give": "Toa",
+    "secure_note": "Malipo salama kupitia MTN, Airtel au kadi.",
+    "processing_momo": "Angalia simu yako",
+    "processing_card": "Kamilisha malipo katika kichupo kipya",
+    "processing_hint": "Idhinisha ombi ili kukamilisha mchango wako.",
+    "thanks_title": "Asante!",
+    "thanks_body": "Tumepokea mchango wako wa",
+    "done": "Imekamilika",
+    "err_amount": "Tafadhali weka angalau RWF 100.",
+    "err_phone": "Weka namba sahihi ya mobile money.",
+    "err_failed": "Malipo hayakufanikiwa. Tafadhali jaribu tena.",
+    "err_pending": "Bado inasubiri. Ikiwa pesa zimetolewa zitaonekana hivi karibuni.",
+    "err_generic": "Hitilafu imetokea. Tafadhali jaribu tena."
   }
 }

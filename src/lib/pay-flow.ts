@@ -9,7 +9,8 @@
 import {
   topupWallet, getTopupStatus,
   initiateGuestJobPayment, getGuestPaymentStatus,
-  type GuestJobPayload,
+  initiateDonation, getDonationStatus,
+  type GuestJobPayload, type DonationPayload,
 } from "./api";
 
 export type PayMethod = "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD";
@@ -89,6 +90,30 @@ export async function runGuestPayment(payload: GuestJobPayload): Promise<PayOutc
 
   return pollStatus(
     () => getGuestPaymentStatus(t.id).then((s) => s.status),
+    { graceMs: card ? 25_000 : 0 },
+  );
+}
+
+/**
+ * Make a donation and wait for it to settle. Works signed in (pass a token to link it to the
+ * account) or anonymously. For card, opens the XentriPay checkout page in a new tab first.
+ */
+export async function runDonation(
+  payload: DonationPayload,
+  token?: string,
+): Promise<PayOutcome> {
+  const card = isCardMethod(payload.paymentMethod);
+  const t = await initiateDonation({
+    ...payload,
+    redirectUrl: card && typeof window !== "undefined" ? window.location.href : undefined,
+  }, token);
+
+  if (t.redirectUrl && typeof window !== "undefined") {
+    window.open(t.redirectUrl, "_blank", "noopener,noreferrer");
+  }
+
+  return pollStatus(
+    () => getDonationStatus(t.id).then((s) => s.status),
     { graceMs: card ? 25_000 : 0 },
   );
 }

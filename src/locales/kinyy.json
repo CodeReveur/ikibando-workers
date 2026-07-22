@@ -2355,5 +2355,30 @@
     "empty": "Nta cyiciro gihuye n’ubushakashatsi bwawe.",
     "workers_word": "abakozi",
     "jobs_word": "akazi"
+  },
+  "donate": {
+    "cta": "Tanga inkunga",
+    "title": "Shyigikira MpahMapu",
+    "subtitle": "Inkunga yawe ituma uru rubuga rukomeza gukora",
+    "amount": "Umubare",
+    "custom_amount": "Cyangwa andika undi mubare (RWF)",
+    "method": "Uburyo bwo kwishyura",
+    "phone": "Nimero ya mobile money",
+    "name_optional": "Izina ryawe (si ngombwa)",
+    "message_optional": "Siga ubutumwa (si ngombwa)",
+    "anonymous": "Tanga utamenyekana",
+    "give": "Tanga",
+    "secure_note": "Kwishyura bitekanye binyuze kuri MTN, Airtel cyangwa ikarita.",
+    "processing_momo": "Reba telefoni yawe",
+    "processing_card": "Uzuza kwishyura mu ipaji nshya",
+    "processing_hint": "Emeza ubutumwa kugira ngo urangize inkunga yawe.",
+    "thanks_title": "Murakoze!",
+    "thanks_body": "Twakiriye inkunga yawe ya",
+    "done": "Byarangiye",
+    "err_amount": "Andika byibura 100 RWF.",
+    "err_phone": "Andika nimero ya mobile money yemewe.",
+    "err_failed": "Kwishyura ntibyagenze neza. Ongera ugerageze.",
+    "err_pending": "Biracyategerejwe. Niba amafaranga yavuye, azagaragara vuba.",
+    "err_generic": "Habaye ikibazo. Ongera ugerageze."
   }
 }

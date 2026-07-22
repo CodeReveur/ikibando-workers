@@ -1,14 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { HandCoins } from "lucide-react";
 import { useLanguage } from "@/lib/language-context";
 import { subscribeNewsletter } from "@/lib/api";
+import { DonationModal } from "@/components/donate/donation-modal";
 
 export default function Footer() {
   const { t } = useLanguage();
 
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "loading" | "done" | "error">("idle");
+  const [donateOpen, setDonateOpen] = useState(false);
 
   const links = [
     { href: "/browse",  label: t("common.nav.browse")  },
@@ -104,7 +107,7 @@ export default function Footer() {
           <p style={{ margin: 0, fontWeight: 900, fontSize: 15, color: "#f97316" }}>MpahMapu</p>
           <p style={{ margin: "3px 0 0", fontSize: 11, color: "#444" }}>{t("common.footer.copyright")}</p>
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 18, fontSize: 12 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 18, fontSize: 12, alignItems: "center" }}>
           {links.map(({ href, label }) => (
             <a key={href} href={href} style={{ color: "#444", textDecoration: "none" }}
               onMouseEnter={e => (e.currentTarget.style.color = "#f97316")}
@@ -113,8 +116,19 @@ export default function Footer() {
               {label}
             </a>
           ))}
+          <button
+            onClick={() => setDonateOpen(true)}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 6, background: "none", border: "none",
+              padding: 0, cursor: "pointer", fontSize: 12, fontWeight: 700, color: "#f97316", fontFamily: "inherit",
+            }}
+          >
+            <HandCoins size={13} /> {t("donate.cta")}
+          </button>
         </div>
       </div>
+
+      <DonationModal open={donateOpen} onClose={() => setDonateOpen(false)} />
     </footer>
   );
 }
