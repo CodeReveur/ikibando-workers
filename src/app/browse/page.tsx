@@ -10,7 +10,7 @@ import {
 import { usePagedResults } from "@/lib/use-paged-results";
 import { CATEGORIES, categoryParam, keyForSlug } from "@/lib/browse-taxonomy";
 import {
-  ActiveChip, SelectField, NumberField, ToggleField,
+  ActiveChip, SelectField, ComboField, NumberField, ToggleField,
   AreaFilter, EMPTY_AREA, areaIsSet, areaLabel, type AreaValue,
 } from "@/components/browse/filter-controls";
 import { ratingInfo } from "@/lib/rating";
@@ -342,7 +342,7 @@ function BrowsePageInner() {
             padding: "20px", marginBottom: 16,
           }}>
             <div className="filter-panel">
-              <SelectField
+              <ComboField
                 label={t("jobs_page.filters.categories") || "Category"}
                 value={filterCategory}
                 onChange={setFilterCategory}

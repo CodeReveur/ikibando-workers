@@ -7,7 +7,7 @@ import { getJobs, daysAgo, workerNetHourly, type JobDto, type JobSearchParams } 
 import { usePagedResults } from "@/lib/use-paged-results";
 import { CATEGORIES, categoryParam, keyForSlug } from "@/lib/browse-taxonomy";
 import {
-  ActiveChip, SelectField, NumberField, ToggleField,
+  ActiveChip, SelectField, ComboField, NumberField, ToggleField,
   AreaFilter, EMPTY_AREA, areaIsSet, areaLabel, type AreaValue,
 } from "@/components/browse/filter-controls";
 import { useLanguage } from "@/lib/language-context";
@@ -231,7 +231,7 @@ export default function JobsPage() {
             borderRadius: 14, padding: "20px", marginBottom: 14,
             display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 14,
           }}>
-            <SelectField
+            <ComboField
               label={t("jobs_page.filters.categories") || "Category"}
               value={filterCategory}
               onChange={setFilterCat}
