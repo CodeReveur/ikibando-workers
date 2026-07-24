@@ -2384,5 +2384,21 @@
     "err_failed": "Malipo hayakufanikiwa. Tafadhali jaribu tena.",
     "err_pending": "Bado inasubiri. Ikiwa pesa zimetolewa zitaonekana hivi karibuni.",
     "err_generic": "Hitilafu imetokea. Tafadhali jaribu tena."
+  },
+  "donate_page": {
+    "title": "Mchango wako hubadilisha maisha",
+    "intro": "Michango kwa MpahMapu inarudi moja kwa moja kwa jamii tunayoihudumia — kusaidia watoto kuendelea shuleni, kufungua elimu kwa wote, na kusimama na familia zinapokabiliwa na shida.",
+    "cta": "Changia sasa",
+    "note": "Kila mchango ni wa hiari na kwa ridhaa. Unachagua kiasi na njia — MTN, Airtel au kadi — na unaweza kuchangia bila kujulikana.",
+    "c_scholar_t": "Watoto shuleni",
+    "c_scholar_d": "Ufadhili wa masomo na ada ili hakuna mtoto anayeachwa nyuma.",
+    "c_education_t": "Elimu kwa wote",
+    "c_education_d": "Vitabu, mafunzo na ujuzi kwa wanafunzi na watafutaji kazi.",
+    "c_family_t": "Msaada wa familia",
+    "c_family_d": "Mkono wa msaada kwa familia zinazokabiliwa na shida.",
+    "c_life_t": "Dharura za maisha",
+    "c_life_d": "Msaada wa haraka pale matatizo yasiyotarajiwa yanapotokea.",
+    "c_society_t": "Jumuiya za kijamii",
+    "c_society_d": "Kuunga mkono jumuiya na vikundi vya kijamii vinavyoinua watu."
   }
 }

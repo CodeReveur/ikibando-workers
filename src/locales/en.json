@@ -2385,5 +2385,21 @@
     "err_failed": "The payment didn't go through. Please try again.",
     "err_pending": "Still pending. If money was taken it will reflect shortly.",
     "err_generic": "Something went wrong. Please try again."
+  },
+  "donate_page": {
+    "title": "Your gift changes lives",
+    "intro": "Donations to MpahMapu go straight back into the community we serve — helping children stay in school, opening education to everyone, and standing with families when life gets hard.",
+    "cta": "Donate now",
+    "note": "Every donation is voluntary and consent-based. You choose the amount and the method — MTN, Airtel or card — and you can give anonymously.",
+    "c_scholar_t": "Kids to school",
+    "c_scholar_d": "Scholarships and school fees so no child is left behind.",
+    "c_education_t": "Education for all",
+    "c_education_d": "Books, training and skills for learners and job-seekers.",
+    "c_family_t": "Family support",
+    "c_family_d": "A helping hand for families facing hard times.",
+    "c_life_t": "Life emergencies",
+    "c_life_d": "Urgent help when unexpected life problems strike.",
+    "c_society_t": "Community societies",
+    "c_society_d": "Backing local societies and community groups that lift people up."
   }
 }

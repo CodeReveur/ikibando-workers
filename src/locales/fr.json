@@ -2384,5 +2384,21 @@
     "err_failed": "Le paiement n'a pas abouti. Veuillez réessayer.",
     "err_pending": "Toujours en attente. Si le montant a été débité, il apparaîtra bientôt.",
     "err_generic": "Une erreur s'est produite. Veuillez réessayer."
+  },
+  "donate_page": {
+    "title": "Votre don change des vies",
+    "intro": "Les dons à MpahMapu reviennent directement à la communauté que nous servons — aider les enfants à rester à l'école, ouvrir l'éducation à tous et soutenir les familles dans les moments difficiles.",
+    "cta": "Faire un don",
+    "note": "Chaque don est volontaire et basé sur le consentement. Vous choisissez le montant et le moyen — MTN, Airtel ou carte — et vous pouvez donner anonymement.",
+    "c_scholar_t": "Les enfants à l'école",
+    "c_scholar_d": "Bourses et frais de scolarité pour qu'aucun enfant ne soit laissé pour compte.",
+    "c_education_t": "L'éducation pour tous",
+    "c_education_d": "Livres, formation et compétences pour les apprenants et les demandeurs d'emploi.",
+    "c_family_t": "Soutien aux familles",
+    "c_family_d": "Un coup de main pour les familles en difficulté.",
+    "c_life_t": "Urgences de la vie",
+    "c_life_d": "Une aide urgente lorsque des problèmes imprévus surviennent.",
+    "c_society_t": "Sociétés communautaires",
+    "c_society_d": "Soutenir les associations et les groupes communautaires locaux."
   }
 }

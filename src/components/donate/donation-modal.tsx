@@ -77,12 +77,22 @@ export function DonationModal({ open, onClose }: { open: boolean; onClose: () =>
         backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 16,
       }}
     >
+      <style>{`
+        .donate-card { scrollbar-width: thin; scrollbar-color: #3a3a3a transparent; }
+        .donate-card::-webkit-scrollbar { width: 6px; }
+        .donate-card::-webkit-scrollbar-track { background: transparent; }
+        .donate-card::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 999px; }
+        .donate-card::-webkit-scrollbar-thumb:hover { background: #4a4a4a; }
+      `}</style>
       <div
+        className="donate-card"
         onClick={e => e.stopPropagation()}
         style={{
           width: "100%", maxWidth: 440, background: "#141414", border: "1px solid #2a2a2a",
-          borderRadius: 16, padding: 22, maxHeight: "90vh", overflowY: "auto",
+          borderRadius: 16, padding: "20px clamp(16px, 4vw, 22px)",
+          maxHeight: "min(88vh, 720px)", overflowY: "auto", overflowX: "hidden",
           boxShadow: "0 24px 64px rgba(0,0,0,0.6)",
+          WebkitOverflowScrolling: "touch",
         }}
       >
         {/* Header */}

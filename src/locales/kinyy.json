@@ -2384,5 +2384,21 @@
     "err_failed": "Kwishyura ntibyagenze neza. Ongera ugerageze.",
     "err_pending": "Biracyategerejwe. Niba amafaranga yavuye, azagaragara vuba.",
     "err_generic": "Habaye ikibazo. Ongera ugerageze."
+  },
+  "donate_page": {
+    "title": "Impano yawe ihindura ubuzima",
+    "intro": "Inkunga zitangwa kuri MpahMapu zisubira mu baturage tuba dukorera — gufasha abana kuguma ku ishuri, gufungurira bose uburezi, no gushyigikira imiryango mu bihe bikomeye.",
+    "cta": "Tanga inkunga",
+    "note": "Buri nkunga itangwa ku bushake kandi wemeye. Uhitamo umubare n'uburyo — MTN, Airtel cyangwa ikarita — kandi ushobora gutanga utamenyekana.",
+    "c_scholar_t": "Abana ku ishuri",
+    "c_scholar_d": "Buruse n'amafaranga y'ishuri kugira ngo nta mwana usigara inyuma.",
+    "c_education_t": "Uburezi kuri bose",
+    "c_education_d": "Ibitabo, amahugurwa n'ubumenyi ku banyeshuri n'abashaka akazi.",
+    "c_family_t": "Gushyigikira imiryango",
+    "c_family_d": "Ukuboko kw'ubufasha ku miryango iri mu bihe bikomeye.",
+    "c_life_t": "Ibibazo by'ubuzima",
+    "c_life_d": "Ubufasha bwihutirwa igihe ibibazo bitunguranye byaje.",
+    "c_society_t": "Amashyirahamwe y'abaturage",
+    "c_society_d": "Gushyigikira amashyirahamwe n'amatsinda y'abaturage azamura abantu."
   }
 }

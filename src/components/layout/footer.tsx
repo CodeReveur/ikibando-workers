@@ -4,14 +4,12 @@ import { useState } from "react";
 import { HandCoins } from "lucide-react";
 import { useLanguage } from "@/lib/language-context";
 import { subscribeNewsletter } from "@/lib/api";
-import { DonationModal } from "@/components/donate/donation-modal";
 
 export default function Footer() {
   const { t } = useLanguage();
 
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "loading" | "done" | "error">("idle");
-  const [donateOpen, setDonateOpen] = useState(false);
 
   const links = [
     { href: "/browse",  label: t("common.nav.browse")  },
@@ -116,19 +114,17 @@ export default function Footer() {
               {label}
             </a>
           ))}
-          <button
-            onClick={() => setDonateOpen(true)}
+          <a
+            href="/donate"
             style={{
-              display: "inline-flex", alignItems: "center", gap: 6, background: "none", border: "none",
-              padding: 0, cursor: "pointer", fontSize: 12, fontWeight: 700, color: "#f97316", fontFamily: "inherit",
+              display: "inline-flex", alignItems: "center", gap: 6,
+              fontSize: 12, fontWeight: 700, color: "#f97316", textDecoration: "none",
             }}
           >
             <HandCoins size={13} /> {t("donate.cta")}
-          </button>
+          </a>
         </div>
       </div>
-
-      <DonationModal open={donateOpen} onClose={() => setDonateOpen(false)} />
     </footer>
   );
 }
