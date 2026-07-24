@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { X, Calendar, Clock, CheckCircle, Bell, MapPin, Navigation, Loader2 } from "lucide-react";
 import { RWANDA_PROVINCES, MIN_RATE_BY_PERIOD } from "@/lib/constants";
-import { postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, type WorkerProfileDto, type PaymentMode } from "@/lib/api";
+import { postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, getPricingConfig, DEFAULT_PRICING, type PricingConfig, type WorkerProfileDto, type PaymentMode } from "@/lib/api";
+import { DonationAddon } from "@/components/donate/donation-addon";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { forwardGeocode } from "@/lib/geocoding";
 import { useToast } from "@/components/ui/toast";
@@ -119,6 +120,9 @@ export function OfferModal({ worker, onClose }: Props) {
   // Payment method fields. Card details are collected on XentriPay's secure page (redirect),
   // so we only keep the selected method + the mobile-money phone here.
   const [payMethod, setPayMethod] = useState<"WALLET" | "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD">("MTN_MOMO");
+  const [donationRwf, setDonationRwf] = useState(0);
+  const [pricing, setPricing] = useState<PricingConfig>(DEFAULT_PRICING);
+  useEffect(() => { getPricingConfig().then(setPricing).catch(() => {}); }, []);
   const [paymentPhone, setPaymentPhone] = useState("");
   const [payNote, setPayNote] = useState("");
   // When on, a worker's per-period payment request pays out immediately (no manual approval).
@@ -255,8 +259,9 @@ export function OfferModal({ worker, onClose }: Props) {
 
   // Logged-in employer pays from wallet; only top up (or, for guests, pay directly)
   // via MoMo/Airtel/Card when the wallet can't cover the escrow.
-  const needsTopup    = walletBal === null || walletBal < total;
-  const topupAmount   = walletBal === null ? total : Math.max(0, total - walletBal);
+  const chargeable    = total + donationRwf;
+  const needsTopup    = walletBal === null || walletBal < chargeable;
+  const topupAmount   = walletBal === null ? chargeable : Math.max(0, chargeable - walletBal);
   const showPayMethods = !hasSession || needsTopup;
 
   const isPaymentDetailsValid = hasSession && !needsTopup
@@ -318,6 +323,7 @@ export function OfferModal({ worker, onClose }: Props) {
         paymentInterval: interval,
         directRelease,
         direct: true, // Direct offer to this one worker, not a broadcast.
+        donationRwf: donationRwf > 0 ? donationRwf : undefined,
       };
 
       // payMethod is one of the 4 gateway methods (default MTN_MOMO); WALLET is never selected.
@@ -361,8 +367,8 @@ export function OfferModal({ worker, onClose }: Props) {
       // shortfall via MoMo/Airtel/Card and wait for it to settle — that money lands in the
       // wallet, then postJob freezes the full escrow from the wallet (never a direct-to-job
       // payment). A low-balance offer therefore reads as a direct deposit.
-      if (walletBal === null || walletBal < total) {
-        const topupAmount = walletBal === null ? total : Math.max(0, total - walletBal);
+      if (walletBal === null || walletBal < chargeable) {
+        const topupAmount = walletBal === null ? chargeable : Math.max(0, chargeable - walletBal);
         if (topupAmount > 0) {
           setPayNote(awaitingNote);
           const outcome = await runWalletTopup({
@@ -756,6 +762,7 @@ export function OfferModal({ worker, onClose }: Props) {
                   </p>
 
                   <PayMethodSelector value={payMethod as PayMethodValue} onChange={setPayMethod} />
+                  <DonationAddon usdToRwf={pricing.usdToRwf} valueRwf={donationRwf} onChange={setDonationRwf} />
                 </div>
 
                 {/* Payment method fields */}
