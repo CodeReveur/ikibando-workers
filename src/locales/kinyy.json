@@ -2404,6 +2404,10 @@
     "c_life_t": "Ibibazo by'ubuzima",
     "c_life_d": "Ubufasha bwihutirwa igihe ibibazo bitunguranye byaje.",
     "c_society_t": "Amashyirahamwe y'abaturage",
-    "c_society_d": "Gushyigikira amashyirahamwe n'amatsinda y'abaturage azamura abantu."
+    "c_society_d": "Gushyigikira amashyirahamwe n'amatsinda y'abaturage azamura abantu.",
+    "recent_title": "Ibikorwa biheruka",
+    "recent_sub": "Ibyo inkunga zawe zafashije MpahMapu gukora vuba aha.",
+    "recent_empty": "Amakuru ku byo inkunga zawe zigeraho azagaragara hano igihe ikipe izabishyira ahagaragara.",
+    "read_more": "Soma byinshi"
   }
 }

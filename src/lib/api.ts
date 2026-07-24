@@ -1384,7 +1384,8 @@ export type BlogCategory =
   | "PRODUCT_UPDATE"
   | "NEWS"
   | "PARTNERSHIP"
-  | "RECOGNITION";
+  | "RECOGNITION"
+  | "IMPACT";
 
 export interface BlogPost {
   id: string;
@@ -1407,6 +1408,7 @@ export const BLOG_CATEGORY_LABELS: Record<BlogCategory, string> = {
   NEWS: "Company news",
   PARTNERSHIP: "Partnership",
   RECOGNITION: "Recognition",
+  IMPACT: "Donation impact",
 };
 
 /** Published posts, newest first. Omit `category` for everything. */

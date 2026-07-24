@@ -2404,6 +2404,10 @@
     "c_life_t": "Dharura za maisha",
     "c_life_d": "Msaada wa haraka pale matatizo yasiyotarajiwa yanapotokea.",
     "c_society_t": "Jumuiya za kijamii",
-    "c_society_d": "Kuunga mkono jumuiya na vikundi vya kijamii vinavyoinua watu."
+    "c_society_d": "Kuunga mkono jumuiya na vikundi vya kijamii vinavyoinua watu.",
+    "recent_title": "Shughuli za hivi karibuni",
+    "recent_sub": "Kile michango yako imesaidia MpahMapu kufanya hivi karibuni.",
+    "recent_empty": "Taarifa kuhusu kile michango yako inafanikisha zitaonekana hapa timu inaposhiriki.",
+    "read_more": "Soma zaidi"
   }
 }

@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { GraduationCap, BookOpen, HeartHandshake, LifeBuoy, Users, HandCoins } from "lucide-react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { GraduationCap, BookOpen, HeartHandshake, LifeBuoy, Users, HandCoins, Activity, ArrowRight } from "lucide-react";
 import Footer from "@/components/layout/footer";
 import { DonationModal } from "@/components/donate/donation-modal";
 import { useLanguage } from "@/lib/language-context";
+import { getBlogPosts, type BlogPost } from "@/lib/api";
 
 const ACCENT = "#f97316";
 
@@ -16,6 +18,15 @@ const ACCENT = "#f97316";
 export default function DonatePage() {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
+
+  // Recent donation-funded activities MpahMapu has performed — admin-managed "Donation impact"
+  // posts (Blog & Updates, category IMPACT). Empty until the team publishes the first one.
+  const [activities, setActivities] = useState<BlogPost[]>([]);
+  useEffect(() => {
+    getBlogPosts({ category: "IMPACT", size: 6 })
+      .then(p => setActivities(p.content))
+      .catch(() => setActivities([]));
+  }, []);
 
   const causes = [
     { icon: <GraduationCap size={22} />, t: t("donate_page.c_scholar_t"),   d: t("donate_page.c_scholar_d") },
@@ -92,6 +103,45 @@ export default function DonatePage() {
           >
             <HandCoins size={16} /> {t("donate_page.cta")}
           </button>
+        </div>
+
+        {/* Recent activities funded by donations (admin-managed impact updates) */}
+        <div style={{ marginTop: 44 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+            <Activity size={18} color={ACCENT} />
+            <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: "#f0f0f0" }}>{t("donate_page.recent_title")}</h2>
+          </div>
+          <p style={{ margin: "0 0 16px", fontSize: 13, color: "#8a8a8a" }}>{t("donate_page.recent_sub")}</p>
+
+          {activities.length === 0 ? (
+            <div style={{
+              padding: 20, borderRadius: 14, border: "1px dashed #2a2a2a", background: "#131313",
+              fontSize: 13, color: "#777",
+            }}>
+              {t("donate_page.recent_empty")}
+            </div>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 14 }}>
+              {activities.map(a => (
+                <Link key={a.id} href={`/blog/${a.slug}`} style={{
+                  display: "block", background: "#161616", border: "1px solid #232323", borderRadius: 14,
+                  overflow: "hidden", textDecoration: "none",
+                }}>
+                  {a.coverImageUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={a.coverImageUrl} alt="" style={{ width: "100%", height: 130, objectFit: "cover" }} />
+                  )}
+                  <div style={{ padding: 16 }}>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: "#f0f0f0", lineHeight: 1.3 }}>{a.title}</div>
+                    {a.excerpt && <div style={{ fontSize: 13, color: "#9a9a9a", lineHeight: 1.5, marginTop: 6 }}>{a.excerpt}</div>}
+                    <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 10, fontSize: 12, fontWeight: 600, color: ACCENT }}>
+                      {t("donate_page.read_more")} <ArrowRight size={13} />
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

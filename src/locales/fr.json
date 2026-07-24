@@ -2404,6 +2404,10 @@
     "c_life_t": "Urgences de la vie",
     "c_life_d": "Une aide urgente lorsque des problèmes imprévus surviennent.",
     "c_society_t": "Sociétés communautaires",
-    "c_society_d": "Soutenir les associations et les groupes communautaires locaux."
+    "c_society_d": "Soutenir les associations et les groupes communautaires locaux.",
+    "recent_title": "Activités récentes",
+    "recent_sub": "Ce que vos dons ont récemment permis à MpahMapu de faire.",
+    "recent_empty": "Les nouvelles sur ce que vos dons permettent apparaîtront ici dès que l’équipe les partagera.",
+    "read_more": "Lire la suite"
   }
 }

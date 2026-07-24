@@ -2405,6 +2405,10 @@
     "c_life_t": "Life emergencies",
     "c_life_d": "Urgent help when unexpected life problems strike.",
     "c_society_t": "Community societies",
-    "c_society_d": "Backing local societies and community groups that lift people up."
+    "c_society_d": "Backing local societies and community groups that lift people up.",
+    "recent_title": "Recent activities",
+    "recent_sub": "What your gifts have helped MpahMapu do lately.",
+    "recent_empty": "Updates on what your donations achieve will appear here as the team shares them.",
+    "read_more": "Read more"
   }
 }
