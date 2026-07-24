@@ -129,6 +129,7 @@ function BrowsePageInner() {
       page, size: PAGE_SIZE,
       q: search.trim() || undefined,
       category: categoryParam(filterCategory),
+      country: (area.country && area.country !== "Rwanda" ? area.country : undefined),
       province: area.province || undefined,
       district: area.district || undefined,
       sector: area.sector || undefined,
@@ -164,7 +165,7 @@ function BrowsePageInner() {
   // 3s pause before each scroll-loaded batch of 16, so results arrive at a
   // deliberate pace rather than the instant the sentinel scrolls into view.
   const workersView = usePagedResults<WorkerProfileDto>(fetchWorkers, [
-    tab, search, filterCategory, area.province, area.district, area.sector,
+    tab, search, filterCategory, area.country, area.province, area.district, area.sector,
     minRating, minJobs, accountType, availableOnly, verifiedOnly, withEquipment, sortWorker,
   ], { autoLoadDelayMs: 3000 });
   const jobsView = usePagedResults<JobDto>(fetchJobs, [
@@ -352,7 +353,9 @@ function BrowsePageInner() {
               <AreaFilter
                 value={area}
                 onChange={setArea}
+                showCountry={tab === "workers"}
                 labels={{
+                  country:  t("jobs_page.filters.country")  || "Country",
                   province: t("jobs_page.filters.province") || "Province",
                   district: t("jobs_page.filters.district") || "District",
                   sector:   t("jobs_page.filters.sector")   || "Sector",

@@ -1244,6 +1244,7 @@ export interface WorkerSearchParams {
   q?: string;
   /** One category slug, or several comma-separated. */
   category?: string;
+  country?: string;
   province?: string;
   district?: string;
   sector?: string;

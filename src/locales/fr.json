@@ -1101,7 +1101,8 @@
       "team_jobs": "Recrute 2+",
       "still_open": "Encore ouvert",
       "max": "Max",
-      "posted_24h": "Dernières 24 heures"
+      "posted_24h": "Dernières 24 heures",
+      "country": "Pays"
     },
     "sort_options": {
       "newest": "Le plus récent",

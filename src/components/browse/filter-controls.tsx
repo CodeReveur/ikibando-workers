@@ -3,6 +3,7 @@
 import { ChevronDown, X, Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { geoProvinces, geoDistricts, geoSectors } from "@/lib/rwanda-geo";
+import { COUNTRIES } from "@/lib/countries";
 
 /**
  * The filter controls shared by /jobs and /browse. Both pages previously carried their own
@@ -283,20 +284,23 @@ export function ToggleField({ label, value, onChange }: {
 // ── location ───────────────────────────────────────────────────────────────
 
 export interface AreaValue {
+  country: string;
   province: string;
   district: string;
   sector: string;
 }
 
-export const EMPTY_AREA: AreaValue = { province: "", district: "", sector: "" };
+export const EMPTY_AREA: AreaValue = { country: "", province: "", district: "", sector: "" };
 
 export function areaIsSet(a: AreaValue): boolean {
-  return Boolean(a.province || a.district || a.sector);
+  // A country of "Rwanda" alone is not a real narrowing (it's the default place), so it doesn't
+  // count as a set filter on its own; any other country, or any Rwanda sub-level, does.
+  return Boolean((a.country && a.country !== "Rwanda") || a.province || a.district || a.sector);
 }
 
 /** The narrowest level set, for a filter chip: "Kanombe" beats "Kicukiro" beats "Kigali". */
 export function areaLabel(a: AreaValue): string {
-  return a.sector || a.district || a.province || "";
+  return a.sector || a.district || a.province || (a.country && a.country !== "Rwanda" ? a.country : "") || "";
 }
 
 /**
@@ -307,22 +311,37 @@ export function areaLabel(a: AreaValue): string {
  * district, so the rest could never match a single row. Reading the real hierarchy means
  * every area in the country is selectable and the value matches what postings store.
  */
-export function AreaFilter({ value, onChange, labels }: {
+export function AreaFilter({ value, onChange, labels, showCountry }: {
   value: AreaValue;
   onChange: (v: AreaValue) => void;
-  labels?: { province?: string; district?: string; sector?: string };
+  labels?: { country?: string; province?: string; district?: string; sector?: string };
+  /** Show a searchable country picker. Rwanda keeps its province/district/sector cascade; any
+   *  other country hides them (there is no sub-country dataset outside Rwanda). */
+  showCountry?: boolean;
 }) {
   const provinces = geoProvinces();
   const districts = value.province ? geoDistricts(value.province) : [];
   const sectors   = value.district ? geoSectors(value.province, value.district) : [];
+  const isRwanda  = !value.country || value.country === "Rwanda";
 
   return (
     <>
+      {showCountry && (
+        <ComboField
+          label={labels?.country ?? "Country"}
+          value={value.country}
+          allLabel="All countries"
+          // Switching country clears the Rwanda cascade below.
+          onChange={v => onChange({ country: v, province: "", district: "", sector: "" })}
+          options={COUNTRIES}
+        />
+      )}
+      {isRwanda && <>
       <ComboField
         label={labels?.province ?? "Province"}
         value={value.province}
         // Narrowing the province invalidates the district and sector below it.
-        onChange={v => onChange({ province: v, district: "", sector: "" })}
+        onChange={v => onChange({ ...value, province: v, district: "", sector: "" })}
         options={provinces}
       />
       <ComboField
@@ -339,6 +358,7 @@ export function AreaFilter({ value, onChange, labels }: {
         options={sectors}
         disabled={!value.district}
       />
+      </>}
     </>
   );
 }

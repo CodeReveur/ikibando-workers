@@ -1102,7 +1102,8 @@
       "team_jobs": "Hiring 2+",
       "still_open": "Still open",
       "max": "Max",
-      "posted_24h": "Last 24 hours"
+      "posted_24h": "Last 24 hours",
+      "country": "Country"
     },
     "sort_options": {
       "newest": "Newest first",
