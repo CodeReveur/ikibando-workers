@@ -2,27 +2,18 @@
 
 import { useMemo } from "react";
 import { geoProvinces, geoDistricts, geoSectors, geoCells, geoVillages } from "@/lib/rwanda-geo";
+import { COUNTRIES } from "@/lib/countries";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import type { Address } from "@/lib/api";
 
 /**
- * Structured address input. For Rwanda it renders cascading dropdowns
- * (Province → District → Sector → Cell → Village) sourced from the `rwanda`
- * dataset; each level only lists options valid for the parent selection.
- * For any other country it renders universal free-text fields.
+ * Structured address input. For Rwanda it renders cascading, search-as-you-type dropdowns
+ * (Province → District → Sector → Cell → Village) sourced from the `rwanda` dataset; each level
+ * only lists options valid for the parent selection. For any other country it renders universal
+ * free-text fields. The country picker lists every country in the world (searchable).
  *
  * No maps or GPS — location is captured purely as structured data.
  */
-
-// Common countries first, then the rest alphabetically.
-const COUNTRIES = [
-  "Rwanda",
-  "Burundi", "DR Congo", "Kenya", "Tanzania", "Uganda",
-  "Belgium", "Canada", "China", "Ethiopia", "France", "Germany", "Ghana",
-  "India", "Italy", "Kuwait", "Netherlands", "Nigeria", "Qatar",
-  "Saudi Arabia", "South Africa", "South Sudan", "Sweden", "Switzerland",
-  "Turkey", "Uganda", "United Arab Emirates", "United Kingdom",
-  "United States", "Zambia", "Zimbabwe", "Other",
-];
 
 const SELECT_CLASS =
   "w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-[#f97316] transition-colors disabled:opacity-40 disabled:cursor-not-allowed";
@@ -78,85 +69,74 @@ export function AddressPicker({ value, onChange }: Props) {
     <div className="space-y-4">
       <div>
         <label className={LABEL_CLASS}>Country</label>
-        <select
-          className={SELECT_CLASS}
+        <SearchableSelect
+          ariaLabel="Country"
           value={a.country}
-          onChange={(e) => onCountry(e.target.value)}
-        >
-          {COUNTRIES.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
+          options={COUNTRIES}
+          placeholder="Select country…"
+          onChange={onCountry}
+        />
       </div>
 
       {isRwanda ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className={LABEL_CLASS}>Province</label>
-            <select
-              className={SELECT_CLASS}
+            <SearchableSelect
+              ariaLabel="Province"
               value={a.province ?? ""}
-              onChange={(e) =>
-                update({ province: e.target.value, district: "", sector: "", cell: "", village: "" })
-              }
-            >
-              <option value="">Select province…</option>
-              {provinces.map((p) => <option key={p} value={p}>{p}</option>)}
-            </select>
+              options={provinces}
+              placeholder="Select province…"
+              onChange={(v) => update({ province: v, district: "", sector: "", cell: "", village: "" })}
+            />
           </div>
 
           <div>
             <label className={LABEL_CLASS}>District</label>
-            <select
-              className={SELECT_CLASS}
+            <SearchableSelect
+              ariaLabel="District"
               value={a.district ?? ""}
+              options={districts}
               disabled={!a.province}
-              onChange={(e) =>
-                update({ district: e.target.value, sector: "", cell: "", village: "" })
-              }
-            >
-              <option value="">Select district…</option>
-              {districts.map((d) => <option key={d} value={d}>{d}</option>)}
-            </select>
+              placeholder="Select district…"
+              onChange={(v) => update({ district: v, sector: "", cell: "", village: "" })}
+            />
           </div>
 
           <div>
             <label className={LABEL_CLASS}>Sector</label>
-            <select
-              className={SELECT_CLASS}
+            <SearchableSelect
+              ariaLabel="Sector"
               value={a.sector ?? ""}
+              options={sectors}
               disabled={!a.district}
-              onChange={(e) => update({ sector: e.target.value, cell: "", village: "" })}
-            >
-              <option value="">Select sector…</option>
-              {sectors.map((s) => <option key={s} value={s}>{s}</option>)}
-            </select>
+              placeholder="Select sector…"
+              onChange={(v) => update({ sector: v, cell: "", village: "" })}
+            />
           </div>
 
           <div>
             <label className={LABEL_CLASS}>Cell</label>
-            <select
-              className={SELECT_CLASS}
+            <SearchableSelect
+              ariaLabel="Cell"
               value={a.cell ?? ""}
+              options={cells}
               disabled={!a.sector}
-              onChange={(e) => update({ cell: e.target.value, village: "" })}
-            >
-              <option value="">Select cell…</option>
-              {cells.map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
+              placeholder="Select cell…"
+              onChange={(v) => update({ cell: v, village: "" })}
+            />
           </div>
 
           <div className="sm:col-span-2">
             <label className={LABEL_CLASS}>Village</label>
-            <select
-              className={SELECT_CLASS}
+            <SearchableSelect
+              ariaLabel="Village"
               value={a.village ?? ""}
+              options={villages}
               disabled={!a.cell}
-              onChange={(e) => update({ village: e.target.value })}
-            >
-              <option value="">Select village…</option>
-              {villages.map((v) => <option key={v} value={v}>{v}</option>)}
-            </select>
+              placeholder="Select village…"
+              onChange={(v) => update({ village: v })}
+            />
           </div>
         </div>
       ) : (

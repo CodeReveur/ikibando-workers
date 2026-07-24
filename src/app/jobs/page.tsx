@@ -7,7 +7,7 @@ import { getJobs, daysAgo, workerNetHourly, type JobDto, type JobSearchParams } 
 import { usePagedResults } from "@/lib/use-paged-results";
 import { CATEGORIES, categoryParam, keyForSlug } from "@/lib/browse-taxonomy";
 import {
-  ActiveChip, SelectField, ComboField, NumberField, ToggleField,
+  ActiveChip, ComboField, NumberField, ToggleField,
   AreaFilter, EMPTY_AREA, areaIsSet, areaLabel, type AreaValue,
 } from "@/components/browse/filter-controls";
 import { useLanguage } from "@/lib/language-context";
@@ -249,14 +249,14 @@ export default function JobsPage() {
               }}
             />
 
-            <SelectField
+            <ComboField
               label={t("jobs_page.filters.urgency") || "Urgency"}
               value={filterUrgency}
               onChange={setUrgency}
               options={[...URGENCIES]}
               labels={URGENCIES.map(urgencyLabel)}
             />
-            <SelectField
+            <ComboField
               label={t("jobs_page.filters.rate_type") || "Rate type"}
               value={filterRateType}
               onChange={setRateType}
@@ -282,7 +282,7 @@ export default function JobsPage() {
               value={filterMaxHours} onChange={setMaxHours} placeholder="12" step={1}
             />
 
-            <SelectField
+            <ComboField
               label={t("jobs_page.filters.posted") || "Posted"}
               value={filterPosted}
               onChange={setFilterPosted}
@@ -290,7 +290,7 @@ export default function JobsPage() {
               labels={POSTED_WITHIN.map(postedWithinLabel)}
               allLabel={t("jobs_page.filters.any_time") || "Any time"}
             />
-            <SelectField
+            <ComboField
               label={t("jobs_page.filters.sort_by") || "Sort by"}
               value={sort}
               onChange={v => setSort((v || "newest") as SortKey)}

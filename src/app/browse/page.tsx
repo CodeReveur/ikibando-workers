@@ -10,7 +10,7 @@ import {
 import { usePagedResults } from "@/lib/use-paged-results";
 import { CATEGORIES, categoryParam, keyForSlug } from "@/lib/browse-taxonomy";
 import {
-  ActiveChip, SelectField, ComboField, NumberField, ToggleField,
+  ActiveChip, ComboField, NumberField, ToggleField,
   AreaFilter, EMPTY_AREA, areaIsSet, areaLabel, type AreaValue,
 } from "@/components/browse/filter-controls";
 import { ratingInfo } from "@/lib/rating";
@@ -360,7 +360,7 @@ function BrowsePageInner() {
               />
 
               {tab === "workers" && <>
-                <SelectField
+                <ComboField
                   label={t("browse_page.filters.min_rating") || "Min rating"}
                   value={minRating}
                   onChange={setMinRating}
@@ -368,7 +368,7 @@ function BrowsePageInner() {
                   labels={MIN_RATINGS.map(r => `${r}★ +`)}
                   allLabel={t("browse_page.filters.any_rating") || "Any rating"}
                 />
-                <SelectField
+                <ComboField
                   label={t("browse_page.filters.jobs_completed") || "Jobs completed"}
                   value={minJobs}
                   onChange={setMinJobs}
@@ -377,14 +377,14 @@ function BrowsePageInner() {
                     t("browse_page.filters.jobs_done", { count: Number(n) }) || `${n}+ jobs`)}
                   allLabel={t("browse_page.filters.any_experience") || "Any"}
                 />
-                <SelectField
+                <ComboField
                   label={t("browse_page.filters.account_type") || "Worker type"}
                   value={accountType}
                   onChange={setAccountType}
                   options={[...ACCOUNT_TYPES]}
                   labels={ACCOUNT_TYPES.map(accountTypeLabel)}
                 />
-                <SelectField
+                <ComboField
                   label={t("jobs_page.filters.sort_by") || "Sort by"}
                   value={sortWorker}
                   onChange={v => setSortWorker((v || "recommended") as SortWorker)}
@@ -413,7 +413,7 @@ function BrowsePageInner() {
               </>}
 
               {tab === "jobs" && <>
-                <SelectField
+                <ComboField
                   label={t("jobs_page.filters.urgency") || "Urgency"}
                   value={filterUrgency}
                   onChange={setFilterUrgency}
@@ -428,7 +428,7 @@ function BrowsePageInner() {
                   label={t("jobs_page.filters.max_pay") || "Max pay (RWF)"}
                   value={filterMaxAmount} onChange={setFilterMaxAmount} placeholder="50,000" step={1000}
                 />
-                <SelectField
+                <ComboField
                   label={t("jobs_page.filters.posted") || "Posted"}
                   value={filterPosted}
                   onChange={setFilterPosted}
@@ -436,7 +436,7 @@ function BrowsePageInner() {
                   labels={POSTED_WITHIN.map(postedWithinLabel)}
                   allLabel={t("jobs_page.filters.any_time") || "Any time"}
                 />
-                <SelectField
+                <ComboField
                   label={t("jobs_page.filters.sort_by") || "Sort by"}
                   value={sortJob}
                   onChange={v => setSortJob((v || "newest") as SortJob)}
