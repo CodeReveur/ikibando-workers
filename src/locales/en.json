@@ -487,7 +487,11 @@
       "use_facebook_desc": "This account signs in with Facebook, not a password. Please continue with Facebook.",
       "use_password_desc": "This email is registered with an email & password account. Please sign in with your email and password instead.",
       "no_password_desc": "This account doesn't have a password yet. Use 'Forgot password' to create one.",
-      "no_account_desc": "No account found for this Google account. Please sign up first."
+      "no_account_desc": "No account found for this Google account. Please sign up first.",
+      "account_suspended_desc": "Your account has been suspended. Please contact support if you believe this is a mistake.",
+      "account_deactivated_desc": "Your account has been deactivated. Please contact support to reactivate it.",
+      "credentials_expired_desc": "Your session has expired. Please sign in again.",
+      "auth_failed_desc": "We couldn't sign you in. Please check your details and try again."
     }
   },
   "signup": {

@@ -111,6 +111,16 @@ export default function SignInPage() {
           msg: t("signin.toasts.no_account_desc") || "No account found for this Google account. Please sign up first.",
           action: { label: t("common.nav.signup") || "Sign up", href: "/signup" },
         };
+      case "ACCOUNT_SUSPENDED":
+        return { msg: t("signin.toasts.account_suspended_desc"), action: undefined };
+      case "ACCOUNT_DEACTIVATED":
+        return { msg: t("signin.toasts.account_deactivated_desc"), action: undefined };
+      case "BAD_CREDENTIALS":
+        return { msg: t("signin.toasts.invalid_creds_desc"), action: undefined };
+      case "CREDENTIALS_EXPIRED":
+        return { msg: t("signin.toasts.credentials_expired_desc"), action: undefined };
+      case "AUTH_FAILED":
+        return { msg: t("signin.toasts.auth_failed_desc"), action: undefined };
       default:
         return { msg: apiError(e, fallback), action: undefined };
     }

@@ -486,7 +486,11 @@
       "use_facebook_desc": "Iyi konti yinjira ukoresheje Facebook, atari ijambobanga. Nyamuneka komeza na Facebook.",
       "use_password_desc": "Iyi imeyili yanditswe kuri konti ikoresha imeyili n'ijambobanga. Nyamuneka injira ukoresheje ijambobanga ryawe.",
       "no_password_desc": "Iyi konti ntiragira ijambobanga. Koresha 'Wibagiwe ijambobanga' kugira ngo urishyireho.",
-      "no_account_desc": "Nta konti iboneka kuri iyi konti ya Google. Nyamuneka banza wiyandikishe."
+      "no_account_desc": "Nta konti iboneka kuri iyi konti ya Google. Nyamuneka banza wiyandikishe.",
+      "account_suspended_desc": "Konti yawe yahagaritswe by'agateganyo. Vugana n'ubufasha niba utekereza ko ari ikosa.",
+      "account_deactivated_desc": "Konti yawe yafunzwe. Vugana n'ubufasha kugira ngo ongere uyifungure.",
+      "credentials_expired_desc": "Igihe cyo kwinjira cyararangiye. Ongera winjire.",
+      "auth_failed_desc": "Ntitwashoboye kukwinjiza. Reba amakuru yawe wongere ugerageze."
     }
   },
   "signup": {

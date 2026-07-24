@@ -486,7 +486,11 @@
       "use_facebook_desc": "Akaunti hii inaingia kwa Facebook, si kwa nenosiri. Tafadhali endelea na Facebook.",
       "use_password_desc": "Barua pepe hii imesajiliwa kwa akaunti ya barua pepe na nenosiri. Tafadhali ingia kwa nenosiri lako.",
       "no_password_desc": "Akaunti hii bado haina nenosiri. Tumia 'Umesahau nenosiri' kuunda moja.",
-      "no_account_desc": "Hakuna akaunti iliyopatikana kwa akaunti hii ya Google. Tafadhali jisajili kwanza."
+      "no_account_desc": "Hakuna akaunti iliyopatikana kwa akaunti hii ya Google. Tafadhali jisajili kwanza.",
+      "account_suspended_desc": "Akaunti yako imesimamishwa. Tafadhali wasiliana na usaidizi ikiwa unadhani ni kosa.",
+      "account_deactivated_desc": "Akaunti yako imezimwa. Tafadhali wasiliana na usaidizi ili kuiwasha tena.",
+      "credentials_expired_desc": "Kipindi chako kimeisha. Tafadhali ingia tena.",
+      "auth_failed_desc": "Hatukuweza kukuingiza. Tafadhali angalia maelezo yako na ujaribu tena."
     }
   },
   "signup": {

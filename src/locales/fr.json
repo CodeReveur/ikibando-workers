@@ -486,7 +486,11 @@
       "use_facebook_desc": "Ce compte se connecte avec Facebook, pas avec un mot de passe. Veuillez continuer avec Facebook.",
       "use_password_desc": "Cet e-mail est enregistré avec un compte e-mail et mot de passe. Veuillez vous connecter avec votre mot de passe.",
       "no_password_desc": "Ce compte n'a pas encore de mot de passe. Utilisez « Mot de passe oublié » pour en créer un.",
-      "no_account_desc": "Aucun compte trouvé pour ce compte Google. Veuillez d'abord vous inscrire."
+      "no_account_desc": "Aucun compte trouvé pour ce compte Google. Veuillez d'abord vous inscrire.",
+      "account_suspended_desc": "Votre compte a été suspendu. Veuillez contacter le support si vous pensez qu'il s'agit d'une erreur.",
+      "account_deactivated_desc": "Votre compte a été désactivé. Veuillez contacter le support pour le réactiver.",
+      "credentials_expired_desc": "Votre session a expiré. Veuillez vous reconnecter.",
+      "auth_failed_desc": "Nous n'avons pas pu vous connecter. Veuillez vérifier vos informations et réessayer."
     }
   },
   "signup": {
