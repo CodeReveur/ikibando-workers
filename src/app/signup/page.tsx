@@ -40,6 +40,28 @@ export default function SignUpPage() {
   const [referralCode, setReferralCode] = useState("");
   const fbReady = useRef(false);
 
+  /**
+   * Turn a sign-up failure into a localized message + next step, driven by the server's stable
+   * code so it never depends on parsing English text. Registration already returns codes
+   * (ACCOUNT_EXISTS, USE_PASSWORD_LOGIN, USE_*_LOGIN, NO_PASSWORD_SET) for the common cases.
+   */
+  const signUpError = (e: unknown, fallback: string): { msg: string; action?: { label: string; href: string } } => {
+    const toSignIn = { label: t("common.nav.signin") || "Sign in", href: "/signin" };
+    switch (apiErrorCode(e)) {
+      case "ACCOUNT_EXISTS":
+      case "USE_PASSWORD_LOGIN":
+        return { msg: t("signup.toasts.account_exists_desc"), action: toSignIn };
+      case "USE_GOOGLE_LOGIN":
+        return { msg: t("signin.toasts.use_google_desc"), action: toSignIn };
+      case "USE_FACEBOOK_LOGIN":
+        return { msg: t("signin.toasts.use_facebook_desc"), action: toSignIn };
+      case "NO_PASSWORD_SET":
+        return { msg: t("signin.toasts.no_password_desc"), action: { label: t("signin.toasts.set_password_label"), href: "/forgot-password" } };
+      default:
+        return { msg: apiError(e, fallback), action: undefined };
+    }
+  };
+
   // Capture a referral code from the invite link (?ref=CODE).
   useEffect(() => {
     const ref = new URLSearchParams(window.location.search).get("ref");
@@ -171,21 +193,9 @@ export default function SignUpPage() {
         }
       } catch (e: unknown) {
         // Signing up with an identity that already has an account, or with an email that's
-        // registered with a password — say which, and offer the sign-in route.
-        const code = apiErrorCode(e);
-        const sendToSignIn = code === "ACCOUNT_EXISTS" || code === "USE_PASSWORD_LOGIN";
-        const msg =
-          code === "ACCOUNT_EXISTS"
-            ? (t("signup.toasts.account_exists_desc")
-                || "You already have an account with this Google account. Please sign in instead.")
-            : code === "USE_PASSWORD_LOGIN"
-              ? (t("signin.toasts.use_password_desc")
-                  || "This email is registered with an email & password account. Please sign in with your email and password instead.")
-              : apiError(e, t("signup.toasts.google_fail_desc"));
-        toastError(msg, {
-          title: t("signup.toasts.signup_failed_title"),
-          action: sendToSignIn ? { label: t("common.nav.signin") || "Sign in", href: "/signin" } : undefined,
-        });
+        // registered with a password — say which (localized), and offer the sign-in route.
+        const { msg, action } = signUpError(e, t("signup.toasts.google_fail_desc"));
+        toastError(msg, { title: t("signup.toasts.signup_failed_title"), action });
       } finally {
         setLoading(null);
       }
@@ -259,10 +269,8 @@ export default function SignUpPage() {
         saveAndRedirect(result);
       }
     } catch (e: unknown) {
-      const msg =
-        (e as { response?: { data?: { message?: string } } })?.response?.data?.message ??
-        t("signup.toasts.fail_generic_desc");
-      toastError(msg, { title: t("signup.toasts.signup_failed_title") });
+      const { msg, action } = signUpError(e, t("signup.toasts.fail_generic_desc"));
+      toastError(msg, { title: t("signup.toasts.signup_failed_title"), action });
     } finally {
       setLoading(null);
     }
