@@ -283,8 +283,8 @@ export default function SeekerEarnings() {
 
       {/* Withdraw modal */}
       {wdOpen && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", zIndex:9999, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
-          <div style={{ background:"#111", border:"1px solid #222", borderRadius:18, width:"100%", maxWidth:440, padding:"28px" }}>
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", zIndex:9999, display:"flex", alignItems:"center", justifyContent:"center", padding:16 }}>
+          <div className="wd-modal-card" style={{ background:"#111", border:"1px solid #222", borderRadius:18, width:"100%", maxWidth:440, padding:"22px clamp(16px,4vw,26px)", maxHeight:"min(90vh, 760px)", overflowY:"auto", overflowX:"hidden" }}>
             <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:22 }}>
               <p style={{ margin:0, fontSize:16, fontWeight:800, color:"#fff" }}>{t("seeker_earnings.withdraw_title")}</p>
               <button onClick={closeWd} style={{ background:"none", border:"none", cursor:"pointer", color:"#555" }}><X size={18} /></button>
@@ -424,7 +424,14 @@ export default function SeekerEarnings() {
           </div>
         </div>
       )}
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      <style>{`
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .wd-modal-card { scrollbar-width: thin; scrollbar-color: #333 transparent; }
+        .wd-modal-card::-webkit-scrollbar { width: 6px; }
+        .wd-modal-card::-webkit-scrollbar-track { background: transparent; }
+        .wd-modal-card::-webkit-scrollbar-thumb { background: #333; border-radius: 999px; }
+        .wd-modal-card::-webkit-scrollbar-thumb:hover { background: #444; }
+      `}</style>
     </div>
   );
 }
