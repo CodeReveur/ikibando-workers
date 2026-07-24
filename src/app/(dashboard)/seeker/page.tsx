@@ -12,6 +12,7 @@ import {
 } from "@/lib/api";
 import { StatCard, SectionHead, Dot, PageLoader } from "@/components/dashboard/ui";
 import { fmt } from "@/lib/dashboard-data";
+import { Balance } from "@/components/ui/balance";
 import { useSession } from "@/components/dashboard/session-ctx";
 import { useLanguage } from "@/lib/language-context";
 
@@ -174,7 +175,7 @@ export default function SeekerHome() {
 
       {/* Stats */}
       <div className="stat-grid">
-        <StatCard label={t("dashboard_home.wallet_balance")}   value={fmt(wallet?.balance ?? 0)} sub={t("dashboard_home.available_balance")}   accent="#f97316" />
+        <StatCard label={t("dashboard_home.wallet_balance")}   value={<Balance amount={wallet?.balance ?? 0} />} sub={t("dashboard_home.available_balance")}   accent="#f97316" />
         <StatCard label={t("dashboard_home.active_jobs")}      value={String(active.length)}     sub={t("dashboard_home.currently_hired")}     accent="#22c55e" />
         <StatCard label={t("dashboard_home.direct_offers")}    value={String(hireNow.length)}    sub={t("dashboard_home.awaiting_reply")} accent="#60a5fa" />
         <StatCard label={t("dashboard_home.total_earned")}     value={fmt(earned)}               sub={t("dashboard_home.released_payments")}   accent="#a78bfa" />
@@ -233,7 +234,7 @@ export default function SeekerHome() {
             <Wallet size={15} color="#f97316" />
             <p style={{ margin:0, fontSize:11, fontWeight:700, color:"#3a3a3a", textTransform:"uppercase", letterSpacing:"0.07em" }}>{t("dashboard_home.my_wallet")}</p>
           </div>
-          <p style={{ margin:"0 0 4px", fontSize:28, fontWeight:900, color:"#fff", letterSpacing:"-1px" }}>{fmt(wallet?.balance ?? 0)}</p>
+          <p style={{ margin:"0 0 4px", fontSize:28, fontWeight:900, color:"#fff", letterSpacing:"-1px" }}><Balance amount={wallet?.balance ?? 0} toggle /></p>
           <p style={{ margin:"0 0 16px", fontSize:11, color:"#333" }}>
             {fmt(wallet?.totalHeld ?? 0)} {t("dashboard_home.in_escrow")} · {fmt(wallet?.totalReleased ?? 0)} {t("dashboard_home.released")}
           </p>

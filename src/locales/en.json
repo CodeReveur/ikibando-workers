@@ -2384,7 +2384,12 @@
     "err_phone": "Enter a valid mobile money number.",
     "err_failed": "The payment didn't go through. Please try again.",
     "err_pending": "Still pending. If money was taken it will reflect shortly.",
-    "err_generic": "Something went wrong. Please try again."
+    "err_generic": "Something went wrong. Please try again.",
+    "addon_prompt": "Would you love to support with a donation?",
+    "learn": "Learn more",
+    "custom_usd": "Or enter an amount ($)",
+    "addon_added": "added to your total",
+    "remove": "Remove"
   },
   "donate_page": {
     "title": "Your gift changes lives",

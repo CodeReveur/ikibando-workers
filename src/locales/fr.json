@@ -2383,7 +2383,12 @@
     "err_phone": "Saisissez un numéro mobile money valide.",
     "err_failed": "Le paiement n'a pas abouti. Veuillez réessayer.",
     "err_pending": "Toujours en attente. Si le montant a été débité, il apparaîtra bientôt.",
-    "err_generic": "Une erreur s'est produite. Veuillez réessayer."
+    "err_generic": "Une erreur s'est produite. Veuillez réessayer.",
+    "addon_prompt": "Souhaitez-vous soutenir avec un don ?",
+    "learn": "En savoir plus",
+    "custom_usd": "Ou saisissez un montant ($)",
+    "addon_added": "ajoutés à votre total",
+    "remove": "Retirer"
   },
   "donate_page": {
     "title": "Votre don change des vies",

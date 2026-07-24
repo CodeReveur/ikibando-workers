@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import {
   getWallet, getWalletTransactions, requestWithdrawalOtp, confirmWithdrawal, apiError,
+  getPricingConfig, DEFAULT_PRICING, type PricingConfig,
   type WalletDto, type PaymentDto,
 } from "@/lib/api";
 type WdMethod = "MTN_MOMO" | "AIRTEL_MONEY";
@@ -15,6 +16,8 @@ import { fmt } from "@/lib/dashboard-data";
 import { useLanguage } from "@/lib/language-context";
 import Link from "next/link";
 import { useToast } from "@/components/ui/toast";
+import { Balance } from "@/components/ui/balance";
+import { DonationAddon } from "@/components/donate/donation-addon";
 
 const STATUS_STYLE: Record<string, { label: string; color: string; bg: string }> = {
   RELEASED: { label:"Released",   color:"#22c55e", bg:"rgba(34,197,94,0.08)"   },
@@ -49,6 +52,9 @@ export default function SeekerEarnings() {
   const [wdErr,     setWdErr]     = useState("");
   // OTP step: after details are submitted we email a code the user must confirm.
   const [wdStep,    setWdStep]    = useState<"details" | "otp">("details");
+  const [wdDonation, setWdDonation] = useState(0);
+  const [pricing, setPricing] = useState<PricingConfig>(DEFAULT_PRICING);
+  useEffect(() => { getPricingConfig().then(setPricing).catch(() => {}); }, []);
   const [wdCode,    setWdCode]    = useState("");
 
   const load = useCallback(async () => {
@@ -73,11 +79,16 @@ export default function SeekerEarnings() {
     const token = localStorage.getItem("access_token")!;
     const amount = parseInt(wdAmt, 10);
     if (!amount || amount < 500) { setWdErr(t("seeker_earnings.min_wd_err") || "Minimum withdrawal is RWF 500"); return; }
-    if (amount > (wallet?.balance ?? 0)) { setWdErr(t("seeker_earnings.exceeds_err") || "Amount exceeds wallet balance"); return; }
+    if (amount + wdDonation > (wallet?.balance ?? 0)) {
+      setWdErr(wdDonation > 0
+        ? `Your wallet balance (${fmt(wallet?.balance ?? 0)}) is below the withdrawal plus the ${fmt(wdDonation)} donation.`
+        : (t("seeker_earnings.exceeds_err") || "Amount exceeds wallet balance"));
+      return;
+    }
     if (!wdPhone.trim() || wdPhone.replace(/\D/g,"").length < 9) { setWdErr(t("seeker_earnings.valid_phone_err") || "Enter a valid phone number"); return; }
     setWdBusy(true); setWdErr("");
     try {
-      await requestWithdrawalOtp({ amount, phoneNumber: wdPhone.trim(), paymentMethod: wdMethod }, token);
+      await requestWithdrawalOtp({ amount, phoneNumber: wdPhone.trim(), paymentMethod: wdMethod, donationRwf: wdDonation > 0 ? wdDonation : undefined }, token);
       setWdStep("otp"); setWdCode("");
       toastSuccess(t("seeker_earnings.otp_sent_toast") || "We've emailed you a code to confirm this withdrawal.");
     } catch (e: any) {
@@ -111,7 +122,7 @@ export default function SeekerEarnings() {
     const amount = parseInt(wdAmt, 10);
     setWdBusy(true); setWdErr("");
     try {
-      await requestWithdrawalOtp({ amount, phoneNumber: wdPhone.trim(), paymentMethod: wdMethod }, token);
+      await requestWithdrawalOtp({ amount, phoneNumber: wdPhone.trim(), paymentMethod: wdMethod, donationRwf: wdDonation > 0 ? wdDonation : undefined }, token);
       toastSuccess(t("seeker_earnings.otp_resent_toast") || "A new code has been emailed to you.");
     } catch (e: any) {
       toastError(apiError(e, t("seeker_earnings.wd_failed_err") || "Could not resend the code."));
@@ -172,7 +183,7 @@ export default function SeekerEarnings() {
           <p style={{ margin:0, fontSize:11, fontWeight:700, color:"#3a3a3a", textTransform:"uppercase", letterSpacing:"0.08em" }}>{t("seeker_earnings.my_wallet")}</p>
         </div>
         <p style={{ margin:"0 0 6px", fontSize:42, fontWeight:900, color:"#fff", letterSpacing:"-2px" }}>
-          {fmt(wallet?.balance ?? 0)}
+          <Balance amount={wallet?.balance ?? 0} toggle />
         </p>
         <p style={{ margin:"0 0 22px", fontSize:12, color:"#333" }}>
           {t("seeker_earnings.in_escrow_released")
@@ -281,7 +292,7 @@ export default function SeekerEarnings() {
 
             <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:10, padding:"12px 16px", marginBottom:18 }}>
               <p style={{ margin:"0 0 2px", fontSize:11, color:"#3a3a3a" }}>{t("seeker_earnings.available_balance")}</p>
-              <p style={{ margin:0, fontSize:22, fontWeight:900, color:"#22c55e" }}>{fmt(wallet?.balance ?? 0)}</p>
+              <p style={{ margin:0, fontSize:22, fontWeight:900, color:"#22c55e" }}><Balance amount={wallet?.balance ?? 0} toggle /></p>
             </div>
 
             {wdStep === "details" && (<>
@@ -341,9 +352,16 @@ export default function SeekerEarnings() {
               placeholder={wdMethod === "MTN_MOMO" ? "e.g. 0788 123 456" : "e.g. 0738 123 456"}
               value={wdPhone} onChange={e => setWdPhone(e.target.value)}
             />
-            <p style={{ margin:"0 0 18px", fontSize:11, color:"#2a2a2a", lineHeight:1.6 }}>
+            <p style={{ margin:"0 0 12px", fontSize:11, color:"#2a2a2a", lineHeight:1.6 }}>
               {t("seeker_earnings.phone_hint")}
             </p>
+
+            <DonationAddon usdToRwf={pricing.usdToRwf} valueRwf={wdDonation} onChange={setWdDonation} />
+            {wdDonation > 0 && (
+              <p style={{ margin:"8px 0 12px", fontSize:12, color:"#22c55e" }}>
+                {fmt(wdDonation)} will be given as a donation from your wallet, on top of your withdrawal.
+              </p>
+            )}
             </>)}
 
             {wdStep === "otp" && (<>

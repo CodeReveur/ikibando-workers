@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
 import { Bot, X, HandCoins } from "lucide-react";
 import { BazaBotChat } from "./bazabot";
 import { DonationModal } from "@/components/donate/donation-modal";
@@ -14,7 +13,6 @@ import { useLanguage } from "@/lib/language-context";
 export function BazaBotWidget() {
   const [open, setOpen] = useState(false);
   const [donateOpen, setDonateOpen] = useState(false);
-  const pathname = usePathname();
   const { t } = useLanguage();
 
   // Close on Escape.
@@ -24,9 +22,6 @@ export function BazaBotWidget() {
     window.addEventListener("keydown", fn);
     return () => window.removeEventListener("keydown", fn);
   }, [open]);
-
-  // The dashboard already embeds BazaBot on its help pages.
-  if (pathname?.startsWith("/owner") || pathname?.startsWith("/seeker")) return null;
 
   return (
     <div style={{

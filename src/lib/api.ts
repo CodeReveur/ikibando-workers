@@ -903,7 +903,7 @@ export async function requestRefund(paymentId: string, reason: string, token: st
  * No money moves until {@link confirmWithdrawal} is called with the code.
  */
 export async function requestWithdrawalOtp(
-  payload: { amount: number; phoneNumber: string; paymentMethod: "MTN_MOMO" | "AIRTEL_MONEY"; notes?: string },
+  payload: { amount: number; phoneNumber: string; paymentMethod: "MTN_MOMO" | "AIRTEL_MONEY"; notes?: string; donationRwf?: number },
   token: string,
 ): Promise<void> {
   await http.post("/api/wallet/withdraw/otp", payload, { headers: authHeader(token) });
@@ -1008,6 +1008,7 @@ export interface PricingConfig {
   cancellationPenaltyRate: number;
   cancellationWorkerCompRate: number;
   referralRewardRwf: number;
+  usdToRwf: number;                   // RWF per 1 USD, for donation presets
 }
 
 /** Defaults matching the server's fallback so the UI still works if the call fails. */
@@ -1015,7 +1016,7 @@ export const DEFAULT_PRICING: PricingConfig = {
   workerCommissionRate: 0.20, workerCommissionFixed: 0,
   employerServiceFeeRate: 0.05, employerServiceFeeFixed: 0,
   cancellationPenaltyRate: 0.10, cancellationWorkerCompRate: 0.04,
-  referralRewardRwf: 1000,
+  referralRewardRwf: 1000, usdToRwf: 1300,
 };
 
 export async function getPricingConfig(): Promise<PricingConfig> {
@@ -1106,6 +1107,8 @@ export interface JobPayload {
   directRelease?: boolean;
   /** True for Hire Now / direct Offer: don't broadcast to all workers, only the picked one. */
   direct?: boolean;
+  /** Optional voluntary donation (RWF) added on top of the escrow at payment time. */
+  donationRwf?: number;
 }
 
 export async function postJob(payload: JobPayload, token: string): Promise<JobDto> {

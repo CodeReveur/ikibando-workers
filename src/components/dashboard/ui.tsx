@@ -1,7 +1,7 @@
 /* Shared primitive components used across all dashboard pages */
 
 export function StatCard({ label, value, sub, accent }: {
-  label: string; value: string; sub: string; accent: string;
+  label: string; value: React.ReactNode; sub: string; accent: string;
 }) {
   return (
     <div style={{ background:"#131313", border:"1px solid #1c1c1c", borderRadius:14, padding:"20px 22px" }}>

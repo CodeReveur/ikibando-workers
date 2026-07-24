@@ -8,6 +8,7 @@ import {
 } from "@/lib/api";
 import { StatCard, SectionHead, PageLoader } from "@/components/dashboard/ui";
 import { fmt } from "@/lib/dashboard-data";
+import { Balance } from "@/components/ui/balance";
 import { useLanguage } from "@/lib/language-context";
 import { PayMethodSelector, type PayMethodValue } from "@/components/ui/pay-logos";
 import { runWalletTopup, isCardMethod } from "@/lib/pay-flow";
@@ -178,7 +179,7 @@ export default function OwnerPayments() {
         }
       `}</style>
       <div className="stats-grid">
-        <StatCard label={t("owner_payments.wallet_balance") || "Wallet Balance"} value={fmt(wallet?.balance ?? 0)} sub={t("owner_payments.available_spend") || "Available to spend"} accent="#f97316" />
+        <StatCard label={t("owner_payments.wallet_balance") || "Wallet Balance"} value={<Balance amount={wallet?.balance ?? 0} toggle />} sub={t("owner_payments.available_spend") || "Available to spend"} accent="#f97316" />
         <StatCard label={t("owner_payments.in_escrow") || "In Escrow"}      value={String(heldCount) + " " + (t("owner_payments.jobs_unit") || "jobs")}    sub={t("owner_payments.awaiting_completion") || "Awaiting completion"} accent="#f59e0b" />
         <StatCard label={t("owner_payments.total_released") || "Total Released"} value={fmt(releasedAmt)}          sub={t("owner_payments.workers_paid") || "Workers paid"}     accent="#22c55e" />
         <StatCard label={t("owner_payments.refunded") || "Refunded"}       value={fmt(refundedAmt)}          sub={t("owner_payments.returned_wallet") || "Returned to wallet"} accent="#60a5fa" />

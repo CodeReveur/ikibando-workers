@@ -2383,7 +2383,12 @@
     "err_phone": "Weka namba sahihi ya mobile money.",
     "err_failed": "Malipo hayakufanikiwa. Tafadhali jaribu tena.",
     "err_pending": "Bado inasubiri. Ikiwa pesa zimetolewa zitaonekana hivi karibuni.",
-    "err_generic": "Hitilafu imetokea. Tafadhali jaribu tena."
+    "err_generic": "Hitilafu imetokea. Tafadhali jaribu tena.",
+    "addon_prompt": "Je, ungependa kusaidia kwa mchango?",
+    "learn": "Jifunze zaidi",
+    "custom_usd": "Au weka kiasi ($)",
+    "addon_added": "vimeongezwa kwenye jumla yako",
+    "remove": "Ondoa"
   },
   "donate_page": {
     "title": "Mchango wako hubadilisha maisha",

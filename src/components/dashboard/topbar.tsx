@@ -8,6 +8,7 @@ import { useLanguage } from "@/lib/language-context";
 import { Pip } from "./ui";
 import { getWallet, getNotifications, getUnreadNotificationCount, markAllNotificationsRead, notificationHref, type WalletDto, type NotificationDto } from "@/lib/api";
 import { fmt } from "@/lib/dashboard-data";
+import { Balance } from "@/components/ui/balance";
 import { PaymentApprovalModal } from "@/components/payments/payment-approval-modal";
 
 export const TB_HEIGHT = 64;
@@ -190,7 +191,7 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
           <Wallet size={13} color="#f97316" />
           <span className="wallet-label" style={{ fontSize:11, color:"#3a3a3a", fontWeight:600 }}>{t("common.nav.wallet") || "Wallet"}</span>
           <span className="wallet-amount" style={{ fontSize:14, fontWeight:800, color: wallet ? (wallet.balance > 0 ? "#f0f0f0" : "#ef4444") : "#555" }}>
-            {wallet ? fmt(wallet.balance) : "…"}
+            {wallet ? <Balance amount={wallet.balance} /> : "…"}
           </span>
           <Plus size={11} color="#f97316" className="wallet-plus" />
         </a>

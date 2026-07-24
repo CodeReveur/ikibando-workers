@@ -16,6 +16,7 @@ import { useToast } from "@/components/ui/toast";
 import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
 import { useSession, type Session } from "@/components/dashboard/session-ctx";
 import { PayMethodSelector, type PayMethodValue } from "@/components/ui/pay-logos";
+import { DonationAddon } from "@/components/donate/donation-addon";
 
 // Leaflet must render client-side only
 const MapPicker = dynamic(
@@ -173,6 +174,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
   // Payment method fields. Card details are collected on XentriPay's secure page (redirect),
   // so we only keep the selected method + the mobile-money phone here.
   const [payMethod, setPayMethod] = useState<"WALLET" | "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD">("MTN_MOMO");
+  const [donationRwf, setDonationRwf] = useState(0);
   const [paymentPhone, setPaymentPhone] = useState("");
   const [payNote, setPayNote] = useState("");
   // When on, a worker's per-period payment request pays out immediately (no manual approval).
@@ -407,6 +409,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
         paymentInterval,
         directRelease,
         locationNotes: job.notes || undefined,
+        donationRwf: donationRwf > 0 ? donationRwf : undefined,
       };
 
       // payMethod is one of the 4 gateway methods (default MTN_MOMO); WALLET is never selected.
@@ -448,8 +451,8 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
       // shortfall via MoMo/Airtel/Card and wait for it to settle — that money lands in the
       // wallet, then postJob freezes the full escrow from the wallet (never a direct-to-job
       // payment). A low-balance posting therefore reads as a direct deposit.
-      if (walletBal === null || walletBal < escrow) {
-        const topupAmount = walletBal === null ? escrow : Math.max(0, escrow - walletBal);
+      if (walletBal === null || walletBal < chargeable) {
+        const topupAmount = walletBal === null ? chargeable : Math.max(0, chargeable - walletBal);
         if (topupAmount > 0) {
           setPayNote(awaitingNote);
           const outcome = await runWalletTopup({
@@ -552,8 +555,10 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
 
   // Logged-in employer pays from wallet; only top up (or, for guests, pay directly)
   // via MoMo/Airtel/Card when the wallet can't cover the escrow.
-  const needsTopup    = walletBal === null || walletBal < escrow;
-  const topupAmount   = walletBal === null ? escrow : Math.max(0, escrow - walletBal);
+  // The employer pays the escrow plus any voluntary donation they added.
+  const chargeable    = escrow + donationRwf;
+  const needsTopup    = walletBal === null || walletBal < chargeable;
+  const topupAmount   = walletBal === null ? chargeable : Math.max(0, chargeable - walletBal);
   const showPayMethods = !hasSession || needsTopup;
 
   const isPaymentDetailsValid = hasSession && !needsTopup
@@ -1020,6 +1025,12 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                     </p>
 
                     <PayMethodSelector value={payMethod as PayMethodValue} onChange={setPayMethod} />
+                    <DonationAddon usdToRwf={pricing.usdToRwf} valueRwf={donationRwf} onChange={setDonationRwf} />
+                    {donationRwf > 0 && (
+                      <p style={{ margin: "6px 0 0", fontSize: 12, color: "#22c55e" }}>
+                        {fmt(escrow)} escrow + {fmt(donationRwf)} donation = <strong>{fmt(chargeable)}</strong> total
+                      </p>
+                    )}
                   </div>
 
                   {/* Payment method fields */}
