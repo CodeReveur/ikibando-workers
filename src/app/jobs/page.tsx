@@ -396,7 +396,7 @@ export default function JobsPage() {
                     </div>
 
                     {/* footer */}
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginTop: "auto" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, rowGap: 6, flexWrap: "wrap", marginTop: "auto" }}>
                       {/* Workers see their take-home, never the employer's posting price. */}
                       <span style={{ fontSize: 15, fontWeight: 800, color: "#f97316", whiteSpace: "nowrap" }}
                             title={t("jobs_page.cards.you_earn_hint") || "What you take home, after all charges"}>

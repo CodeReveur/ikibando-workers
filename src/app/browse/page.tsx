@@ -645,7 +645,7 @@ function BrowsePageInner() {
                         <MapPin size={11} color="#555" />
                         <span style={{ fontSize: 11, color: "#555" }}>{j.district}</span>
                       </div>
-                      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8, marginTop: "auto" }}>
+                      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8, rowGap: 4, flexWrap: "wrap", marginTop: "auto" }}>
                         {/* Workers see their take-home, never the employer's gross posting price. */}
                         <span style={{ fontSize: 15, fontWeight: 800, color: "#f97316", whiteSpace: "nowrap" }}
                               title="What you take home, after all charges">
