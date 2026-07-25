@@ -4,7 +4,7 @@ import Footer from "@/components/layout/footer";
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import {
-  getWorkers, getJobs, daysAgo,
+  getWorkers, getJobs, daysAgo, workerNetHourly,
   type WorkerProfileDto, type JobDto, type JobSearchParams, type WorkerSearchParams,
 } from "@/lib/api";
 import { usePagedResults } from "@/lib/use-paged-results";
@@ -646,8 +646,10 @@ function BrowsePageInner() {
                         <span style={{ fontSize: 11, color: "#555" }}>{j.district}</span>
                       </div>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
-                        <span style={{ fontSize: 15, fontWeight: 800, color: "#f97316" }}>
-                          {fmt(j.ratePerHour)}
+                        {/* Workers see their take-home, never the employer's gross posting price. */}
+                        <span style={{ fontSize: 15, fontWeight: 800, color: "#f97316" }}
+                              title="What you take home, after all charges">
+                          {fmt(workerNetHourly(j))}
                           <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}>{" / " + rateUnit(j).short}</span>
                         </span>
                         <span style={{ fontSize: 11, color: "#444" }}>

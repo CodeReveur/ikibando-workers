@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Footer from "@/components/layout/footer";
 import { PostJobModal } from "@/components/jobs/post-job-modal";
 import { getWorkers, getJobs, getCategoryStats, daysAgo, workerNetHourly, type WorkerProfileDto, type JobDto } from "@/lib/api";
+import { rateUnit } from "@/lib/rate-unit";
 import { ratingInfo } from "@/lib/rating";
 import { CATEGORIES, countsForCategory, type CategoryStats } from "@/lib/browse-taxonomy";
 import { useLanguage } from "@/lib/language-context";
@@ -365,7 +366,7 @@ export default function Home() {
                     background: "rgba(249,115,22,0.1)", borderRadius: 999,
                     padding: "4px 12px", fontSize: 11, fontWeight: 700, color: "#f97316",
                   }}>
-                  {fmt(workerNetHourly(j))} {t("common.general.per_hour")}
+                  {fmt(workerNetHourly(j))} / {rateUnit(j).short}
                 </span>
               </a>
             ))

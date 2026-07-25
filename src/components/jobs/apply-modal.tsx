@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { X, CheckCircle, Loader2, ChevronDown, ChevronUp, Paperclip, FileText } from "lucide-react";
-import { applyForJob, uploadFile, apiError, type JobDto } from "@/lib/api";
+import { applyForJob, uploadFile, workerNetHourly, apiError, type JobDto } from "@/lib/api";
 import { saveRedirect } from "@/lib/auth-redirect";
 import { useToast } from "@/components/ui/toast";
 import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
@@ -154,7 +154,7 @@ export function ApplyModal({ job, onClose }: Props) {
               {t("apply.header.title")}
             </p>
             <p style={{ margin: "2px 0 0", fontSize: 15, fontWeight: 900, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{job.title}</p>
-            <p style={{ margin: "2px 0 0", fontSize: 12, color: "#555" }}>{fmt(job.ratePerHour)}{rateLabel(job.rateType)} · {job.district}</p>
+            <p style={{ margin: "2px 0 0", fontSize: 12, color: "#555" }}>{fmt(workerNetHourly(job))}{rateLabel(job.rateType)} · {job.district}</p>
           </div>
           <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "#555", flexShrink: 0 }}><X size={18} /></button>
         </div>
