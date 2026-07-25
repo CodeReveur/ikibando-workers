@@ -32,14 +32,14 @@ export function JobAlertsBanner({ jobs }: { jobs: JobDto[] }) {
   return (
     <div style={{
       display: "flex", flexDirection: "column", alignItems: "flex-start",
-      gap: 8, marginBottom: 24,
+      gap: 7, marginBottom: 16,
     }}>
       <style>{`
         .jab-ad {
-          width:100%; max-width:440px; text-align:left; text-decoration:none; position:relative;
-          display:flex; align-items:center; gap:12px; overflow:hidden;
+          width:100%; max-width:430px; text-align:left; text-decoration:none; position:relative;
+          display:flex; align-items:center; gap:10px; overflow:hidden;
           background:linear-gradient(120deg,#1e1a16 0%,#181818 55%);
-          border:1px solid rgba(249,115,22,0.26); border-radius:12px; padding:9px 12px 9px 15px;
+          border:1px solid rgba(249,115,22,0.26); border-radius:12px; padding:7px 10px 7px 13px;
           box-shadow:0 4px 16px rgba(0,0,0,0.3); animation:jabIn .45s ease both;
           transition:transform .14s ease, border-color .14s ease, box-shadow .14s ease;
         }
@@ -49,6 +49,26 @@ export function JobAlertsBanner({ jobs }: { jobs: JobDto[] }) {
           background:linear-gradient(#f97316,#ea580c); }
         @keyframes jabIn { from{opacity:0;} to{opacity:1;} }
         @keyframes jabDot { 0%,100%{opacity:1; transform:scale(1);} 50%{opacity:.3; transform:scale(.65);} }
+        /* Outlined pill to match the nav "Hire now" button, with a periodic attention shake. */
+        .jab-cta {
+          flex-shrink:0; display:inline-flex; align-items:center; gap:5px;
+          background:transparent; color:#f97316;
+          border:1.5px solid rgba(249,115,22,0.5); border-radius:999px;
+          padding:6px 14px; font-size:11.5px; font-weight:700; white-space:nowrap;
+          transform-origin:center; animation:jabShake 3s ease-in-out infinite;
+          transition:background .15s, border-color .15s, color .15s;
+        }
+        .jab-ad:hover .jab-cta { background:rgba(249,115,22,0.12); border-color:#f97316; color:#fb923c; }
+        @keyframes jabShake {
+          0%,80%,100% { transform:translateX(0) rotate(0) scale(1); }
+          83% { transform:translateX(-2px) rotate(-4deg) scale(1.06); }
+          86% { transform:translateX(2px)  rotate(4deg)  scale(1.06); }
+          89% { transform:translateX(-2px) rotate(-3deg) scale(1.04); }
+          92% { transform:translateX(2px)  rotate(3deg)  scale(1.04); }
+          95% { transform:translateX(-1px) rotate(-1deg) scale(1.02); }
+          98% { transform:translateX(0) rotate(0) scale(1); }
+        }
+        @media (prefers-reduced-motion: reduce) { .jab-cta { animation:none; } }
         @media (max-width:720px){ .jab-hide-mobile{ display:none !important; } }
       `}</style>
 
@@ -101,12 +121,8 @@ export function JobAlertsBanner({ jobs }: { jobs: JobDto[] }) {
               </div>
             </div>
 
-            {/* CTA */}
-            <span style={{
-              flexShrink: 0, display: "inline-flex", alignItems: "center", gap: 5,
-              background: "#f97316", color: "#fff", borderRadius: 9, padding: "8px 13px",
-              fontSize: 11.5, fontWeight: 800, whiteSpace: "nowrap",
-            }}>
+            {/* CTA - outlined pill like "Hire now", with an attention shake every few seconds */}
+            <span className="jab-cta">
               {t("home.hero.alert_cta") || "View & apply"} <ArrowRight size={12} />
             </span>
           </a>
