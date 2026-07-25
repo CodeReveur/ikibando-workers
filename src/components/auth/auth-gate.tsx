@@ -1,11 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Mail, ShieldCheck, QrCode } from "lucide-react";
+import { Loader2, Mail, ShieldCheck, QrCode, Clock } from "lucide-react";
 import {
   AuthResult, verifyEmailCode, resendOtpCode, loginWithEmail, authenticate2fa, enableTotp,
+  snoozeTotpSetup,
 } from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
+
+/** Skip-mode reminder windows for deferring the mandatory 2FA setup. */
+const SNOOZE_OPTIONS: { days: number; label: string }[] = [
+  { days: 2, label: "2 days" },
+  { days: 7, label: "1 week" },
+  { days: 14, label: "2 weeks" },
+  { days: 30, label: "1 month" },
+];
 
 interface Props {
   /** The gated login response (requiresEmailVerification / requires2fa / requires2faSetup). */
@@ -30,6 +39,8 @@ export function AuthGate({ result, email, password, onResolved }: Props) {
   const [active, setActive] = useState<AuthResult>(result);
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
+  const [snoozeDays, setSnoozeDays] = useState(7);
+  const [snoozing, setSnoozing] = useState(false);
   const mode = modeOf(active);
 
   // If a fresh result has no gate, resolve immediately.
@@ -69,13 +80,29 @@ export function AuthGate({ result, email, password, onResolved }: Props) {
     finally { setLoading(false); }
   };
 
+  // Skip mode: defer setup and continue. The user already holds full tokens at the SETUP gate.
+  const skipSetup = async () => {
+    setSnoozing(true);
+    try {
+      await snoozeTotpSetup(snoozeDays, active.accessToken);
+      const label = SNOOZE_OPTIONS.find(o => o.days === snoozeDays)?.label || `${snoozeDays} days`;
+      toastSuccess(`We'll remind you in ${label}.`, { title: "Reminder set" });
+      onResolved(active);
+    } catch (e: any) {
+      toastError(e?.response?.data?.message || "Could not defer setup. Please try again.",
+        { title: "Skip failed" });
+    } finally {
+      setSnoozing(false);
+    }
+  };
+
   if (!mode) return null;
 
   const title = mode === "EMAIL" ? "Verify your email"
     : mode === "SETUP" ? "Set up two-factor authentication"
     : "Two-factor authentication";
   const subtitle = mode === "EMAIL" ? `Enter the code we sent to ${email} to continue.`
-    : mode === "SETUP" ? "Required after 14 days. Scan the QR with an authenticator app, then enter the 6-digit code."
+    : mode === "SETUP" ? "Scan the QR with an authenticator app, then enter the 6-digit code — or pick a reminder and set it up later."
     : "Enter the 6-digit code from your authenticator app.";
   const Icon = mode === "EMAIL" ? Mail : mode === "SETUP" ? QrCode : ShieldCheck;
 
@@ -121,6 +148,40 @@ export function AuthGate({ result, email, password, onResolved }: Props) {
             {loading && <Loader2 size={15} className="animate-spin" />}
             {mode === "EMAIL" ? "Verify & continue" : mode === "SETUP" ? "Enable & continue" : "Verify"}
           </button>
+
+          {mode === "SETUP" && (
+            <div className="pt-4 mt-1 border-t border-[#2a2a2a] space-y-2.5">
+              <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                <Clock size={13} className="text-gray-500" />
+                <span>Not now? Pick when we should remind you.</span>
+              </div>
+              <div className="grid grid-cols-4 gap-1.5">
+                {SNOOZE_OPTIONS.map((o) => (
+                  <button
+                    key={o.days}
+                    type="button"
+                    onClick={() => setSnoozeDays(o.days)}
+                    className={`py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
+                      snoozeDays === o.days
+                        ? "bg-[#f97316]/15 border-[#f97316] text-[#f97316]"
+                        : "bg-[#1a1a1a] border-[#2a2a2a] text-gray-400 hover:border-[#3a3a3a]"
+                    }`}
+                  >
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={skipSetup}
+                disabled={snoozing || loading}
+                className="w-full text-xs font-semibold text-gray-400 hover:text-gray-200 disabled:opacity-50 py-2 flex items-center justify-center gap-2 transition-colors"
+              >
+                {snoozing && <Loader2 size={13} className="animate-spin" />}
+                Skip for now
+              </button>
+            </div>
+          )}
 
           {mode === "EMAIL" && (
             <p className="text-center text-xs text-gray-600">

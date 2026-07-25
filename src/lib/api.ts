@@ -323,6 +323,11 @@ export async function disableTotp(code: string, token: string): Promise<void> {
   await http.post("/api/auth/2fa/disable", { code }, { headers: authHeader(token) });
 }
 
+/** Skip mode: defer the mandatory 2FA setup. `days` must be 2, 7, 14 or 30. */
+export async function snoozeTotpSetup(days: number, token: string): Promise<void> {
+  await http.post("/api/auth/2fa/snooze", { days }, { headers: authHeader(token) });
+}
+
 /**
  * Save onboarding data. `finalize` false persists the fields silently (a per-step
  * save in the sliding signup wizard) without promoting the account or notifying
