@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft, Check, X, Edit2, Trash2, Users, Clock,
   MapPin, CreditCard, CheckCircle, Circle, Loader2,
-  DollarSign, User, Calendar, Briefcase, ChevronDown, ChevronUp, AlertCircle, Star, FileText,
+  DollarSign, User, Calendar, Briefcase, ChevronDown, ChevronUp, AlertCircle, Star, FileText, ExternalLink,
 } from "lucide-react";
 import {
   getJob, getJobApplications, getWalletTransactions,
@@ -266,50 +266,67 @@ export default function OwnerJobDetail() {
           </button>
           {expandApps && apps.map(app => (
             <div key={app.id} style={{
-              display: "flex", alignItems: "center", justifyContent: "space-between",
-              padding: "8px 0", borderBottom: "1px solid #1a1a1a",
+              display: "flex", alignItems: "flex-start", justifyContent: "space-between",
+              padding: "10px 0", borderBottom: "1px solid #1a1a1a",
             }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: "#d0d0d0", display: "flex", alignItems: "center", gap: 6 }}>
-                  {app.workerName}
+                <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: "#d0d0d0", display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                  {app.workerId ? (
+                    <a href={`/browse/${app.workerId}`} target="_blank" rel="noopener noreferrer"
+                       style={{ color: "#d0d0d0", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4 }}
+                       title={t("owner_jobs.view_profile") || "View profile on platform"}>
+                      {app.workerName}
+                      <ExternalLink size={11} color="#f97316" />
+                    </a>
+                  ) : app.workerName}
                   <span style={{ display: "inline-flex", alignItems: "center", gap: 2, fontSize: 10, color: "#f97316", fontWeight: 700 }}>
                     <Star size={9} color="#f97316" fill="#f97316" />{ratingLabel(app.workerRating, app.workerRatingCount)}
                   </span>
                 </p>
-                <p style={{ margin: 0, fontSize: 10, color: "#444" }}>
+                <p style={{ margin: "2px 0 0", fontSize: 10, color: "#444" }}>
                   {app.workerDistrict ?? "—"}
                   {app.appliedVia === "HIRE_NOW" ? ` · ${t("owner_jobs.direct_offer") || "Direct Offer"}` : ` · ${t("owner_jobs.self_applied") || "Self-applied"}`}
                   {app.createdAt ? ` · ${d(app.createdAt, currentLocale)}` : ""}
                 </p>
                 {app.bestFit && (
-                  <div style={{ margin: "5px 0 0", fontSize: 11, color: "#999" }}>
-                    <RichTextDisplay content={app.bestFit} />
+                  <div style={{ margin: "8px 0 0", padding: "9px 11px", background: "#141414", border: "1px solid #222", borderRadius: 8 }}>
+                    <p style={{ margin: "0 0 4px", fontSize: 9, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                      {t("owner_jobs.why_a_fit") || "Why they're a fit"}
+                    </p>
+                    <div style={{ fontSize: 12, color: "#bbb" }}>
+                      <RichTextDisplay content={app.bestFit} />
+                    </div>
                   </div>
                 )}
                 {app.attachments && app.attachments.length > 0 && (
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 6 }}>
-                    {app.attachments.map((url, i) => (
-                      /\.(png|jpe?g|gif|webp|bmp|svg)(\?|$)/i.test(url) ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <a key={url + i} href={url} target="_blank" rel="noopener noreferrer">
-                          <img src={url} alt="" style={{ width: 46, height: 46, borderRadius: 6, objectFit: "cover", border: "1px solid #242424" }} />
-                        </a>
-                      ) : (
-                        <a key={url + i} href={url} target="_blank" rel="noopener noreferrer" style={{
-                          display: "flex", alignItems: "center", gap: 5, background: "#161616",
-                          border: "1px solid #242424", borderRadius: 6, padding: "5px 8px",
-                          fontSize: 10, color: "#aaa", textDecoration: "none", maxWidth: 160,
-                        }}>
-                          <FileText size={12} style={{ flexShrink: 0 }} />
-                          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                            {(() => { try { return decodeURIComponent(url.split("/").pop() || "file").split("?")[0]; } catch { return "file"; } })()}
-                          </span>
-                        </a>
-                      )
-                    ))}
+                  <div style={{ marginTop: 8 }}>
+                    <p style={{ margin: "0 0 5px", fontSize: 9, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                      {t("owner_jobs.attachments") || "Attachments"}
+                    </p>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                      {app.attachments.map((url, i) => (
+                        /\.(png|jpe?g|gif|webp|bmp|svg)(\?|$)/i.test(url) ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <a key={url + i} href={url} target="_blank" rel="noopener noreferrer" title={t("owner_jobs.open_file") || "Open"}>
+                            <img src={url} alt="" style={{ width: 52, height: 52, borderRadius: 8, objectFit: "cover", border: "1px solid #242424" }} />
+                          </a>
+                        ) : (
+                          <a key={url + i} href={url} target="_blank" rel="noopener noreferrer" style={{
+                            display: "flex", alignItems: "center", gap: 5, background: "#161616",
+                            border: "1px solid #242424", borderRadius: 8, padding: "7px 10px",
+                            fontSize: 11, color: "#ccc", textDecoration: "none", maxWidth: 200,
+                          }}>
+                            <FileText size={13} color="#f97316" style={{ flexShrink: 0 }} />
+                            <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                              {(() => { try { return decodeURIComponent(url.split("/").pop() || "file").split("?")[0]; } catch { return "file"; } })()}
+                            </span>
+                          </a>
+                        )
+                      ))}
+                    </div>
                   </div>
                 )}
-                {app.responseNote && <p style={{ margin: "3px 0 0", fontSize: 10, color: "#888" }}>{t("owner_offers.note_from_employer") || "Note:"} {app.responseNote}</p>}
+                {app.responseNote && <p style={{ margin: "4px 0 0", fontSize: 10, color: "#888" }}>{t("owner_offers.note_from_employer") || "Note:"} {app.responseNote}</p>}
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0, marginLeft: 10 }}>
                 {app.status === "PENDING" && isOpen ? (

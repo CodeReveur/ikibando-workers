@@ -2164,7 +2164,11 @@
     "edit_locked_notice": "Abakozi bamaze gusaba, bityo itariki, amasaha, umubare w'abakozi n'ihutirwa byafunzwe. Uracyashobora guhindura umutwe, aho biherereye, ibisobanuro n'ibisabwa.",
     "accept_failed": "Ntibyashobotse kuvugurura ubusabe.",
     "job_full": "Abakozi bose barahawe akazi",
-    "track_worker": "Kurikirana umukozi aho ari"
+    "track_worker": "Kurikirana umukozi aho ari",
+    "view_profile": "Reba umwirondoro kuri platifomu",
+    "why_a_fit": "Impamvu akwiye",
+    "attachments": "Inyongeramanota",
+    "open_file": "Fungura"
   },
   "seeker_help": {
     "faq1_q": "Nishyurwa nte?",

@@ -645,14 +645,14 @@ function BrowsePageInner() {
                         <MapPin size={11} color="#555" />
                         <span style={{ fontSize: 11, color: "#555" }}>{j.district}</span>
                       </div>
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
+                      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8, marginTop: "auto" }}>
                         {/* Workers see their take-home, never the employer's gross posting price. */}
-                        <span style={{ fontSize: 15, fontWeight: 800, color: "#f97316" }}
+                        <span style={{ fontSize: 15, fontWeight: 800, color: "#f97316", whiteSpace: "nowrap" }}
                               title="What you take home, after all charges">
                           {fmt(workerNetHourly(j))}
                           <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}>{" / " + rateUnit(j).short}</span>
                         </span>
-                        <span style={{ fontSize: 11, color: "#444" }}>
+                        <span style={{ fontSize: 11, color: "#444", flexShrink: 0, whiteSpace: "nowrap" }}>
                           {posted === 0 ? "Today" : `${posted}d ago`}
                         </span>
                       </div>

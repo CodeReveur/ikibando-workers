@@ -396,15 +396,15 @@ export default function JobsPage() {
                     </div>
 
                     {/* footer */}
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginTop: "auto" }}>
                       {/* Workers see their take-home, never the employer's posting price. */}
-                      <span style={{ fontSize: 15, fontWeight: 800, color: "#f97316" }}
+                      <span style={{ fontSize: 15, fontWeight: 800, color: "#f97316", whiteSpace: "nowrap" }}
                             title={t("jobs_page.cards.you_earn_hint") || "What you take home, after all charges"}>
                         {fmt(workerNetHourly(j))}
                         <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}>{" / " + rateUnit(j).short}</span>
                       </span>
                       <span style={{
-                        display: "flex", alignItems: "center", gap: 4,
+                        display: "flex", alignItems: "center", gap: 4, flexShrink: 0,
                         fontSize: 12, fontWeight: 600, color: "#666",
                       }}>
                         {t("jobs_page.cards.apply") || "Apply"} <ArrowRight size={12} />

@@ -14,6 +14,7 @@ import {
 } from "@/lib/api";
 import { ratingLabel } from "@/lib/rating";
 import { rateUnit, durationLabel } from "@/lib/rate-unit";
+import { categoryLabel } from "@/lib/browse-taxonomy";
 import { fmt } from "@/lib/dashboard-data";
 import { RichTextDisplay } from "@/components/ui/rich-text-editor";
 import { useLanguage } from "@/lib/language-context";
@@ -375,7 +376,7 @@ export default function SeekerJobDetail() {
               )}
             </div>
             <p style={{ margin: 0, fontSize: 12, color: "#444" }}>
-              {t("common.general.by") || "by"} {job.employerName} · {job.category} · {job.district}
+              {t("common.general.by") || "by"} {job.employerName} · {categoryLabel(job.category, t)} · {job.district}
             </p>
           </div>
 
@@ -469,7 +470,7 @@ export default function SeekerJobDetail() {
           {/* Job details */}
           <div style={{ background: "#111", border: "1px solid #1c1c1c", borderRadius: 14, padding: "16px 18px" }}>
             <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: "0.08em" }}>{t("seeker_job_detail.job_details")}</p>
-            <InfoRow label={t("seeker_job_detail.category")} value={job.category} />
+            <InfoRow label={t("seeker_job_detail.category")} value={categoryLabel(job.category, t)} />
             <InfoRow label={t("seeker_job_detail.location")} value={`${job.district}${job.province ? `, ${job.province}` : ""}`} />
             {(job.street || job.houseNumber) && (
               <InfoRow

@@ -112,6 +112,12 @@ export function keyForSlug(slug: string): string {
   return CATEGORIES.find(c => c.apiValues.includes(s))?.key ?? slug;
 }
 
+/** Human display name for a category slug (never the raw slug like "sales_agent"). */
+export function categoryLabel(slug: string, t: (k: string) => string): string {
+  if (!slug) return "";
+  return t("common.categories." + keyForSlug(slug)) || slug;
+}
+
 export type CategoryStats = Record<string, { workers: number; jobs: number }>;
 
 /**

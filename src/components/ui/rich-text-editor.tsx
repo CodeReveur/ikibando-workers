@@ -134,6 +134,22 @@ function tidyHtml(html: string): string {
     .trim();
 }
 
+/** Plain-text preview of rich HTML: tags stripped and common entities decoded (SSR-safe). */
+export function htmlToPlainText(html: string): string {
+  if (!html) return "";
+  return html
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#0*39;|&apos;/gi, "'")
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export function RichTextDisplay({ content }: { content: string }) {
   if (!content) return null;
   return (

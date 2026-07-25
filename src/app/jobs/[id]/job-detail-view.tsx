@@ -5,6 +5,7 @@ import Footer from "@/components/layout/footer";
 import { ApplyModal } from "@/components/jobs/apply-modal";
 import { daysAgo, workerNetHourly, workerNetTotal, type JobDto } from "@/lib/api";
 import { rateUnit } from "@/lib/rate-unit";
+import { categoryLabel } from "@/lib/browse-taxonomy";
 import { useLanguage, usePageTitle } from "@/lib/language-context";
 import { ratingLabel } from "@/lib/rating";
 import {
@@ -77,7 +78,7 @@ export default function JobDetailView({ job }: { job: JobDto }) {
               fontSize: 11, fontWeight: 700, borderRadius: 999, padding: "4px 12px",
               background: "rgba(249,115,22,0.1)", color: "#f97316", border: "1px solid rgba(249,115,22,0.2)",
             }}>
-              {job.category}
+              {categoryLabel(job.category, t)}
             </span>
             <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "#555" }}>
               <MapPin size={12} color="#555" /> {job.district}
@@ -235,7 +236,7 @@ export default function JobDetailView({ job }: { job: JobDto }) {
                 {job.title}
               </p>
               <p style={{ margin: 0, fontSize: 11, color: "#555" }}>
-                {job.category} · {job.district}
+                {categoryLabel(job.category, t)} · {job.district}
               </p>
             </div>
             <div style={{ width: 1, height: 28, background: "#2a2a2a", flexShrink: 0 }} />

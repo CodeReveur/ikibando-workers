@@ -5,7 +5,7 @@ import { X, CheckCircle, Loader2, ChevronDown, ChevronUp, Paperclip, FileText } 
 import { applyForJob, uploadFile, workerNetHourly, apiError, type JobDto } from "@/lib/api";
 import { saveRedirect } from "@/lib/auth-redirect";
 import { useToast } from "@/components/ui/toast";
-import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
+import { RichTextEditor, RichTextDisplay, htmlToPlainText } from "@/components/ui/rich-text-editor";
 import { useLanguage } from "@/lib/language-context";
 
 interface Props { job: JobDto; onClose: () => void; }
@@ -21,9 +21,13 @@ const overlay: React.CSSProperties = {
 };
 const card: React.CSSProperties = {
   background: "#161616", border: "1px solid #222", borderRadius: 20,
-  width: "100%", maxWidth: 440, padding: "24px",
-  maxHeight: "90vh", overflowY: "auto",
+  width: "100%", maxWidth: 440,
+  maxHeight: "90vh", display: "flex", flexDirection: "column", overflow: "hidden",
 };
+// Header and footer stay put; only the middle scrolls, so the scrollbar reads as intentional.
+const modalHeader: React.CSSProperties = { padding: "24px 24px 16px", flexShrink: 0, borderBottom: "1px solid #222" };
+const modalBody: React.CSSProperties = { padding: "16px 24px", overflowY: "auto", flex: 1 };
+const modalFooter: React.CSSProperties = { padding: "14px 24px 20px", flexShrink: 0, borderTop: "1px solid #222" };
 
 const fileName = (url: string) => {
   try { return decodeURIComponent(url.split("/").pop() || "file").split("?")[0]; }
@@ -147,17 +151,22 @@ export function ApplyModal({ job, onClose }: Props) {
     <div style={overlay} onClick={onClose}>
       <div style={card} onClick={e => e.stopPropagation()}>
 
-        {/* header */}
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
-          <div style={{ flex: 1, minWidth: 0, paddingRight: 12 }}>
-            <p style={{ margin: 0, fontSize: 11, fontWeight: 700, color: "#f97316", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-              {t("apply.header.title")}
-            </p>
-            <p style={{ margin: "2px 0 0", fontSize: 15, fontWeight: 900, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{job.title}</p>
-            <p style={{ margin: "2px 0 0", fontSize: 12, color: "#555" }}>{fmt(workerNetHourly(job))}{rateLabel(job.rateType)} · {job.district}</p>
+        {/* header (fixed) */}
+        <div style={modalHeader}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+            <div style={{ flex: 1, minWidth: 0, paddingRight: 12 }}>
+              <p style={{ margin: 0, fontSize: 11, fontWeight: 700, color: "#f97316", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                {t("apply.header.title")}
+              </p>
+              <p style={{ margin: "2px 0 0", fontSize: 15, fontWeight: 900, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{job.title}</p>
+              <p style={{ margin: "2px 0 0", fontSize: 12, color: "#555" }}>{fmt(workerNetHourly(job))}{rateLabel(job.rateType)} · {job.district}</p>
+            </div>
+            <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "#555", flexShrink: 0 }}><X size={18} /></button>
           </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "#555", flexShrink: 0 }}><X size={18} /></button>
         </div>
+
+        {/* scrollable body */}
+        <div style={modalBody}>
 
         {!token && (
           <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 14,
@@ -210,7 +219,7 @@ export function ApplyModal({ job, onClose }: Props) {
                 overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2,
                 WebkitBoxOrient: "vertical",
               }}>
-                {(job.requirements.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()) || ""}
+                {htmlToPlainText(job.requirements)}
               </div>
             )}
           </div>
@@ -297,12 +306,17 @@ export function ApplyModal({ job, onClose }: Props) {
               {t("apply.hints.attachments") || "Up to 10 files, 30MB each. Images, PDF or Word."}
             </p>
           </div>
+        </div>
+        {/* end scrollable body */}
+        </div>
 
+        {/* footer (fixed) */}
+        <div style={modalFooter}>
           <button
             disabled={!token || submitting}
             onClick={handleSubmit}
             style={{
-              marginTop: 4, display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+              width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
               background: token && !submitting ? "#f97316" : "#1c1c1c",
               border: token ? "none" : "1px solid #272727",
               borderRadius: 10, padding: "12px", fontSize: 14, fontWeight: 700,
@@ -314,7 +328,6 @@ export function ApplyModal({ job, onClose }: Props) {
             {submitting ? (t("apply.buttons.submitting") || "Submitting…") : (t("apply.buttons.submit") || "Submit application")}
           </button>
           <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-
         </div>
       </div>
     </div>
