@@ -989,6 +989,11 @@
     },
     "hints": {
       "street_or_pin": "Indiquez la rue et le numéro, ou placez un repère sur la carte ci-dessous — les travailleurs l'utilisent pour vous rejoindre."
+    },
+    "title_confirm": {
+      "heading": "Nommez ce travail",
+      "desc": "Confirmez le nom du travail ou modifiez-le. Il reste un travail de type {cat}.",
+      "confirm": "Confirmer et payer"
     }
   },
   "offer": {
@@ -1766,7 +1771,10 @@
     "otp_label": "CODE DE VÉRIFICATION",
     "otp_resend": "Renvoyer le code",
     "wd_send_code": "Continuer — envoyez-moi un code",
-    "wd_confirm_btn": "Confirmer le retrait {amount}"
+    "wd_confirm_btn": "Confirmer le retrait {amount}",
+    "withdrawal_fee": "Frais de retrait",
+    "you_receive": "Vous recevez",
+    "total_from_wallet": "Total du portefeuille"
   },
   "seeker_bonuses": {
     "bonus_earned": "Bonus gagné",

@@ -79,10 +79,10 @@ export default function SeekerEarnings() {
     const token = localStorage.getItem("access_token")!;
     const amount = parseInt(wdAmt, 10);
     if (!amount || amount < 500) { setWdErr(t("seeker_earnings.min_wd_err") || "Minimum withdrawal is RWF 500"); return; }
-    if (amount + wdDonation > (wallet?.balance ?? 0)) {
-      setWdErr(wdDonation > 0
-        ? `Your wallet balance (${fmt(wallet?.balance ?? 0)}) is below the withdrawal plus the ${fmt(wdDonation)} donation.`
-        : (t("seeker_earnings.exceeds_err") || "Amount exceeds wallet balance"));
+    const fee = pricing.withdrawalFeeRwf || 0;
+    if (amount + wdDonation + fee > (wallet?.balance ?? 0)) {
+      setWdErr(`Your wallet balance (${fmt(wallet?.balance ?? 0)}) is below the total of ${fmt(amount + wdDonation + fee)}`
+        + ` (withdrawal ${fmt(amount)}${wdDonation > 0 ? ` + ${fmt(wdDonation)} donation` : ""} + ${fmt(fee)} fee).`);
       return;
     }
     if (!wdPhone.trim() || wdPhone.replace(/\D/g,"").length < 9) { setWdErr(t("seeker_earnings.valid_phone_err") || "Enter a valid phone number"); return; }
@@ -358,10 +358,32 @@ export default function SeekerEarnings() {
 
             <DonationAddon usdToRwf={pricing.usdToRwf} valueRwf={wdDonation} onChange={setWdDonation} />
             {wdDonation > 0 && (
-              <p style={{ margin:"8px 0 12px", fontSize:12, color:"#22c55e" }}>
+              <p style={{ margin:"8px 0 4px", fontSize:12, color:"#22c55e" }}>
                 {fmt(wdDonation)} will be given as a donation from your wallet, on top of your withdrawal.
               </p>
             )}
+
+            {/* Fee + total-from-wallet breakdown, so there are no surprises. */}
+            {(() => {
+              const amt = parseInt(wdAmt, 10) || 0;
+              const fee = pricing.withdrawalFeeRwf || 0;
+              if (amt <= 0 && fee <= 0) return null;
+              const total = amt + fee + wdDonation;
+              const row = (label: string, val: string, strong = false) => (
+                <div style={{ display:"flex", justifyContent:"space-between", fontSize:12, padding:"3px 0", color: strong ? "#e0e0e0" : "#888" }}>
+                  <span>{label}</span><span style={{ fontWeight: strong ? 800 : 500 }}>{val}</span>
+                </div>
+              );
+              return (
+                <div style={{ margin:"12px 0 4px", padding:"10px 14px", background:"#131313", border:"1px solid #1c1c1c", borderRadius:10 }}>
+                  {row(t("seeker_earnings.you_receive") || "You receive", fmt(amt))}
+                  {fee > 0 && row(t("seeker_earnings.withdrawal_fee") || "Withdrawal fee", `− ${fmt(fee)}`)}
+                  {wdDonation > 0 && row(t("donate.cta") || "Donation", `− ${fmt(wdDonation)}`)}
+                  <div style={{ height:1, background:"#222", margin:"6px 0" }} />
+                  {row(t("seeker_earnings.total_from_wallet") || "Total from wallet", fmt(total), true)}
+                </div>
+              );
+            })()}
             </>)}
 
             {wdStep === "otp" && (<>

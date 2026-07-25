@@ -989,6 +989,11 @@
     },
     "hints": {
       "street_or_pin": "Vuga umuhanda na nomero y'inzu, cyangwa ushyire akadomo ku ikarita hepfo — abakozi babikoresha kugera aho uri."
+    },
+    "title_confirm": {
+      "heading": "Ita iyi akazi",
+      "desc": "Emeza izina ry’akazi cyangwa urihindure. Rikomeza kuba akazi ka {cat}.",
+      "confirm": "Emeza wishyure"
     }
   },
   "offer": {
@@ -1766,7 +1771,10 @@
     "otp_label": "KODE YO KWEMEZA",
     "otp_resend": "Ongera wohereze kode",
     "wd_send_code": "Komeza — mpa kode kuri email",
-    "wd_confirm_btn": "Emeza kubikuza {amount}"
+    "wd_confirm_btn": "Emeza kubikuza {amount}",
+    "withdrawal_fee": "Amafaranga yo kubikuza",
+    "you_receive": "Uhabwa",
+    "total_from_wallet": "Igiteranyo kivuye muri konti"
   },
   "seeker_bonuses": {
     "bonus_earned": "Agahimbazamusyi",

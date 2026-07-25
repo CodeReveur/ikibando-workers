@@ -990,6 +990,11 @@
     },
     "hints": {
       "street_or_pin": "Name the street & house number, or drop a pin on the map below — workers use this to navigate to you."
+    },
+    "title_confirm": {
+      "heading": "Name this job",
+      "desc": "Confirm the job name or edit it. It stays a {cat} job.",
+      "confirm": "Confirm & pay"
     }
   },
   "offer": {
@@ -1767,7 +1772,10 @@
     "otp_label": "VERIFICATION CODE",
     "otp_resend": "Resend code",
     "wd_send_code": "Continue — email me a code",
-    "wd_confirm_btn": "Confirm withdrawal {amount}"
+    "wd_confirm_btn": "Confirm withdrawal {amount}",
+    "withdrawal_fee": "Withdrawal fee",
+    "you_receive": "You receive",
+    "total_from_wallet": "Total from wallet"
   },
   "seeker_bonuses": {
     "bonus_earned": "Bonus earned",

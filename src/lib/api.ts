@@ -1009,6 +1009,7 @@ export interface PricingConfig {
   cancellationWorkerCompRate: number;
   referralRewardRwf: number;
   usdToRwf: number;                   // RWF per 1 USD, for donation presets
+  withdrawalFeeRwf: number;           // flat fee charged per wallet withdrawal
 }
 
 /** Defaults matching the server's fallback so the UI still works if the call fails. */
@@ -1016,7 +1017,7 @@ export const DEFAULT_PRICING: PricingConfig = {
   workerCommissionRate: 0.20, workerCommissionFixed: 0,
   employerServiceFeeRate: 0.05, employerServiceFeeFixed: 0,
   cancellationPenaltyRate: 0.10, cancellationWorkerCompRate: 0.04,
-  referralRewardRwf: 1000, usdToRwf: 1300,
+  referralRewardRwf: 1000, usdToRwf: 1300, withdrawalFeeRwf: 450,
 };
 
 export async function getPricingConfig(): Promise<PricingConfig> {

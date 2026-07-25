@@ -989,6 +989,11 @@
     },
     "hints": {
       "street_or_pin": "Taja mtaa na nambari ya nyumba, au weka alama kwenye ramani hapa chini — wafanyakazi hutumia hii kukufikia."
+    },
+    "title_confirm": {
+      "heading": "Taja kazi hii",
+      "desc": "Thibitisha jina la kazi au libadilishe. Inabaki kuwa kazi ya {cat}.",
+      "confirm": "Thibitisha na ulipe"
     }
   },
   "offer": {
@@ -1766,7 +1771,10 @@
     "otp_label": "MSIMBO WA UTHIBITISHO",
     "otp_resend": "Tuma msimbo tena",
     "wd_send_code": "Endelea — nitumie msimbo",
-    "wd_confirm_btn": "Thibitisha uondoaji {amount}"
+    "wd_confirm_btn": "Thibitisha uondoaji {amount}",
+    "withdrawal_fee": "Ada ya kutoa",
+    "you_receive": "Unapokea",
+    "total_from_wallet": "Jumla kutoka mkoba"
   },
   "seeker_bonuses": {
     "bonus_earned": "Bonus uliyopata",
