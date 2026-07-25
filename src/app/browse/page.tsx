@@ -632,15 +632,13 @@ function BrowsePageInner() {
                       background: "#1c1c1c", border: "1px solid #272727", borderRadius: 14,
                       padding: "16px", textDecoration: "none",
                     }}>
-                      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
-                        <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: "#f0f0f0", lineHeight: 1.3 }}>{j.title}</p>
-                        <span style={{
-                          fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "3px 8px", flexShrink: 0,
-                          background: "rgba(249,115,22,0.1)", color: "#f97316",
-                        }}>
-                          {localizedJCat}
-                        </span>
-                      </div>
+                      <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: "#f0f0f0", lineHeight: 1.3 }}>{j.title}</p>
+                      <span style={{
+                        alignSelf: "flex-start", fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "3px 10px",
+                        background: "rgba(249,115,22,0.08)", color: "#f97316",
+                      }}>
+                        {localizedJCat}
+                      </span>
                       <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                         <MapPin size={11} color="#555" />
                         <span style={{ fontSize: 11, color: "#555" }}>{j.district}</span>
