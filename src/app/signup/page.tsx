@@ -193,7 +193,7 @@ export default function SignUpPage() {
         }
       } catch (e: unknown) {
         // Signing up with an identity that already has an account, or with an email that's
-        // registered with a password — say which (localized), and offer the sign-in route.
+        // registered with a password - say which (localized), and offer the sign-in route.
         const { msg, action } = signUpError(e, t("signup.toasts.google_fail_desc"));
         toastError(msg, { title: t("signup.toasts.signup_failed_title"), action });
       } finally {

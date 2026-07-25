@@ -286,7 +286,7 @@ export default function OwnerJobDetail() {
                   </span>
                 </p>
                 <p style={{ margin: "2px 0 0", fontSize: 10, color: "#444" }}>
-                  {app.workerDistrict ?? "—"}
+                  {app.workerDistrict ?? "-"}
                   {app.appliedVia === "HIRE_NOW" ? ` · ${t("owner_jobs.direct_offer") || "Direct Offer"}` : ` · ${t("owner_jobs.self_applied") || "Self-applied"}`}
                   {app.createdAt ? ` · ${d(app.createdAt, currentLocale)}` : ""}
                 </p>
@@ -561,7 +561,7 @@ export default function OwnerJobDetail() {
             <PaymentPanel jobId={id} role="employer" token={token} />
           )}
 
-          {/* Proof of work the worker attached — read-only here. Hides itself when empty. */}
+          {/* Proof of work the worker attached - read-only here. Hides itself when empty. */}
           {token && <JobEvidence jobId={id} canUpload={false} />}
         </div>
 
@@ -577,11 +577,11 @@ export default function OwnerJobDetail() {
             <InfoRow label={t("owner_jobs.duration") || "Duration"} value={durationLabel(job)} />
             <InfoRow label={t("owner_offers.workers_needed") || "Headcount"} value={`${job.headcount} worker${job.headcount !== 1 ? "s" : ""}`} />
             <InfoRow label={t("owner_offers.urgency") || "Urgency"} value={job.urgency?.replace("_", " ")} />
-            {job.startTime && <InfoRow label={t("owner_offers.start_time") || "Start Time"} value={dt(job.startTime, currentLocale) ?? "—"} />}
+            {job.startTime && <InfoRow label={t("owner_offers.start_time") || "Start Time"} value={dt(job.startTime, currentLocale) ?? "-"} />}
             {job.requirements && <InfoRow label={t("seeker_job_detail.requirements") || "Requirements"} value={<RichTextDisplay content={job.requirements} />} />}
           </div>
 
-          {/* Auto-release toggle — editable anytime; affects future payment requests only. */}
+          {/* Auto-release toggle - editable anytime; affects future payment requests only. */}
           <div style={{ background: "#111", border: "1px solid #1c1c1c", borderRadius: 14, padding: "16px 18px" }}>
             <p style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: "0.08em" }}>
               {t("owner_jobs.auto_release_title") || "Auto-release"}
@@ -592,8 +592,8 @@ export default function OwnerJobDetail() {
                 style={{ marginTop: 2, accentColor: "#f97316", width: 16, height: 16 }} />
               <span style={{ fontSize: 12.5, color: "#bbb", lineHeight: 1.5 }}>
                 {job.directRelease
-                  ? (t("owner_jobs.auto_release_on_desc") || "On — you can approve payment requests, but if you don't act within 2 hours they auto-release.")
-                  : (t("owner_jobs.auto_release_off_desc") || "Off — you must approve every payment request. Unapproved requests open a support case after 24 hours.")}
+                  ? (t("owner_jobs.auto_release_on_desc") || "On - you can approve payment requests, but if you don't act within 2 hours they auto-release.")
+                  : (t("owner_jobs.auto_release_off_desc") || "Off - you must approve every payment request. Unapproved requests open a support case after 24 hours.")}
               </span>
             </label>
           </div>
@@ -610,8 +610,8 @@ export default function OwnerJobDetail() {
                   {txn.status}
                 </span>
               } />
-              {txn.releasedAt && <InfoRow label={t("owner_jobs.released") || "Released"} value={d(txn.releasedAt, currentLocale) ?? "—"} />}
-              {txn.refundedAt && <InfoRow label={t("owner_jobs.refunded") || "Refunded"} value={d(txn.refundedAt, currentLocale) ?? "—"} />}
+              {txn.releasedAt && <InfoRow label={t("owner_jobs.released") || "Released"} value={d(txn.releasedAt, currentLocale) ?? "-"} />}
+              {txn.refundedAt && <InfoRow label={t("owner_jobs.refunded") || "Refunded"} value={d(txn.refundedAt, currentLocale) ?? "-"} />}
             </div>
           )}
 
@@ -626,7 +626,7 @@ export default function OwnerJobDetail() {
                   </div>
                   <div style={{ flex: 1 }}>
                     <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: "#d0d0d0" }}>{a.workerName}</p>
-                    <p style={{ margin: 0, fontSize: 10, color: "#444" }}>{a.workerDistrict ?? "—"} · Accepted {d(a.respondedAt, currentLocale)}</p>
+                    <p style={{ margin: 0, fontSize: 10, color: "#444" }}>{a.workerDistrict ?? "-"} · Accepted {d(a.respondedAt, currentLocale)}</p>
                   </div>
                 </div>
               ))}
@@ -641,7 +641,7 @@ export default function OwnerJobDetail() {
           <div style={{ background: "#111", border: "1px solid #222", borderRadius: 18, width: "100%", maxWidth: 420, padding: 28 }}>
             <p style={{ margin: "0 0 6px", fontSize: 16, fontWeight: 800, color: "#fff" }}>{t("owner_jobs.mark_job_complete") || "Mark Job Complete"}</p>
             <p style={{ margin: "0 0 18px", fontSize: 12, color: "#555", lineHeight: 1.5 }}>
-              {t("owner_jobs.complete_modal_desc", { amount: workerPayout?.toLocaleString() ?? "—" }) || `This will release RWF ${workerPayout?.toLocaleString() ?? "—"} to the worker(s). This action cannot be undone.`}
+              {t("owner_jobs.complete_modal_desc", { amount: workerPayout?.toLocaleString() ?? "-" }) || `This will release RWF ${workerPayout?.toLocaleString() ?? "-"} to the worker(s). This action cannot be undone.`}
             </p>
             
             <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "#3a3a3a" }}>{t("owner_workers.rating_required") || "RATING (REQUIRED)"}</p>
@@ -710,7 +710,7 @@ function EditJobModal({ job, saving, onSave, onClose }: {
   const existingTime = job.startTime ? new Date(job.startTime).toTimeString().slice(0, 5) : "";
 
   // Once workers have applied/been hired, the sensitive terms (date, hours, headcount, urgency) are
-  // locked — only title, location, description and requirements stay editable.
+  // locked - only title, location, description and requirements stay editable.
   const locked = ((job.acceptedCount ?? 0) + (job.pendingCount ?? 0)) > 0;
 
   const [form, setForm] = useState({

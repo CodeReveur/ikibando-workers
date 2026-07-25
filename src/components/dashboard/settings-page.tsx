@@ -314,7 +314,7 @@ export function SettingsPage({ roleLabel }: { roleLabel: string }) {
           })}
         </div>
 
-        {/* Right content — fills remaining width */}
+        {/* Right content - fills remaining width */}
         <div style={{ flex: 1, minWidth: 0 }}>
           {tab === "profile"       && <ProfileTab session={session} roleLabel={roleLabel} success={success} toastError={toastError} />}
           {tab === "security"      && <SecurityTab session={session} success={success} toastError={toastError} />}
@@ -393,7 +393,7 @@ function ProfileTab({
           boxShadow: "0 0 0 3px #111, 0 0 0 5px rgba(249,115,22,0.3)",
         }}>{initials}</div>
         <div style={{ flex: 1 }}>
-          <p style={{ margin: 0, fontWeight: 700, fontSize: 16, color: "#e0e0e0" }}>{name || "—"}</p>
+          <p style={{ margin: 0, fontWeight: 700, fontSize: 16, color: "#e0e0e0" }}>{name || "-"}</p>
           <p style={{ margin: "3px 0 0", fontSize: 12, color: "#444" }}>{roleLabel} · {session.email}</p>
         </div>
         {session.emailVerified && (
@@ -474,7 +474,7 @@ function ProfileTab({
         </div>
       </div>
 
-      {/* Employer payments preference — default auto-release for new jobs */}
+      {/* Employer payments preference - default auto-release for new jobs */}
       {session.role === "EMPLOYER" && (
         <div style={card}>
           <div style={cardHeader}>
@@ -573,7 +573,7 @@ function readWorkerFields() {
 
 /**
  * Profile picture: upload a custom one, remove it entirely, or let the badge photo stand in.
- * The badge itself always keeps its own photo — this only controls what's shown publicly.
+ * The badge itself always keeps its own photo - this only controls what's shown publicly.
  */
 function ProfilePhotoCard({
   session,
@@ -660,7 +660,7 @@ function ProfilePhotoCard({
           <p style={{ margin: "0 0 12px", fontSize: 12, color: "#666", lineHeight: 1.6 }}>
             {resolved
               ? (t("settings_page.photo.shown_desc") || "This picture is shown to employers on your public profile.")
-              : (t("settings_page.photo.initials_desc") || "No picture — employers will see your initials instead.")}
+              : (t("settings_page.photo.initials_desc") || "No picture - employers will see your initials instead.")}
           </p>
 
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: badgePhoto ? 14 : 0 }}>
@@ -727,7 +727,7 @@ function WorkerProfileSection({
 
   const [dob,          setDob]          = useState(stored?.dob ?? "");
   const [education,    setEducation]    = useState(stored?.educationLevel ?? "");
-  // A worker can practise several fields — multiple categories may be selected.
+  // A worker can practise several fields - multiple categories may be selected.
   const [experiences,  setExperiences]  = useState<string[]>(
     stored?.experienceTypes && stored.experienceTypes.length > 0
       ? stored.experienceTypes
@@ -871,7 +871,7 @@ function WorkerProfileSection({
               onBlur={e => (e.currentTarget.style.borderColor = "#222")}
             />
 
-            {/* Picked categories, in the order chosen — the first one is the primary. */}
+            {/* Picked categories, in the order chosen - the first one is the primary. */}
             {experiences.length > 0 && (
               <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 8 }}>
                 {experiences.map((slug, i) => {
@@ -1547,7 +1547,7 @@ function NotificationsTab({ role, success }: { role: string; success: (m: string
 }
 
 /**
- * Browser push. Permission lives with the browser, not our DB — so the state is read from
+ * Browser push. Permission lives with the browser, not our DB - so the state is read from
  * Notification.permission, and "denied" can only be undone in browser settings.
  */
 function PushNotificationCard({ success }: { success: (m: string) => void }) {
@@ -1645,7 +1645,7 @@ function AccountTab({
 
   const joinedDate = session.createdAt
     ? new Date(session.createdAt).toLocaleDateString(currentLocale, { year: "numeric", month: "long", day: "numeric" })
-    : "—";
+    : "-";
 
   const rows: { label: string; value: string }[] = [
     { label: t("settings_page.account.role"), value: roleLabel },
@@ -1667,7 +1667,7 @@ function AccountTab({
   const handleShare = async () => {
     if (!profileUrl) return;
     if (navigator.share) {
-      await navigator.share({ title: `${session.name} — MpahMapu`, url: profileUrl }).catch(() => {});
+      await navigator.share({ title: `${session.name} - MpahMapu`, url: profileUrl }).catch(() => {});
     } else {
       handleCopy();
     }
@@ -1675,7 +1675,7 @@ function AccountTab({
 
   return (
     <>
-      {/* Profile link card — workers only */}
+      {/* Profile link card - workers only */}
       {isWorker && profileUrl && (
         <div style={card}>
           <div style={cardHeader}>

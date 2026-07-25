@@ -114,7 +114,7 @@ export function AuthGate({ result, email, password, onResolved }: Props) {
     : mode === "SETUP" ? "Set up two-factor authentication"
     : "Two-factor authentication";
   const subtitle = mode === "EMAIL" ? `Enter the code we sent to ${email} to continue.`
-    : mode === "SETUP" ? "Scan the QR with an authenticator app, then enter the 6-digit code — or pick a reminder and set it up later."
+    : mode === "SETUP" ? "Scan the QR with an authenticator app, then enter the 6-digit code - or pick a reminder and set it up later."
     : "Enter the 6-digit code from your authenticator app.";
   const Icon = mode === "EMAIL" ? Mail : mode === "SETUP" ? QrCode : ShieldCheck;
 

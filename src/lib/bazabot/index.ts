@@ -82,7 +82,7 @@ async function streamRuleTurn(req: AgentRequest, cfg: BazaBotConfig, emit: Agent
  * Resolve the effective language for a turn, with a STICKY per-session
  * preference. An explicit request ("answer in Kinyarwanda", "nsubiza mu
  * kinyarwanda") or a detected Kinyarwanda message sets the preference; it then
- * persists so every following turn keeps that language — even short questions
+ * persists so every following turn keeps that language - even short questions
  * that carry no language signal of their own.
  */
 async function resolveLanguage(sessionId: string, message: string, uiLang: LangCode): Promise<LangCode> {
@@ -98,7 +98,7 @@ async function resolveLanguage(sessionId: string, message: string, uiLang: LangC
 }
 
 /**
- * Run one user turn with streaming. Never throws — always resolves to turn
+ * Run one user turn with streaming. Never throws - always resolves to turn
  * metadata, degrading to the rule engine on any failure.
  */
 export async function runAgentStream(req: AgentRequest, emit: AgentEmit): Promise<AgentMeta> {
@@ -106,7 +106,7 @@ export async function runAgentStream(req: AgentRequest, emit: AgentEmit): Promis
 
   // Rate limit per session.
   if (!checkRateLimit(req.context.sessionId, cfg.rateLimitPerMinute)) {
-    await emitChunks(emit, "You're sending messages a bit fast — give me a moment and try again. 🙂");
+    await emitChunks(emit, "You're sending messages a bit fast - give me a moment and try again. 🙂");
     return { source: "rules", lang: req.context.language, actions: [], suggestions: [], escalate: false, latencyMs: 0 };
   }
 
@@ -130,7 +130,7 @@ export async function runAgentStream(req: AgentRequest, emit: AgentEmit): Promis
   // to a generic answer). Signed-in users skip this and get a normal answer.
   if (req.context.role === "public" && wantsSignup(clean)) {
     await emitChunks(emit,
-      "Getting started takes a minute — tap Sign Up, choose Worker or Employer, then enter your name, email and phone. Use the button below to sign up.");
+      "Getting started takes a minute - tap Sign Up, choose Worker or Employer, then enter your name, email and phone. Use the button below to sign up.");
     return {
       source: "rules", lang: req.context.language, actions: [],
       suggestions: [], results: [signupCard()], escalate: false, latencyMs: 0,
@@ -139,15 +139,15 @@ export async function runAgentStream(req: AgentRequest, emit: AgentEmit): Promis
 
   // Prompt-injection guard: deflect without invoking the model at all.
   if (suspectedInjection) {
-    log.warn("suspected prompt injection — deflected", { sessionId: req.context.sessionId });
+    log.warn("suspected prompt injection - deflected", { sessionId: req.context.sessionId });
     await emitChunks(emit,
-      "I can only help with questions about MpahMapu — I can't change how I work. What would you like to know about the platform?");
+      "I can only help with questions about MpahMapu - I can't change how I work. What would you like to know about the platform?");
     return { source: "rules", lang: req.context.language, actions: [], suggestions: [], escalate: false, latencyMs: 0 };
   }
 
   // Language gate: the AI handles English, French and Swahili well. No free
   // hosted model reliably produces Kinyarwanda (they drift into Swahili and mix
-  // languages), so Kinyarwanda goes to the curated rule engine — pure, unmixed
+  // languages), so Kinyarwanda goes to the curated rule engine - pure, unmixed
   // Kinyarwanda. The preference is sticky per session (see resolveLanguage), so
   // "answer in Kinyarwanda only" keeps working on later turns too. Override with
   // BAZABOT_AI_ALL_LANGS=true to force the AI for every language.

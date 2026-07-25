@@ -88,7 +88,7 @@ function ToastPortal({ toasts, onDismiss }: { toasts: ToastItem[]; onDismiss: (i
           position: fixed;
           /* Fallback first: if env() isn't supported, this plain value stays
              in effect. The env() line below only overrides it on browsers
-             that understand it — it never leaves the toast unpositioned. */
+             that understand it - it never leaves the toast unpositioned. */
           bottom: 24px;
           right: 12px;
           left: 12px;
@@ -106,7 +106,7 @@ function ToastPortal({ toasts, onDismiss }: { toasts: ToastItem[]; onDismiss: (i
 
         /* Mobile browsers reserve unpredictable, browser-specific space at
            the bottom for their own toolbar/gesture bar, which sits on top
-           of the page instead of shrinking it — no fixed offset reliably
+           of the page instead of shrinking it - no fixed offset reliably
            clears it. Anchoring to the top on mobile avoids that fight
            entirely; only the status bar/notch is a factor there, which
            safe-area-inset-top accounts for precisely. */

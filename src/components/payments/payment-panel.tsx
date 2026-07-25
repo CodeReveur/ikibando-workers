@@ -16,7 +16,7 @@ import { Countdown } from "./countdown";
 const CURRENCY = "RWF";
 const fmt = (n: number) => `${CURRENCY} ${Number(n || 0).toLocaleString()}`;
 const fmtDate = (s: string | null) =>
-  s ? new Date(s).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : "—";
+  s ? new Date(s).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : "-";
 
 const card: React.CSSProperties = {
   background: "#131313", border: "1px solid #1c1c1c", borderRadius: 14, padding: 18, marginTop: 16,
@@ -117,7 +117,7 @@ export function PaymentPanel({ jobId, role, token }: {
         success(t("payments.toast_declined") || "Payment declined");
       } else {
         await disputePaymentRequest(id, reason, token);
-        success(t("payments.toast_complaint") || "Complaint submitted — payment frozen");
+        success(t("payments.toast_complaint") || "Complaint submitted - payment frozen");
       }
       setReasonFor(null);
       await load();

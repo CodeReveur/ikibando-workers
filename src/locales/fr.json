@@ -49,7 +49,7 @@
       "newsletter_subtitle": "Nouvelles fonctionnalités et astuces, directement dans votre boîte mail.",
       "newsletter_placeholder": "vous@email.com",
       "newsletter_button": "S'abonner",
-      "newsletter_thanks": "Merci — vous êtes abonné !",
+      "newsletter_thanks": "Merci - vous êtes abonné !",
       "newsletter_error": "Échec de l'abonnement. Veuillez réessayer."
     },
     "categories": {
@@ -643,9 +643,9 @@
       "member_emails_label": "E-mails des membres",
       "members_count": "· {count} membre{plural}",
       "member_email_placeholder": "Tapez un e-mail et appuyez sur Entrée…",
-      "member_email_hint": "Nous enverrons un e-mail à chaque membre pour l'informer qu'il a été ajouté. Ils recevront uniquement des notifications — aucun accès au tableau de bord — et pourront toujours créer leur propre compte plus tard.",
+      "member_email_hint": "Nous enverrons un e-mail à chaque membre pour l'informer qu'il a été ajouté. Ils recevront uniquement des notifications - aucun accès au tableau de bord - et pourront toujours créer leur propre compte plus tard.",
       "tin_label": "Numéro TIN",
-      "tin_placeholder": "Numéro d'identification fiscale — laisser vide pour passer",
+      "tin_placeholder": "Numéro d'identification fiscale - laisser vide pour passer",
       "tin_recommended": "(recommandé)",
       "tin_optional": "(optionnel)",
       "email_error": "Entrez une adresse e-mail valide.",
@@ -666,7 +666,7 @@
       "loading_categories": "Chargement des catégories...",
       "age_restriction_error": "Vous devez avoir au moins 18 ans pour vous inscrire.",
       "age_restriction_title": "Limite d'âge",
-      "category_multi_hint": "— sélectionnez tout ce qui s'applique",
+      "category_multi_hint": "- sélectionnez tout ce qui s'applique",
       "category_selected": "sélectionné(s)",
       "category_primary": "Principale",
       "category_note": "Toutes vos catégories apparaissent sur votre profil. La première que vous choisissez est votre catégorie principale."
@@ -988,7 +988,7 @@
       "desc": "Le travailleur peut demander un paiement après chaque {unit} terminé. Si activé, les montants approuvés sont versés instantanément ; sinon, vous approuvez chaque demande (approbation automatique en 2h)."
     },
     "hints": {
-      "street_or_pin": "Indiquez la rue et le numéro, ou placez un repère sur la carte ci-dessous — les travailleurs l'utilisent pour vous rejoindre."
+      "street_or_pin": "Indiquez la rue et le numéro, ou placez un repère sur la carte ci-dessous - les travailleurs l'utilisent pour vous rejoindre."
     },
     "title_confirm": {
       "heading": "Nommez ce travail",
@@ -1510,7 +1510,7 @@
     "photo": {
       "title": "Photo de profil",
       "shown_desc": "Cette photo est visible par les employeurs sur votre profil public.",
-      "initials_desc": "Aucune photo — les employeurs verront vos initiales.",
+      "initials_desc": "Aucune photo - les employeurs verront vos initiales.",
       "upload_btn": "Ajouter une photo",
       "change_btn": "Changer la photo",
       "remove_btn": "Supprimer",
@@ -1599,7 +1599,7 @@
     "feedback_label": "Commentaires de l'employeur",
     "released_to_wallet": "libéré dans votre portefeuille",
     "released_to_wallet_on": "libéré dans votre portefeuille le",
-    "held_in_escrow": "détenu en dépôt — payé lorsque l'employeur marque le travail comme terminé",
+    "held_in_escrow": "détenu en dépôt - payé lorsque l'employeur marque le travail comme terminé",
     "total_released": "Total libéré",
     "in_escrow": "En dépôt",
     "jobs_total": "Total des emplois",
@@ -1702,7 +1702,7 @@
     "badge_required": "L'identifiant du badge est requis.",
     "take_home": "Vous gagnerez (frais inclus)",
     "address": "Rue / Maison",
-    "track_the_way": "Suivre l'itinéraire — navigation en direct",
+    "track_the_way": "Suivre l'itinéraire - navigation en direct",
     "pays_on_time": "Paie à temps",
     "good_instructor": "Bon encadrant",
     "gives_tips": "Donne des pourboires",
@@ -1736,7 +1736,7 @@
     "withdraw": "Retirer",
     "done": "Terminé ✓",
     "track": "Suivre",
-    "accept_title": "Accepter l'offre — ajouter un message (facultatif)",
+    "accept_title": "Accepter l'offre - ajouter un message (facultatif)",
     "confirm_acceptance": "Confirmer l'acceptation",
     "cancel": "Annuler",
     "optional_placeholder": "ex. J'ai hâte de commencer ! Je serai là à l'heure."
@@ -1783,7 +1783,7 @@
     "otp_desc": "Pour votre sécurité, saisissez le code à 6 chiffres que nous venons de vous envoyer par e-mail pour confirmer ce retrait.",
     "otp_label": "CODE DE VÉRIFICATION",
     "otp_resend": "Renvoyer le code",
-    "wd_send_code": "Continuer — envoyez-moi un code",
+    "wd_send_code": "Continuer - envoyez-moi un code",
     "wd_confirm_btn": "Confirmer le retrait {amount}",
     "withdrawal_fee": "Frais de retrait",
     "you_receive": "Vous recevez",
@@ -1795,7 +1795,7 @@
     "credited_desc": "Crédité sur votre portefeuille · {count} bonus",
     "withdraw": "Retirer",
     "referral_program": "Programme de parrainage",
-    "earn_reward_desc": "Gagnez {reward} lorsqu'une personne rejoint avec votre lien — un travailleur qui termine son premier travail, ou un employeur que vous avez invité dont le premier travail est libéré.",
+    "earn_reward_desc": "Gagnez {reward} lorsqu'une personne rejoint avec votre lien - un travailleur qui termine son premier travail, ou un employeur que vous avez invité dont le premier travail est libéré.",
     "invited": "Invités",
     "rewarded": "Récompensés",
     "earned": "Gagnés",
@@ -1824,7 +1824,7 @@
     "claimed": "Bonus ajouté à votre portefeuille",
     "claim_failed": "Impossible de réclamer votre bonus. Veuillez réessayer.",
     "all_claimed": "Tout réclamé",
-    "in_wallet": "Déjà dans votre portefeuille — rien à réclamer pour le moment.",
+    "in_wallet": "Déjà dans votre portefeuille - rien à réclamer pour le moment.",
     "none_yet": "Aucun bonus pour l'instant.",
     "view_wallet": "Voir le portefeuille",
     "status_claimed": "Réclamé",
@@ -1921,8 +1921,8 @@
     "no_applications": "Aucune candidature pour cette offre.",
     "accept": "Accepter",
     "reject": "Refuser",
-    "confirm_accept_title": "Accepter le travailleur — ajouter une note (facultatif)",
-    "confirm_reject_title": "Refuser le travailleur — ajouter une note (facultatif)",
+    "confirm_accept_title": "Accepter le travailleur - ajouter une note (facultatif)",
+    "confirm_reject_title": "Refuser le travailleur - ajouter une note (facultatif)",
     "confirm_btn": "Confirmer",
     "cancel": "Annuler",
     "edit_job_modal": "Modifier l'emploi",
@@ -1998,11 +1998,11 @@
     "pay_method": "MODE DE PAIEMENT",
     "topup_card_hint": "Vous serez redirigé vers une page de paiement par carte sécurisée dans un nouvel onglet. Les fonds apparaîtront automatiquement dans votre portefeuille une fois le paiement confirmé.",
     "topup_pending_err": "Paiement pas encore confirmé. Si vous avez été débité, cela apparaîtra bientôt.",
-    "refund_pending": "Remboursement demandé — en attente d’approbation de l’administrateur",
+    "refund_pending": "Remboursement demandé - en attente d’approbation de l’administrateur",
     "refund_pending_badge": "Remboursement en attente",
     "refund_submitted": "Demande de remboursement envoyée. Un administrateur l’examinera ; les remboursements approuvés sont reversés sur votre portefeuille moins les frais applicables.",
     "refund_reason_err": "Veuillez indiquer une raison claire (au moins 10 caractères).",
-    "refund_notice": "Les remboursements sont examinés par un administrateur — ce n’est pas instantané. Les frais de service non remboursables sont conservés, et si un travailleur est déjà engagé, des frais d’annulation s’appliquent.",
+    "refund_notice": "Les remboursements sont examinés par un administrateur - ce n’est pas instantané. Les frais de service non remboursables sont conservés, et si un travailleur est déjà engagé, des frais d’annulation s’appliquent.",
     "submit_refund": "Envoyer la demande",
     "filter_all_types": "Tous les types",
     "filter_escrow": "Paiements sous séquestre",
@@ -2155,8 +2155,8 @@
     "complete_and_release": "Terminer & Libérer le paiement",
     "confirm_cancel_alert": "Annuler cet emploi ? Le montant déposé sera remboursé sur votre portefeuille.",
     "auto_release_title": "Versement automatique",
-    "auto_release_on_desc": "Activé — vous pouvez approuver les demandes de paiement, mais si vous n'agissez pas sous 2 heures, elles sont versées automatiquement.",
-    "auto_release_off_desc": "Désactivé — vous devez approuver chaque demande de paiement. Les demandes non approuvées ouvrent un dossier support après 24 heures.",
+    "auto_release_on_desc": "Activé - vous pouvez approuver les demandes de paiement, mais si vous n'agissez pas sous 2 heures, elles sont versées automatiquement.",
+    "auto_release_off_desc": "Désactivé - vous devez approuver chaque demande de paiement. Les demandes non approuvées ouvrent un dossier support après 24 heures.",
     "auto_release_failed": "Impossible de mettre à jour le versement automatique",
     "applications_closed": "Candidatures fermées",
     "title_label": "Titre",
@@ -2174,7 +2174,7 @@
     "faq1_q": "Comment suis-je payé ?",
     "faq1_a": "Vos gains sont bloqués en dépôt fiduciaire (escrow) au début du travail et sont versés directement sur votre portefeuille dès que l'employeur marque la mission comme terminée. Vous pouvez transférer vos fonds vers votre compte MTN MoMo ou Airtel Money à tout moment.",
     "faq2_q": "Quels sont les frais de plateforme ?",
-    "faq2_a": "Une commission de service est déduite des gains des travailleurs pour faire fonctionner le service, vérifier les utilisateurs et traiter les paiements — le taux exact est fixé par MpahMapu et affiché avant que vous acceptiez une mission.",
+    "faq2_a": "Une commission de service est déduite des gains des travailleurs pour faire fonctionner le service, vérifier les utilisateurs et traiter les paiements - le taux exact est fixé par MpahMapu et affiché avant que vous acceptiez une mission.",
     "faq3_q": "Comment obtenir des missions ?",
     "faq3_a": "Assurez-vous que les détails de votre profil, vos spécialités, votre éducation et votre district sont complets. Les employeurs peuvent vous trouver dans la recherche ou vous pouvez postuler aux offres publiées.",
     "faq4_q": "Comment valider la fin d'un travail ?",
@@ -2199,12 +2199,12 @@
       "process": "Dès que vous cliquez sur 'Réserver', le système traite la demande à {time} et gèle le montant total. Les fonds restent dans cet état de dépôt bloqué pendant toute la durée de la mission. Une fois la tâche accomplie, le travailleur présente son badge QR à l'employeur. Le scan du badge ou le clic sur 'Marquer comme terminé' libère instantanément le paiement.",
       "guidelines": "Tous les fonds du dépôt fiduciaire sont soumis à notre politique de vérification stricte. Les employeurs ont jusqu'à 24 heures après la fin des travaux pour inspecter la qualité du service. Si un litige est ouvert, les fonds resteront bloqués jusqu'à ce que notre équipe d'administration examine les preuves et prenne une décision finale.",
       "seeker": {
-        "overview": "En tant que travailleur, votre paiement est bloqué en toute sécurité dès qu'un employeur vous réserve — vos gains sont donc garantis avant même que vous ne vous déplaciez. Vous ne courez jamais après un employeur pour être payé.",
+        "overview": "En tant que travailleur, votre paiement est bloqué en toute sécurité dès qu'un employeur vous réserve - vos gains sont donc garantis avant même que vous ne vous déplaciez. Vous ne courez jamais après un employeur pour être payé.",
         "process": "Les fonds restent bloqués pendant toute la mission. Une fois terminée, l'employeur scanne votre badge QR ou clique sur 'Marquer comme terminé', et le paiement est versé directement dans votre portefeuille MpahMapu, prêt à être retiré."
       },
       "public": {
         "overview": "Le dépôt fiduciaire protège les deux parties. Lorsqu'un employeur réserve un travailleur, le montant total est bloqué sur un compte séquestre sécurisé : le travailleur sait que l'argent est garanti et l'employeur sait qu'il n'est débloqué que pour un travail accompli.",
-        "process": "Les fonds restent gelés pendant la mission. Une fois le travail confirmé comme terminé — en scannant le badge QR du travailleur ou en cliquant sur 'Marquer comme terminé' — le paiement est immédiatement versé dans le portefeuille du travailleur."
+        "process": "Les fonds restent gelés pendant la mission. Une fois le travail confirmé comme terminé - en scannant le badge QR du travailleur ou en cliquant sur 'Marquer comme terminé' - le paiement est immédiatement versé dans le portefeuille du travailleur."
       }
     },
     "payout": {
@@ -2212,10 +2212,10 @@
       "process": "Ouvrez votre Portefeuille, cliquez sur 'Retrait', saisissez le montant et votre numéro MTN MoMo ou Airtel Money, puis confirmez. Les fonds sont envoyés sur votre compte mobile money, généralement en quelques minutes.",
       "guidelines": "Vérifiez bien le montant et le numéro de téléphone avant de confirmer. Si un retrait n'arrive pas, consultez son statut dans les transactions de votre portefeuille ou contactez le support et nous le suivrons.",
       "seeker": {
-        "overview": "Vos gains arrivent dans votre portefeuille MpahMapu après chaque mission terminée — vous conservez votre part après la commission de service, et le montant exact est affiché avant que vous acceptiez. De là, vous pouvez encaisser vers Mobile Money quand vous le souhaitez."
+        "overview": "Vos gains arrivent dans votre portefeuille MpahMapu après chaque mission terminée - vous conservez votre part après la commission de service, et le montant exact est affiché avant que vous acceptiez. De là, vous pouvez encaisser vers Mobile Money quand vous le souhaitez."
       },
       "owner": {
-        "overview": "Tout solde restant dans votre portefeuille employeur — par exemple un remboursement après l'annulation d'une mission ou une recharge non utilisée — peut être retiré vers votre compte Mobile Money."
+        "overview": "Tout solde restant dans votre portefeuille employeur - par exemple un remboursement après l'annulation d'une mission ou une recharge non utilisée - peut être retiré vers votre compte Mobile Money."
       }
     },
     "refund": {
@@ -2223,7 +2223,7 @@
       "process": "Pour demander un remboursement, accédez à votre onglet Paiements, sélectionnez la transaction bloquée (HELD) et cliquez sur 'Demander un remboursement'. Pour les réservations en cours, les annulations effectuées plus de 2 heures avant l'heure de début sont intégralement remboursées. Les annulations effectuées moins de 2 heures avant entraînent des frais de 10% pour dédommager le travailleur.",
       "guidelines": "Toute demande de remboursement déposée après le début des travaux fait l'objet d'un audit par notre support client. Notre équipe évalue l'historique du chat, les rapports de travail et les signalements. Une fois approuvés, les fonds apparaissent sur votre solde de portefeuille, que vous pouvez retirer via MTN MoMo ou Airtel Money.",
       "seeker": {
-        "overview": "En tant que travailleur, vous ne demandez pas de remboursement — votre paiement est protégé par le dépôt fiduciaire. Mieux : si un employeur annule tardivement (moins de 2 heures avant le début), vous recevez une indemnité de 10% pour le court préavis.",
+        "overview": "En tant que travailleur, vous ne demandez pas de remboursement - votre paiement est protégé par le dépôt fiduciaire. Mieux : si un employeur annule tardivement (moins de 2 heures avant le début), vous recevez une indemnité de 10% pour le court préavis.",
         "process": "Si une réservation est annulée tardivement ou qu'un litige est tranché en votre faveur, toute indemnité est créditée sur votre portefeuille MpahMapu, et vous pouvez la retirer via MTN MoMo ou Airtel Money."
       },
       "public": {
@@ -2262,7 +2262,7 @@
         "process": "Cliquez sur 'Publier un emploi', remplissez les détails et financez le dépôt avec votre portefeuille, MTN MoMo, Airtel Money ou carte. Les travailleurs vérifiés à proximité peuvent postuler, ou vous pouvez en inviter un directement avec 'Embaucher maintenant' et examiner les candidatures avant d'accepter."
       },
       "public": {
-        "overview": "MpahMapu met en relation les personnes qui ont besoin de main-d'œuvre avec des travailleurs locaux vérifiés partout au Rwanda. Inscrivez-vous comme Travailleur pour être engagé, ou comme Employeur pour publier des offres et embaucher — vous pouvez même publier une première offre en tant qu'invité."
+        "overview": "MpahMapu met en relation les personnes qui ont besoin de main-d'œuvre avec des travailleurs locaux vérifiés partout au Rwanda. Inscrivez-vous comme Travailleur pour être engagé, ou comme Employeur pour publier des offres et embaucher - vous pouvez même publier une première offre en tant qu'invité."
       }
     },
     "complete": {
@@ -2271,7 +2271,7 @@
       "guidelines": "Assurez-vous toujours que l'employeur valide le travail sur place. S'il oublie, envoyez-lui un message poli via le chat. Si l'employeur refuse de valider la fin des travaux alors que le service a été rendu, contactez le support BazaBot pour soumettre vos preuves.",
       "owner": {
         "overview": "Marquer un travail comme terminé, c'est ainsi que vous débloquez le paiement vers le travailleur. C'est l'étape finale, effectuée une fois que vous êtes satisfait du travail convenu.",
-        "process": "Après que le travailleur a validé la fin avec son badge QR, ouvrez le projet sur votre tableau de bord et cliquez sur 'Marquer comme terminé' — ou scannez son badge. Le paiement est versé immédiatement au travailleur, et vous pouvez ensuite laisser une évaluation."
+        "process": "Après que le travailleur a validé la fin avec son badge QR, ouvrez le projet sur votre tableau de bord et cliquez sur 'Marquer comme terminé' - ou scannez son badge. Le paiement est versé immédiatement au travailleur, et vous pouvez ensuite laisser une évaluation."
       }
     },
     "dispute": {
@@ -2281,11 +2281,11 @@
     },
     "fallback": {
       "overview": "Je n’ai pas trouvé de réponse précise à cette question.",
-      "process": "Vous pouvez la reformuler, ou me poser des questions sur les emplois, les travailleurs, les paiements, le séquestre, les frais ou la vérification — je peux vous aider.",
+      "process": "Vous pouvez la reformuler, ou me poser des questions sur les emplois, les travailleurs, les paiements, le séquestre, les frais ou la vérification - je peux vous aider.",
       "guidelines": "Si vous préférez parler à une personne, dites simplement « talk to a live agent » et je vous mets en relation."
     },
     "placeholder_agent": "Écrivez à l'agent d'assistance…",
-    "resumed": "Cette conversation a été fermée. Je suis de nouveau là pour vous aider — n'hésitez pas à me demander ! 🤖",
+    "resumed": "Cette conversation a été fermée. Je suis de nouveau là pour vous aider - n'hésitez pas à me demander ! 🤖",
     "status_agent": "Connecté à un agent d'assistance",
     "status_online": "En ligne"
   },
@@ -2321,7 +2321,7 @@
     "toast_requested": "Paiement demandé",
     "toast_approved": "Paiement approuvé et versé",
     "toast_declined": "Paiement refusé",
-    "toast_complaint": "Réclamation envoyée — paiement gelé",
+    "toast_complaint": "Réclamation envoyée - paiement gelé",
     "err_request": "Impossible de demander le paiement",
     "err_approve": "Impossible d'approuver",
     "err_decline": "Impossible de refuser",
@@ -2354,7 +2354,7 @@
     "tag": "Nouveautés",
     "title": "Dernières fonctionnalités et mises à jour",
     "desc": "Tout ce que nous avons lancé récemment sur MpahMapu.",
-    "empty": "Aucune annonce pour l'instant — revenez bientôt.",
+    "empty": "Aucune annonce pour l'instant - revenez bientôt.",
     "cta": "Découvrir"
   },
   "job_evidence": {
@@ -2418,9 +2418,9 @@
   },
   "donate_page": {
     "title": "Votre don change des vies",
-    "intro": "Les dons à MpahMapu reviennent directement à la communauté que nous servons — aider les enfants à rester à l'école, ouvrir l'éducation à tous et soutenir les familles dans les moments difficiles.",
+    "intro": "Les dons à MpahMapu reviennent directement à la communauté que nous servons - aider les enfants à rester à l'école, ouvrir l'éducation à tous et soutenir les familles dans les moments difficiles.",
     "cta": "Faire un don",
-    "note": "Chaque don est volontaire et basé sur le consentement. Vous choisissez le montant et le moyen — MTN, Airtel ou carte — et vous pouvez donner anonymement.",
+    "note": "Chaque don est volontaire et basé sur le consentement. Vous choisissez le montant et le moyen - MTN, Airtel ou carte - et vous pouvez donner anonymement.",
     "c_scholar_t": "Les enfants à l'école",
     "c_scholar_d": "Bourses et frais de scolarité pour qu'aucun enfant ne soit laissé pour compte.",
     "c_education_t": "L'éducation pour tous",

@@ -3,7 +3,7 @@
  *
  * Every engine (Ollama, llama.cpp, an OpenAI-compatible server, …) implements
  * this same shape, so the rest of the agent never knows which one is running.
- * Swap engines by changing config alone — see providers/index.ts.
+ * Swap engines by changing config alone - see providers/index.ts.
  */
 import type { ChatMessage, ProviderChatOptions, StreamChunk } from "../types";
 

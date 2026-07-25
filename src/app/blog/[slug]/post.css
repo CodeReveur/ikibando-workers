@@ -1,6 +1,6 @@
 /*
  * Styles for admin-authored post HTML. The body is arbitrary markup from the editor's allowlist,
- * so it can't carry its own classes — every tag is styled by element here.
+ * so it can't carry its own classes - every tag is styled by element here.
  */
 
 .post-body {

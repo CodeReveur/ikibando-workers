@@ -4,7 +4,7 @@
  * Every value is read from *server-only* environment variables (NOT the
  * NEXT_PUBLIC_* space, which Next.js inlines at build time). These are read
  * live inside Route Handlers, so the model, engine and endpoints can be changed
- * by editing the host's environment and restarting — no rebuild, no code change.
+ * by editing the host's environment and restarting - no rebuild, no code change.
  *
  * The model is never hardcoded. If nothing is configured the agent degrades
  * gracefully to the legacy rule-based engine (see `lib/bazabot/index.ts`).
@@ -24,7 +24,7 @@ export interface BazaBotConfig {
   baseUrl: string;
   /** Optional bearer key for OpenAI-compatible servers. */
   apiKey?: string;
-  /** Chat/instruct model id. Swappable — never assume a specific model. */
+  /** Chat/instruct model id. Swappable - never assume a specific model. */
   model: string;
   /** Embedding model id (optional; enables semantic knowledge search). */
   embeddingModel?: string;
@@ -77,7 +77,7 @@ export function loadConfig(): BazaBotConfig {
     engine === "llamacpp" ? "http://127.0.0.1:8080" :
     "http://127.0.0.1:8000/v1";
 
-  // Default model per engine. Never hardcoded elsewhere — overridable via env.
+  // Default model per engine. Never hardcoded elsewhere - overridable via env.
   const defaultModel = engine === "groq" ? "llama-3.1-8b-instant" : "";
   const model = envStr("BAZABOT_MODEL", defaultModel);
 

@@ -5,7 +5,7 @@
  *
  * Phone cameras produce 3-8 MB photos, but the reverse proxy in front of the API
  * caps request bodies (nginx defaults to 1 MB) and rejects anything larger with a
- * 413 whose error response carries no CORS headers — so the browser reports it as
+ * 413 whose error response carries no CORS headers - so the browser reports it as
  * an opaque "CORS/network" failure and the app can't even read the status. Shrinking
  * the picture here keeps every upload comfortably under that ceiling, so the failure
  * simply never happens. A passport photo needs nothing like full sensor resolution.
@@ -46,7 +46,7 @@ export async function compressImage(
   try {
     img = await decode(file);
   } catch {
-    return file; // undecodable — caller surfaces a clear "unsupported format" error
+    return file; // undecodable - caller surfaces a clear "unsupported format" error
   }
 
   const scale = Math.min(1, maxDim / Math.max(img.naturalWidth, img.naturalHeight));

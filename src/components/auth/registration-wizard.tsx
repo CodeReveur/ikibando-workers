@@ -70,8 +70,8 @@ const STEP_NUMBER: Partial<Record<Step, string>> = {
   EQUIPMENT: "Step 3",
 };
 
-// Data-collection steps that are safe to resume a draft into (prerequisites —
-// role selection and email verification — already satisfied).
+// Data-collection steps that are safe to resume a draft into (prerequisites -
+// role selection and email verification - already satisfied).
 const DATA_STEPS: Step[] = ["ACCOUNT_TYPE", "EMPLOYER_DETAILS", "PERSONAL", "LOCATION_AVAILABILITY", "EQUIPMENT"];
 
 function capitalize(str: string) {
@@ -163,7 +163,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
   // Personal
   const [dob, setDob] = useState("");
   const [education, setEducation] = useState("");
-  // A worker can practise several fields — multiple categories may be selected.
+  // A worker can practise several fields - multiple categories may be selected.
   const [experiences, setExperiences] = useState<string[]>([]);
   const toggleExperience = (slug: string) =>
     setExperiences(prev => prev.includes(slug) ? prev.filter(s => s !== slug) : [...prev, slug]);
@@ -209,7 +209,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     restoredRef.current = true;
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // The onboarding payload from the current state — used by the FINAL submit,
+  // The onboarding payload from the current state - used by the FINAL submit,
   // where defaults are fine because the user has walked every step.
   const buildPayload = (): OnboardingData => ({
     role: showRoleSelect ? selectedRole : undefined,
@@ -263,7 +263,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
       }));
     } catch {}
 
-    // Server-side per-step save — resumes the account from where it left off,
+    // Server-side per-step save - resumes the account from where it left off,
     // even on another device. Skipped on the first slide(s) (role/verify).
     const token = authResult?.accessToken;
     if (slideMode && token && DATA_STEPS.includes(step)) {
@@ -305,7 +305,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
       if (u.tin) setTin(u.tin);
       if (u.teamMembers && Array.isArray(u.teamMembers)) setMemberEmails(u.teamMembers);
 
-      // Role select overrides everything — always start there when requested
+      // Role select overrides everything - always start there when requested
       let next: Step | null = null;
       if (showRoleSelect) {
         next = "ROLE_SELECT";
@@ -488,7 +488,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     }
   };
 
-  // Worker chose to generate their badge — hand off to the badge wizard.
+  // Worker chose to generate their badge - hand off to the badge wizard.
   if (showBadge && authResult) {
     return <BadgeSubmissionWizard authResult={authResult} onComplete={onComplete} />;
   }
@@ -557,7 +557,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
           </div>
         </div>
 
-        {/* Body — in slide mode each step animates in as the user advances. */}
+        {/* Body - in slide mode each step animates in as the user advances. */}
         {slideMode && <style>{`@keyframes wizSlide{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}`}</style>}
         <div
           key={slideMode ? step : undefined}
@@ -820,7 +820,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                 />
               </div>
 
-              {/* Education — not applicable to companies */}
+              {/* Education - not applicable to companies */}
               {accountType !== "COMPANY" && (
               <div>
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
@@ -844,12 +844,12 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
               </div>
               )}
 
-              {/* Experience — pick all the fields you work in */}
+              {/* Experience - pick all the fields you work in */}
               <div>
                 <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
                   {t("onboarding.personal.category_label")}
                   <span className="ml-1 text-gray-600 normal-case font-normal">
-                    {t("onboarding.personal.category_multi_hint") || "— select all that apply"}
+                    {t("onboarding.personal.category_multi_hint") || "- select all that apply"}
                   </span>
                 </label>
                 <input
@@ -860,7 +860,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                   className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-2 text-sm text-white outline-none focus:border-[#f97316] transition-colors"
                 />
 
-                {/* Picked categories, in the order chosen — the first one is the primary. */}
+                {/* Picked categories, in the order chosen - the first one is the primary. */}
                 {experiences.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mt-2">
                     {experiences.map((slug, i) => {

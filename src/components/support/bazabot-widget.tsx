@@ -42,7 +42,7 @@ export function BazaBotWidget() {
         </div>
       )}
 
-      {/* Small money icon, stacked just above BazaBot — opens the donation flow. Hidden while chat is open. */}
+      {/* Small money icon, stacked just above BazaBot - opens the donation flow. Hidden while chat is open. */}
       {!open && (
         <button
           onClick={() => setDonateOpen(true)}

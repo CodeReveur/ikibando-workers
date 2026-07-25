@@ -157,7 +157,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
 
   const ctxSession = useSession();
   // These modals also open on public pages where SessionProvider isn't mounted, so the
-  // context is null there. Fall back to the persisted "user" in localStorage — the same
+  // context is null there. Fall back to the persisted "user" in localStorage - the same
   // source the navbar uses to detect a logged-in user.
   const [lsUser] = useState<Session | null>(() => {
     if (typeof window === "undefined") return null;
@@ -425,7 +425,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
       const card = isCardMethod(method);
       const awaitingNote = card
         ? "Opening the secure card page… complete your payment there."
-        : "Sent a prompt to your phone — approve it to continue.";
+        : "Sent a prompt to your phone - approve it to continue.";
 
       if (!hasSession) {
         // Guest: take the real payment first (phase 1), then create the job (phase 2).
@@ -443,7 +443,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
         if (outcome !== "success") {
           setPayNote("");
           toastError(outcome === "pending"
-            ? "Payment not confirmed yet. If you were charged, it will reflect shortly — please try again."
+            ? "Payment not confirmed yet. If you were charged, it will reflect shortly - please try again."
             : "The payment was not completed. Please try again.", { title: "Payment not completed" });
           return;
         }
@@ -457,7 +457,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
       if (!activeToken) throw new Error("Failed to authenticate session");
 
       // The wallet is the money source. When it can't cover the escrow, top up only the
-      // shortfall via MoMo/Airtel/Card and wait for it to settle — that money lands in the
+      // shortfall via MoMo/Airtel/Card and wait for it to settle - that money lands in the
       // wallet, then postJob freezes the full escrow from the wallet (never a direct-to-job
       // payment). A low-balance posting therefore reads as a direct deposit.
       if (walletBal === null || walletBal < chargeable) {
@@ -474,7 +474,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
           if (outcome !== "success") {
             setPayNote("");
             toastError(outcome === "pending"
-              ? "Payment not confirmed yet. If you were charged, it will reflect shortly — please try again."
+              ? "Payment not confirmed yet. If you were charged, it will reflect shortly - please try again."
               : "The payment was not completed. Please try again.", { title: "Payment not completed" });
             return;
           }
@@ -516,7 +516,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
     : "-";
   const locationLabel = [getLocalizedProvinceLabel(job.province), job.district].filter(Boolean).join(" › ");
 
-  // Cascading Rwanda location options — resilient to casing/whitespace drift (see rwanda-geo.ts).
+  // Cascading Rwanda location options - resilient to casing/whitespace drift (see rwanda-geo.ts).
   const sectorOpts    = geoSectors(job.province, job.district);
   const cellOpts      = geoCells(job.province, job.district, job.sector);
   const villageOpts   = geoVillages(job.province, job.district, job.sector, job.cell);
@@ -623,7 +623,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
             {step === 0 && (
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
 
-                {/* Category — searchable */}
+                {/* Category - searchable */}
                 <FField label={t("post_job.labels.category") || "Job category *"} error={errors.category}>
                   <SearchSelect
                     options={JOB_CATEGORIES.map(c => ({ value: c.value, label: getLocalizedCategoryLabel(c.value) }))}
@@ -723,11 +723,11 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                       count: String(periods),
                       total: String(hours),
                       totalUnit: getUnit(job.rateType, hours),
-                    }) || `Worker is paid every ${interval} ${getUnit(job.rateType, interval)}, ${periods} time(s) — ${hours} ${getUnit(job.rateType, hours)} total.`)}
+                    }) || `Worker is paid every ${interval} ${getUnit(job.rateType, interval)}, ${periods} time(s) - ${hours} ${getUnit(job.rateType, hours)} total.`)}
                   </p>
                 )}
 
-                {/* Rate — kept right after the schedule so the amount follows the payment terms. */}
+                {/* Rate - kept right after the schedule so the amount follows the payment terms. */}
                 <FField label={(t("post_job.labels.rate_label", { period: RATE_LABEL[job.rateType] }) || `Rate per worker ${RATE_LABEL[job.rateType]} (RWF) *`)} error={errors.ratePerHour}>
                   <input type="number" min="0" placeholder={t("post_job.placeholders.rate") || "e.g. 3000"}
                     value={job.ratePerHour} onChange={e => setJob(f => ({ ...f, ratePerHour: e.target.value }))}
@@ -774,7 +774,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                   </label>
                 </div>
 
-                {/* Province + District — searchable */}
+                {/* Province + District - searchable */}
                 <div className="pj-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                   <FField label={t("post_job.labels.province") || "Province"}>
                     <SearchSelect
@@ -796,7 +796,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                   </FField>
                 </div>
 
-                {/* Sector → Cell → Village — cascading, from the same Rwanda dataset as sign-up.
+                {/* Sector → Cell → Village - cascading, from the same Rwanda dataset as sign-up.
                     Geographic names are constant (not translated), so they match worker locations. */}
                 <div className="pj-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
                   <FField label={t("post_job.labels.sector") || "Sector"}>
@@ -828,7 +828,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                   </FField>
                 </div>
 
-                {/* Street / avenue + house number — precise destination for worker navigation */}
+                {/* Street / avenue + house number - precise destination for worker navigation */}
                 <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 10 }}>
                   <FField
                     label={t("post_job.labels.street") || "Street / Avenue"}
@@ -860,7 +860,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                   </FField>
                 </div>
                 <p style={{ margin: "-4px 0 4px", fontSize: 11, color: "#555" }}>
-                  {t("post_job.hints.street_or_pin") || "Name the street & house number, or drop a pin on the map below — workers use this to navigate to you."}
+                  {t("post_job.hints.street_or_pin") || "Name the street & house number, or drop a pin on the map below - workers use this to navigate to you."}
                 </p>
 
                 {/* Map + GPS */}
@@ -912,7 +912,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                 {/* Requirements */}
                 <FField label={t("post_job.labels.requirements") || "Requirements (optional)"}>
                   <RichTextEditor
-                    placeholder={t("post_job.placeholders.requirements") || "What the worker must have or bring — skills, experience, tools, photos…"}
+                    placeholder={t("post_job.placeholders.requirements") || "What the worker must have or bring - skills, experience, tools, photos…"}
                     value={job.requirements}
                     onChange={v => setJob(f => ({ ...f, requirements: v }))}
                   />
@@ -1021,20 +1021,20 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                         <div style={{ display: "flex", flexDirection: "column" }}>
                           <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>Wallet balance</span>
                           <span style={{ fontSize: 11, color: needsTopup ? "#ef4444" : "#22c55e" }}>
-                            {walletBal !== null ? fmt(walletBal) : "—"}{needsTopup ? " · not enough to cover this job" : " · covers this job"}
+                            {walletBal !== null ? fmt(walletBal) : "-"}{needsTopup ? " · not enough to cover this job" : " · covers this job"}
                           </span>
                         </div>
                         {!needsTopup && <CheckCircle size={18} color="#22c55e" />}
                       </div>
                       {needsTopup && (
                         <p style={{ margin: "8px 0 0", fontSize: 12, color: "#aaa", lineHeight: 1.5 }}>
-                          Pay <strong style={{ color: "#f97316" }}>{fmt(topupAmount)}</strong> below to fund this job. It's added to your wallet and the full {fmt(escrow)} is held in escrow — it appears on your posting as a direct deposit.
+                          Pay <strong style={{ color: "#f97316" }}>{fmt(topupAmount)}</strong> below to fund this job. It's added to your wallet and the full {fmt(escrow)} is held in escrow - it appears on your posting as a direct deposit.
                         </p>
                       )}
                     </div>
                   )}
 
-                  {/* Payment methods — only shown for guests, or to top up a short wallet */}
+                  {/* Payment methods - only shown for guests, or to top up a short wallet */}
                   {showPayMethods && (
                   <>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>

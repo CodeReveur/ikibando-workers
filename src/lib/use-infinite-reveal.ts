@@ -23,7 +23,7 @@ export function useInfiniteReveal<T>(items: T[], batch = 16) {
   const lenRef = useRef(items.length);
   lenRef.current = items.length;
 
-  // Reset the reveal window whenever the (memoised) list identity changes — i.e. filters/search.
+  // Reset the reveal window whenever the (memoised) list identity changes - i.e. filters/search.
   useEffect(() => { setCount(batch); }, [items, batch]);
 
   const sentinelRef = useCallback((el: HTMLDivElement | null) => { setNode(el); }, []);

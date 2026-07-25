@@ -87,7 +87,7 @@ export default async function BlogPage({
             <p>
               {active === "ALL"
                 ? "We're just getting started. Every product update, partnership and announcement will land here first."
-                : "Try another category — there may be posts filed elsewhere."}
+                : "Try another category - there may be posts filed elsewhere."}
             </p>
           </div>
         ) : (

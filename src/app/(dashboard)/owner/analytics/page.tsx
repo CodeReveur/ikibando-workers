@@ -68,7 +68,7 @@ export default function OwnerAnalytics() {
   const acceptedApps = allApps.filter(a => a.status === "ACCEPTED").length;
   const pendingApps  = allApps.filter(a => a.status === "PENDING").length;
 
-  // Category breakdown — funded escrow only (each row maps to a job).
+  // Category breakdown - funded escrow only (each row maps to a job).
   const catTotals: Record<string, number> = {};
   funded.forEach(p => {
     const job = jobs.find(j => (j.id as unknown as string) === p.jobId);
@@ -80,7 +80,7 @@ export default function OwnerAnalytics() {
 
   const COLORS = ["#f97316","#60a5fa","#22c55e","#a78bfa","#f59e0b"];
 
-  // Weekly bars — funded escrow in the last 7 calendar days.
+  // Weekly bars - funded escrow in the last 7 calendar days.
   const recentPayments = funded.filter(p => {
     const d = new Date(p.createdAt);
     return Date.now() - d.getTime() < 7 * 86_400_000;
@@ -171,8 +171,8 @@ export default function OwnerAnalytics() {
           ))}
           <div style={{ marginTop:14, padding:"10px 12px", background:"rgba(249,115,22,0.04)", borderRadius:9 }}>
             <p style={{ margin:0, fontSize:11, color:"#555" }}>
-              {t("owner_analytics.avg_rate")?.replace("{rate}", jobs.length > 0 ? fmt(Math.round(jobs.reduce((s,j) => s + j.ratePerHour, 0) / jobs.length)) : "—") || 
-               `Avg. job rate: ${jobs.length > 0 ? fmt(Math.round(jobs.reduce((s,j) => s + j.ratePerHour, 0) / jobs.length)) : "—"} per hour`}
+              {t("owner_analytics.avg_rate")?.replace("{rate}", jobs.length > 0 ? fmt(Math.round(jobs.reduce((s,j) => s + j.ratePerHour, 0) / jobs.length)) : "-") || 
+               `Avg. job rate: ${jobs.length > 0 ? fmt(Math.round(jobs.reduce((s,j) => s + j.ratePerHour, 0) / jobs.length)) : "-"} per hour`}
             </p>
           </div>
         </div>

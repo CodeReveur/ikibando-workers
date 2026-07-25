@@ -50,8 +50,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   /**
-   * Individual posts. Each is a real page naming the brand — the corroboration Google needs before
-   * it stops spell-correcting an unfamiliar name — so they must be discoverable, not just linked.
+   * Individual posts. Each is a real page naming the brand - the corroboration Google needs before
+   * it stops spell-correcting an unfamiliar name - so they must be discoverable, not just linked.
    * Posts are written in English only, so no hreflang alternates here.
    */
   const page = await fetchPosts({ size: 50 });

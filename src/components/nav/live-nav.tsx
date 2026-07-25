@@ -28,7 +28,7 @@ export interface LiveNavSession {
   destLng?: number;
   startedAt: number;
   /**
-   * Worker only: whether the employer may follow this trip. OFF by default —
+   * Worker only: whether the employer may follow this trip. OFF by default -
    * navigating for yourself must never broadcast your position without consent.
    * The worker turns it on (and can turn it off) from the overlay or the job page.
    */
@@ -108,7 +108,7 @@ export function LiveNavOverlay() {
   const [workerFix, setWorkerFix] = useState<LiveWorkerLocation | null>(null);
   const [gpsError, setGpsError] = useState(false);
   const [shareError, setShareError] = useState<string | null>(null);
-  // Seconds since the worker's last successful upload — proof the push is firing.
+  // Seconds since the worker's last successful upload - proof the push is firing.
   const [sentAgo, setSentAgo] = useState<number | null>(null);
   const watchRef = useRef<number | null>(null);
   const lastSentRef = useRef(0);
@@ -164,7 +164,7 @@ export function LiveNavOverlay() {
         });
     };
 
-    // Immediate fix the moment sharing starts — don't wait for the first movement.
+    // Immediate fix the moment sharing starts - don't wait for the first movement.
     if (sharing) {
       navigator.geolocation.getCurrentPosition(
         (p) => { remember(p.coords); push(); },
@@ -322,7 +322,7 @@ export function LiveNavOverlay() {
                 <span style={{ display: "block", fontSize: 10, color: shareError ? "#ef4444" : "#666", marginTop: 1 }}>
                   {shareError
                     ? shareError
-                    : session.share ? "Sharing your live position on the way" : "Off — your location stays private"}
+                    : session.share ? "Sharing your live position on the way" : "Off - your location stays private"}
                 </span>
               </span>
             </button>

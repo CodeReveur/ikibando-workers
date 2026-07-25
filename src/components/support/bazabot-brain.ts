@@ -3,7 +3,7 @@
  *
  * Each keyword is tied to both a topic (what to answer) and a language (how to
  * answer). Scanning a message therefore tells us the reply content AND the reply
- * language, so the bot answers in whatever language the visitor wrote in —
+ * language, so the bot answers in whatever language the visitor wrote in -
  * independent of the app's selected language.
  */
 import en from "@/locales/en.json";
@@ -23,7 +23,7 @@ export type Topic =
   | "escrow" | "fee" | "refund" | "payout" | "verify" | "job" | "complete" | "dispute"
   | "fallback";
 
-/** Answer priority when several topics match — substantive topics beat small talk. */
+/** Answer priority when several topics match - substantive topics beat small talk. */
 const TOPIC_PRIORITY: Topic[] = [
   "escrow", "payout", "fee", "refund", "verify", "complete", "dispute", "job",
   "business", "quotes", "feeling", "greetings",
@@ -176,7 +176,7 @@ function tr(lang: Lang, key: string, vars?: Record<string, string | number>): st
   return trOrNull(lang, key, vars) ?? "";
 }
 
-/** First of several candidate keys that resolves — used for role → shared fallback. */
+/** First of several candidate keys that resolves - used for role → shared fallback. */
 function pick(lang: Lang, keys: string[], vars?: Record<string, string | number>): string {
   for (const k of keys) {
     const v = trOrNull(lang, k, vars);
@@ -188,8 +188,8 @@ function pick(lang: Lang, keys: string[], vars?: Record<string, string | number>
 /**
  * Build the reply for a topic in the chosen language, tailored to the asker's
  * role. Each part resolves the role-specific text (`<topic>.<role>.<part>`) and
- * falls back to the shared text (`<topic>.<part>`), so every role — including a
- * guest — always gets a complete answer in the visitor's language.
+ * falls back to the shared text (`<topic>.<part>`), so every role - including a
+ * guest - always gets a complete answer in the visitor's language.
  */
 export function respond(topic: Topic, lang: Lang, userName: string, role: Role = "public"): string {
   if (topic === "greetings" || topic === "feeling" || topic === "quotes" || topic === "business") {

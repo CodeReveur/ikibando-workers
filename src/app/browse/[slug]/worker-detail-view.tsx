@@ -51,7 +51,7 @@ export default function WorkerDetailView({
   const catLabels   = catSlugs.map((s, i) =>
     t(catKey(s)) || worker.categoryNames?.[i] || s);
   if (catLabels.length === 0) catLabels.push(t("common.general.worker"));
-  // Keep the stat card compact — a couple of categories then "+N" (full list on hover).
+  // Keep the stat card compact - a couple of categories then "+N" (full list on hover).
   const CAT_MAX   = 2;
   const catAll    = catLabels.join(", ");
   const catShort  = catLabels.slice(0, CAT_MAX).join(", ")
@@ -179,7 +179,7 @@ export default function WorkerDetailView({
             { label: t("worker_detail.stats.rating") || "Rating",         value: (() => { const r = ratingInfo(worker.rating, worker.ratingCount); return r.hasReviews ? `${r.value} ★ (${r.reviews})` : `${r.value} ★`; })() },
             { label: t("worker_detail.stats.completed_jobs") || "Completed jobs", value: String(worker.completedJobs ?? 0) },
             { label: t("jobs_page.filters.location") || "Location",       value: worker.locationRegion || worker.locationShort || worker.district || "Rwanda" },
-            { label: t("worker_detail.sections.available_days") || "Available days", value: worker.availability.length > 0 ? String(worker.availability.length) : "—",
+            { label: t("worker_detail.sections.available_days") || "Available days", value: worker.availability.length > 0 ? String(worker.availability.length) : "-",
               title: worker.availability.length > 0 ? (t("worker_detail.trust.availability", { count: worker.availability.length }) || undefined) : undefined },
           ] as { label: string; value: string; title?: string }[]).map(({ label, value, title }) => (
             <div key={label} style={{ background: "#1c1c1c", border: "1px solid #272727", borderRadius: 12, padding: "11px 12px", minWidth: 0 }}>
@@ -282,7 +282,7 @@ export default function WorkerDetailView({
 
       </div>
 
-      {/* STICKY CTA — matches navbar pill style */}
+      {/* STICKY CTA - matches navbar pill style */}
       <div style={{
         position: "fixed", bottom: 0, left: 0, right: 0,
         padding: "0 20px 20px",

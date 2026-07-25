@@ -32,12 +32,12 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
   // Every photo is aligned in the cropper before it is checked and uploaded, so a
   // badge always prints a square, centred portrait.
   const [cropFile, setCropFile] = useState<File | null>(null);
-  // Defaults to accepted — the badge photo doubles as the profile picture unless declined.
+  // Defaults to accepted - the badge photo doubles as the profile picture unless declined.
   const [usePhotoOnProfile, setUsePhotoOnProfile] = useState(true);
   const [nationalId, setNationalId] = useState("");
   const [legalName, setLegalName] = useState(authResult.user.name || "");
 
-  // Address comes from the profile captured at registration — no map/GPS here.
+  // Address comes from the profile captured at registration - no map/GPS here.
   // When launched from the dashboard the caller may not carry the location, so
   // fall back to fetching the freshest profile.
   const initialAddress = (authResult.user.location as Address | null | undefined) ?? null;
@@ -68,7 +68,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
   const idValid = idDigits >= 10;
 
   /**
-   * Step 1 — accept or reject the photo BEFORE the cropper opens.
+   * Step 1 - accept or reject the photo BEFORE the cropper opens.
    *
    * Checking after cropping meant someone could carefully frame a picture and only
    * then be told it has no usable face. Format, size and face are settled first;
@@ -113,7 +113,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
         return;
       }
 
-      // Accepted — now let them position it.
+      // Accepted - now let them position it.
       setCropFile(ready);
     } finally {
       setUploadingPhoto(false);
@@ -121,7 +121,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
   };
 
   /**
-   * Step 2 — upload the cropped result. Format, size and face were already settled
+   * Step 2 - upload the cropped result. Format, size and face were already settled
    * in acceptPhoto, and the crop re-encodes to a small square JPEG, so this only
    * needs a final size guard before sending.
    */
@@ -164,7 +164,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
       // headers were added (the classic opaque 413).
       return typeof navigator !== "undefined" && navigator.onLine === false
         ? (t("badge_wizard.errors.offline") || "You appear to be offline. Check your connection and try again.")
-        : (t("badge_wizard.errors.network") || "Upload failed — the photo may be too large or the connection dropped. Try again.");
+        : (t("badge_wizard.errors.network") || "Upload failed - the photo may be too large or the connection dropped. Try again.");
     }
     return err?.response?.data?.message
       || t("badge_wizard.toasts.photo_failed")
@@ -293,7 +293,7 @@ export function BadgeSubmissionWizard({ authResult, onComplete }: Props) {
                   </div>
                 </div>
 
-                {/* Real in-app camera (getUserMedia) — works on desktop and mobile,
+                {/* Real in-app camera (getUserMedia) - works on desktop and mobile,
                     unlike <input capture> which many browsers ignore. */}
                 <button
                   type="button"

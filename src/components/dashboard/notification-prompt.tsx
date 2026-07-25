@@ -16,7 +16,7 @@ const SNOOZE_MS = 3 * 24 * 60 * 60 * 1000; // 3 days
  * Soft ask, shown once after a logged-in user's session is detected, offering to turn on browser
  * notifications. Clicking "Enable" triggers the browser's own permission prompt (where the user
  * clicks Allow) and subscribes this browser to push. Only shown when push is supported and the
- * permission is still undecided — never when already granted or blocked.
+ * permission is still undecided - never when already granted or blocked.
  */
 export function NotificationPrompt() {
   const session = useSession();
@@ -47,7 +47,7 @@ export function NotificationPrompt() {
       const { enablePush } = await import("@/lib/push");
       await enablePush(token); // opens the browser's native permission prompt
     } catch {
-      /* denied or unsupported — nothing more to do */
+      /* denied or unsupported - nothing more to do */
     } finally {
       setBusy(false);
       setOpen(false);

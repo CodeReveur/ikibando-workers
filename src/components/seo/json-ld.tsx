@@ -17,7 +17,7 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
 /**
  * The brand entity. Google spell-corrects unfamiliar names ("MpahMapu" → "Mahmapu") until it's
  * confident the brand exists, so this states the name, its legitimate variants, a real logo and
- * every profile that corroborates it — under a stable @id the other schemas point back to, so
+ * every profile that corroborates it - under a stable @id the other schemas point back to, so
  * they read as one entity instead of three unrelated ones.
  */
 export function OrganizationSchema() {
@@ -103,7 +103,7 @@ export function LocalBusinessSchema() {
         "@context": "https://schema.org",
         "@type": "EmploymentAgency",
         "@id": `${SITE_URL}/#localbusiness`,
-        // Same brand, described as a business — parentOrganization keeps it one entity.
+        // Same brand, described as a business - parentOrganization keeps it one entity.
         name: SITE_NAME,
         alternateName: SITE_ALTERNATE_NAMES,
         parentOrganization: { "@id": ORG_ID },
@@ -161,7 +161,7 @@ export function BreadcrumbSchema({ items }: { items: { name: string; url: string
 
 /**
  * Blog post markup. Every post is a fresh page that names the brand and points back at the
- * Organization node — which is exactly the corroboration Google wants before it stops treating an
+ * Organization node - which is exactly the corroboration Google wants before it stops treating an
  * unfamiliar name as a typo. `publisher` is a reference to ORG_ID, not a duplicate definition, so
  * the whole site stays one entity.
  */

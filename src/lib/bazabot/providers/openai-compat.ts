@@ -1,6 +1,6 @@
 /**
  * OpenAI-compatible adapter. Works with any server that speaks the
- * /v1/chat/completions + /v1/embeddings API — llama.cpp's `--api`, LM Studio,
+ * /v1/chat/completions + /v1/embeddings API - llama.cpp's `--api`, LM Studio,
  * vLLM, text-generation-webui, LocalAI, etc. This makes "plug in another engine
  * later" a config change, not a code change.
  */

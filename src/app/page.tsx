@@ -176,7 +176,7 @@ export default function Home() {
       {/* responsive grid styles */}
       <style>{`
         /* Responsive by container width: as many ~150px columns as fit (up to ~4
-           on the wide home summary), fewer on phones — no overflow, no cramping. */
+           on the wide home summary), fewer on phones - no overflow, no cramping. */
         .card-grid {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));

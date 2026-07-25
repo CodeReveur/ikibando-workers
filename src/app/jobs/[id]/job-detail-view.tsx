@@ -100,7 +100,7 @@ export default function JobDetailView({ job }: { job: JobDto }) {
           borderRadius: 14, padding: "20px 22px", marginBottom: 24,
           display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12,
         }}>
-          {/* The headline number is what the worker takes home — the employer's posting price is
+          {/* The headline number is what the worker takes home - the employer's posting price is
               theirs, not the worker's, and showing it here only sets up a nasty surprise at payout. */}
           <div>
             <p style={{ margin: "0 0 2px", fontSize: 11, fontWeight: 700, color: "#f97316", textTransform: "uppercase", letterSpacing: "0.08em" }}>
@@ -137,7 +137,7 @@ export default function JobDetailView({ job }: { job: JobDto }) {
           </div>
         </div>
 
-        {/* PAYMENT SCHEDULE — how the worker gets paid over the job */}
+        {/* PAYMENT SCHEDULE - how the worker gets paid over the job */}
         <div style={{
           background: "#141414", border: "1px solid #222", borderRadius: 12,
           padding: "12px 16px", marginBottom: 24,
@@ -211,7 +211,7 @@ export default function JobDetailView({ job }: { job: JobDto }) {
 
       </div>
 
-      {/* STICKY CTA — matches navbar pill style */}
+      {/* STICKY CTA - matches navbar pill style */}
       <div style={{
         position: "fixed", bottom: 0, left: 0, right: 0,
         padding: "0 20px 20px",

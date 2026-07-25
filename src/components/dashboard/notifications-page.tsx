@@ -31,7 +31,7 @@ function styleFor(type: string): { icon: typeof Bell; color: string } {
 }
 
 /**
- * The full notification history. The bell only ever shows the newest few and clips the body —
+ * The full notification history. The bell only ever shows the newest few and clips the body -
  * this is where a notification can be read in full, and older ones are still reachable.
  */
 export function NotificationsPage({ role }: { role: "seeker" | "owner" }) {
@@ -140,7 +140,7 @@ export function NotificationsPage({ role }: { role: "seeker" | "owner" }) {
                       {n.title}
                     </p>
                   </div>
-                  {/* Full body — no clipping. The bell truncates; this page is where you read it. */}
+                  {/* Full body - no clipping. The bell truncates; this page is where you read it. */}
                   <p style={{ margin: "4px 0 0", fontSize: 12.5, color: "#8a8a8a", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
                     {n.body}
                   </p>

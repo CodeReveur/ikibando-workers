@@ -4,7 +4,7 @@ import type { BlogCategory, BlogPost, Page } from "@/lib/api";
  * Server-side blog fetching.
  *
  * The blog exists largely to give the brand crawlable, corroborating content, so these pages are
- * server-rendered — the axios client in lib/api.ts is browser-oriented and its data would never
+ * server-rendered - the axios client in lib/api.ts is browser-oriented and its data would never
  * reach a crawler. Plain fetch also lets us use Next's revalidation cache.
  */
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8088";
@@ -26,7 +26,7 @@ async function getJson<T>(path: string): Promise<T | null> {
     const body = await res.json();
     return (body?.data ?? null) as T | null;
   } catch {
-    // A blog outage must not take the page down — callers render an empty state.
+    // A blog outage must not take the page down - callers render an empty state.
     return null;
   }
 }

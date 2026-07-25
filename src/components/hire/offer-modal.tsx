@@ -103,7 +103,7 @@ export function OfferModal({ worker, onClose }: Props) {
 
   const ctxSession = useSession();
   // These modals also open on public pages where SessionProvider isn't mounted, so the
-  // context is null there. Fall back to the persisted "user" in localStorage — the same
+  // context is null there. Fall back to the persisted "user" in localStorage - the same
   // source the navbar uses to detect a logged-in user.
   const [lsUser] = useState<Session | null>(() => {
     if (typeof window === "undefined") return null;
@@ -338,7 +338,7 @@ export function OfferModal({ worker, onClose }: Props) {
       const card = isCardMethod(method);
       const awaitingNote = card
         ? "Opening the secure card page… complete your payment there."
-        : "Sent a prompt to your phone — approve it to continue.";
+        : "Sent a prompt to your phone - approve it to continue.";
 
       if (!hasSession) {
         // Guest direct offer: take the real payment first, then create the private job + assign.
@@ -358,7 +358,7 @@ export function OfferModal({ worker, onClose }: Props) {
         if (outcome !== "success") {
           setPayNote("");
           toastError(outcome === "pending"
-            ? "Payment not confirmed yet. If you were charged, it will reflect shortly — please try again."
+            ? "Payment not confirmed yet. If you were charged, it will reflect shortly - please try again."
             : "The payment was not completed. Please try again.", { title: "Payment not completed" });
           return;
         }
@@ -372,7 +372,7 @@ export function OfferModal({ worker, onClose }: Props) {
       if (!activeToken) throw new Error("Failed to authenticate session");
 
       // The wallet is the money source. When it can't cover the escrow, top up only the
-      // shortfall via MoMo/Airtel/Card and wait for it to settle — that money lands in the
+      // shortfall via MoMo/Airtel/Card and wait for it to settle - that money lands in the
       // wallet, then postJob freezes the full escrow from the wallet (never a direct-to-job
       // payment). A low-balance offer therefore reads as a direct deposit.
       if (walletBal === null || walletBal < chargeable) {
@@ -389,7 +389,7 @@ export function OfferModal({ worker, onClose }: Props) {
           if (outcome !== "success") {
             setPayNote("");
             toastError(outcome === "pending"
-              ? "Payment not confirmed yet. If you were charged, it will reflect shortly — please try again."
+              ? "Payment not confirmed yet. If you were charged, it will reflect shortly - please try again."
               : "The payment was not completed. Please try again.", { title: "Payment not completed" });
             return;
           }
@@ -500,7 +500,7 @@ export function OfferModal({ worker, onClose }: Props) {
               {/* requirements */}
               <FField label={t("post_job.labels.requirements") || "Requirements (optional)"}>
                 <RichTextEditor
-                  placeholder={t("post_job.placeholders.requirements") || "What the worker must have or bring — skills, experience, tools, photos…"}
+                  placeholder={t("post_job.placeholders.requirements") || "What the worker must have or bring - skills, experience, tools, photos…"}
                   value={requirements}
                   onChange={setRequirements}
                 />
@@ -585,11 +585,11 @@ export function OfferModal({ worker, onClose }: Props) {
                   {t("post_job.schedule_summary", {
                     interval: String(interval), unit: getUnit(rateType, interval),
                     count: String(periodsNum), total: String(hours), totalUnit: getUnit(rateType, hours),
-                  }) || `Worker is paid every ${interval} ${getUnit(rateType, interval)}, ${periodsNum} time(s) — ${hours} ${getUnit(rateType, hours)} total.`}
+                  }) || `Worker is paid every ${interval} ${getUnit(rateType, interval)}, ${periodsNum} time(s) - ${hours} ${getUnit(rateType, hours)} total.`}
                 </p>
               )}
 
-              {/* offer price — kept right after the schedule so the amount follows the payment terms. */}
+              {/* offer price - kept right after the schedule so the amount follows the payment terms. */}
               <FField label={t("offer.labels.offer_price", { period: RATE_LABEL[rateType] }) || `Your offer price ${RATE_LABEL[rateType]} (RWF) *`}>
                 <input type="number" min={1} placeholder={`e.g. ${minRate.toLocaleString()}`}
                   value={bid} onChange={e => setBid(e.target.value)}
@@ -618,7 +618,7 @@ export function OfferModal({ worker, onClose }: Props) {
                 </span>
               </label>
 
-              {/* Province + District — searchable */}
+              {/* Province + District - searchable */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                 <FField label={t("offer.labels.province") || "Province"}>
                   <SearchSelect
@@ -757,20 +757,20 @@ export function OfferModal({ worker, onClose }: Props) {
                       <div style={{ display: "flex", flexDirection: "column" }}>
                         <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>Wallet balance</span>
                         <span style={{ fontSize: 11, color: needsTopup ? "#ef4444" : "#22c55e" }}>
-                          {walletBal !== null ? fmt(walletBal) : "—"}{needsTopup ? " · not enough to cover this offer" : " · covers this offer"}
+                          {walletBal !== null ? fmt(walletBal) : "-"}{needsTopup ? " · not enough to cover this offer" : " · covers this offer"}
                         </span>
                       </div>
                       {!needsTopup && <CheckCircle size={18} color="#22c55e" />}
                     </div>
                     {needsTopup && (
                       <p style={{ margin: "8px 0 0", fontSize: 12, color: "#aaa", lineHeight: 1.5 }}>
-                        Pay <strong style={{ color: "#f97316" }}>{fmt(topupAmount)}</strong> below to fund this offer. It's added to your wallet and the full {fmt(total)} is held in escrow — it appears on your posting as a direct deposit.
+                        Pay <strong style={{ color: "#f97316" }}>{fmt(topupAmount)}</strong> below to fund this offer. It's added to your wallet and the full {fmt(total)} is held in escrow - it appears on your posting as a direct deposit.
                       </p>
                     )}
                   </div>
                 )}
 
-                {/* Payment methods — only shown for guests, or to top up a short wallet */}
+                {/* Payment methods - only shown for guests, or to top up a short wallet */}
                 {showPayMethods && (
                 <>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>

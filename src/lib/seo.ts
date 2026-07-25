@@ -17,7 +17,7 @@ export const SITE_DESCRIPTION = "Find verified workers instantly or get hired fo
 export const SITE_LOCALE = "en_RW";
 
 /**
- * Real raster logo for schema.org. A .ico is not a valid Organization logo — Google needs an
+ * Real raster logo for schema.org. A .ico is not a valid Organization logo - Google needs an
  * image it can render (min 112x112), and without one there's no logo in a knowledge panel.
  */
 export const SITE_LOGO = `${SITE_URL}/logo-512.png`;
@@ -31,7 +31,7 @@ export const SITE_LOGO = `${SITE_URL}/logo-512.png`;
  * silent h, will search for it. Naming it here tells Google the two strings are one entity.
  *
  * Only genuine variants of OUR name belong here. Do NOT add "Mahmapuu" or the other near-misses
- * Google currently guesses at — those belong to somebody else, and claiming them would teach
+ * Google currently guesses at - those belong to somebody else, and claiming them would teach
  * search engines the wrong entity rather than correcting them.
  */
 export const SITE_ALTERNATE_NAMES = [
@@ -46,7 +46,7 @@ export const SITE_ALTERNATE_NAMES = [
 /**
  * Profiles that prove this brand is a real, single entity. This is the strongest signal Google
  * has for deciding an unfamiliar name is a real thing rather than a typo, and while it was empty
- * nothing anywhere corroborated that "MpahMapu" exists — which is why a search for it offered a
+ * nothing anywhere corroborated that "MpahMapu" exists - which is why a search for it offered a
  * similarly spelled stranger instead.
  *
  * Hard-coded rather than env-only: these are public brand facts, not secrets or per-environment

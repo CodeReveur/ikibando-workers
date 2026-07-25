@@ -49,7 +49,7 @@
       "newsletter_subtitle": "Ibintu bishya n'inama, bigera kuri imeyili yawe.",
       "newsletter_placeholder": "wowe@email.com",
       "newsletter_button": "Iyandikishe",
-      "newsletter_thanks": "Murakoze — mwiyandikishije!",
+      "newsletter_thanks": "Murakoze - mwiyandikishije!",
       "newsletter_error": "Kwiyandikisha byanze. Ongera ugerageze."
     },
     "categories": {
@@ -643,9 +643,9 @@
       "member_emails_label": "Imeri z'abagize itsinda",
       "members_count": "· Umuryango {count} {plural}",
       "member_email_placeholder": "Andika imeri hanyuma ukande Enter...",
-      "member_email_hint": "Tukoherereza buri munyamuryango imeri imumenyesha ko yashyizwemo. Bahabwa gusa ubutumwa bw'arifa — nta buryo bafite bwo kwinjira ahabanza — kandi bashobora kwiyandikisha ku giti cyabo nyuma.",
+      "member_email_hint": "Tukoherereza buri munyamuryango imeri imumenyesha ko yashyizwemo. Bahabwa gusa ubutumwa bw'arifa - nta buryo bafite bwo kwinjira ahabanza - kandi bashobora kwiyandikisha ku giti cyabo nyuma.",
       "tin_label": "Nomero ya TIN",
-      "tin_placeholder": "TIN y'imisoro — andika ubusa niba ushaka kubisiga",
+      "tin_placeholder": "TIN y'imisoro - andika ubusa niba ushaka kubisiga",
       "tin_recommended": "(birasabwa)",
       "tin_optional": "(si ngombwa)",
       "email_error": "Andika imeri itunganye.",
@@ -666,7 +666,7 @@
       "loading_categories": "Gushakisha ikiciro...",
       "age_restriction_error": "Ugomba kuba ufite nibura imyaka 18 kugira ngo wiyandikishe.",
       "age_restriction_title": "Imyaka ntihagije",
-      "category_multi_hint": "— hitamo ibikwiye byose",
+      "category_multi_hint": "- hitamo ibikwiye byose",
       "category_selected": "byatoranyijwe",
       "category_primary": "Ibanze",
       "category_note": "Ibyiciro byawe byose bigaragara kuri profile yawe. Icya mbere watoranyije ni cyo cyiciro cyawe cy'ibanze."
@@ -988,7 +988,7 @@
       "desc": "Umukozi ashobora gusaba ubwishyu nyuma ya buri {unit} irangiye. Iyo iki gikora, amafaranga yemejwe yishyurwa ako kanya; iyo bidakora, wemeza buri busabe (byiyemeza mu masaha 2)."
     },
     "hints": {
-      "street_or_pin": "Vuga umuhanda na nomero y'inzu, cyangwa ushyire akadomo ku ikarita hepfo — abakozi babikoresha kugera aho uri."
+      "street_or_pin": "Vuga umuhanda na nomero y'inzu, cyangwa ushyire akadomo ku ikarita hepfo - abakozi babikoresha kugera aho uri."
     },
     "title_confirm": {
       "heading": "Ita iyi akazi",
@@ -1510,7 +1510,7 @@
     "photo": {
       "title": "Ifoto ya profile",
       "shown_desc": "Iyi foto igaragarira abakoresha kuri profile yawe rusange.",
-      "initials_desc": "Nta foto — abakoresha bazabona inyuguti z'amazina yawe.",
+      "initials_desc": "Nta foto - abakoresha bazabona inyuguti z'amazina yawe.",
       "upload_btn": "Shyiraho ifoto",
       "change_btn": "Hindura ifoto",
       "remove_btn": "Kuraho",
@@ -1599,7 +1599,7 @@
     "feedback_label": "Ibitekerezo by'umukoresha",
     "released_to_wallet": "yoherejwe kuri konti yawe",
     "released_to_wallet_on": "yoherejwe kuri konti yawe ku itariki",
-    "held_in_escrow": "yafunzwe muri escrow — azafungurwa umukoresha nemeza ko akazi karangiye",
+    "held_in_escrow": "yafunzwe muri escrow - azafungurwa umukoresha nemeza ko akazi karangiye",
     "total_released": "Ayishyuwe yose",
     "in_escrow": "Ategerejwe",
     "jobs_total": "Dosiye zose",
@@ -1702,7 +1702,7 @@
     "badge_required": "ID ya badge irakenewe.",
     "take_home": "Uzahembwa (amafaranga yose akuweho)",
     "address": "Umuhanda / Inzu",
-    "track_the_way": "Kurikira inzira — kuyobora ako kanya",
+    "track_the_way": "Kurikira inzira - kuyobora ako kanya",
     "pays_on_time": "Yishyura ku gihe",
     "good_instructor": "Umwigisha mwiza",
     "gives_tips": "Atanga inkunga",
@@ -1736,7 +1736,7 @@
     "withdraw": "Kura dosiye",
     "done": "Byakozwe ✓",
     "track": "Gukurikirana",
-    "accept_title": "Kwemera ubusabe — andika ubutumwa (si ngombwa)",
+    "accept_title": "Kwemera ubusabe - andika ubutumwa (si ngombwa)",
     "confirm_acceptance": "Emeza ko Wemeye",
     "cancel": "Guhagarika",
     "optional_placeholder": "Ugereranye: Niteguye gukorana namwe! Nzaza ku gihe."
@@ -1783,7 +1783,7 @@
     "otp_desc": "Ku mutekano wawe, andika kode y'imibare 6 twaguhereje kuri email kugira wemeze ubu bukwe.",
     "otp_label": "KODE YO KWEMEZA",
     "otp_resend": "Ongera wohereze kode",
-    "wd_send_code": "Komeza — mpa kode kuri email",
+    "wd_send_code": "Komeza - mpa kode kuri email",
     "wd_confirm_btn": "Emeza kubikuza {amount}",
     "withdrawal_fee": "Amafaranga yo kubikuza",
     "you_receive": "Uhabwa",
@@ -1795,7 +1795,7 @@
     "credited_desc": "Yoherejwe kuri konti yawe · agahimbazamusyi {count}",
     "withdraw": "Kubikuza",
     "referral_program": "Gutumira inshuti",
-    "earn_reward_desc": "Unguka {reward} iyo umuntu yiyandikishije akoresheje link yawe — umukozi urangije akazi ke ka mbere, cyangwa umukoresha watumiye afite akazi ke ka mbere kasohotse.",
+    "earn_reward_desc": "Unguka {reward} iyo umuntu yiyandikishije akoresheje link yawe - umukozi urangije akazi ke ka mbere, cyangwa umukoresha watumiye afite akazi ke ka mbere kasohotse.",
     "invited": "Abatumiwe",
     "rewarded": "Abahembwe",
     "earned": "Ayinjijwe",
@@ -1824,7 +1824,7 @@
     "claimed": "Inyongera yashyizwe muri wallet yawe",
     "claim_failed": "Ntibyashobotse gufata inyongera yawe. Ongera ugerageze.",
     "all_claimed": "Byose byafashwe",
-    "in_wallet": "Bisanzwe muri wallet yawe — nta kintu cyo gufata ubu.",
+    "in_wallet": "Bisanzwe muri wallet yawe - nta kintu cyo gufata ubu.",
     "none_yet": "Nta nyongera irahaba.",
     "view_wallet": "Reba wallet",
     "status_claimed": "Byafashwe",
@@ -1921,8 +1921,8 @@
     "no_applications": "Nta busabe bw'abakozi buraza kuri aka kazi.",
     "accept": "Kwemeza",
     "reject": "Guhakana",
-    "confirm_accept_title": "Kwemeza umukozi — andika ubutumwa (si ngombwa)",
-    "confirm_reject_title": "Guhakana umukozi — andika ubutumwa (si ngombwa)",
+    "confirm_accept_title": "Kwemeza umukozi - andika ubutumwa (si ngombwa)",
+    "confirm_reject_title": "Guhakana umukozi - andika ubutumwa (si ngombwa)",
     "confirm_btn": "Emeza",
     "cancel": "Guhagarika",
     "edit_job_modal": "Vugurura akazi",
@@ -1998,11 +1998,11 @@
     "pay_method": "UBURYO BWO KWISHYURA",
     "topup_card_hint": "Uzajyanwa ku rupapuro rwizewe rwo kwishyura na karita mu gafeni gashya. Amafaranga azagaragara muri wallet yawe iyo kwishyura byemejwe.",
     "topup_pending_err": "Kwishyura ntibiremezwa. Niba wishyuye, bizagaragara vuba.",
-    "refund_pending": "Gusaba kwishyurwa — bitegereje kwemezwa n’umuyobozi",
+    "refund_pending": "Gusaba kwishyurwa - bitegereje kwemezwa n’umuyobozi",
     "refund_pending_badge": "Kwishyurwa gutegereje",
     "refund_submitted": "Icyifuzo cyo kwishyurwa cyoherejwe. Umuyobozi arakigenzura; ayemejwe asubizwa muri wallet yawe hakuwemo amafaranga akatwa.",
     "refund_reason_err": "Nyamuneka tanga impamvu isobanutse (nibura inyuguti 10).",
-    "refund_notice": "Kwishyurwa bigenzurwa n’umuyobozi — ntibiba ako kanya. Amafaranga y’serivisi adasubizwa arakomeza gukatwa, kandi niba umukozi yaramaze gushakwa hakatwa amafaranga yo guhagarika.",
+    "refund_notice": "Kwishyurwa bigenzurwa n’umuyobozi - ntibiba ako kanya. Amafaranga y’serivisi adasubizwa arakomeza gukatwa, kandi niba umukozi yaramaze gushakwa hakatwa amafaranga yo guhagarika.",
     "submit_refund": "Ohereza icyifuzo",
     "filter_all_types": "Ubwoko bwose",
     "filter_escrow": "Amafaranga ari mu bubiko",
@@ -2155,8 +2155,8 @@
     "complete_and_release": "Emeza & Kora Payout",
     "confirm_cancel_alert": "Guhagarika aka kazi? Amafaranga yafunzwe azasubizwa kuri wallet yawe.",
     "auto_release_title": "Kwishyura ako kanya",
-    "auto_release_on_desc": "Birakora — ushobora kwemeza ubusabe bw'ubwishyu, ariko nutabikora mu masaha 2 byishyurwa byonyine.",
-    "auto_release_off_desc": "Ntibikora — ugomba kwemeza buri busabe bw'ubwishyu. Ubusabe butemejwe bufungura urubanza nyuma y'amasaha 24.",
+    "auto_release_on_desc": "Birakora - ushobora kwemeza ubusabe bw'ubwishyu, ariko nutabikora mu masaha 2 byishyurwa byonyine.",
+    "auto_release_off_desc": "Ntibikora - ugomba kwemeza buri busabe bw'ubwishyu. Ubusabe butemejwe bufungura urubanza nyuma y'amasaha 24.",
     "auto_release_failed": "Ntibishoboye guhindura kwishyura ako kanya",
     "applications_closed": "Ubusabe bwafunzwe",
     "title_label": "Umutwe",
@@ -2174,7 +2174,7 @@
     "faq1_q": "Nishyurwa nte?",
     "faq1_a": "Amafaranga yawe afungirwa muri escrow iyo akazi gatangiye maze agahita yoherezwa kuri wallet yawe iyo umukoresha yemeje ko akazi karangiye. Ushobora kuyakura kuri wallet ukayohereza kuri MTN MoMo cyangwa Airtel Money umunsi wose.",
     "faq2_q": "Ni ayahe mafaranga ya platform (fee)?",
-    "faq2_a": "Komisiyo ikatwa ku mafaranga umukozi yinjije kugira ngo dukomeze serivisi, kugenzura abakoresha n'abakozi no kwishyura — igipimo nyacyo gishyirwaho na MpahMapu kandi kigaragazwa mbere yo kwemera akazi.",
+    "faq2_a": "Komisiyo ikatwa ku mafaranga umukozi yinjije kugira ngo dukomeze serivisi, kugenzura abakoresha n'abakozi no kwishyura - igipimo nyacyo gishyirwaho na MpahMapu kandi kigaragazwa mbere yo kwemera akazi.",
     "faq3_q": "Nabonera nte akazi?",
     "faq3_a": "Emeza ko umwirondoro wawe, ubumenyi, amashuri, ndetse n'akarere utuyemo byuzuye neza. Abakoresha bashobora kugushakira ahabonetse abakozi cyangwa nawe ugasaba akazi katangajwe mu isoko ry'imirimo.",
     "faq4_q": "Nemeza nte ko akazi karangiye?",
@@ -2199,12 +2199,12 @@
       "process": "Iyo ukanze 'Book Now', sisitemu ihita yakira ubusabe bwawe saa {time} ikazibira amafaranga yose hamwe. Amafaranga aguma afunzwe muri escrow mu gihe cyose cy'akazi. Iyo umukozi arangije akazi, yerekana badge ye y'umukozi ifite QR code. Gusikana iyi badge cyangwa gukanda 'Mark Complete' bihita birekura amafaranga ako kanya akajya kuri wallet y'umukozi.",
       "guidelines": "Amafaranga yose yafunzwe agengwa n'amabwiriza yacu yo kugenzura. Abakoresha bafite amasaha agera kuri 24 nyuma yo kurangiza akazi kugira ngo bagenzure ubuziranenge bwako. Iyo impaka zafunguwe, amafaranga aguma afunzwe kugeza igihe ikipe yacu ishinzwe ubufasha isuzumye ibimenyetso ikagira umwanzuro ifata.",
       "seeker": {
-        "overview": "Nk'umukozi, amafaranga yawe afungirwa neza muri escrow igihe umukoresha akwemereye akazi — bityo umushahara wawe uba wemejwe na mbere y'uko ujya ku kazi. Ntutegereza gukurikirana umukoresha ngo aguhe amafaranga.",
+        "overview": "Nk'umukozi, amafaranga yawe afungirwa neza muri escrow igihe umukoresha akwemereye akazi - bityo umushahara wawe uba wemejwe na mbere y'uko ujya ku kazi. Ntutegereza gukurikirana umukoresha ngo aguhe amafaranga.",
         "process": "Amafaranga aguma afunzwe mu gihe cyose cy'akazi. Iyo urangije, umukoresha asikana badge yawe ya QR cyangwa agakanda 'Mark Complete', maze ubwishyu bukoherezwa ako kanya kuri wallet yawe ya MpahMapu, witeguye kuyakura."
       },
       "public": {
         "overview": "Escrow irinda impande zombi. Iyo umukoresha yemereye umukozi akazi, amafaranga yose afungirwa ku konti yizewe: umukozi amenya ko amafaranga yemejwe naho umukoresha akamenya ko arekurwa gusa iyo akazi karangiye.",
-        "process": "Amafaranga aguma afunzwe mu gihe cy'akazi. Iyo akazi kemejwe ko karangiye — usikanye badge ya QR y'umukozi cyangwa ukanze 'Mark Complete' — ubwishyu buhita bwoherezwa kuri wallet y'umukozi."
+        "process": "Amafaranga aguma afunzwe mu gihe cy'akazi. Iyo akazi kemejwe ko karangiye - usikanye badge ya QR y'umukozi cyangwa ukanze 'Mark Complete' - ubwishyu buhita bwoherezwa kuri wallet y'umukozi."
       }
     },
     "payout": {
@@ -2212,10 +2212,10 @@
       "process": "Fungura Wallet yawe, ukande 'Withdraw', wandike umubare w'amafaranga na numero yawe ya MTN MoMo cyangwa Airtel Money, hanyuma wemeze. Amafaranga akoherezwa kuri konti yawe ya mobile money, akenshi mu minota mike.",
       "guidelines": "Genzura neza umubare w'amafaranga na numero ya telefone mbere yo kwemeza. Niba amafaranga adageze, reba aho ageze kuri transactions za wallet yawe cyangwa uvugane na support tuyakurikirane.",
       "seeker": {
-        "overview": "Umushahara wawe ugera kuri wallet yawe ya MpahMapu nyuma ya buri kazi urangije — usigarana umugabane wawe nyuma ya komisiyo ya serivisi, kandi umubare nyawo ugaragazwa mbere yo kwemera. Uhereye aho ushobora gukura amafaranga ukayohereza kuri Mobile Money igihe cyose."
+        "overview": "Umushahara wawe ugera kuri wallet yawe ya MpahMapu nyuma ya buri kazi urangije - usigarana umugabane wawe nyuma ya komisiyo ya serivisi, kandi umubare nyawo ugaragazwa mbere yo kwemera. Uhereye aho ushobora gukura amafaranga ukayohereza kuri Mobile Money igihe cyose."
       },
       "owner": {
-        "overview": "Amafaranga asigaye kuri wallet yawe y'umukoresha — nk'ayakuwe mu kazi kahagaritswe cyangwa top-up utakoresheje — ushobora kuyakura ukayasubiza kuri konti yawe ya Mobile Money."
+        "overview": "Amafaranga asigaye kuri wallet yawe y'umukoresha - nk'ayakuwe mu kazi kahagaritswe cyangwa top-up utakoresheje - ushobora kuyakura ukayasubiza kuri konti yawe ya Mobile Money."
       }
     },
     "refund": {
@@ -2223,7 +2223,7 @@
       "process": "Niba ushaka gusubizwa amafaranga, jya ahanditse Payments, uhitemo transaction yafunzwe (HELD), maze ukande 'Request Refund'. Kuri gahunda z'akazi zigifunguye, guhagarika bikozwe mbere y'amasaha 2 ngo akazi gatangire bisubizwa 100%. Iyo uhagaritse mu masaha ari munsi ya 2 akazi gasigaje, ukatwa 10% yo guha indishyi umukozi.",
       "guidelines": "Ubusabe bwose bwo gusubizwa amafaranga nyuma y'uko akazi gatangira busuzumwa n'ikipe yacu. Ikipe yacu isuzuma ibiganiro bya chat, raporo z'akazi, ndetse n'umwirondoro w'abakoresha. Iyo byemejwe, amafaranga ahita agaragara kuri wallet yawe kandi ushobora kuyakura ukayohereza kuri MTN MoMo cyangwa Airtel Money.",
       "seeker": {
-        "overview": "Nk'umukozi ntusaba gusubizwa amafaranga — umushahara wawe urinzwe na escrow. Ndetse, iyo umukoresha ahagaritse akazi bitinze (mu masaha ari munsi ya 2 ngo gatangire), uhabwa indishyi ya 10% kubera integuza ngufi.",
+        "overview": "Nk'umukozi ntusaba gusubizwa amafaranga - umushahara wawe urinzwe na escrow. Ndetse, iyo umukoresha ahagaritse akazi bitinze (mu masaha ari munsi ya 2 ngo gatangire), uhabwa indishyi ya 10% kubera integuza ngufi.",
         "process": "Iyo akazi kahagaritswe bitinze cyangwa impaka zikemuwe ku ruhande rwawe, indishyi iyo ari yo yose ishyirwa kuri wallet yawe ya MpahMapu, kandi ushobora kuyakura ukoresheje MTN MoMo cyangwa Airtel Money."
       },
       "public": {
@@ -2262,7 +2262,7 @@
         "process": "Kanda 'Post a Job', wuzuze amakuru, hanyuma wishyure escrow ukoresheje wallet yawe, MTN MoMo, Airtel Money cyangwa ikarita. Abakozi bagenzuwe bari hafi bashobora gusaba, cyangwa ushobora gutumira umwe wenyine ukoresheje 'Hire Now' maze ukareba abasabye mbere yo kwemeza."
       },
       "public": {
-        "overview": "MpahMapu ihuza abantu bakeneye ko akazi gakorwa n'abakozi baho bagenzuwe mu Rwanda hose. Iyandikishe nk'Umukozi kugira ngo uhabwe akazi, cyangwa nk'Umukoresha kugira ngo utangaze akazi kandi uhe akazi — ushobora no gutangaza akazi ka mbere nk'umushyitsi."
+        "overview": "MpahMapu ihuza abantu bakeneye ko akazi gakorwa n'abakozi baho bagenzuwe mu Rwanda hose. Iyandikishe nk'Umukozi kugira ngo uhabwe akazi, cyangwa nk'Umukoresha kugira ngo utangaze akazi kandi uhe akazi - ushobora no gutangaza akazi ka mbere nk'umushyitsi."
       }
     },
     "complete": {
@@ -2271,7 +2271,7 @@
       "guidelines": "Emeza ko umukoresha yemeza akazi mbere y'uko uvaho. Iyo yabyibagiwe, mwandikire mu mucyo kuri chat. Iyo umukoresha wanze kwemeza ko akazi karangiye kandi wamukoreye, contacta support ya BazaBot maze uheze ibimenyetso by'akazi.",
       "owner": {
         "overview": "Kwemeza ko akazi karangiye ni bwo buryo urekura ubwishyu bwari bwafunzwe ukabuha umukozi. Ni intambwe ya nyuma, ikorwa iyo unyuzwe n'uko akazi kumvikanyweho karangiye.",
-        "process": "Nyuma y'uko umukozi yemeje ko akazi karangiye akoresheje badge ye ya QR, fungura akazi kuri dashboard yawe maze ukande 'Mark Complete' — cyangwa usikane badge ye. Ubwishyu buhita bwoherezwa umukozi, hanyuma ushobora kumuha amanota."
+        "process": "Nyuma y'uko umukozi yemeje ko akazi karangiye akoresheje badge ye ya QR, fungura akazi kuri dashboard yawe maze ukande 'Mark Complete' - cyangwa usikane badge ye. Ubwishyu buhita bwoherezwa umukozi, hanyuma ushobora kumuha amanota."
       }
     },
     "dispute": {
@@ -2281,11 +2281,11 @@
     },
     "fallback": {
       "overview": "Sinabashije kubona igisubizo nyacyo ku kibazo cyawe.",
-      "process": "Ushobora kongera kukibaza mu bundi buryo, cyangwa umbaze ku kazi, abakozi, kwishyura, escrow, amafaranga ya serivisi cyangwa kwemezwa — nshobora kubifasha.",
+      "process": "Ushobora kongera kukibaza mu bundi buryo, cyangwa umbaze ku kazi, abakozi, kwishyura, escrow, amafaranga ya serivisi cyangwa kwemezwa - nshobora kubifasha.",
       "guidelines": "Niba wifuza kuvugana n’umuntu, vuga gusa uti \"talk to a live agent\" maze nguhuze."
     },
     "placeholder_agent": "Andikira umukozi w'ubufasha…",
-    "resumed": "Iki kiganiro cyarafunzwe. Ndi hano nanone kugufasha — umva ukibaza icyo ari cyo cyose! 🤖",
+    "resumed": "Iki kiganiro cyarafunzwe. Ndi hano nanone kugufasha - umva ukibaza icyo ari cyo cyose! 🤖",
     "status_agent": "Uhujwe n'umukozi w'ubufasha",
     "status_online": "Kuri interineti"
   },
@@ -2321,7 +2321,7 @@
     "toast_requested": "Ubwishyu bwasabwe",
     "toast_approved": "Ubwishyu bwemejwe kandi bwarekuwe",
     "toast_declined": "Ubwishyu bwanzwe",
-    "toast_complaint": "Ikirego cyatanzwe — ubwishyu bwahagaritswe",
+    "toast_complaint": "Ikirego cyatanzwe - ubwishyu bwahagaritswe",
     "err_request": "Ntibishoboye gusaba ubwishyu",
     "err_approve": "Ntibishoboye kwemeza",
     "err_decline": "Ntibishoboye kwanga",
@@ -2354,7 +2354,7 @@
     "tag": "Ibishya",
     "title": "Ibintu bishya n'ivugururwa",
     "desc": "Ibyo twashyize ku rubuga rwa MpahMapu vuba aha.",
-    "empty": "Nta matangazo ahari — garuka vuba.",
+    "empty": "Nta matangazo ahari - garuka vuba.",
     "cta": "Reba"
   },
   "job_evidence": {
@@ -2418,9 +2418,9 @@
   },
   "donate_page": {
     "title": "Impano yawe ihindura ubuzima",
-    "intro": "Inkunga zitangwa kuri MpahMapu zisubira mu baturage tuba dukorera — gufasha abana kuguma ku ishuri, gufungurira bose uburezi, no gushyigikira imiryango mu bihe bikomeye.",
+    "intro": "Inkunga zitangwa kuri MpahMapu zisubira mu baturage tuba dukorera - gufasha abana kuguma ku ishuri, gufungurira bose uburezi, no gushyigikira imiryango mu bihe bikomeye.",
     "cta": "Tanga inkunga",
-    "note": "Buri nkunga itangwa ku bushake kandi wemeye. Uhitamo umubare n'uburyo — MTN, Airtel cyangwa ikarita — kandi ushobora gutanga utamenyekana.",
+    "note": "Buri nkunga itangwa ku bushake kandi wemeye. Uhitamo umubare n'uburyo - MTN, Airtel cyangwa ikarita - kandi ushobora gutanga utamenyekana.",
     "c_scholar_t": "Abana ku ishuri",
     "c_scholar_d": "Buruse n'amafaranga y'ishuri kugira ngo nta mwana usigara inyuma.",
     "c_education_t": "Uburezi kuri bose",

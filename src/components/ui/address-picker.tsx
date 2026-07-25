@@ -12,7 +12,7 @@ import type { Address } from "@/lib/api";
  * only lists options valid for the parent selection. For any other country it renders universal
  * free-text fields. The country picker lists every country in the world (searchable).
  *
- * No maps or GPS — location is captured purely as structured data.
+ * No maps or GPS - location is captured purely as structured data.
  */
 
 const SELECT_CLASS =

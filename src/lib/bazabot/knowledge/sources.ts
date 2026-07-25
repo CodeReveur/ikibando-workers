@@ -1,6 +1,6 @@
 /**
  * Knowledge sources. The searchable corpus is assembled from:
- *  - the existing FAQ corpus (bazabot-knowledge.ts) — single source of truth,
+ *  - the existing FAQ corpus (bazabot-knowledge.ts) - single source of truth,
  *  - a handful of concise platform policy/how-to documents.
  *
  * Add markdown/JSON docs by pushing more KnowledgeDoc entries. Keeping docs
@@ -59,7 +59,7 @@ const DOCS: KnowledgeDoc[] = [
     title: "Login and password help",
     category: "help",
     text: "Forgot your password? Tap 'Forgot Password' on the sign-in page and use the email you registered with to set a new one. " +
-      "Guest job posters have passwordless accounts — use the same flow to add a password. Social sign-in users log in with Google or Facebook.",
+      "Guest job posters have passwordless accounts - use the same flow to add a password. Social sign-in users log in with Google or Facebook.",
   },
 ];
 

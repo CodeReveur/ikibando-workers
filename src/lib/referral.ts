@@ -1,6 +1,6 @@
 /**
  * Referral-code capture. When a visitor arrives on any page via an invite link (?ref=CODE), we
- * persist the code so it survives navigation into flows that create an account later — notably the
+ * persist the code so it survives navigation into flows that create an account later - notably the
  * guest job-posting flow, where an invited employer never touches the /signup page.
  */
 const KEY = "MpahMapu_ref";
@@ -27,7 +27,7 @@ export function getReferralCode(): string | undefined {
   }
 }
 
-/** Forget the captured referral code — call once it has been attributed to a new account. */
+/** Forget the captured referral code - call once it has been attributed to a new account. */
 export function clearReferralCode(): void {
   if (typeof window === "undefined") return;
   try { localStorage.removeItem(KEY); } catch { /* ignore */ }

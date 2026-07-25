@@ -117,7 +117,7 @@ export interface AuthResult {
     profilePhotoUrl?: string | null;
     /** Whether the badge photo may be shown as the profile picture. */
     photoOnProfile?: boolean;
-    /** Resolved picture shown publicly — custom, else badge photo if consented, else null. */
+    /** Resolved picture shown publicly - custom, else badge photo if consented, else null. */
     profilePhoto?: string | null;
     nationalId?: string;
     legalName?: string;
@@ -177,7 +177,7 @@ export async function authenticate2fa(tempToken: string, code: string): Promise<
   return data.data;
 }
 
-/** Sign in to an EXISTING account. Never creates one — an unknown identity is rejected. */
+/** Sign in to an EXISTING account. Never creates one - an unknown identity is rejected. */
 export async function loginWithGoogle(accessToken: string): Promise<AuthResult> {
   const { data } = await http.post("/api/auth/oauth/google", {
     token: accessToken,
@@ -247,7 +247,7 @@ export interface OnboardingData {
   educationLevel: string;
   /** Primary/legacy single category slug. */
   experienceType: string;
-  /** All selected category slugs — a worker may practise several fields. */
+  /** All selected category slugs - a worker may practise several fields. */
   experienceTypes?: string[];
   /** Account identifier. Team/Company/Crew may carry members + TIN. */
   accountType?: AccountType;
@@ -559,7 +559,7 @@ export interface Page<T> {
 
 /**
  * Flatten Spring's VIA_DTO page shape. The server serializes Page as
- * {content, page:{number,size,totalElements,totalPages}} — the meta lives under
+ * {content, page:{number,size,totalElements,totalPages}} - the meta lives under
  * `page`, NOT at the top level. Reading `p.totalPages` off that raw shape gives
  * undefined, which silently killed pagination ("has more" always false). Every
  * paged endpoint funnels through here so callers get the flat shape they expect.
@@ -612,7 +612,7 @@ export interface JobDto {
   latitude: number | null;
   longitude: number | null;
   locationNotes: string | null;
-  /** Street / avenue of the job site — used for precise navigation. */
+  /** Street / avenue of the job site - used for precise navigation. */
   street: string | null;
   /** House / plot number at the street. */
   houseNumber: string | null;
@@ -634,13 +634,13 @@ export interface JobDto {
   platformFeeRate: number | null;
   /** Commission deducted from the worker's gross earnings (RWF). */
   platformFee: number | null;
-  /** Net the worker takes home — public "all charges covered" price (RWF). */
+  /** Net the worker takes home - public "all charges covered" price (RWF). */
   workerPayout: number | null;
   createdAt: string;
   completedAt: string | null;
   cancelledAt: string | null;
   completionNotes: string | null;
-  /** True once all positions are filled — no new applications accepted. */
+  /** True once all positions are filled - no new applications accepted. */
   applicationsClosed: boolean;
   filledAt: string | null;
   /** Live counts on detail/owner views (null on the public feed list). */
@@ -665,7 +665,7 @@ export interface WorkerProfileDto {
   categoryName: string | null;
   categoryNames: string[] | null;
   educationLevel: string | null;
-  /** Plain locality (e.g. "Kicukiro") — used for filtering/proximity. */
+  /** Plain locality (e.g. "Kicukiro") - used for filtering/proximity. */
   district: string | null;
   /** Compact address for cards, e.g. "Kicukiro, Rwanda". */
   locationShort: string | null;
@@ -689,7 +689,7 @@ export interface ApplicationDto {
   jobTitle: string;
   jobCategory: string;
   jobDistrict: string;
-  /** Gross rate the employer posted — not the worker's take-home. Use workerNetHourly(). */
+  /** Gross rate the employer posted - not the worker's take-home. Use workerNetHourly(). */
   jobRatePerHour: number;
   /** Net payout for all workers on the job, stamped at posting. */
   jobWorkerPayout: number | null;
@@ -771,9 +771,9 @@ export interface BonusDto {
 }
 
 export interface BonusSummary {
-  /** Bonuses already claimed — this money is in the wallet. */
+  /** Bonuses already claimed - this money is in the wallet. */
   total: number;
-  /** Granted but not yet claimed — not spendable until claimed. */
+  /** Granted but not yet claimed - not spendable until claimed. */
   claimable: number;
   count: number;
   items: BonusDto[];
@@ -800,7 +800,7 @@ export interface BonusRule {
   repeatable: boolean;
 }
 
-/** Promotions that are live right now — drives "Ways to earn bonuses". */
+/** Promotions that are live right now - drives "Ways to earn bonuses". */
 export async function getActiveBonusRules(token: string): Promise<BonusRule[]> {
   const { data } = await http.get("/api/wallet/bonus-rules", { headers: authHeader(token) });
   return data.data;
@@ -866,7 +866,7 @@ export async function getNotifications(token: string, page = 0, size = 20): Prom
  * The safe click target for a notification.
  *
  * Every URL a notification carries is an internal app route (/blog/..., /seeker/jobs/...), but
- * older ones were stored as absolute URLs built from the server's first CORS origin — which is
+ * older ones were stored as absolute URLs built from the server's first CORS origin - which is
  * http://localhost:3000 by default and a non-canonical host otherwise, so following them landed on
  * a dead host or a login page. Reducing any absolute URL to its path makes the link resolve
  * against wherever the app is actually running, which repairs those stored notifications without a
@@ -883,7 +883,7 @@ export function notificationHref(rawUrl: string | undefined | null): string | un
     if (u.protocol === "http:" || u.protocol === "https:") return u.pathname + u.search + u.hash;
     return url;
   } catch {
-    // Not a parseable URL — treat it as a relative path rather than dropping the link.
+    // Not a parseable URL - treat it as a relative path rather than dropping the link.
     return url.startsWith("/") ? url : `/${url}`;
   }
 }
@@ -1007,7 +1007,7 @@ export async function getJob(id: string): Promise<JobDto> {
   return data.data;
 }
 
-/** Public platform charge/bonus parameters — admin-configurable (see /api/config/pricing). */
+/** Public platform charge/bonus parameters - admin-configurable (see /api/config/pricing). */
 export interface PricingConfig {
   workerCommissionRate: number;       // fraction of job cost taken from the worker
   workerCommissionFixed: number;      // fixed RWF override (0 = use rate)
@@ -1071,13 +1071,13 @@ export function workerNetTotal(job: PayoutShape, p: PricingConfig = DEFAULT_PRIC
   return Math.round(gross - workerCommissionOf(gross, p));
 }
 
-/** The worker's net per hour — the number to show wherever a job's "rate" is displayed to workers. */
+/** The worker's net per hour - the number to show wherever a job's "rate" is displayed to workers. */
 export function workerNetHourly(job: PayoutShape, p: PricingConfig = DEFAULT_PRICING): number {
   const hours = job.durationHours && job.durationHours > 0 ? job.durationHours : 1;
   return Math.round(workerNetTotal(job, p) / hours);
 }
 
-/** Same, for an ApplicationDto — its job fields are prefixed, so adapt rather than re-derive. */
+/** Same, for an ApplicationDto - its job fields are prefixed, so adapt rather than re-derive. */
 type ApplicationPayoutShape = {
   jobRatePerHour: number;
   jobWorkerPayout?: number | null;
@@ -1134,7 +1134,7 @@ export interface GuestJobPayload {
   appliedVia?: string;
   /** Where XentriPay returns the browser after a hosted card payment. */
   redirectUrl?: string;
-  /** Optional referral code — links a new guest employer to whoever invited them. */
+  /** Optional referral code - links a new guest employer to whoever invited them. */
   referralCode?: string;
 }
 
@@ -1178,7 +1178,7 @@ export interface DonationPayload {
 }
 
 /**
- * Start a donation collection (public — works signed in or as a guest). Mobile money pushes a
+ * Start a donation collection (public - works signed in or as a guest). Mobile money pushes a
  * USSD prompt; card returns a hosted-checkout redirectUrl. Poll getDonationStatus with the
  * returned id until it settles. When a bearer token is present it is attached so the donation
  * is linked to the account; otherwise it is anonymous/guest.
@@ -1404,7 +1404,7 @@ export interface BlogPost {
   slug: string;
   title: string;
   excerpt: string | null;
-  /** Sanitised HTML. Null on list endpoints — cards don't render the body. */
+  /** Sanitised HTML. Null on list endpoints - cards don't render the body. */
   bodyHtml: string | null;
   coverImageUrl: string | null;
   category: BlogCategory;

@@ -11,15 +11,15 @@ import { getBlogPosts, type BlogPost } from "@/lib/api";
 const ACCENT = "#f97316";
 
 /**
- * Public "why donate" page. Explains what contributions to MpahMapu go towards — schooling for
- * children, education for all, family and emergency support, and community societies — and opens
+ * Public "why donate" page. Explains what contributions to MpahMapu go towards - schooling for
+ * children, education for all, family and emergency support, and community societies - and opens
  * the same donation flow used elsewhere. Linked from the footer.
  */
 export default function DonatePage() {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
 
-  // Recent donation-funded activities MpahMapu has performed — admin-managed "Donation impact"
+  // Recent donation-funded activities MpahMapu has performed - admin-managed "Donation impact"
   // posts (Blog & Updates, category IMPACT). Empty until the team publishes the first one.
   const [activities, setActivities] = useState<BlogPost[]>([]);
   useEffect(() => {

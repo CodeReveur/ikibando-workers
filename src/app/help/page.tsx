@@ -45,7 +45,7 @@ export default function HelpCenter() {
         <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">Help Center</h1>
         <p className="mx-auto mt-3 max-w-2xl text-[15px] leading-relaxed text-gray-500">
           Answers about jobs, workers, payments, escrow, fees and verification on MpahMapu. Still stuck?
-          Tap the chat bubble at the bottom-right to talk to BazaBot — it can connect you to a live agent.
+          Tap the chat bubble at the bottom-right to talk to BazaBot - it can connect you to a live agent.
         </p>
       </div>
 
@@ -116,7 +116,7 @@ export default function HelpCenter() {
       {/* Foot note */}
       <div className="mt-10 flex items-center justify-center gap-2 rounded-xl bg-orange-50 px-4 py-3 text-center text-[13px] text-orange-700">
         <MessageCircle size={16} />
-        Can’t find your answer? Chat with BazaBot (bottom-right) — it can connect you to a live agent.
+        Can’t find your answer? Chat with BazaBot (bottom-right) - it can connect you to a live agent.
       </div>
     </main>
   );

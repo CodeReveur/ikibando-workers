@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     "Find verified workers instantly or get hired for a job today. Rwanda's trusted on-demand workforce platform for events, cleaning, security, driving, and more.",
   /*
    * Google has ignored the keywords meta tag since 2009, and Bing does too. It is kept because it
-   * costs nothing and a few smaller crawlers still read it — but nothing here affects ranking on
+   * costs nothing and a few smaller crawlers still read it - but nothing here affects ranking on
    * Google, so it is not the place to fix a brand that does not surface. The name variants that
    * actually carry weight are in SITE_ALTERNATE_NAMES, which feeds schema.org alternateName.
    */
@@ -89,12 +89,12 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
-    // Was coutput.png — a 5MB, 10000x10000 image served as a touch icon.
+    // Was coutput.png - a 5MB, 10000x10000 image served as a touch icon.
     apple: "/icon-192.png",
   },
   /**
    * Search Console ownership. Without a verified property you cannot submit the sitemap, request
-   * indexing, or see what Google actually thinks this brand is — which is the whole problem when
+   * indexing, or see what Google actually thinks this brand is - which is the whole problem when
    * it spell-corrects the name. Set NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION to the token Google gives
    * you under Settings → Ownership verification → HTML tag.
    */

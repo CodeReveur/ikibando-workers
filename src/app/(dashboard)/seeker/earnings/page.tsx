@@ -430,7 +430,7 @@ export default function SeekerEarnings() {
                     {t("seeker_earnings.processing") || "Processing…"}
                   </>
                 ) : wdStep === "details" ? (
-                  t("seeker_earnings.wd_send_code") || "Continue — email me a code"
+                  t("seeker_earnings.wd_send_code") || "Continue - email me a code"
                 ) : (
                   t("seeker_earnings.wd_confirm_btn")
                     ?.replace("{amount}", wdAmt ? fmt(parseInt(wdAmt, 10)||0) : "") ||

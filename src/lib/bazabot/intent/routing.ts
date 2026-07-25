@@ -4,7 +4,7 @@
  * Lightweight models are unreliable at free-form tool selection, so we make tool
  * *selection* deterministic: the detected intent (and its extracted slots) maps
  * to the tool(s) most likely to ground a correct answer. These run before the
- * answer is composed, guaranteeing the model always has real platform data —
+ * answer is composed, guaranteeing the model always has real platform data -
  * regardless of the model's own tool-calling ability.
  *
  * The model still drives intent classification and the final reasoning/wording;
@@ -31,7 +31,7 @@ const OCCUPATIONS = "cleaner|electrician|plumber|guard|driver|cook|maid|nanny|te
  * meant "ndashaka akazi" ("I want a job") looked like small talk, so the bot had
  * to ask which side the person was on instead of just searching.
  *
- * These sets are matched all at once — no language detection first, which would
+ * These sets are matched all at once - no language detection first, which would
  * fail on mixed sentences.
  */
 const JOB_NOUNS =
@@ -81,7 +81,7 @@ function normalize(message: string): string {
     .replace(/\s+/g, " ")} `;
 }
 
-/** "I am a driver" / "ndi umushoferi" — naming your own trade is a request for jobs. */
+/** "I am a driver" / "ndi umushoferi" - naming your own trade is a request for jobs. */
 const DECLARES_TRADE = new RegExp(
   `\\b(i am|i m|am|ndi|ndimwe|mimi ni|je suis)\\s+(a|an|umu\\w*|mu\\w*|un|une)?\\s*(${OCCUPATIONS})\\b`,
 );
@@ -91,7 +91,7 @@ export function isSearchRequest(message: string): boolean {
   const m = normalize(message);
   const verb = new RegExp(`\\b(${SEARCH_VERBS})\\b`).test(m);
   const noun = new RegExp(`\\b(${JOB_NOUNS}|${WORKER_NOUNS}|${OCCUPATIONS})\\b`).test(m);
-  // An unambiguous phrase, or naming your own trade, is a search on its own —
+  // An unambiguous phrase, or naming your own trade, is a search on its own -
   // neither needs a search verb to be present.
   return (verb && noun) || WANTS_TO_HIRE.test(m) || WANTS_WORK.test(m) || DECLARES_TRADE.test(m);
 }
@@ -118,7 +118,7 @@ export function resolveSearchTarget(message: string, role: string): "worker" | "
   if (hasWorker && !hasJob) return "worker";
   if (hasJob && !hasWorker) return "job";
 
-  // 3. "I am a <trade>" — the speaker is describing themselves, so they want jobs.
+  // 3. "I am a <trade>" - the speaker is describing themselves, so they want jobs.
   if (/\b(i am|i m|am)\s+(a|an)\b/.test(m) || /\bndi\b|\bmimi ni\b|\bje suis\b/.test(m)) return "job";
 
   return role === "owner" ? "worker" : "job";
@@ -129,7 +129,7 @@ export function signupCard(): ResultCard {
   return {
     kind: "action", id: "signup",
     title: "Create your account",
-    subtitle: "Sign up in your browser — no app to download",
+    subtitle: "Sign up in your browser - no app to download",
     url: "/signup", cta: "Sign up",
   };
 }
@@ -168,7 +168,7 @@ export function routeIntent(intent: DetectedIntent, message: string, role: strin
   const kb: PlannedCall = { tool: "searchKnowledge", args: { query: message } };
 
   // Search requests are resolved by CONTENT (worker vs job), not just the
-  // classifier — so "I want a worker" searches workers, not jobs. Runs first so
+  // classifier - so "I want a worker" searches workers, not jobs. Runs first so
   // a mislabelled intent can't send it to the wrong tool.
   if (isSearchRequest(message)) {
     return resolveSearchTarget(message, role) === "worker"
@@ -186,7 +186,7 @@ export function routeIntent(intent: DetectedIntent, message: string, role: strin
     case "check_profile":
       return [{ tool: "getProfile", args: {} }];
     case "update_profile":
-      return []; // mutation — require the model/user to confirm explicitly
+      return []; // mutation - require the model/user to confirm explicitly
     case "verify_account":
       return [{ tool: "checkVerification", args: badgeId ? { badgeId } : {} }];
     case "search_job":
@@ -198,7 +198,7 @@ export function routeIntent(intent: DetectedIntent, message: string, role: strin
     case "payment_help":
     case "explain_policy":
       // Pricing is only pulled when the message actually mentions money/fees
-      // (keywordAugment handles that) — otherwise it distracts policy answers.
+      // (keywordAugment handles that) - otherwise it distracts policy answers.
       return [kb];
     case "recommendation":
     case "navigation_help":

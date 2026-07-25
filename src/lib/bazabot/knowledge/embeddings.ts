@@ -4,7 +4,7 @@
  * the server process. Query embeddings are computed per request (cheap: one text).
  *
  * If the provider can't embed (no embedding model, server down), callers fall
- * back to keyword search — see knowledge.ts.
+ * back to keyword search - see knowledge.ts.
  */
 import type { AIProvider } from "../providers";
 import type { KnowledgeDoc } from "./sources";

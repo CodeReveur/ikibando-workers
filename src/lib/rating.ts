@@ -4,7 +4,7 @@
  * Every user is seeded at rating=5.0, ratingCount=1 on the server, and each
  * real review increments the count. So the number of genuine reviews is
  * `ratingCount - 1`. A worker with only the seed (0 real reviews) is still
- * shown with their star rating (the 5.0 seed) — just without a review count —
+ * shown with their star rating (the 5.0 seed) - just without a review count -
  * rather than a "New" label.
  */
 export interface RatingInfo {

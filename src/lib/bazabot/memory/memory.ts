@@ -16,7 +16,7 @@ export interface SessionMemory {
   /** Summaries of the most recent tool observations, for cross-turn context. */
   recentToolResults: string[];
   /**
-   * Learned facts about this user, accumulated across turns — e.g.
+   * Learned facts about this user, accumulated across turns - e.g.
    * { category: "Electrical", location: "Kigali", role: "worker", name: "Eric" }.
    * Injected into the prompt so the bot "remembers" and personalises answers.
    */
@@ -70,7 +70,7 @@ export function mergeProfile(mem: SessionMemory, facts: Record<string, string | 
   }
 }
 
-/** One-line, human-readable summary of what we remember — for prompt injection. */
+/** One-line, human-readable summary of what we remember - for prompt injection. */
 export function profileSummary(mem: SessionMemory): string {
   const entries = Object.entries(mem.profile);
   if (!entries.length) return "";

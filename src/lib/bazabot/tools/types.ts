@@ -53,6 +53,6 @@ export interface Tool<A = any> {
   roles?: Role[];
   /** User-safe explanation template, e.g. "I searched available jobs". */
   explain: string;
-  /** Runs the tool. Must never throw for expected failures — return ok:false. */
+  /** Runs the tool. Must never throw for expected failures - return ok:false. */
   execute(args: A, ctx: ToolContext): Promise<ToolResult>;
 }

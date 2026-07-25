@@ -80,7 +80,7 @@ export function SelectField({ label, value, onChange, options, labels, allLabel 
 }
 
 /**
- * A search-as-you-type version of {@link SelectField} — same props, so it drops in
+ * A search-as-you-type version of {@link SelectField} - same props, so it drops in
  * anywhere a SelectField is used. The trigger shows the current pick; opening it reveals
  * a text box that filters the options as you type, plus a keyboard-navigable list.
  *

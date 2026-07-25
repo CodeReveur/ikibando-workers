@@ -148,7 +148,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
 
   const ctxSession = useSession();
   // These modals also open on public pages where SessionProvider isn't mounted, so the
-  // context is null there. Fall back to the persisted "user" in localStorage — the same
+  // context is null there. Fall back to the persisted "user" in localStorage - the same
   // source the navbar uses to detect a logged-in user.
   const [lsUser] = useState<Session | null>(() => {
     if (typeof window === "undefined") return null;
@@ -318,7 +318,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
       const card = isCardMethod(method);
       const awaitingNote = card
         ? "Opening the secure card page… complete your payment there."
-        : "Sent a prompt to your phone — approve it to continue.";
+        : "Sent a prompt to your phone - approve it to continue.";
 
       if (!hasSession) {
         // Guest: take the real payment first (phase 1), then create the job + assign workers.
@@ -338,7 +338,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
         if (outcome !== "success") {
           setPayNote("");
           toastError(outcome === "pending"
-            ? "Payment not confirmed yet. If you were charged, it will reflect shortly — please try again."
+            ? "Payment not confirmed yet. If you were charged, it will reflect shortly - please try again."
             : "The payment was not completed. Please try again.", { title: "Payment not completed" });
           return;
         }
@@ -352,7 +352,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
       if (!activeToken) throw new Error("Failed to authenticate session");
 
       // The wallet is the money source. When it can't cover the escrow, top up only the
-      // shortfall via MoMo/Airtel/Card and wait for it to settle — that money lands in the
+      // shortfall via MoMo/Airtel/Card and wait for it to settle - that money lands in the
       // wallet, then postJob freezes the full escrow from the wallet (never a direct-to-job
       // payment). A low-balance hire therefore reads as a direct deposit.
       if (walletBal === null || walletBal < chargeable) {
@@ -369,7 +369,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
           if (outcome !== "success") {
             setPayNote("");
             toastError(outcome === "pending"
-              ? "Payment not confirmed yet. If you were charged, it will reflect shortly — please try again."
+              ? "Payment not confirmed yet. If you were charged, it will reflect shortly - please try again."
               : "The payment was not completed. Please try again.", { title: "Payment not completed" });
             return;
           }
@@ -379,7 +379,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
       setPayNote("");
       const job = await postJob(jobPayload, activeToken);
 
-      // Send each picked worker a pending offer — they accept or decline. The server notifies them;
+      // Send each picked worker a pending offer - they accept or decline. The server notifies them;
       // if a worker declines, it opens the job to other nearby workers in the same category.
       await Promise.all(selected.map(w =>
         applyForJob(job.id as unknown as string, { bestFit: "Hire Now selection", appliedVia: "HIRE_NOW", workerId: w.id as unknown as string }, activeToken!)
@@ -626,11 +626,11 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                     {t("post_job.schedule_summary", {
                       interval: String(interval), unit: getUnit(form.rateType, interval),
                       count: String(periodsNum), total: String(durationNum), totalUnit: getUnit(form.rateType, durationNum),
-                    }) || `Worker is paid every ${interval} ${getUnit(form.rateType, interval)}, ${periodsNum} time(s) — ${durationNum} ${getUnit(form.rateType, durationNum)} total.`}
+                    }) || `Worker is paid every ${interval} ${getUnit(form.rateType, interval)}, ${periodsNum} time(s) - ${durationNum} ${getUnit(form.rateType, durationNum)} total.`}
                   </p>
                 )}
 
-                {/* Workers + amount — chosen after the schedule so the rate matches the mode. */}
+                {/* Workers + amount - chosen after the schedule so the rate matches the mode. */}
                 <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                   <FField label={t("hire_modal.details.workers_label")}>
                     <div style={{ position: "relative" }}>
@@ -941,20 +941,20 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                         <div style={{ display: "flex", flexDirection: "column" }}>
                           <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>Wallet balance</span>
                           <span style={{ fontSize: 11, color: needsTopup ? "#ef4444" : "#22c55e" }}>
-                            {walletBal !== null ? fmt(walletBal) : "—"}{needsTopup ? " · not enough to cover this hire" : " · covers this hire"}
+                            {walletBal !== null ? fmt(walletBal) : "-"}{needsTopup ? " · not enough to cover this hire" : " · covers this hire"}
                           </span>
                         </div>
                         {!needsTopup && <CheckCircle size={18} color="#22c55e" />}
                       </div>
                       {needsTopup && (
                         <p style={{ margin: "8px 0 0", fontSize: 12, color: "#aaa", lineHeight: 1.5 }}>
-                          Pay <strong style={{ color: "#f97316" }}>{fmt(topupAmount)}</strong> below to fund this hire. It's added to your wallet and the full {fmt(total)} is held in escrow — it appears on your posting as a direct deposit.
+                          Pay <strong style={{ color: "#f97316" }}>{fmt(topupAmount)}</strong> below to fund this hire. It's added to your wallet and the full {fmt(total)} is held in escrow - it appears on your posting as a direct deposit.
                         </p>
                       )}
                     </div>
                   )}
 
-                  {/* Payment methods — only shown for guests, or to top up a short wallet */}
+                  {/* Payment methods - only shown for guests, or to top up a short wallet */}
                   {showPayMethods && (
                   <>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>

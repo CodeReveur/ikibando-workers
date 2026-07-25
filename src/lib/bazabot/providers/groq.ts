@@ -1,8 +1,8 @@
 /**
- * Groq adapter — the default, Vercel-friendly provider.
+ * Groq adapter - the default, Vercel-friendly provider.
  *
  * Uses the official `groq-sdk` library to call Groq's hosted inference over
- * HTTPS. This runs anywhere a Node serverless function runs (Vercel included) —
+ * HTTPS. This runs anywhere a Node serverless function runs (Vercel included) -
  * no local binary, no long-running server. The models are open-source
  * (Llama 3.x, Qwen, Gemma) and the free tier needs only an API key (no card).
  *

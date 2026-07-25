@@ -3,7 +3,7 @@
  * existing web API layer (`@/lib/api`) or another platform source, so BazaBot
  * orchestrates the real backend instead of inventing answers.
  *
- * Summaries are deliberately compact and free of internal identifiers — they are
+ * Summaries are deliberately compact and free of internal identifiers - they are
  * what the model reasons over and must never leak API names or raw JSON to users.
  */
 import { z } from "zod";
@@ -128,7 +128,7 @@ export function buildCatalog(deps: CatalogDeps = {}): Tool[] {
       explain: "I looked up active employers",
       async execute(a): Promise<ToolResult> {
         // The platform doesn't expose a public employer directory, so surface
-        // the employers behind currently-open jobs — the ones actually hiring.
+        // the employers behind currently-open jobs - the ones actually hiring.
         const page = await api.getJobs({ category: a.category, district: a.district, size: 15 });
         const items = page?.content ?? [];
         const seen = new Map<string, { name: string; rating?: string; jobs: number }>();
@@ -217,7 +217,7 @@ export function buildCatalog(deps: CatalogDeps = {}): Tool[] {
         }));
         if (!list.length) return ok("No transactions yet.", []);
         return ok(`Last ${list.length} transaction(s): ` +
-          list.map(t => `${t.type ?? "txn"} ${t.amount ?? ""} (${t.status ?? "—"})`).join("; "), list);
+          list.map(t => `${t.type ?? "txn"} ${t.amount ?? ""} (${t.status ?? "-"})`).join("; "), list);
       },
     },
 
@@ -252,13 +252,13 @@ export function buildCatalog(deps: CatalogDeps = {}): Tool[] {
           const list = (apps ?? []).filter(x => !a.status || field(x, "status")?.toLowerCase() === a.status!.toLowerCase());
           if (!list.length) return ok("You have no applications yet.", []);
           return ok(`You have ${list.length} application(s): ` +
-            list.slice(0, 5).map(x => `${field(x, "jobTitle", "title") ?? "Job"} — ${field(x, "status") ?? "pending"}`).join("; "), list.slice(0, 5));
+            list.slice(0, 5).map(x => `${field(x, "jobTitle", "title") ?? "Job"} - ${field(x, "status") ?? "pending"}`).join("; "), list.slice(0, 5));
         }
         const jobs = await api.getMyJobs(ctx.token!);
         const list = (jobs ?? []).filter(x => !a.status || field(x, "status")?.toLowerCase() === a.status!.toLowerCase());
         if (!list.length) return ok("You have not posted any jobs yet.", []);
         return ok(`You have ${list.length} job(s): ` +
-          list.slice(0, 5).map(x => `${field(x, "title", "category") ?? "Job"} — ${field(x, "status") ?? "open"}`).join("; "), list.slice(0, 5));
+          list.slice(0, 5).map(x => `${field(x, "title", "category") ?? "Job"} - ${field(x, "status") ?? "open"}`).join("; "), list.slice(0, 5));
       },
     },
 
@@ -272,7 +272,7 @@ export function buildCatalog(deps: CatalogDeps = {}): Tool[] {
       explain: "I looked at your profile",
       async execute(_a, ctx: ToolContext): Promise<ToolResult> {
         const p = await api.getProfile(ctx.token!);
-        return ok(`Profile — name: ${field(p, "name") ?? "—"}, role: ${field(p, "role") ?? "—"}, ` +
+        return ok(`Profile - name: ${field(p, "name") ?? "-"}, role: ${field(p, "role") ?? "-"}, ` +
           `verified: ${field(p, "approved") ?? "no"}, completion: ${field(p, "profileCompletion") ?? "?"}%.`, {
           name: field(p, "name"), role: field(p, "role"), approved: (p as any)?.approved,
           profileCompletion: (p as any)?.profileCompletion, badgeSubmitted: (p as any)?.badgeSubmitted,
@@ -310,7 +310,7 @@ export function buildCatalog(deps: CatalogDeps = {}): Tool[] {
         if (a.badgeId) {
           const v = await api.verifyBadge(a.badgeId);
           return ok(v?.valid
-            ? `Badge ${a.badgeId} is valid — ${v.name ?? "worker"}, ${v.category ?? "verified"}, ${v.completedJobs ?? 0} jobs done.`
+            ? `Badge ${a.badgeId} is valid - ${v.name ?? "worker"}, ${v.category ?? "verified"}, ${v.completedJobs ?? 0} jobs done.`
             : `Badge ${a.badgeId} could not be verified.`, v);
         }
         if (!ctx.token) return fail("Sign in to check your own verification, or provide a badge id.", "auth_required");
@@ -319,7 +319,7 @@ export function buildCatalog(deps: CatalogDeps = {}): Tool[] {
         const submitted = (p as any)?.badgeSubmitted;
         return ok(approved ? "Your account is verified." :
           submitted ? "Your verification is submitted and under review." :
-          "Your account is not yet verified — submit your badge to get verified.", { approved, submitted });
+          "Your account is not yet verified - submit your badge to get verified.", { approved, submitted });
       },
     },
 

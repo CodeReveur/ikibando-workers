@@ -49,7 +49,7 @@
       "newsletter_subtitle": "Vipengele vipya na vidokezo, moja kwa moja kwenye barua pepe yako.",
       "newsletter_placeholder": "wewe@email.com",
       "newsletter_button": "Jiandikishe",
-      "newsletter_thanks": "Asante — umejiandikisha!",
+      "newsletter_thanks": "Asante - umejiandikisha!",
       "newsletter_error": "Imeshindwa kujiandikisha. Tafadhali jaribu tena."
     },
     "categories": {
@@ -643,9 +643,9 @@
       "member_emails_label": "Barua pepe za wanachama",
       "members_count": "· Mwanachama {count} {plural}",
       "member_email_placeholder": "Andika barua pepe na ubonyeze Enter…",
-      "member_email_hint": "Tutamtumia kila mwanachama barua pepe kuwa ameongezwa. Wanapokea arifa pekee — hawana ufikiaji wa dashibodi — na bado wanaweza kusajili akaunti yao wenyewe baadaye.",
+      "member_email_hint": "Tutamtumia kila mwanachama barua pepe kuwa ameongezwa. Wanapokea arifa pekee - hawana ufikiaji wa dashibodi - na bado wanaweza kusajili akaunti yao wenyewe baadaye.",
       "tin_label": "Nambari ya TIN",
-      "tin_placeholder": "Kitambulisho cha Ushuru — acha wazi ili kuruka",
+      "tin_placeholder": "Kitambulisho cha Ushuru - acha wazi ili kuruka",
       "tin_recommended": "(inapendekezwa)",
       "tin_optional": "(hiari)",
       "email_error": "Weka barua pepe halisi.",
@@ -666,7 +666,7 @@
       "loading_categories": "Inapakia kategoria...",
       "age_restriction_error": "Lazima uwe na angalau umri wa miaka 18 ili ujisajili.",
       "age_restriction_title": "Kizuizi cha Umri",
-      "category_multi_hint": "— chagua vyote vinavyohusika",
+      "category_multi_hint": "- chagua vyote vinavyohusika",
       "category_selected": "zimechaguliwa",
       "category_primary": "Kuu",
       "category_note": "Kategoria zako zote zinaonyeshwa kwenye wasifu wako. Ya kwanza unayochagua ndiyo kategoria yako kuu."
@@ -988,7 +988,7 @@
       "desc": "Mfanyakazi anaweza kuomba malipo baada ya kila {unit} kukamilika. Ikiwashwa, kiasi kilichoidhinishwa hutolewa papo hapo; vinginevyo, unaidhinisha kila ombi (huidhinishwa kiotomatiki baada ya saa 2)."
     },
     "hints": {
-      "street_or_pin": "Taja mtaa na nambari ya nyumba, au weka alama kwenye ramani hapa chini — wafanyakazi hutumia hii kukufikia."
+      "street_or_pin": "Taja mtaa na nambari ya nyumba, au weka alama kwenye ramani hapa chini - wafanyakazi hutumia hii kukufikia."
     },
     "title_confirm": {
       "heading": "Taja kazi hii",
@@ -1510,7 +1510,7 @@
     "photo": {
       "title": "Picha ya wasifu",
       "shown_desc": "Picha hii inaonyeshwa kwa waajiri kwenye wasifu wako wa umma.",
-      "initials_desc": "Hakuna picha — waajiri wataona herufi zako za mwanzo.",
+      "initials_desc": "Hakuna picha - waajiri wataona herufi zako za mwanzo.",
       "upload_btn": "Pakia picha",
       "change_btn": "Badilisha picha",
       "remove_btn": "Ondoa",
@@ -1599,7 +1599,7 @@
     "feedback_label": "Maoni ya Mwajiri",
     "released_to_wallet": "imetolewa kwenye wallet yako",
     "released_to_wallet_on": "imetolewa kwenye wallet yako mnamo",
-    "held_in_escrow": "imeshikiliwa kwenye escrow — inalipwa mwajiri anapoweka alama ya kazi kukamilika",
+    "held_in_escrow": "imeshikiliwa kwenye escrow - inalipwa mwajiri anapoweka alama ya kazi kukamilika",
     "total_released": "Jumla ya Zilizotolewa",
     "in_escrow": "Kwenye Escrow",
     "jobs_total": "Jumla ya Kazi",
@@ -1702,7 +1702,7 @@
     "badge_required": "ID ya beji inahitajika.",
     "take_home": "Utapata (gharama zote zimehusishwa)",
     "address": "Mtaa / Nyumba",
-    "track_the_way": "Fuata njia — uelekezaji wa moja kwa moja",
+    "track_the_way": "Fuata njia - uelekezaji wa moja kwa moja",
     "pays_on_time": "Analipa kwa wakati",
     "good_instructor": "Mwalimu mzuri",
     "gives_tips": "Anatoa bakshishi",
@@ -1736,7 +1736,7 @@
     "withdraw": "Ondoa",
     "done": "Imekamilika ✓",
     "track": "Fuatilia",
-    "accept_title": "Kubali ofa — ongeza ujumbe (si lazima)",
+    "accept_title": "Kubali ofa - ongeza ujumbe (si lazima)",
     "confirm_acceptance": "Thibitisha Kukubali",
     "cancel": "Ghairi",
     "optional_placeholder": "mfano. Natarajia kujiunga! Nitakuwepo kwa wakati."
@@ -1783,7 +1783,7 @@
     "otp_desc": "Kwa usalama wako, weka msimbo wa tarakimu 6 tuliokutumia kwa barua pepe kuthibitisha uondoaji huu.",
     "otp_label": "MSIMBO WA UTHIBITISHO",
     "otp_resend": "Tuma msimbo tena",
-    "wd_send_code": "Endelea — nitumie msimbo",
+    "wd_send_code": "Endelea - nitumie msimbo",
     "wd_confirm_btn": "Thibitisha uondoaji {amount}",
     "withdrawal_fee": "Ada ya kutoa",
     "you_receive": "Unapokea",
@@ -1795,7 +1795,7 @@
     "credited_desc": "Imewekwa kwenye wallet yako · bonus {count}",
     "withdraw": "Kutoa Pesa",
     "referral_program": "Programu ya kualika",
-    "earn_reward_desc": "Pata {reward} mtu anapojiunga kwa kiungo chako — mfanyakazi anayekamilisha kazi yake ya kwanza, au mwajiri uliyemwalika ambaye kazi yake ya kwanza imetolewa.",
+    "earn_reward_desc": "Pata {reward} mtu anapojiunga kwa kiungo chako - mfanyakazi anayekamilisha kazi yake ya kwanza, au mwajiri uliyemwalika ambaye kazi yake ya kwanza imetolewa.",
     "invited": "Waliolikwa",
     "rewarded": "Waliyotuzwa",
     "earned": "Zilizopatikana",
@@ -1824,7 +1824,7 @@
     "claimed": "Bonasi imeongezwa kwenye pochi yako",
     "claim_failed": "Imeshindwa kudai bonasi yako. Tafadhali jaribu tena.",
     "all_claimed": "Zote zimedaiwa",
-    "in_wallet": "Tayari kwenye pochi yako — hakuna cha kudai kwa sasa.",
+    "in_wallet": "Tayari kwenye pochi yako - hakuna cha kudai kwa sasa.",
     "none_yet": "Hakuna bonasi bado.",
     "view_wallet": "Tazama pochi",
     "status_claimed": "Imedaiwa",
@@ -1921,8 +1921,8 @@
     "no_applications": "Bado hakuna maombi ya zabuni hii.",
     "accept": "Kubali",
     "reject": "Kataa",
-    "confirm_accept_title": "Kubali mfanyakazi — weka maoni (hiari)",
-    "confirm_reject_title": "Kataa mfanyakazi — weka maoni (hiari)",
+    "confirm_accept_title": "Kubali mfanyakazi - weka maoni (hiari)",
+    "confirm_reject_title": "Kataa mfanyakazi - weka maoni (hiari)",
     "confirm_btn": "Thibitisha",
     "cancel": "Ghairi",
     "edit_job_modal": "Hariri Kazi",
@@ -1998,11 +1998,11 @@
     "pay_method": "NJIA YA MALIPO",
     "topup_card_hint": "Utapelekwa kwenye ukurasa salama wa malipo ya kadi katika kichupo kipya. Fedha zitaonekana kwenye pochi yako kiotomatiki mara malipo yatakapothibitishwa.",
     "topup_pending_err": "Malipo hayajathibitishwa bado. Ikiwa umetozwa, yataonekana hivi karibuni.",
-    "refund_pending": "Marejesho yameombwa — yanasubiri idhini ya msimamizi",
+    "refund_pending": "Marejesho yameombwa - yanasubiri idhini ya msimamizi",
     "refund_pending_badge": "Marejesho yanasubiri",
     "refund_submitted": "Ombi la marejesho limewasilishwa. Msimamizi ataliangalia; marejesho yaliyoidhinishwa hurejeshwa kwenye pochi yako baada ya gharama husika.",
     "refund_reason_err": "Tafadhali toa sababu wazi (angalau herufi 10).",
-    "refund_notice": "Marejesho hukaguliwa na msimamizi — si papo hapo. Ada ya huduma isiyorejeshwa hubaki, na kama mfanyakazi tayari ameshirikishwa gharama ya kughairi hutozwa.",
+    "refund_notice": "Marejesho hukaguliwa na msimamizi - si papo hapo. Ada ya huduma isiyorejeshwa hubaki, na kama mfanyakazi tayari ameshirikishwa gharama ya kughairi hutozwa.",
     "submit_refund": "Wasilisha ombi",
     "filter_all_types": "Aina zote",
     "filter_escrow": "Malipo ya amana",
@@ -2155,8 +2155,8 @@
     "complete_and_release": "Kamilisha & Toa Malipo",
     "confirm_cancel_alert": "Ghairi kazi hii? Kiasi cha escrow kitarejeshwa kwenye wallet yako.",
     "auto_release_title": "Utoaji wa moja kwa moja",
-    "auto_release_on_desc": "Imewashwa — unaweza kuidhinisha maombi ya malipo, lakini usipochukua hatua ndani ya saa 2 yatatolewa kiotomatiki.",
-    "auto_release_off_desc": "Imezimwa — lazima uidhinishe kila ombi la malipo. Maombi yasiyoidhinishwa hufungua kesi ya usaidizi baada ya saa 24.",
+    "auto_release_on_desc": "Imewashwa - unaweza kuidhinisha maombi ya malipo, lakini usipochukua hatua ndani ya saa 2 yatatolewa kiotomatiki.",
+    "auto_release_off_desc": "Imezimwa - lazima uidhinishe kila ombi la malipo. Maombi yasiyoidhinishwa hufungua kesi ya usaidizi baada ya saa 24.",
     "auto_release_failed": "Imeshindwa kusasisha utoaji wa moja kwa moja",
     "applications_closed": "Maombi yamefungwa",
     "title_label": "Kichwa",
@@ -2174,7 +2174,7 @@
     "faq1_q": "Je, ninalipwaje?",
     "faq1_a": "Mapato yako yanashikiliwa kwenye escrow wakati kazi inapoanza na yanatolewa moja kwa moja kwenye wallet yako mara tu mwajiri anapoweka alama ya kazi kuwa imekamilika. Unaweza kuhamisha fedha hizo kwenda MTN MoMo au Airtel Money wakati wowote.",
     "faq2_q": "Ada ya jukwaa ni kiasi gani?",
-    "faq2_a": "Kamisheni hukatwa kwenye mapato ya mfanyakazi ili kuendesha huduma, kuhakiki watumiaji na kushughulikia malipo — kiwango kamili kimewekwa na MpahMapu na kinaonyeshwa kabla ya kukubali kazi.",
+    "faq2_a": "Kamisheni hukatwa kwenye mapato ya mfanyakazi ili kuendesha huduma, kuhakiki watumiaji na kushughulikia malipo - kiwango kamili kimewekwa na MpahMapu na kinaonyeshwa kabla ya kukubali kazi.",
     "faq3_q": "Ninapataje kazi?",
     "faq3_a": "Hakikisha maelezo ya wasifu wako, ujuzi wako maalum, elimu na wilaya yako vimekamilika. Waajiri wanaweza kukupata kwenye ukurasa wa kutafuta wafanyakazi au unaweza kuomba kazi zilizoorodheshwa.",
     "faq4_q": "Ninathibitishaje kukamilika kwa kazi?",
@@ -2199,12 +2199,12 @@
       "process": "Mara tu unapobofya 'Weka Sasa', mfumo unashughulikia ombi hilo saa {time} na kuzuia thamani yote. Fedha hizo hubaki katika hali ya escrow inayosubiri katika zamu nzima. Baada ya mfanyakazi kukamilisha jukumu, anamwonyesha mwajiri beji yake ya QR. Kusoma beji hiyo au kubofya 'Weka alama ya Kukamilika' kunaanzisha uhamisho wa malipo ya papo hapo.",
       "guidelines": "Fedha zote za escrow ziko chini ya sera yetu thabiti ya uhakiki. Waajiri wana hadi saa 24 baada ya kukamilika ili kukagua ubora wa kazi iliyofanyika. Ikiwa mzozo utawasilishwa, fedha hizo zitabaki zimezuiliwa hadi timu yetu ya usaidizi wa kiutawala itakapokagua ushahidi na kutoa uamuzi wa mwisho.",
       "seeker": {
-        "overview": "Kama mfanyakazi, malipo yako yanazuiliwa salama kwenye escrow mara tu mwajiri anapokuweka nafasi — hivyo mapato yako yanahakikishwa hata kabla hujaanza safari ya kwenda kazini. Huhitaji kamwe kumfukuza mwajiri kwa ajili ya pesa zako.",
+        "overview": "Kama mfanyakazi, malipo yako yanazuiliwa salama kwenye escrow mara tu mwajiri anapokuweka nafasi - hivyo mapato yako yanahakikishwa hata kabla hujaanza safari ya kwenda kazini. Huhitaji kamwe kumfukuza mwajiri kwa ajili ya pesa zako.",
         "process": "Fedha hubaki zimezuiliwa kwa zamu nzima. Unapomaliza, mwajiri anachanganua beji yako ya QR au anabofya 'Weka alama ya Kukamilika', na malipo yanatumwa moja kwa moja kwenye mkoba wako wa MpahMapu, tayari kutolewa."
       },
       "public": {
         "overview": "Escrow inalinda pande zote mbili. Mwajiri anapomweka nafasi mfanyakazi, kiasi chote kinazuiliwa kwenye akaunti salama ya kuhifadhi: mfanyakazi anajua pesa zimehakikishwa na mwajiri anajua zinatolewa tu kwa kazi iliyokamilika.",
-        "process": "Fedha hubaki zimegandishwa wakati wa kazi. Mara kazi inapothibitishwa kuwa imekamilika — kwa kuchanganua beji ya QR ya mfanyakazi au kubofya 'Weka alama ya Kukamilika' — malipo yanatumwa papo hapo kwenye mkoba wa mfanyakazi."
+        "process": "Fedha hubaki zimegandishwa wakati wa kazi. Mara kazi inapothibitishwa kuwa imekamilika - kwa kuchanganua beji ya QR ya mfanyakazi au kubofya 'Weka alama ya Kukamilika' - malipo yanatumwa papo hapo kwenye mkoba wa mfanyakazi."
       }
     },
     "payout": {
@@ -2212,10 +2212,10 @@
       "process": "Fungua Mkoba wako, bofya 'Toa', weka kiasi na nambari yako ya MTN MoMo au Airtel Money, kisha thibitisha. Fedha zinatumwa kwenye akaunti yako ya mobile money, kwa kawaida ndani ya dakika chache.",
       "guidelines": "Hakiki mara mbili kiasi na nambari ya simu kabla ya kuthibitisha. Ikiwa utoaji hautafika, angalia hali yake kwenye miamala ya mkoba wako au wasiliana na usaidizi na tutaufuatilia.",
       "seeker": {
-        "overview": "Mapato yako yanaingia kwenye mkoba wako wa MpahMapu baada ya kila kazi iliyokamilika — unabaki na sehemu yako baada ya kamisheni ya huduma, na kiasi kamili huonyeshwa kabla ya kukubali. Kutoka hapo unaweza kutoa kwenda Mobile Money wakati wowote."
+        "overview": "Mapato yako yanaingia kwenye mkoba wako wa MpahMapu baada ya kila kazi iliyokamilika - unabaki na sehemu yako baada ya kamisheni ya huduma, na kiasi kamili huonyeshwa kabla ya kukubali. Kutoka hapo unaweza kutoa kwenda Mobile Money wakati wowote."
       },
       "owner": {
-        "overview": "Salio lolote lililobaki kwenye mkoba wako wa mwajiri — kwa mfano urejeshaji kutoka kazi iliyoghairiwa au ongezeko usilotumia — linaweza kutolewa kurudi kwenye akaunti yako ya Mobile Money."
+        "overview": "Salio lolote lililobaki kwenye mkoba wako wa mwajiri - kwa mfano urejeshaji kutoka kazi iliyoghairiwa au ongezeko usilotumia - linaweza kutolewa kurudi kwenye akaunti yako ya Mobile Money."
       }
     },
     "refund": {
@@ -2223,7 +2223,7 @@
       "process": "Ili kuomba urejeshaji wa pesa, nenda kwenye tab ya Malipo yako, chagua muamala uliozuiliwa (HELD), na ubofye 'Omba Urejeshaji'. Kwa kazi zilizoorodheshwa, kughairi kufanywa zaidi ya saa 2 kabla ya kuanza kunarejesha pesa kikamilifu. Kughairi ndani ya saa 2 kunatoza ada ya 10% kama fidia kwa mfanyakazi.",
       "guidelines": "Maombi yote ya urejeshaji yaliyowasilishwa baada ya kazi kuanza yanakaguliwa na usaidizi wetu. Timu yetu inatathmini historia ya gumzo, magogo ya kazi na ripoti za watumiaji. Yakishaidhinishwa, fedha hizo zinaonekana kwenye salio la mkoba wako, ambalo unaweza kutoa kupitia MTN MoMo au Airtel Money.",
       "seeker": {
-        "overview": "Kama mfanyakazi hauombi urejeshaji wa pesa — malipo yako yanalindwa kwenye escrow. Zaidi ya hayo, ikiwa mwajiri anaghairi kwa kuchelewa (ndani ya saa 2 kabla ya kuanza), unapokea ada ya fidia ya 10% kwa taarifa ya muda mfupi.",
+        "overview": "Kama mfanyakazi hauombi urejeshaji wa pesa - malipo yako yanalindwa kwenye escrow. Zaidi ya hayo, ikiwa mwajiri anaghairi kwa kuchelewa (ndani ya saa 2 kabla ya kuanza), unapokea ada ya fidia ya 10% kwa taarifa ya muda mfupi.",
         "process": "Ikiwa kazi imeghairiwa kwa kuchelewa au mzozo umeamuliwa kwa upande wako, fidia yoyote inawekwa kwenye mkoba wako wa MpahMapu, na unaweza kuitoa kupitia MTN MoMo au Airtel Money."
       },
       "public": {
@@ -2262,7 +2262,7 @@
         "process": "Bofya 'Chapisha Kazi', jaza maelezo, na ulipe escrow kwa mkoba wako, MTN MoMo, Airtel Money au kadi. Wafanyakazi waliothibitishwa walio karibu wanaweza kuomba, au unaweza kumwalika mmoja moja kwa moja kwa 'Ajiri Sasa' na kukagua waombaji kabla ya kukubali."
       },
       "public": {
-        "overview": "MpahMapu inaunganisha watu wanaohitaji kazi ifanyike na wafanyakazi wa ndani waliothibitishwa kote Rwanda. Jisajili kama Mfanyakazi ili kuajiriwa, au kama Mwajiri ili kuchapisha kazi na kuajiri — unaweza hata kuchapisha kazi ya kwanza kama mgeni."
+        "overview": "MpahMapu inaunganisha watu wanaohitaji kazi ifanyike na wafanyakazi wa ndani waliothibitishwa kote Rwanda. Jisajili kama Mfanyakazi ili kuajiriwa, au kama Mwajiri ili kuchapisha kazi na kuajiri - unaweza hata kuchapisha kazi ya kwanza kama mgeni."
       }
     },
     "complete": {
@@ -2271,7 +2271,7 @@
       "guidelines": "Daima hakikisha kuwa mwajiri anakamilisha kazi ukiwa bado hapo eneo la kazi. Akisahau, mtumie ujumbe wa adabu kupitia gumzo. Ikiwa mwajiri akijitenga na kuweka alama ya kukamilika licha ya kazi kufanyika, wasiliana na usaidizi wa BazaBot ili kuwasilisha ushahidi.",
       "owner": {
         "overview": "Kuweka alama ya kazi imekamilika ndiyo jinsi unavyotoa malipo yaliyozuiliwa kwa mfanyakazi. Ni hatua ya mwisho, inayofanywa mara tu unaporidhika kwamba kazi iliyokubaliwa imemalizika.",
-        "process": "Baada ya mfanyakazi kuthibitisha kukamilika kwa beji yake ya QR, fungua kazi kwenye dashibodi yako na ubofye 'Weka alama ya Kukamilika' — au changanua beji yake. Malipo yanatumwa papo hapo kwa mfanyakazi, na kisha unaweza kutoa ukadiriaji."
+        "process": "Baada ya mfanyakazi kuthibitisha kukamilika kwa beji yake ya QR, fungua kazi kwenye dashibodi yako na ubofye 'Weka alama ya Kukamilika' - au changanua beji yake. Malipo yanatumwa papo hapo kwa mfanyakazi, na kisha unaweza kutoa ukadiriaji."
       }
     },
     "dispute": {
@@ -2281,11 +2281,11 @@
     },
     "fallback": {
       "overview": "Sikupata jibu kamili kwa swali hilo mahususi.",
-      "process": "Unaweza kuliuliza kwa njia nyingine, au uniulize kuhusu kazi, wafanyakazi, malipo, escrow, ada au uthibitisho — naweza kusaidia.",
+      "process": "Unaweza kuliuliza kwa njia nyingine, au uniulize kuhusu kazi, wafanyakazi, malipo, escrow, ada au uthibitisho - naweza kusaidia.",
       "guidelines": "Ukipenda kuzungumza na mtu, sema tu \"talk to a live agent\" nami nitakuunganisha."
     },
     "placeholder_agent": "Mtumie ujumbe wakala wa usaidizi…",
-    "resumed": "Mazungumzo haya yamefungwa. Nipo tena kukusaidia — jisikie huru kuniuliza chochote! 🤖",
+    "resumed": "Mazungumzo haya yamefungwa. Nipo tena kukusaidia - jisikie huru kuniuliza chochote! 🤖",
     "status_agent": "Umeunganishwa na wakala wa usaidizi",
     "status_online": "Mtandaoni"
   },
@@ -2321,7 +2321,7 @@
     "toast_requested": "Malipo yameombwa",
     "toast_approved": "Malipo yameidhinishwa na kutolewa",
     "toast_declined": "Malipo yamekataliwa",
-    "toast_complaint": "Malalamiko yamewasilishwa — malipo yamegandishwa",
+    "toast_complaint": "Malalamiko yamewasilishwa - malipo yamegandishwa",
     "err_request": "Imeshindwa kuomba malipo",
     "err_approve": "Imeshindwa kuidhinisha",
     "err_decline": "Imeshindwa kukataa",
@@ -2354,7 +2354,7 @@
     "tag": "Mpya",
     "title": "Vipengele na masasisho ya hivi karibuni",
     "desc": "Kila kitu tulichozindua hivi karibuni kwenye MpahMapu.",
-    "empty": "Hakuna matangazo bado — rudi hivi karibuni.",
+    "empty": "Hakuna matangazo bado - rudi hivi karibuni.",
     "cta": "Angalia"
   },
   "job_evidence": {
@@ -2418,9 +2418,9 @@
   },
   "donate_page": {
     "title": "Mchango wako hubadilisha maisha",
-    "intro": "Michango kwa MpahMapu inarudi moja kwa moja kwa jamii tunayoihudumia — kusaidia watoto kuendelea shuleni, kufungua elimu kwa wote, na kusimama na familia zinapokabiliwa na shida.",
+    "intro": "Michango kwa MpahMapu inarudi moja kwa moja kwa jamii tunayoihudumia - kusaidia watoto kuendelea shuleni, kufungua elimu kwa wote, na kusimama na familia zinapokabiliwa na shida.",
     "cta": "Changia sasa",
-    "note": "Kila mchango ni wa hiari na kwa ridhaa. Unachagua kiasi na njia — MTN, Airtel au kadi — na unaweza kuchangia bila kujulikana.",
+    "note": "Kila mchango ni wa hiari na kwa ridhaa. Unachagua kiasi na njia - MTN, Airtel au kadi - na unaweza kuchangia bila kujulikana.",
     "c_scholar_t": "Watoto shuleni",
     "c_scholar_d": "Ufadhili wa masomo na ada ili hakuna mtoto anayeachwa nyuma.",
     "c_education_t": "Elimu kwa wote",

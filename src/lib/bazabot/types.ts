@@ -11,7 +11,7 @@ export type ChatRole = "system" | "user" | "assistant" | "tool";
 export interface ChatMessage {
   role: ChatRole;
   content: string;
-  /** Present on tool result messages — which tool produced this. */
+  /** Present on tool result messages - which tool produced this. */
   name?: string;
 }
 
@@ -62,7 +62,7 @@ export interface Suggestion {
 export interface AgentResult {
   /** The user-facing reply (markdown allowed). */
   reply: string;
-  /** Which engine produced it — for analytics + UI badges. */
+  /** Which engine produced it - for analytics + UI badges. */
   source: "ai" | "rules" | "knowledge" | "escalation";
   /** Detected intent, if classified. */
   intent?: string;

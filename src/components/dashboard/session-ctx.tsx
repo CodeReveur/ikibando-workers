@@ -19,7 +19,7 @@ export interface Session {
   profilePhotoUrl?: string | null;
   /** Whether the badge photo may be shown as the profile picture. */
   photoOnProfile?: boolean;
-  /** Resolved picture shown publicly — custom, else badge photo if consented, else null. */
+  /** Resolved picture shown publicly - custom, else badge photo if consented, else null. */
   profilePhoto?: string | null;
   accountStatus?: string;
   profileCompletion?: number;
@@ -68,7 +68,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       const token = localStorage.getItem("access_token");
       if (token) {
         // Browsers rotate push subscriptions; re-register silently for anyone who already
-        // granted permission. No-op when unsupported or not granted — never prompts here.
+        // granted permission. No-op when unsupported or not granted - never prompts here.
         import("@/lib/push").then(({ syncPushSubscription }) => syncPushSubscription(token)).catch(() => {});
         import("@/lib/api").then(({ getProfile }) => {
           getProfile(token).then((freshUser) => {

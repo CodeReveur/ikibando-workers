@@ -23,7 +23,7 @@ function videoDuration(file: File): Promise<number> {
 }
 
 /**
- * Proof of work for a job: up to 20 photos and one short video. Always optional — nothing here
+ * Proof of work for a job: up to 20 photos and one short video. Always optional - nothing here
  * gates completion or payment. `canUpload` is true for the worker on the job; everyone else
  * (employer, admin) sees the same evidence read-only.
  */
@@ -55,7 +55,7 @@ export function JobEvidence({ jobId, canUpload }: { jobId: string; canUpload: bo
     setBusy(kind);
     try {
       if (kind === "VIDEO") {
-        // Check length locally — uploading then rejecting would waste the worker's data.
+        // Check length locally - uploading then rejecting would waste the worker's data.
         const seconds = await videoDuration(file).catch(() => 0);
         if (seconds > MAX_EVIDENCE_VIDEO_SECONDS + 0.5) {
           toastError(t("job_evidence.video_too_long")

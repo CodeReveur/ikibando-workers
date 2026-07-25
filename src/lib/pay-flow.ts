@@ -31,7 +31,7 @@ async function pollStatus(
   const startedAt = Date.now();
   for (let i = 0; i < maxAttempts; i++) {
     let raw = "PENDING";
-    try { raw = (await fetchStatus()) || "PENDING"; } catch { /* transient — keep polling */ }
+    try { raw = (await fetchStatus()) || "PENDING"; } catch { /* transient - keep polling */ }
     const s = raw.toUpperCase();
     if (s === "SUCCESS") return "success";
     if (s === "FAILED") {

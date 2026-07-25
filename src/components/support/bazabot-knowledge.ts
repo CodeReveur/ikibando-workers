@@ -1,11 +1,11 @@
 /**
- * BazaBot knowledge base — a large set of frequently-asked questions and answers
+ * BazaBot knowledge base - a large set of frequently-asked questions and answers
  * about MpahMapu. Matched by significant-word overlap against the visitor's
  * message; used for the long tail after the multilingual intent engine and
  * before escalating to a human agent.
  *
  * Answers are written in English (the platform's primary language). To extend
- * coverage, just add more { q, a } entries — keywords are derived automatically.
+ * coverage, just add more { q, a } entries - keywords are derived automatically.
  */
 
 export interface QA { q: string; a: string }
@@ -65,8 +65,8 @@ export const KNOWLEDGE: QA[] = [
   // ── Getting started & accounts ───────────────────────────────────────────
   { q: "What is MpahMapu?", a: "MpahMapu is Rwanda's on-demand workforce platform. Employers hire verified workers for jobs like cleaning, events, security, driving and more, and workers find paid gigs near them." },
   { q: "How do I create an account?", a: "Tap Sign Up, choose Worker or Employer, then enter your name, email and phone number. Workers add their skills and district; employers can start posting jobs right away." },
-  { q: "What is required to register as a worker?", a: "Just a phone or computer with a web browser — MpahMapu is a website, not an app, so there's nothing to download. Open the site, tap Sign Up, choose Worker, and enter your name, email and phone number. Then complete your profile, add your skills and district, and submit your verification badge to get approved. No app install or payment setup is needed to register." },
-  { q: "Do I need to download an app to use MpahMapu?", a: "No. MpahMapu is a website that works in your browser on any phone or computer — there is no app to download. You can add the site to your home screen for quick access." },
+  { q: "What is required to register as a worker?", a: "Just a phone or computer with a web browser - MpahMapu is a website, not an app, so there's nothing to download. Open the site, tap Sign Up, choose Worker, and enter your name, email and phone number. Then complete your profile, add your skills and district, and submit your verification badge to get approved. No app install or payment setup is needed to register." },
+  { q: "Do I need to download an app to use MpahMapu?", a: "No. MpahMapu is a website that works in your browser on any phone or computer - there is no app to download. You can add the site to your home screen for quick access." },
   { q: "Is it free to sign up?", a: "Yes, creating an account on MpahMapu is completely free for both workers and employers." },
   { q: "Do I need an account to post a job?", a: "No. You can post a job as a guest by entering your name, email and phone. We create a passwordless account for you automatically so you can manage the job later." },
   { q: "Should I sign up as a worker or an employer?", a: "Sign up as a Worker if you want to be hired for jobs, or as an Employer if you want to hire people. You can create a separate account for the other role if you need both." },
@@ -143,9 +143,9 @@ export const KNOWLEDGE: QA[] = [
   { q: "How do I withdraw money from my wallet?", a: "Open your wallet, tap Withdraw, enter the amount and your Mobile Money number, and the funds are sent to your MoMo or Airtel account." },
   { q: "Is there a minimum withdrawal amount?", a: "You can withdraw your available balance. If a minimum applies it's shown on the withdrawal screen before you confirm." },
   { q: "How long do withdrawals take?", a: "Withdrawals to Mobile Money are usually processed quickly. If it's delayed, check the transaction status in your wallet or contact support." },
-  { q: "What is the platform fee?", a: "A commission is deducted from worker earnings to run the service, verify users and process payments. The exact rate is set by MpahMapu and shown before you accept a job and in your earnings — you keep the rest of the job amount." },
+  { q: "What is the platform fee?", a: "A commission is deducted from worker earnings to run the service, verify users and process payments. The exact rate is set by MpahMapu and shown before you accept a job and in your earnings - you keep the rest of the job amount." },
   { q: "What is the 5% escrow fee?", a: "Employers pay a 5% escrow handling fee on top of the job amount. It covers secure payment processing and protection of the funds." },
-  { q: "How much will I actually earn from a job?", a: "Your exact payout — the job amount minus the platform commission — is shown before you accept a job, so you always know what you will earn." },
+  { q: "How much will I actually earn from a job?", a: "Your exact payout - the job amount minus the platform commission - is shown before you accept a job, so you always know what you will earn." },
   { q: "How much does an employer pay in total?", a: "An employer pays the workers' total amount plus a 5% escrow handling fee. This full amount is held in escrow." },
   { q: "Why was a fee deducted from my earnings?", a: "The platform commission funds verification, support and payment processing that keep MpahMapu safe and reliable. The current rate is shown before you accept a job and in your earnings." },
   { q: "Can I see my transaction history?", a: "Yes. Your wallet shows every top-up, payment, payout and withdrawal with its status and date." },
@@ -345,7 +345,7 @@ export const KNOWLEDGE: QA[] = [
   { q: "Is there a payment confirmation?", a: "Yes. Successful payments appear instantly in your wallet transactions, and we email a confirmation." },
   { q: "Can I top up more than a job costs?", a: "Yes. You can keep extra balance in your wallet for future jobs or withdraw it to Mobile Money anytime." },
   { q: "What happens to leftover wallet balance?", a: "Any balance stays in your wallet for future jobs, or you can withdraw it to your MoMo or Airtel account." },
-  { q: "Are there any hidden fees?", a: "No hidden fees. Employers see the escrow service fee before checkout, and workers see the commission on their payout — both shown clearly before you confirm." },
+  { q: "Are there any hidden fees?", a: "No hidden fees. Employers see the escrow service fee before checkout, and workers see the commission on their payout - both shown clearly before you confirm." },
   { q: "Why is the total more than the rate?", a: "The employer total includes the workers' amount plus the 5% escrow handling fee, which is shown clearly before you pay." },
 
   // ── More about verification & badges ─────────────────────────────────────
@@ -422,7 +422,7 @@ export const KNOWLEDGE: QA[] = [
 
   // ── More small talk & guidance ───────────────────────────────────────────
   { q: "What should I do first?", a: "If you want to work, sign up as a worker and complete your profile. If you want to hire, post a job. I can guide you through either." },
-  { q: "How do I get started on MpahMapu?", a: "Open the website and tap Sign Up. Choose Worker (to be hired) or Employer (to hire). Enter your name, email, phone and a password. Workers then do a short onboarding — date of birth, education, the service categories you work in, account type, your district, equipment and availability — and submit a verification badge to get approved. It's all in the browser; there's no app to download." },
+  { q: "How do I get started on MpahMapu?", a: "Open the website and tap Sign Up. Choose Worker (to be hired) or Employer (to hire). Enter your name, email, phone and a password. Workers then do a short onboarding - date of birth, education, the service categories you work in, account type, your district, equipment and availability - and submit a verification badge to get approved. It's all in the browser; there's no app to download." },
   { q: "What are the steps to sign up as a worker?", a: "1) Tap Sign Up and choose Worker. 2) Enter your name, email, phone and password. 3) Complete onboarding: date of birth, education level, the categories you work in (e.g. Cleaning, Electrical, Security), account type, your province and district, equipment and availability. 4) Submit your verification badge with your national ID to get approved. Then you can apply to jobs or be invited through Hire Now." },
   { q: "I'm new here, where do I begin?", a: "Welcome! Choose whether you want to hire or be hired, then create your account. Ask me anything as you go." },
   { q: "Can you explain how it works simply?", a: "Employers post jobs and pay into secure escrow; workers get hired, do the job, verify it, and get paid to their wallet. I'm here to help at each step." },
@@ -450,7 +450,7 @@ function idf(t: string): number {
  * Returns the best-matching answer for a message, or null if nothing is
  * confident enough. Scores by the IDF-weighted overlap between the message and
  * each question, and only accepts a match that covers most of the message's
- * distinctive words — so vague or unknown messages fall through to an agent.
+ * distinctive words - so vague or unknown messages fall through to an agent.
  *
  * When two answers are equally relevant (e.g. "how do I withdraw" matches both
  * "withdraw money from wallet" and "withdraw a job application"), the visitor's

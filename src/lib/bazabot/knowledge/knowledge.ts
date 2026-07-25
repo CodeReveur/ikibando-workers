@@ -1,5 +1,5 @@
 /**
- * KnowledgeSearcher — semantic search over the platform corpus with automatic
+ * KnowledgeSearcher - semantic search over the platform corpus with automatic
  * keyword fallback.
  *
  * Order of preference:
@@ -76,7 +76,7 @@ export class KnowledgeSearcher {
     const docs = knowledgeCorpus();
     let hits: KnowledgeHit[] = [];
 
-    // 1) Semantic — only if the corpus is already embedded (else warm in the
+    // 1) Semantic - only if the corpus is already embedded (else warm in the
     //    background and use keyword this time, keeping the request fast).
     if (this.provider && this.cfg.semanticSearch && this.cfg.embeddingModel) {
       try {

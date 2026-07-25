@@ -80,7 +80,7 @@ const fmt = (n: number) => `RWF ${n.toLocaleString()}`;
 
 // ── sub-components ─────────────────────────────────────────────────────────
 /**
- * Whether a worker counts as "available". Single source of truth — change what availability
+ * Whether a worker counts as "available". Single source of truth - change what availability
  * depends on here (currently: the worker has at least one availability slot set).
  */
 function isAvailable(w: WorkerProfileDto): boolean {
@@ -514,7 +514,7 @@ function BrowsePageInner() {
                       padding: "16px", display: "flex", flexDirection: "column", gap: 12,
                       textDecoration: "none", overflow: "hidden",
                     }}>
-                      {/* top row — availability shows as a green dot on the avatar, never over the name */}
+                      {/* top row - availability shows as a green dot on the avatar, never over the name */}
                       <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
                         <div style={{
                           width: 42, height: 42, borderRadius: 999, flexShrink: 0, position: "relative",

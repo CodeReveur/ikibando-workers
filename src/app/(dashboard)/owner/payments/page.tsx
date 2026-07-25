@@ -70,7 +70,7 @@ export default function OwnerPayments() {
     const amount = parseInt(topupAmt, 10);
     const card = isCardMethod(topupMethod);
     if (!amount || amount < 100) { setTopupErr(t("owner_payments.min_topup_err") || "Minimum top-up is RWF 100"); return; }
-    // Card payments are collected on XentriPay's hosted page — no phone needed.
+    // Card payments are collected on XentriPay's hosted page - no phone needed.
     if (!card && (!topupPhone || topupPhone.replace(/\D/g,"").length < 9)) {
       setTopupErr(t("owner_payments.valid_phone_err") || "Enter a valid phone number"); return;
     }
@@ -209,7 +209,7 @@ export default function OwnerPayments() {
         </button>
       } />
 
-      {/* Filters — All is the default first option */}
+      {/* Filters - All is the default first option */}
       <div style={{ display:"flex", gap:10, flexWrap:"wrap", marginBottom:12 }}>
         <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} style={filterSel}>
           <option value="">{t("owner_payments.filter_all_types") || "All types"}</option>
@@ -271,7 +271,7 @@ export default function OwnerPayments() {
                     </p>
                     {p.refundReason && <p style={{ margin:0, fontSize:10, color:"#3a3a3a" }}>{t("owner_payments.reason") || "Reason:"} {p.refundReason}</p>}
                     {p.refundRequestedAt && p.status === "HELD" && (
-                      <p style={{ margin:0, fontSize:10, color:"#f59e0b" }}>{t("owner_payments.refund_pending") || "Refund requested — awaiting admin approval"}</p>
+                      <p style={{ margin:0, fontSize:10, color:"#f59e0b" }}>{t("owner_payments.refund_pending") || "Refund requested - awaiting admin approval"}</p>
                     )}
                   </div>
                 </div>
@@ -329,7 +329,7 @@ export default function OwnerPayments() {
               <button onClick={() => { setTopupOpen(false); setTopupErr(""); }} style={{ background:"none", border:"none", cursor:"pointer", color:"#555" }}><X size={18} /></button>
             </div>
 
-            {/* Payment method — mobile money or card */}
+            {/* Payment method - mobile money or card */}
             <p style={{ margin:"0 0 8px", fontSize:11, fontWeight:700, color:"#3a3a3a", letterSpacing:"0.06em" }}>{t("owner_payments.pay_method") || "PAYMENT METHOD"}</p>
             <div style={{ marginBottom:18 }}>
               <PayMethodSelector value={topupMethod} onChange={setTopupMethod} />
@@ -398,7 +398,7 @@ export default function OwnerPayments() {
               style={{ ...inp, marginBottom:10, resize:"vertical" }}
             />
             <p style={{ margin:"0 0 18px", fontSize:11, color:"#f59e0b", lineHeight:1.6, background:"rgba(245,158,11,0.06)", border:"1px solid rgba(245,158,11,0.15)", borderRadius:8, padding:"9px 12px" }}>
-              {t("owner_payments.refund_notice") || "Refunds are reviewed by an admin — this is not instant. The non-refundable service fee is kept, and if a worker is already engaged a cancellation charge applies."}
+              {t("owner_payments.refund_notice") || "Refunds are reviewed by an admin - this is not instant. The non-refundable service fee is kept, and if a worker is already engaged a cancellation charge applies."}
             </p>
             <div style={{ display:"flex", gap:10 }}>
               <button onClick={doRefund} disabled={refundBusy || refundNote.trim().length < 10} style={{ flex:1, background: refundNote.trim().length < 10 ? "#2a3a4a" : "#60a5fa", color:"#fff", border:"none", borderRadius:9, padding:"11px", fontSize:13, fontWeight:700, cursor: refundBusy || refundNote.trim().length < 10 ? "not-allowed" : "pointer", fontFamily:"inherit" }}>
@@ -444,7 +444,7 @@ export default function OwnerPayments() {
               style={{ ...inp, marginBottom:10, resize:"vertical" }}
             />
             <p style={{ margin:"0 0 18px", fontSize:11, color:"#f59e0b", lineHeight:1.6, background:"rgba(245,158,11,0.06)", border:"1px solid rgba(245,158,11,0.15)", borderRadius:8, padding:"9px 12px" }}>
-              {t("owner_payments.refund_notice") || "Refunds are reviewed by an admin — this is not instant. The non-refundable service fee is kept, and if a worker is already engaged a cancellation charge applies."}
+              {t("owner_payments.refund_notice") || "Refunds are reviewed by an admin - this is not instant. The non-refundable service fee is kept, and if a worker is already engaged a cancellation charge applies."}
             </p>
             <div style={{ display:"flex", gap:10 }}>
               <button onClick={doGeneralRefund} disabled={refundBusy || !selectedRefundPaymentId || refundNote.trim().length < 10} style={{ flex:1, background: (!selectedRefundPaymentId || refundNote.trim().length < 10) ? "#2a3a4a" : "#60a5fa", color:"#fff", border:"none", borderRadius:9, padding:"11px", fontSize:13, fontWeight:700, cursor: refundBusy || !selectedRefundPaymentId || refundNote.trim().length < 10 ? "not-allowed" : "pointer", fontFamily:"inherit" }}>

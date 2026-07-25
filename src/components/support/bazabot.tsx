@@ -19,7 +19,7 @@ interface Msg {
   suggestions?: Suggestion[];
   /** True while tokens are still streaming in. */
   streaming?: boolean;
-  /** True if the turn errored — shows a Retry affordance. */
+  /** True if the turn errored - shows a Retry affordance. */
   error?: boolean;
   /** Renders the name+email hand-off form inside this bubble. */
   form?: boolean;
@@ -50,7 +50,7 @@ function readSession(): StoredSession | null {
 
 /**
  * Clear an expired session AND the guest identity, so chats older than 24h don't
- * reload — including the escalated thread the server still keeps for admins.
+ * reload - including the escalated thread the server still keeps for admins.
  * Rotating the guest identity gives a fresh (empty) server thread.
  */
 function clearExpiredSession(): void {
@@ -78,7 +78,7 @@ function saveSession(messages: Msg[], seenAgentIds: string[], createdAt: number)
 }
 
 /** Short live-agent hand-off copy shown when BazaBot escalates. */
-const ESCALATION_INTRO = "I'll connect you with a live agent — just add your details:";
+const ESCALATION_INTRO = "I'll connect you with a live agent - just add your details:";
 
 export type BazaBotRole = "owner" | "seeker" | "public";
 
@@ -95,7 +95,7 @@ function resolveIdentity(): Identity {
     const u = raw ? JSON.parse(raw) : null;
     if (u && u.email) return { name: u.name || "You", email: u.email, guest: false, token };
   } catch {}
-  // Anonymous visitor — create/restore an avatar identity.
+  // Anonymous visitor - create/restore an avatar identity.
   try {
     const saved = localStorage.getItem("bazabot_identity");
     if (saved) {
@@ -365,7 +365,7 @@ export function BazaBotChat({ role = "public", onClose, style }: {
         if (wasEscalated.current && !nowEsc) {
           setMessages(prev => [...prev, {
             sender: "bot",
-            text: t("bazabot.resumed") || "This conversation has been closed. I'm here again to help — feel free to ask me anything! 🤖",
+            text: t("bazabot.resumed") || "This conversation has been closed. I'm here again to help - feel free to ask me anything! 🤖",
           }]);
         }
         wasEscalated.current = nowEsc;
@@ -416,7 +416,7 @@ export function BazaBotChat({ role = "public", onClose, style }: {
       wasEscalated.current = true;
       setMessages(prev => [...prev, {
         sender: "bot",
-        text: "Connecting you with a live agent — they'll reply here shortly. Please keep this tab open.",
+        text: "Connecting you with a live agent - they'll reply here shortly. Please keep this tab open.",
       }]);
       return;
     }
@@ -445,7 +445,7 @@ export function BazaBotChat({ role = "public", onClose, style }: {
       const cleared = prev.map(m => (m.form ? { ...m, form: false } : m));
       return [...cleared, {
         sender: "bot",
-        text: `Thanks, ${nm}! An agent will reply here shortly — please keep this tab open.`,
+        text: `Thanks, ${nm}! An agent will reply here shortly - please keep this tab open.`,
       }];
     });
     return true;
@@ -613,7 +613,7 @@ export function BazaBotChat({ role = "public", onClose, style }: {
         <div ref={endRef} />
       </div>
 
-      {/* Suggestion chips — hidden while an agent is handling the chat */}
+      {/* Suggestion chips - hidden while an agent is handling the chat */}
       {!escalated && (
         <div className="bb-chips">
           {chips.map(c => (

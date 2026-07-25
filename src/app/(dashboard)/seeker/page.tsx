@@ -320,7 +320,7 @@ export default function SeekerHome() {
         </div>
       )}
 
-      {/* Worker updates — latest platform features / announcements */}
+      {/* Worker updates - latest platform features / announcements */}
       {updates.length > 0 && (
         <>
           <div style={{ marginTop: 28 }}>

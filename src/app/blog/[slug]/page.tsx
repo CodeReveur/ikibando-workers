@@ -56,7 +56,7 @@ export default async function BlogPostPage({
   const mins = readingTime(post.bodyHtml);
 
   // Reaching the end of a post shouldn't be a dead end. Fetched after the post, so a failure here
-  // costs nothing — the section simply doesn't render.
+  // costs nothing - the section simply doesn't render.
   const more = await fetchPosts({ size: 4 });
   const related = (more?.content ?? []).filter((p) => p.id !== post.id).slice(0, 3);
 

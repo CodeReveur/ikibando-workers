@@ -260,8 +260,8 @@ export default function OwnerWorkers() {
                       <div style={{ padding:"10px 18px 14px 68px", background:"#0b0b0b", borderTop:"1px solid #141414" }}>
                         <p style={{ margin:"0 0 6px", fontSize:11, fontWeight:700, color: pendingAct?.act === "ACCEPTED" ? "#22c55e" : "#ef4444" }}>
                           {pendingAct?.act === "ACCEPTED"
-                            ? (t("owner_offers.confirm_accept_title") || "Accept worker — add a note (optional)")
-                            : (t("owner_offers.confirm_reject_title") || "Reject worker — add a note (optional)")}
+                            ? (t("owner_offers.confirm_accept_title") || "Accept worker - add a note (optional)")
+                            : (t("owner_offers.confirm_reject_title") || "Reject worker - add a note (optional)")}
                         </p>
                         <input
                           autoFocus

@@ -6,7 +6,7 @@ import { useEffect } from "react";
  * Console deterrent, the same approach big platforms use (e.g. Facebook's
  * "Stop!"): a loud warning against pasting code or poking the API from
  * DevTools, reprinted if the console is cleared. DevTools itself cannot be
- * blocked by any website — real protection lives server-side (auth, permission
+ * blocked by any website - real protection lives server-side (auth, permission
  * checks, rate limits and the origin guard).
  */
 export function ConsoleGuard() {

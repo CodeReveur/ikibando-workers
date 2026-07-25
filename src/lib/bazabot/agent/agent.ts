@@ -9,7 +9,7 @@
  * (prompt-builder). Each iteration either calls a tool and feeds the observation
  * back, or decides it is ready to answer. The FINAL answer is produced by a
  * dedicated streaming pass (provider.chatStream), so tokens reach the user as
- * the model generates them — true token-level streaming, not server chunking.
+ * the model generates them - true token-level streaming, not server chunking.
  *
  * The loop is hard-bounded by config.maxSteps to keep latency predictable on
  * small models.
@@ -102,7 +102,7 @@ export class Agent {
     private memory: MemoryStore = defaultMemoryStore,
   ) {}
 
-  /** Non-streaming convenience wrapper — collects the streamed deltas. */
+  /** Non-streaming convenience wrapper - collects the streamed deltas. */
   async run(req: AgentRequest): Promise<AgentResult> {
     let reply = "";
     const meta = await this.runStream(req, (ev, data) => {
@@ -175,7 +175,7 @@ export class Agent {
       messages.push({ role: "tool", name, content: `Observation from ${name}: ${result.summary}` });
     };
 
-    // 3a) Deterministic grounding — intent routing + keyword-triggered tools.
+    // 3a) Deterministic grounding - intent routing + keyword-triggered tools.
     //     Job/worker searches are enriched with remembered preferences (so
     //     "any jobs for me?" reuses the category/location the user gave earlier).
     const enrichedIntent = { ...intent, params: enrichParams(intent.params, mem.profile) };
@@ -207,7 +207,7 @@ export class Agent {
     await this.memory.save(mem);
 
     // Never auto-escalate: the bot always gives its best answer. If it sounds
-    // unsure, we simply OFFER a live-agent chip the user can tap — the hand-off
+    // unsure, we simply OFFER a live-agent chip the user can tap - the hand-off
     // stays user-initiated (explicit request), so we don't over-shift to agents.
     const uncertain = looksUncertain(reply);
     const suggestions: Suggestion[] = uncertain
@@ -239,11 +239,11 @@ export class Agent {
     const sys = buildComposePrompt(context, intent, memory);
     const grounding = observations.length
       ? `Verified information I retrieved (use only this for platform facts, never invent):\n${observations.map(o => `- ${o}`).join("\n")}`
-      : `No lookups were needed — answer from general platform knowledge, and do not invent specific data.`;
+      : `No lookups were needed - answer from general platform knowledge, and do not invent specific data.`;
     // When cards are present, the UI shows them as clickable buttons below the
-    // reply — so tell the model NOT to paste links or restate every item.
+    // reply - so tell the model NOT to paste links or restate every item.
     const cardsNote = cards.length
-      ? `\n\nI am also showing the user ${cards.length} ${cards[0].kind} card(s) with buttons below your reply. Briefly, warmly introduce them (say you found matches and to tap a card) — do NOT list every one or paste URLs.`
+      ? `\n\nI am also showing the user ${cards.length} ${cards[0].kind} card(s) with buttons below your reply. Briefly, warmly introduce them (say you found matches and to tap a card) - do NOT list every one or paste URLs.`
       : "";
     const user = `User question: "${message}"\n\n${grounding}${cardsNote}\n\nReply now, concisely and warmly.`;
     const msgs: ChatMessage[] = [

@@ -1,6 +1,6 @@
 /**
  * Security guard: input sanitization, prompt-injection dampening, and a simple
- * per-session sliding-window rate limiter. Defence in depth — the tool registry
+ * per-session sliding-window rate limiter. Defence in depth - the tool registry
  * already validates args and enforces auth; this stops abusive input before it
  * reaches the model.
  */

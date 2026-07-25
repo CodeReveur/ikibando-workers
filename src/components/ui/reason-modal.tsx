@@ -7,7 +7,7 @@ import { X, Loader2 } from "lucide-react";
  * In-app modal for collecting a short reason (complaint, decline note, …).
  *
  * Replaces window.prompt(), which renders as a bare browser dialog titled
- * "www.mpahmapu.com says" — unstyled, untranslatable, unable to explain
+ * "www.mpahmapu.com says" - unstyled, untranslatable, unable to explain
  * consequences, and blocked outright by some mobile browsers.
  */
 export function ReasonModal({

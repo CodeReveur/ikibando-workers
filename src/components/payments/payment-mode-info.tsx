@@ -11,7 +11,7 @@ const UNIT_OF: Record<PaymentMode, "hour" | "day" | "week" | "month" | "year"> =
 
 /**
  * A localized, plain-language summary of a job's installment payment schedule, shown on public and
- * dashboard job details so a worker knows how they'll be paid before applying — e.g. "Paid every
+ * dashboard job details so a worker knows how they'll be paid before applying - e.g. "Paid every
  * 2 days · 4 payments". Safe to render for any job.
  */
 export function PaymentModeInfo({

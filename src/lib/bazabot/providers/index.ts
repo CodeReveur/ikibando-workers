@@ -1,7 +1,7 @@
 /**
  * Provider factory. Selects the inference adapter from config so the rest of the
  * agent stays engine-agnostic. Add a new engine by implementing AIProvider and
- * registering it here — nothing else changes.
+ * registering it here - nothing else changes.
  */
 import type { BazaBotConfig } from "../config";
 import type { AIProvider } from "./provider";

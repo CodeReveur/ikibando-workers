@@ -8,7 +8,7 @@ import { RotateCw, ZoomIn, X, Check } from "lucide-react";
  *
  * A badge prints one fixed square portrait, so an uncropped phone photo arrives
  * off-centre or with the face tiny in frame. This lets the user drag to position,
- * zoom and rotate before anything is uploaded, and outputs a clean square JPEG —
+ * zoom and rotate before anything is uploaded, and outputs a clean square JPEG -
  * which also keeps the file small enough for the API's body limit.
  *
  * Deliberately dependency-free (canvas + pointer events) rather than pulling in a
@@ -36,7 +36,7 @@ export function ImageCropper({
   const boxRef = useRef<HTMLDivElement | null>(null);
 
   // Decode the file whenever a new one arrives, and reset the transform.
-  // The object URL must stay alive for as long as the preview <img> uses it —
+  // The object URL must stay alive for as long as the preview <img> uses it -
   // revoking it as soon as the image decoded left the box rendering black.
   useEffect(() => {
     if (!open || !file) { setImg(null); setImgUrl(null); return; }

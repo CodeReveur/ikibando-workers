@@ -25,7 +25,7 @@ function visitorId(): string {
 
 /**
  * Fire-and-forget visitor beacon. Sends one event to `/api/track` on every route change so the
- * admin panel can report traffic, devices, IPs and locations. Failures are swallowed — tracking
+ * admin panel can report traffic, devices, IPs and locations. Failures are swallowed - tracking
  * must never affect the visitor's experience.
  */
 export function VisitorTracker() {

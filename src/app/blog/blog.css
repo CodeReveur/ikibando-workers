@@ -6,7 +6,7 @@
  * borders. Deviating here is what made this page feel like a different product.
  *
  * A stylesheet rather than inline styles because these are server components and the states that
- * matter — hover, focus, line clamping, responsive columns — can't be expressed inline.
+ * matter - hover, focus, line clamping, responsive columns - can't be expressed inline.
  */
 
 .blog-page {
@@ -85,7 +85,7 @@
   color: #e0e0e0;
   border-color: #3a3a3a;
 }
-/* Active state is a quiet tint, not a solid orange slab — five of these lit up at once was
+/* Active state is a quiet tint, not a solid orange slab - five of these lit up at once was
    the "eye killing" part. */
 .blog-chip[data-active="true"] {
   background: rgba(249, 115, 22, 0.1);
@@ -102,7 +102,7 @@
 
 /*
  * Rows, not image cards. Most posts are written without a cover, and a grid of empty frames looks
- * broken — a list degrades to "no image" gracefully and reads like a changelog, which is what
+ * broken - a list degrades to "no image" gracefully and reads like a changelog, which is what
  * this is.
  */
 .blog-row {

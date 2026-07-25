@@ -2,7 +2,7 @@
  * llama.cpp native adapter. Targets the server's native /completion and
  * /embedding endpoints (default 127.0.0.1:8080).
  *
- * llama.cpp also exposes an OpenAI-compatible API at /v1 — if you prefer that,
+ * llama.cpp also exposes an OpenAI-compatible API at /v1 - if you prefer that,
  * set BAZABOT_ENGINE=openai-compat and BAZABOT_BASE_URL=http://host:8080/v1.
  * This native adapter renders messages with the ChatML template, which the
  * recommended lightweight instruct models (Qwen2.5, SmolLM2) understand.

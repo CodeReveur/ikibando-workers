@@ -1,5 +1,5 @@
 /**
- * ToolRegistry — the agent's single gateway to backend capabilities.
+ * ToolRegistry - the agent's single gateway to backend capabilities.
  *
  * Responsibilities:
  *  - hold the set of available tools
@@ -39,14 +39,14 @@ export class ToolRegistry {
       const ps = t.params
         .map(p => `${p.name}:${p.type}${p.required ? "" : "?"}`)
         .join(", ");
-      return `- ${t.name}(${ps}) — ${t.description}`;
+      return `- ${t.name}(${ps}) - ${t.description}`;
     });
     return lines.join("\n");
   }
 
   /**
    * Validate and execute a tool call. All failure modes are captured as
-   * ToolResult (ok:false) — the caller never has to try/catch.
+   * ToolResult (ok:false) - the caller never has to try/catch.
    */
   async execute(name: string, rawArgs: unknown, ctx: ToolContext): Promise<ToolResult> {
     const tool = this.tools.get(name);

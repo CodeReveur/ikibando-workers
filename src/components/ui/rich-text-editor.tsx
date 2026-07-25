@@ -10,7 +10,7 @@ const QuillNoSSRWrapper = dynamic(() => import("react-quill-new"), {
 });
 
 /**
- * Upload the picked image to Cloudflare R2 and insert its URL — instead of Quill's default, which
+ * Upload the picked image to Cloudflare R2 and insert its URL - instead of Quill's default, which
  * embeds a huge base64 blob straight into the HTML. `this` is the Quill toolbar module, so
  * `this.quill` is the editor. Runs only in the browser (the toolbar button is a user action).
  */

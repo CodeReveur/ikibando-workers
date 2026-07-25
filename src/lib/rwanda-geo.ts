@@ -55,7 +55,7 @@ export function geoSectors(province?: string | null, district?: string | null): 
   // The package's Sectors() is buggy: it returns every sector of the whole PROVINCE, not just the
   // district's (it iterates all districts). That polluted the dropdown with sectors from other
   // districts, and picking one left Cells/Villages empty. Cells() is correct, so a sector truly
-  // belongs to this district iff it has cells here — filter on that (and dedupe).
+  // belongs to this district iff it has cells here - filter on that (and dedupe).
   const all = safe(() => Sectors({ province: p, district: d }));
   const belongs = all.filter(s => safe(() => Cells({ province: p, district: d, sector: s })).length > 0);
   return [...new Set(belongs)];

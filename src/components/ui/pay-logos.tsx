@@ -19,7 +19,7 @@ export function MastercardMark({ size = 22 }: { size?: number }) {
 
 export type PayMethodValue = "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD";
 
-// One tile per method. Visa & Mastercard share a single card tile (same gateway flow) — selecting
+// One tile per method. Visa & Mastercard share a single card tile (same gateway flow) - selecting
 // it maps to VISA, and it stays highlighted for either card value.
 const METHODS: { value: PayMethodValue; label: string; logo: React.ReactNode; match?: PayMethodValue[] }[] = [
   { value: "MTN_MOMO",     label: "MTN Mobile Money", logo: <img src="/mtn.png"    alt="MTN Mobile Money" style={{ height: 26, width: "auto", objectFit: "contain" }} /> },

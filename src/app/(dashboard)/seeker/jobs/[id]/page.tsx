@@ -293,7 +293,7 @@ export default function SeekerJobDetail() {
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
             <DollarSign size={12} color="#666" />
-            {/* The worker's net — never the employer's posting price. */}
+            {/* The worker's net - never the employer's posting price. */}
             <span style={{ fontSize: 11, color: "#888" }}>RWF {workerNetHourly(job).toLocaleString()} / {rateUnit(job).short}</span>
           </div>
         </div>
@@ -444,7 +444,7 @@ export default function SeekerJobDetail() {
             <PaymentPanel jobId={id} role="worker" token={token} />
           )}
 
-          {/* Optional proof of work — the worker uploads, employer and admins can review. */}
+          {/* Optional proof of work - the worker uploads, employer and admins can review. */}
           {token && isAccepted && <JobEvidence jobId={id} canUpload />}
         </div>
 
@@ -489,7 +489,7 @@ export default function SeekerJobDetail() {
               />
             )}
             <InfoRow label={t("seeker_job_detail.urgency")} value={job.urgency?.replace("_", " ")} />
-            {job.startTime && <InfoRow label={t("seeker_job_detail.start_time")} value={dt(job.startTime) ?? "—"} />}
+            {job.startTime && <InfoRow label={t("seeker_job_detail.start_time")} value={dt(job.startTime) ?? "-"} />}
             {job.requirements && <InfoRow label={t("seeker_job_detail.requirements")} value={<RichTextDisplay content={job.requirements} />} />}
             <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #1a1a1a" }}>
               <PaymentModeInfo
@@ -501,7 +501,7 @@ export default function SeekerJobDetail() {
               />
             </div>
 
-            {/* Track the way — live turn-by-turn navigation, available to every worker */}
+            {/* Track the way - live turn-by-turn navigation, available to every worker */}
             <button
               onClick={() => router.push(`/seeker/jobs/${job.id}/navigate`)}
               style={{
@@ -510,7 +510,7 @@ export default function SeekerJobDetail() {
                 padding: "12px", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "inherit",
               }}
             >
-              <Navigation size={15} /> {t("seeker_job_detail.track_the_way") || "Track the way — live navigation"}
+              <Navigation size={15} /> {t("seeker_job_detail.track_the_way") || "Track the way - live navigation"}
             </button>
 
             {/* Consent: only an accepted worker can let the employer follow the trip,
@@ -542,7 +542,7 @@ export default function SeekerJobDetail() {
               <p style={{ margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: "0.08em" }}>{t("seeker_job_detail.your_earnings")}</p>
               <div style={{ textAlign: "center", padding: "8px 0" }}>
                 <p style={{ margin: "0 0 4px", fontSize: 32, fontWeight: 900, color: isReleased ? "#22c55e" : "#f97316" }}>
-                  {/* Fallback used to be gross (rate x hours) — that overstated earnings. */}
+                  {/* Fallback used to be gross (rate x hours) - that overstated earnings. */}
                   RWF {(myPayout != null ? myPayout : workerNetTotal(job)).toLocaleString()}
                 </p>
                 <p style={{ margin: 0, fontSize: 11, color: "#444" }}>
@@ -568,7 +568,7 @@ export default function SeekerJobDetail() {
             <p style={{ margin: 0, fontSize: 12, color: "#666" }}>
               {t("seeker_job_detail.job_is")} <strong style={{ color: "#aaa" }}>{job.status}</strong>
               {isCompleted && job.completedAt ? ` · ${t("seeker_job_detail.completed_on")} ${d(job.completedAt)}` : ""}
-              {isCancelled ? ` — ${t("seeker_job_detail.job_cancelled")}` : ""}
+              {isCancelled ? ` - ${t("seeker_job_detail.job_cancelled")}` : ""}
             </p>
           </div>
         </div>

@@ -49,7 +49,7 @@
       "newsletter_subtitle": "New features and tips, straight to your inbox.",
       "newsletter_placeholder": "you@email.com",
       "newsletter_button": "Subscribe",
-      "newsletter_thanks": "Thanks — you're subscribed!",
+      "newsletter_thanks": "Thanks - you're subscribed!",
       "newsletter_error": "Couldn't subscribe. Please try again."
     },
     "categories": {
@@ -644,9 +644,9 @@
       "member_emails_label": "Member emails",
       "members_count": "· {count} member{plural}",
       "member_email_placeholder": "Type an email and press Enter…",
-      "member_email_hint": "We'll email each member that they've been added. They receive notifications only — no dashboard access — and can still register their own account later.",
+      "member_email_hint": "We'll email each member that they've been added. They receive notifications only - no dashboard access - and can still register their own account later.",
       "tin_label": "TIN number",
-      "tin_placeholder": "Tax ID — leave blank to skip",
+      "tin_placeholder": "Tax ID - leave blank to skip",
       "tin_recommended": "(recommended)",
       "tin_optional": "(optional)",
       "email_error": "Enter a valid email address.",
@@ -667,7 +667,7 @@
       "loading_categories": "Loading categories...",
       "age_restriction_error": "You must be at least 18 years old to register.",
       "age_restriction_title": "Age Restriction",
-      "category_multi_hint": "— select all that apply",
+      "category_multi_hint": "- select all that apply",
       "category_selected": "selected",
       "category_primary": "Primary",
       "category_note": "All your categories are shown on your profile. The first one you pick is your primary category."
@@ -989,7 +989,7 @@
       "desc": "The worker can request payment after each {unit} is completed. With this on, approved amounts release instantly; with it off, you approve each request (auto-approves in 2h)."
     },
     "hints": {
-      "street_or_pin": "Name the street & house number, or drop a pin on the map below — workers use this to navigate to you."
+      "street_or_pin": "Name the street & house number, or drop a pin on the map below - workers use this to navigate to you."
     },
     "title_confirm": {
       "heading": "Name this job",
@@ -1511,7 +1511,7 @@
     "photo": {
       "title": "Profile picture",
       "shown_desc": "This picture is shown to employers on your public profile.",
-      "initials_desc": "No picture — employers will see your initials instead.",
+      "initials_desc": "No picture - employers will see your initials instead.",
       "upload_btn": "Upload photo",
       "change_btn": "Change photo",
       "remove_btn": "Remove",
@@ -1600,7 +1600,7 @@
     "feedback_label": "Employer Feedback",
     "released_to_wallet": "released to your wallet",
     "released_to_wallet_on": "released to your wallet on",
-    "held_in_escrow": "held in escrow — paid when employer marks job complete",
+    "held_in_escrow": "held in escrow - paid when employer marks job complete",
     "total_released": "Total Released",
     "in_escrow": "In Escrow",
     "jobs_total": "Jobs Total",
@@ -1703,7 +1703,7 @@
     "badge_required": "Badge ID is required.",
     "take_home": "You'll earn (all charges covered)",
     "address": "Street / House",
-    "track_the_way": "Track the way — live navigation",
+    "track_the_way": "Track the way - live navigation",
     "pays_on_time": "Pays on time",
     "good_instructor": "Good instructor",
     "gives_tips": "Gives tips",
@@ -1737,7 +1737,7 @@
     "withdraw": "Withdraw",
     "done": "Done ✓",
     "track": "Track",
-    "accept_title": "Accept offer — add a message (optional)",
+    "accept_title": "Accept offer - add a message (optional)",
     "confirm_acceptance": "Confirm Acceptance",
     "cancel": "Cancel",
     "optional_placeholder": "e.g. Looking forward to it! I'll be there on time."
@@ -1784,7 +1784,7 @@
     "otp_desc": "For your security, enter the 6-digit code we just emailed you to confirm this withdrawal.",
     "otp_label": "VERIFICATION CODE",
     "otp_resend": "Resend code",
-    "wd_send_code": "Continue — email me a code",
+    "wd_send_code": "Continue - email me a code",
     "wd_confirm_btn": "Confirm withdrawal {amount}",
     "withdrawal_fee": "Withdrawal fee",
     "you_receive": "You receive",
@@ -1796,7 +1796,7 @@
     "credited_desc": "Credited to your wallet · {count} bonus{plural}",
     "withdraw": "Withdraw",
     "referral_program": "Referral program",
-    "earn_reward_desc": "Earn {reward} when someone joins with your link — a worker completing their first job, or an employer you invited having their first job released.",
+    "earn_reward_desc": "Earn {reward} when someone joins with your link - a worker completing their first job, or an employer you invited having their first job released.",
     "invited": "Invited",
     "rewarded": "Rewarded",
     "earned": "Earned",
@@ -1825,7 +1825,7 @@
     "claimed": "Bonus added to your wallet",
     "claim_failed": "Couldn't claim your bonus. Please try again.",
     "all_claimed": "All claimed",
-    "in_wallet": "Already in your wallet — nothing to claim right now.",
+    "in_wallet": "Already in your wallet - nothing to claim right now.",
     "none_yet": "No bonuses yet.",
     "view_wallet": "View wallet",
     "status_claimed": "Claimed",
@@ -1922,8 +1922,8 @@
     "no_applications": "No applications yet for this offer.",
     "accept": "Accept",
     "reject": "Reject",
-    "confirm_accept_title": "Accept worker — add a note (optional)",
-    "confirm_reject_title": "Reject worker — add a note (optional)",
+    "confirm_accept_title": "Accept worker - add a note (optional)",
+    "confirm_reject_title": "Reject worker - add a note (optional)",
     "confirm_btn": "Confirm",
     "cancel": "Cancel",
     "edit_job_modal": "Edit Job",
@@ -1999,11 +1999,11 @@
     "pay_method": "PAYMENT METHOD",
     "topup_card_hint": "You'll be taken to a secure card payment page in a new tab. Funds appear in your wallet automatically once the payment is confirmed.",
     "topup_pending_err": "Payment not confirmed yet. If you were charged, it will reflect shortly.",
-    "refund_pending": "Refund requested — awaiting admin approval",
+    "refund_pending": "Refund requested - awaiting admin approval",
     "refund_pending_badge": "Refund pending",
     "refund_submitted": "Refund request submitted. An admin will review it; approved refunds are returned to your wallet minus any applicable charges.",
     "refund_reason_err": "Please give a clear reason (at least 10 characters).",
-    "refund_notice": "Refunds are reviewed by an admin — this is not instant. The non-refundable service fee is kept, and if a worker is already engaged a cancellation charge applies.",
+    "refund_notice": "Refunds are reviewed by an admin - this is not instant. The non-refundable service fee is kept, and if a worker is already engaged a cancellation charge applies.",
     "submit_refund": "Submit request",
     "filter_all_types": "All types",
     "filter_escrow": "Escrow payments",
@@ -2156,8 +2156,8 @@
     "complete_and_release": "Complete & Release Payment",
     "confirm_cancel_alert": "Cancel this job? The escrowed amount will be refunded to your wallet.",
     "auto_release_title": "Auto-release",
-    "auto_release_on_desc": "On — you can approve payment requests, but if you don't act within 2 hours they auto-release.",
-    "auto_release_off_desc": "Off — you must approve every payment request. Unapproved requests open a support case after 24 hours.",
+    "auto_release_on_desc": "On - you can approve payment requests, but if you don't act within 2 hours they auto-release.",
+    "auto_release_off_desc": "Off - you must approve every payment request. Unapproved requests open a support case after 24 hours.",
     "auto_release_failed": "Couldn't update auto-release",
     "applications_closed": "Applications closed",
     "title_label": "Title",
@@ -2175,7 +2175,7 @@
     "faq1_q": "How do I get paid?",
     "faq1_a": "Your earnings are held in escrow when a job starts and are released directly to your wallet as soon as the employer marks the job complete. You can transfer wallet funds to your MTN MoMo or Airtel Money account anytime.",
     "faq2_q": "What is the platform fee?",
-    "faq2_a": "A commission is deducted from worker earnings to run the service, verify users and process payments — the exact rate is set by MpahMapu and shown before you accept a job.",
+    "faq2_a": "A commission is deducted from worker earnings to run the service, verify users and process payments - the exact rate is set by MpahMapu and shown before you accept a job.",
     "faq3_q": "How do I get jobs?",
     "faq3_a": "Make sure your profile details, specialties, education, and district are complete. Employers can find you in 'Browse Workers' or you can apply to open jobs listed in the marketplace.",
     "faq4_q": "How do I verify completion?",
@@ -2189,7 +2189,7 @@
     "status_online": "Online",
     "status_agent": "Connected to a support agent",
     "placeholder_agent": "Message the support agent…",
-    "resumed": "This conversation has been closed. I'm here again to help — feel free to ask me anything! 🤖",
+    "resumed": "This conversation has been closed. I'm here again to help - feel free to ask me anything! 🤖",
     "greetings": "Hello! I am BazaBot, your helper. Hope you are having a wonderful day! How can I assist you with MpahMapu today?",
     "feeling": "As an AI assistant, I don't have feelings, but I'm always energized and ready to help you navigate MpahMapu!",
     "quotes": "\"Success is not final, failure is not fatal: it is the courage to continue that counts.\" - Winston Churchill. Keep pushing your limits!",
@@ -2204,12 +2204,12 @@
       "process": "Once you click 'Book Now', the system processes the request at {time} and freezes the total value. The funds remain in a pending escrow state during the entire shift. After the worker completes the task, they present their QR badge to the employer. Scanning the badge or clicking 'Mark Complete' triggers the instant payout release.",
       "guidelines": "All escrow funds are subject to our strict verification policy. Employers have up to 24 hours after completion to inspect the quality of work. If a dispute is raised, the funds will remain frozen until our admin support team verifies the case evidence and makes a final decision.",
       "seeker": {
-        "overview": "As a worker, your pay is locked safely in escrow the moment an employer books you — so your earnings are guaranteed before you even travel to the job. You never chase an employer for money.",
+        "overview": "As a worker, your pay is locked safely in escrow the moment an employer books you - so your earnings are guaranteed before you even travel to the job. You never chase an employer for money.",
         "process": "The funds stay held for the whole shift. When you finish, the employer scans your QR badge or taps 'Mark Complete', and the payment is released straight to your MpahMapu wallet, ready to withdraw."
       },
       "public": {
         "overview": "Escrow protects both sides. When an employer books a worker, the full amount is locked in a secure holding account so the worker knows the money is guaranteed and the employer knows it's only released for completed work.",
-        "process": "The funds stay frozen during the job. Once the work is confirmed complete — by scanning the worker's QR badge or tapping 'Mark Complete' — the payment is released to the worker's wallet instantly."
+        "process": "The funds stay frozen during the job. Once the work is confirmed complete - by scanning the worker's QR badge or tapping 'Mark Complete' - the payment is released to the worker's wallet instantly."
       }
     },
     "payout": {
@@ -2217,10 +2217,10 @@
       "process": "Open your Wallet, tap 'Withdraw', enter the amount and your MTN MoMo or Airtel Money number, then confirm. The funds are sent to your mobile money account, usually within minutes.",
       "guidelines": "Double-check the amount and the phone number before confirming. If a withdrawal doesn't arrive, check its status in your wallet transactions or contact support and we'll trace it.",
       "seeker": {
-        "overview": "Your earnings land in your MpahMapu wallet after each completed job — you keep your share after the platform commission, and the exact amount is shown before you accept. From there you can cash out to Mobile Money whenever you like."
+        "overview": "Your earnings land in your MpahMapu wallet after each completed job - you keep your share after the platform commission, and the exact amount is shown before you accept. From there you can cash out to Mobile Money whenever you like."
       },
       "owner": {
-        "overview": "Any spare balance in your employer wallet — for example a refund from a cancelled job or a top-up you didn't use — can be withdrawn back to your Mobile Money account."
+        "overview": "Any spare balance in your employer wallet - for example a refund from a cancelled job or a top-up you didn't use - can be withdrawn back to your Mobile Money account."
       }
     },
     "refund": {
@@ -2228,7 +2228,7 @@
       "process": "To request a refund, navigate to your Payments tab, select the HELD transaction, and click 'Request Refund'. For open bookings, cancellations made more than 2 hours before the start time are fully refunded. Cancellations within the 2-hour window incur a small 10% worker compensation fee.",
       "guidelines": "Any refund requests filed after the work has commenced are audited by support. Our team evaluates the chat timeline, work logs, and user reports. Once approved, the funds show up in your wallet balance, which you can withdraw via MTN MoMo or Airtel Money.",
       "seeker": {
-        "overview": "As a worker you don't request refunds — your pay is protected in escrow. In fact, if an employer cancels late (within 2 hours of the start), you receive a 10% compensation fee for the short notice.",
+        "overview": "As a worker you don't request refunds - your pay is protected in escrow. In fact, if an employer cancels late (within 2 hours of the start), you receive a 10% compensation fee for the short notice.",
         "process": "If a booking is cancelled late or a dispute is decided in your favour, any compensation is credited to your MpahMapu wallet, and you can withdraw it via MTN MoMo or Airtel Money."
       },
       "public": {
@@ -2267,7 +2267,7 @@
         "process": "Tap 'Post a Job', fill in the details, and fund the escrow with your wallet, MTN MoMo, Airtel Money or card. Nearby verified workers can apply, or you can invite one directly with 'Hire Now' and review applicants before accepting."
       },
       "public": {
-        "overview": "MpahMapu connects people who need work done with verified local workers across Rwanda. Sign up as a Worker to get hired for gigs, or as an Employer to post jobs and hire — you can even post a first job as a guest."
+        "overview": "MpahMapu connects people who need work done with verified local workers across Rwanda. Sign up as a Worker to get hired for gigs, or as an Employer to post jobs and hire - you can even post a first job as a guest."
       }
     },
     "complete": {
@@ -2276,7 +2276,7 @@
       "guidelines": "Always ensure the employer completes the job on-site. If they forget, send a polite message via chat. If the employer refuses to mark completion despite work being done, do not worry; contact BazaBot support to submit work proof.",
       "owner": {
         "overview": "Marking a job complete is how you release the escrowed payment to the worker. It's the final step, done once you're satisfied the agreed work is finished.",
-        "process": "After the worker verifies completion with their QR badge, open the job on your dashboard and tap 'Mark Complete' — or scan their badge. The payment is released to the worker instantly, and you can then leave a rating."
+        "process": "After the worker verifies completion with their QR badge, open the job on your dashboard and tap 'Mark Complete' - or scan their badge. The payment is released to the worker instantly, and you can then leave a rating."
       }
     },
     "dispute": {
@@ -2286,7 +2286,7 @@
     },
     "fallback": {
       "overview": "I could not find a precise answer to that specific question.",
-      "process": "You can rephrase it, or ask me about jobs, workers, payments, escrow, fees or verification — I can help with those.",
+      "process": "You can rephrase it, or ask me about jobs, workers, payments, escrow, fees or verification - I can help with those.",
       "guidelines": "If you would prefer a person, just say \"talk to a live agent\" and I will connect you."
     }
   },
@@ -2322,7 +2322,7 @@
     "toast_requested": "Payment requested",
     "toast_approved": "Payment approved & released",
     "toast_declined": "Payment declined",
-    "toast_complaint": "Complaint submitted — payment frozen",
+    "toast_complaint": "Complaint submitted - payment frozen",
     "err_request": "Couldn't request payment",
     "err_approve": "Couldn't approve",
     "err_decline": "Couldn't decline",
@@ -2355,7 +2355,7 @@
     "tag": "What's new",
     "title": "Latest features & updates",
     "desc": "Everything we've shipped recently on MpahMapu.",
-    "empty": "No announcements yet — check back soon.",
+    "empty": "No announcements yet - check back soon.",
     "cta": "Check it out"
   },
   "job_evidence": {
@@ -2419,9 +2419,9 @@
   },
   "donate_page": {
     "title": "Your gift changes lives",
-    "intro": "Donations to MpahMapu go straight back into the community we serve — helping children stay in school, opening education to everyone, and standing with families when life gets hard.",
+    "intro": "Donations to MpahMapu go straight back into the community we serve - helping children stay in school, opening education to everyone, and standing with families when life gets hard.",
     "cta": "Donate now",
-    "note": "Every donation is voluntary and consent-based. You choose the amount and the method — MTN, Airtel or card — and you can give anonymously.",
+    "note": "Every donation is voluntary and consent-based. You choose the amount and the method - MTN, Airtel or card - and you can give anonymously.",
     "c_scholar_t": "Kids to school",
     "c_scholar_d": "Scholarships and school fees so no child is left behind.",
     "c_education_t": "Education for all",

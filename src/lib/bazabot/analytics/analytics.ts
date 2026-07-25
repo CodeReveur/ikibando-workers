@@ -3,7 +3,7 @@
  *
  * Tracks the signals that help improve the assistant: intent distribution, tool
  * usage, knowledge hit/miss, fallback + escalation rates, latency, completion.
- * No PII — messages are never stored, only derived counters. Because it uses the
+ * No PII - messages are never stored, only derived counters. Because it uses the
  * KV store, counters aggregate across instances when Redis is enabled.
  *
  * Track methods are fire-and-forget (call sites use `void analytics.x(...)`) so

@@ -6,7 +6,7 @@
  *  - RedisKV     (opt-in):  shared across instances; activated by setting
  *                           BAZABOT_REDIS_URL. `ioredis` is imported lazily via
  *                           a non-literal specifier so it is NOT a hard
- *                           dependency — install it only if you enable Redis.
+ *                           dependency - install it only if you enable Redis.
  *
  * This is what "move analytics + memory to a shared store for multiple
  * instances" resolves to: flip one env var, run `npm i ioredis`, done.
@@ -94,7 +94,7 @@ async function build(): Promise<KV> {
   if (!url) return new InMemoryKV();
   try {
     // Optional dependency. `new Function` hides the import from the bundler
-    // (webpack/Turbopack) entirely, so ioredis is never resolved at build time —
+    // (webpack/Turbopack) entirely, so ioredis is never resolved at build time -
     // it stays a true opt-in, loaded from node_modules only at runtime when
     // Redis is enabled. Install it (`npm i ioredis`) to use a shared store.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

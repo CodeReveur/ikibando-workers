@@ -33,7 +33,7 @@ interface Props {
 const KIGALI: [number, number] = [-1.9441, 30.0619];
 
 // A GPS fix worse than this (metres) is almost certainly network/IP-based, not a
-// real satellite fix — on a desktop or with GPS off the browser can be hundreds
+// real satellite fix - on a desktop or with GPS off the browser can be hundreds
 // of km wrong. We refuse to draw driving directions from such a point.
 const COARSE_ACCURACY_M = 1500;
 
@@ -124,7 +124,7 @@ export default function LeafletNavigationMap({ destination }: Props) {
 
   // Hard reset: drop any known position/route and re-acquire a genuinely fresh
   // fix. A one-shot getCurrentPosition (maximumAge:0) gives instant feedback that
-  // it's re-locating, then the live watch takes over — no stale/cached position.
+  // it's re-locating, then the live watch takes over - no stale/cached position.
   const resetGps = () => {
     if (watchId.current !== null) { navigator.geolocation.clearWatch(watchId.current); watchId.current = null; }
     setPos(null); setAccuracy(null); setRoute(null); setStepIdx(0);
@@ -156,7 +156,7 @@ export default function LeafletNavigationMap({ destination }: Props) {
     setVoice((v) => {
       const next = !v;
       const cur = route?.steps[stepIdx];
-      // Turning voice ON is a user gesture — speak the current maneuver so mobile
+      // Turning voice ON is a user gesture - speak the current maneuver so mobile
       // browsers unlock speech and the user immediately hears guidance.
       if (next && cur) speak(cur.voice || cur.instruction);
       else if (!next && typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
@@ -171,7 +171,7 @@ export default function LeafletNavigationMap({ destination }: Props) {
   }, []);
 
   // The point we navigate FROM: a manual pin if the user set one, else the live
-  // GPS fix — but only when that fix is accurate enough to trust.
+  // GPS fix - but only when that fix is accurate enough to trust.
   const gpsReliable = pos != null && (accuracy == null || accuracy <= COARSE_ACCURACY_M);
   const origin: [number, number] | null = manualPos ?? (gpsReliable ? pos : null);
 
@@ -240,7 +240,7 @@ export default function LeafletNavigationMap({ destination }: Props) {
     <div style={{ position: "relative", width: "100%", height: "100%", minHeight: 420 }}>
       <style>{CSS}</style>
 
-      {/* Next-maneuver banner — collapsible to a thin bar so it never buries the map */}
+      {/* Next-maneuver banner - collapsible to a thin bar so it never buries the map */}
       <div className={`nav-banner ${bannerOpen ? "" : "mini"}`}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0, flex: 1 }}>
           <div className="nav-banner-icon">
@@ -299,7 +299,7 @@ export default function LeafletNavigationMap({ destination }: Props) {
         <button className="nav-btn" title={follow ? "Following you" : "Recenter on me"} onClick={() => { setFollow(true); }}>
           <LocateFixed size={18} color={follow ? "#f97316" : "#ccc"} />
         </button>
-        <button className="nav-btn" title={voice ? "Voice on — tap to mute" : "Voice off — tap to hear directions"} onClick={toggleVoice}>
+        <button className="nav-btn" title={voice ? "Voice on - tap to mute" : "Voice off - tap to hear directions"} onClick={toggleVoice}>
           {voice ? <Volume2 size={18} color="#22c55e" /> : <VolumeX size={18} color="#888" />}
         </button>
         <button className="nav-btn" title={manualPos || picking ? "Change your start point" : "Set your start point on the map"} onClick={() => setPicking(p => !p)}>
@@ -323,7 +323,7 @@ export default function LeafletNavigationMap({ destination }: Props) {
                 : <span style={{ color: "#f59e0b" }}><Loader2 size={11} className="nav-spin" /> Acquiring your location…</span>}
       </div>
 
-      {/* Poor-fix warning — the device gave a network/IP location (can be far off),
+      {/* Poor-fix warning - the device gave a network/IP location (can be far off),
           so we don't route from it. The user places their real start point. */}
       {(coarse || picking) && !manualPos && (
         <div className="nav-warn">
@@ -333,7 +333,7 @@ export default function LeafletNavigationMap({ destination }: Props) {
           <p className="nav-warn-sub">
             {picking
               ? "Your tap becomes the starting point for directions."
-              : `Your device reported an approximate location (±${Math.round(accuracy! / 1000)} km) — likely from Wi-Fi/IP, not satellites. Turn on precise GPS, or set your start point.`}
+              : `Your device reported an approximate location (±${Math.round(accuracy! / 1000)} km) - likely from Wi-Fi/IP, not satellites. Turn on precise GPS, or set your start point.`}
           </p>
           <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
             {!picking && (
@@ -348,7 +348,7 @@ export default function LeafletNavigationMap({ destination }: Props) {
         </div>
       )}
 
-      {/* Turn-by-turn steps — collapsed by default (tap the header to open),
+      {/* Turn-by-turn steps - collapsed by default (tap the header to open),
           so the route list never covers the map unless you ask for it. */}
       {route && route.steps.length > 0 && (
         <div className={`nav-steps ${stepsOpen ? "open" : ""}`}>

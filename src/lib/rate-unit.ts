@@ -1,6 +1,6 @@
 /**
  * The pay unit for a job. `ratePerHour` and `durationHours` are historically-named counts that are
- * actually expressed in the job's rate unit — a daily job stores the number of DAYS in
+ * actually expressed in the job's rate unit - a daily job stores the number of DAYS in
  * `durationHours` and the price per DAY in `ratePerHour`. Deriving the label from `rateType`
  * (falling back to `paymentMode`) is what keeps "7 days" from rendering as "7 hrs".
  */
@@ -28,7 +28,7 @@ export function rateUnit(job: { rateType?: string | null; paymentMode?: string |
   return BY_RATE_TYPE[rt] || BY_RATE_TYPE.PER_HOUR;
 }
 
-/** "7 days" / "1 hour" — count plus the correctly-pluralised long unit. */
+/** "7 days" / "1 hour" - count plus the correctly-pluralised long unit. */
 export function durationLabel(job: { durationHours?: number | null; rateType?: string | null; paymentMode?: string | null }): string {
   const n = job.durationHours && job.durationHours > 0 ? job.durationHours : 1;
   const u = rateUnit(job).long;

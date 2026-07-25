@@ -14,7 +14,7 @@
  * "no-face"    nothing face-like found
  * "unclear"    a face, but too small / too low-confidence to identify
  * "multiple"   more than one person in frame
- * "unavailable" no detector could run — caller should let the photo through
+ * "unavailable" no detector could run - caller should let the photo through
  */
 export type FaceCheckResult = "face" | "no-face" | "unclear" | "multiple" | "unavailable";
 

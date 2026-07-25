@@ -1,5 +1,5 @@
 /**
- * Escalation heuristics — deciding when BazaBot should hand off to a live agent.
+ * Escalation heuristics - deciding when BazaBot should hand off to a live agent.
  *
  * Two triggers:
  *  1. The user explicitly asks for a human ("talk to an agent", "real person").

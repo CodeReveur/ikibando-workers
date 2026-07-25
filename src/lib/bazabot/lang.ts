@@ -10,7 +10,7 @@
  * NOT appear in Swahili/English/French, to avoid false positives.
  */
 
-// Strong markers: seeing ONE is enough — these are unmistakably Kinyarwanda.
+// Strong markers: seeing ONE is enough - these are unmistakably Kinyarwanda.
 const STRONG = [
   "nigute", "muraho", "mwaramutse", "mwiriwe", "amakuru", "ndashaka", "nshaka",
   "nkeneye", "cyangwa", "murakoze", "kwishyura", "kwishyurwa", "umukoresha",

@@ -235,7 +235,7 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
           )}
         </div>
 
-        {/* Employer payment approvals — pending per-period requests with countdown */}
+        {/* Employer payment approvals - pending per-period requests with countdown */}
         {isOwner && <PaymentApprovalModal />}
 
         <div style={{ position:"relative" }}>
@@ -281,7 +281,7 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
                   </div>
                 )}
               </div>
-              {/* The bell holds only the newest few and clips the text — full history lives here. */}
+              {/* The bell holds only the newest few and clips the text - full history lives here. */}
               <a href={isOwner ? "/owner/notifications" : "/seeker/notifications"}
                  onClick={() => setNotifOpen(false)}
                  style={{

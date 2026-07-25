@@ -60,7 +60,7 @@ function UnsubscribeInner() {
             </h1>
             <p style={{ fontSize: 14, color: "#888", lineHeight: 1.7, margin: "0 0 24px" }}>
               You won&apos;t get product updates or the newsletter from us any more. Messages about
-              your jobs, payments and account will still reach you — those aren&apos;t marketing.
+              your jobs, payments and account will still reach you - those aren&apos;t marketing.
             </p>
             <Link
               href="/"

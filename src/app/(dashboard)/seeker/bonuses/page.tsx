@@ -56,7 +56,7 @@ export default function SeekerBonuses() {
       .finally(() => setLoading(false));
   }, []);
 
-  const total     = bonus?.total ?? 0;        // claimed — already wallet balance
+  const total     = bonus?.total ?? 0;        // claimed - already wallet balance
   const claimable = bonus?.claimable ?? 0;    // still to claim
   const lifetime  = total + claimable;        // everything ever granted
   const items     = bonus?.items ?? [];
@@ -161,9 +161,9 @@ export default function SeekerBonuses() {
         }}>
           <Gift size={28} color="#f97316" />
         </div>
-        {/* Headline is what's waiting to be claimed when there is any — a bonus isn't wallet
+        {/* Headline is what's waiting to be claimed when there is any - a bonus isn't wallet
             money until claimed, so leading with the claimed total would be misleading. */}
-        {/* This number always means one thing: what's claimable. Zero when there's nothing —
+        {/* This number always means one thing: what's claimable. Zero when there's nothing -
             money already claimed is just wallet balance and is reported on the history below. */}
         <div style={{ flex: 1 }}>
           <p style={{ margin: "0 0 4px", fontSize: 11, color: "#5a4000", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>
@@ -231,7 +231,7 @@ export default function SeekerBonuses() {
             flex: 1, background: "#0d0d0d", border: "1px solid #1e1e1e", borderRadius: 9,
             padding: "10px 14px", fontSize: 13, color: "#888", fontFamily: "monospace",
             overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-          }}>{loading ? "Loading…" : code || "—"}</div>
+          }}>{loading ? "Loading…" : code || "-"}</div>
           <button onClick={copy} disabled={!link} style={{
             background: copied ? "rgba(34,197,94,0.1)" : "#1a1a1a",
             border: `1px solid ${copied ? "rgba(34,197,94,0.3)" : "#222"}`, borderRadius: 9,
@@ -262,7 +262,7 @@ export default function SeekerBonuses() {
         )}
       </div>
 
-      {/* Bonus history — the lifetime total lives here, not on the claim card. */}
+      {/* Bonus history - the lifetime total lives here, not on the claim card. */}
       <SectionHead
         title={t("seeker_bonuses.bonus_history") || "Bonus history"}
         action={items.length > 0 ? (

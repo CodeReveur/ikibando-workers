@@ -2,8 +2,8 @@
  * Rule-engine bridge.
  *
  * Wraps the existing multilingual intent engine (bazabot-brain) and FAQ matcher
- * (bazabot-knowledge) so BazaBot keeps working — in all four languages, with
- * role awareness and human-agent escalation — whenever AI mode is unavailable.
+ * (bazabot-knowledge) so BazaBot keeps working - in all four languages, with
+ * role awareness and human-agent escalation - whenever AI mode is unavailable.
  * This is what makes "no model configured" a graceful degradation rather than an
  * outage.
  */
@@ -79,7 +79,7 @@ export function runRuleEngine(req: AgentRequest, _cfg: BazaBotConfig, forceLang?
     return base(respond(topic, lang, userName, role), "rules");
   }
 
-  // 4) Nothing matched — still help with the general overview (in the visitor's
+  // 4) Nothing matched - still help with the general overview (in the visitor's
   //    language) and OFFER a live agent as a chip, rather than auto-escalating.
   return base(respond("fallback", lang, userName, role), "rules", [AGENT_SUGGESTION, ...suggestionsFor(role).slice(0, 1)]);
 }

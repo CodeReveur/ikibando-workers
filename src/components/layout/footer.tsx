@@ -55,7 +55,7 @@ export default function Footer() {
         </div>
         {state === "done" ? (
           <p style={{ margin: 0, fontSize: 12, color: "#22c55e", fontWeight: 600 }}>
-            {t("common.footer.newsletter_thanks") || "Thanks — you're subscribed!"}
+            {t("common.footer.newsletter_thanks") || "Thanks - you're subscribed!"}
           </p>
         ) : (
           <form onSubmit={handleSubscribe} style={{ display: "flex", gap: 8, flex: "1 1 260px", maxWidth: 340 }}>
