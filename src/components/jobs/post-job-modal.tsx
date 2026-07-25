@@ -725,6 +725,22 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                   </p>
                 )}
 
+                {/* Rate — kept right after the schedule so the amount follows the payment terms. */}
+                <FField label={(t("post_job.labels.rate_label", { period: RATE_LABEL[job.rateType] }) || `Rate per worker ${RATE_LABEL[job.rateType]} (RWF) *`)} error={errors.ratePerHour}>
+                  <input type="number" min="0" placeholder={t("post_job.placeholders.rate") || "e.g. 3000"}
+                    value={job.ratePerHour} onChange={e => setJob(f => ({ ...f, ratePerHour: e.target.value }))}
+                    style={inp}
+                    onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
+                    onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                  />
+                  {rate > 0 && hours > 0 && (
+                    <p style={{ margin: "4px 0 0", fontSize: 11, color: "#555" }}>
+                      Job Cost: <strong style={{ color: "#f97316" }}>{fmt(baseCost)}</strong>
+                      {" "}({heads} × {hours}h × {fmt(rate)})
+                    </p>
+                  )}
+                </FField>
+
                 <div className="pj-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                   <FField label={t("post_job.labels.workers_count") || "No. of workers"}>
                     <div style={{ position: "relative" }}>
@@ -889,22 +905,6 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                       )}
                     </div>
                   </div>
-                </FField>
-
-                {/* Rate */}
-                <FField label={(t("post_job.labels.rate_label", { period: RATE_LABEL[job.rateType] }) || `Rate per worker ${RATE_LABEL[job.rateType]} (RWF) *`)} error={errors.ratePerHour}>
-                  <input type="number" min="0" placeholder={t("post_job.placeholders.rate") || "e.g. 3000"}
-                    value={job.ratePerHour} onChange={e => setJob(f => ({ ...f, ratePerHour: e.target.value }))}
-                    style={inp}
-                    onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-                    onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
-                  />
-                  {rate > 0 && hours > 0 && (
-                    <p style={{ margin: "4px 0 0", fontSize: 11, color: "#555" }}>
-                      Job Cost: <strong style={{ color: "#f97316" }}>{fmt(baseCost)}</strong>
-                      {" "}({heads} × {hours}h × {fmt(rate)})
-                    </p>
-                  )}
                 </FField>
 
                 {/* Requirements */}

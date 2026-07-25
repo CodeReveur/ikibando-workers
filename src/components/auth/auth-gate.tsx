@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Mail, ShieldCheck, QrCode, Clock } from "lucide-react";
+import { Loader2, Mail, ShieldCheck, QrCode, Clock, Copy, Check } from "lucide-react";
 import {
   AuthResult, verifyEmailCode, resendOtpCode, loginWithEmail, authenticate2fa, enableTotp,
   snoozeTotpSetup,
@@ -41,7 +41,19 @@ export function AuthGate({ result, email, password, onResolved }: Props) {
   const [loading, setLoading] = useState(false);
   const [snoozeDays, setSnoozeDays] = useState(7);
   const [snoozing, setSnoozing] = useState(false);
+  const [copied, setCopied] = useState(false);
   const mode = modeOf(active);
+
+  const copySecret = async () => {
+    if (!active.secret) return;
+    try {
+      await navigator.clipboard.writeText(active.secret);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      toastError("Copy failed. Select the key and copy it manually.", { title: "Clipboard blocked" });
+    }
+  };
 
   // If a fresh result has no gate, resolve immediately.
   const advance = (r: AuthResult) => {
@@ -125,6 +137,27 @@ export function AuthGate({ result, email, password, onResolved }: Props) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={active.qrCodeUri} alt="Scan with authenticator"
                 className="w-40 h-40 rounded-xl border border-[#2a2a2a] bg-white p-2" />
+            </div>
+          )}
+
+          {mode === "SETUP" && active.secret && (
+            <div className="space-y-1.5">
+              <p className="text-[11px] text-gray-500 text-center">
+                Can&apos;t scan? Enter this key in your authenticator app.
+              </p>
+              <button
+                type="button"
+                onClick={copySecret}
+                title="Copy setup key"
+                className="w-full flex items-center justify-between gap-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-3 py-2.5 hover:border-[#3a3a3a] transition-colors group"
+              >
+                <code className="text-xs text-gray-300 font-mono tracking-wider break-all text-left leading-relaxed">
+                  {active.secret.replace(/(.{4})/g, "$1 ").trim()}
+                </code>
+                {copied
+                  ? <Check size={15} className="text-green-500 shrink-0" />
+                  : <Copy size={15} className="text-gray-500 group-hover:text-gray-300 shrink-0" />}
+              </button>
             </div>
           )}
 

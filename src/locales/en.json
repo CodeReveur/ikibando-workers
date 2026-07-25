@@ -2432,5 +2432,15 @@
     "recent_sub": "What your gifts have helped MpahMapu do lately.",
     "recent_empty": "Updates on what your donations achieve will appear here as the team shares them.",
     "read_more": "Read more"
+  },
+  "notif_prompt": {
+    "title": "Turn on notifications",
+    "subtitle": "Get instant alerts even when this tab is closed. Click Enable, then Allow on your browser's prompt.",
+    "perk_jobs": "New jobs and application updates",
+    "perk_messages": "Replies and messages from support",
+    "perk_payments": "Payments, top-ups and withdrawals",
+    "later": "Not now",
+    "enable": "Enable notifications",
+    "enabling": "Enabling…"
   }
 }

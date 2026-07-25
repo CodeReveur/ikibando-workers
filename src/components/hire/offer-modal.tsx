@@ -587,6 +587,21 @@ export function OfferModal({ worker, onClose }: Props) {
                 </p>
               )}
 
+              {/* offer price — kept right after the schedule so the amount follows the payment terms. */}
+              <FField label={t("offer.labels.offer_price", { period: RATE_LABEL[rateType] }) || `Your offer price ${RATE_LABEL[rateType]} (RWF) *`}>
+                <input type="number" min={1} placeholder={`e.g. ${minRate.toLocaleString()}`}
+                  value={bid} onChange={e => setBid(e.target.value)}
+                  style={{ ...inp, fontWeight: bidNum > 0 ? 700 : 400 }}
+                  onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
+                  onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                />
+                {bidNum > 0 && !bidOk && (
+                  <p style={{ margin: "4px 0 0", fontSize: 11, color: "#ef4444" }}>
+                    Minimum is {fmt(minRate)} {RATE_LABEL[rateType]}
+                  </p>
+                )}
+              </FField>
+
               <label style={{
                 background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10,
                 padding: "12px 14px", display: "flex", gap: 10, alignItems: "flex-start", cursor: "pointer", marginTop: 12,
@@ -656,21 +671,6 @@ export function OfferModal({ worker, onClose }: Props) {
                     )}
                   </div>
                 </div>
-              </FField>
-
-              {/* offer price */}
-              <FField label={t("offer.labels.offer_price", { period: RATE_LABEL[rateType] }) || `Your offer price ${RATE_LABEL[rateType]} (RWF) *`}>
-                <input type="number" min={1} placeholder={`e.g. ${minRate.toLocaleString()}`}
-                  value={bid} onChange={e => setBid(e.target.value)}
-                  style={{ ...inp, fontWeight: bidNum > 0 ? 700 : 400 }}
-                  onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-                  onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
-                />
-                {bidNum > 0 && !bidOk && (
-                  <p style={{ margin: "4px 0 0", fontSize: 11, color: "#ef4444" }}>
-                    Minimum is {fmt(minRate)} {RATE_LABEL[rateType]}
-                  </p>
-                )}
               </FField>
 
             </div>

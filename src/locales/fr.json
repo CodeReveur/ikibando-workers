@@ -2431,5 +2431,15 @@
     "recent_sub": "Ce que vos dons ont récemment permis à MpahMapu de faire.",
     "recent_empty": "Les nouvelles sur ce que vos dons permettent apparaîtront ici dès que l’équipe les partagera.",
     "read_more": "Lire la suite"
+  },
+  "notif_prompt": {
+    "title": "Activer les notifications",
+    "subtitle": "Recevez des alertes instantanées même lorsque cet onglet est fermé. Cliquez sur Activer, puis sur Autoriser dans l'invite de votre navigateur.",
+    "perk_jobs": "Nouveaux emplois et suivi des candidatures",
+    "perk_messages": "Réponses et messages du support",
+    "perk_payments": "Paiements, recharges et retraits",
+    "later": "Plus tard",
+    "enable": "Activer les notifications",
+    "enabling": "Activation…"
   }
 }

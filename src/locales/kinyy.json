@@ -2431,5 +2431,15 @@
     "recent_sub": "Ibyo inkunga zawe zafashije MpahMapu gukora vuba aha.",
     "recent_empty": "Amakuru ku byo inkunga zawe zigeraho azagaragara hano igihe ikipe izabishyira ahagaragara.",
     "read_more": "Soma byinshi"
+  },
+  "notif_prompt": {
+    "title": "Fungura imenyesha",
+    "subtitle": "Akira imenyesha ako kanya n'ubwo iyi paji ifunze. Kanda Emeza, hanyuma Wemere ku kibazo cya mushakisha yawe.",
+    "perk_jobs": "Imirimo mishya n'amakuru ku busabe",
+    "perk_messages": "Ibisubizo n'ubutumwa bituruka muri serivisi z'abakiriya",
+    "perk_payments": "Kwishyura, kongera amafaranga no kubikuza",
+    "later": "Nyuma",
+    "enable": "Fungura imenyesha",
+    "enabling": "Birafungura…"
   }
 }

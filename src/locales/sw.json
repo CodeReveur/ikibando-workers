@@ -2431,5 +2431,15 @@
     "recent_sub": "Kile michango yako imesaidia MpahMapu kufanya hivi karibuni.",
     "recent_empty": "Taarifa kuhusu kile michango yako inafanikisha zitaonekana hapa timu inaposhiriki.",
     "read_more": "Soma zaidi"
+  },
+  "notif_prompt": {
+    "title": "Washa arifa",
+    "subtitle": "Pata arifa papo hapo hata wakati kichupo hiki kimefungwa. Bofya Washa, kisha Ruhusu kwenye kidokezo cha kivinjari chako.",
+    "perk_jobs": "Kazi mpya na masasisho ya maombi",
+    "perk_messages": "Majibu na ujumbe kutoka kwa usaidizi",
+    "perk_payments": "Malipo, kuongeza salio na kutoa pesa",
+    "later": "Baadaye",
+    "enable": "Washa arifa",
+    "enabling": "Inawasha…"
   }
 }
