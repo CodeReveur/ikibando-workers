@@ -155,16 +155,23 @@ export function RichTextDisplay({ content }: { content: string }) {
   return (
     <>
       <style>{`
-        .rich-text-display { line-height: 1.55; }
-        .rich-text-display p { margin: 0 0 6px; }
+        .rich-text-display { line-height: 1.6; }
+        .rich-text-display p { margin: 0 0 8px; }
         .rich-text-display p:last-child { margin-bottom: 0; }
-        .rich-text-display p > br:only-child { line-height: 1; }
-        .rich-text-display ul, .rich-text-display ol { margin: 4px 0; padding-left: 1.4em; }
-        .rich-text-display li { margin: 1px 0; padding-left: 0; }
-        .rich-text-display h1, .rich-text-display h2 { color: #f0f0f0; margin: 10px 0 6px; line-height: 1.3; }
-        .rich-text-display blockquote { margin: 6px 0; padding-left: 12px; border-left: 3px solid #333; color: #aaa; }
+        .rich-text-display h1, .rich-text-display h2, .rich-text-display h3 { color: #f0f0f0; margin: 12px 0 6px; line-height: 1.3; }
+        .rich-text-display strong, .rich-text-display b { color: #eaeaea; }
+        .rich-text-display blockquote { margin: 8px 0; padding-left: 12px; border-left: 3px solid #333; color: #aaa; }
         .rich-text-display img { max-width: 100%; height: auto; border-radius: 8px; margin: 8px 0; }
         .rich-text-display a { color: #f97316; }
+        /* Lists: draw NATIVE markers so bullets survive even when the server-side sanitizer strips
+           Quill's data-list attribute. Quill 2 puts both bullet and numbered items in <ol>, flagged
+           by data-list; we hide Quill's ::before marker, default every item to a bullet (requirement
+           lists are almost always bullets), and only switch to numbers when data-list says ordered. */
+        .rich-text-display ul, .rich-text-display ol { margin: 6px 0; padding-left: 1.5em; }
+        .rich-text-display li { margin: 3px 0; padding-left: 0; list-style-position: outside; list-style-type: disc; }
+        .rich-text-display li::before { content: none !important; }
+        .rich-text-display li[data-list="ordered"] { list-style-type: decimal; }
+        .rich-text-display ol.no-bullet > li, .rich-text-display ul.no-bullet > li { list-style-type: none; }
       `}</style>
       <div
         className="ql-editor rich-text-display"
