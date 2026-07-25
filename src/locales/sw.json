@@ -50,7 +50,9 @@
       "newsletter_placeholder": "wewe@email.com",
       "newsletter_button": "Jiandikishe",
       "newsletter_thanks": "Asante - umejiandikisha!",
-      "newsletter_error": "Imeshindwa kujiandikisha. Tafadhali jaribu tena."
+      "newsletter_error": "Imeshindwa kujiandikisha. Tafadhali jaribu tena.",
+      "follow_us": "Tufuate",
+      "join_community": "Jiunge na jumuiya yetu ya WhatsApp"
     },
     "categories": {
       "": "Mfanyakazi",

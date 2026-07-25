@@ -50,7 +50,9 @@
       "newsletter_placeholder": "you@email.com",
       "newsletter_button": "Subscribe",
       "newsletter_thanks": "Thanks - you're subscribed!",
-      "newsletter_error": "Couldn't subscribe. Please try again."
+      "newsletter_error": "Couldn't subscribe. Please try again.",
+      "follow_us": "Follow us",
+      "join_community": "Join our WhatsApp community"
     },
     "categories": {
       "": "Worker",

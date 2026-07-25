@@ -50,7 +50,9 @@
       "newsletter_placeholder": "vous@email.com",
       "newsletter_button": "S'abonner",
       "newsletter_thanks": "Merci - vous êtes abonné !",
-      "newsletter_error": "Échec de l'abonnement. Veuillez réessayer."
+      "newsletter_error": "Échec de l'abonnement. Veuillez réessayer.",
+      "follow_us": "Suivez-nous",
+      "join_community": "Rejoignez notre communauté WhatsApp"
     },
     "categories": {
       "": "Travailleur",

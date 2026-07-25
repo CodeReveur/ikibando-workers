@@ -50,7 +50,9 @@
       "newsletter_placeholder": "wowe@email.com",
       "newsletter_button": "Iyandikishe",
       "newsletter_thanks": "Murakoze - mwiyandikishije!",
-      "newsletter_error": "Kwiyandikisha byanze. Ongera ugerageze."
+      "newsletter_error": "Kwiyandikisha byanze. Ongera ugerageze.",
+      "follow_us": "Dukurikire",
+      "join_community": "Injira mu itsinda ryacu rya WhatsApp"
     },
     "categories": {
       "": "Umukozi",
