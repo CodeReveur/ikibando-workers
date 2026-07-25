@@ -8,6 +8,7 @@ import {
   type WorkerProfileDto, type JobDto, type JobSearchParams, type WorkerSearchParams,
 } from "@/lib/api";
 import { usePagedResults } from "@/lib/use-paged-results";
+import { rateUnit } from "@/lib/rate-unit";
 import { CATEGORIES, categoryParam, keyForSlug } from "@/lib/browse-taxonomy";
 import {
   ActiveChip, ComboField, NumberField, ToggleField,
@@ -647,7 +648,7 @@ function BrowsePageInner() {
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
                         <span style={{ fontSize: 15, fontWeight: 800, color: "#f97316" }}>
                           {fmt(j.ratePerHour)}
-                          <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}>{t("common.general.per_hour") || " / hr"}</span>
+                          <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}>{" / " + rateUnit(j).short}</span>
                         </span>
                         <span style={{ fontSize: 11, color: "#444" }}>
                           {posted === 0 ? "Today" : `${posted}d ago`}

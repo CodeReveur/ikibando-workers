@@ -695,6 +695,8 @@ export interface ApplicationDto {
   jobWorkerPayout: number | null;
   jobHeadcount: number | null;
   jobDurationHours: number | null;
+  /** Rate type (PER_HOUR, PER_DAY, …) so cards can label the pay unit correctly. */
+  jobRateType?: string | null;
   workerId: string;
   workerName: string;
   workerDistrict: string | null;

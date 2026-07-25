@@ -11,6 +11,7 @@ import {
   type WalletDto, type ApplicationDto, type PaymentDto, type FeatureAnnouncement,
 } from "@/lib/api";
 import { StatCard, SectionHead, Dot, PageLoader } from "@/components/dashboard/ui";
+import { rateUnit } from "@/lib/rate-unit";
 import { fmt } from "@/lib/dashboard-data";
 import { Balance } from "@/components/ui/balance";
 import { useSession } from "@/components/dashboard/session-ctx";
@@ -212,7 +213,7 @@ export default function SeekerHome() {
                   </div>
                 </div>
                 <div style={{ textAlign:"right", flexShrink:0 }}>
-                  <p style={{ margin:"0 0 8px", fontWeight:800, fontSize:14, color:"#f97316" }}>{fmt(applicationNetHourly(app))}/hr</p>
+                  <p style={{ margin:"0 0 8px", fontWeight:800, fontSize:14, color:"#f97316" }}>{fmt(applicationNetHourly(app))}/{rateUnit({ rateType: app.jobRateType }).short}</p>
                   <div style={{ display:"flex", gap:6 }}>
                     <button className="act-btn accept" disabled={respondingId === app.id}
                       onClick={() => handleOffer(app.id, "ACCEPTED")}>{t("dashboard_home.accept")}</button>
@@ -308,7 +309,7 @@ export default function SeekerHome() {
                   </div>
                 </div>
                 <div style={{ textAlign:"right", flexShrink:0 }}>
-                  <p style={{ margin:"0 0 3px", fontSize:13, fontWeight:800, color:"#f97316" }}>{fmt(applicationNetHourly(app))}/hr</p>
+                  <p style={{ margin:"0 0 3px", fontSize:13, fontWeight:800, color:"#f97316" }}>{fmt(applicationNetHourly(app))}/{rateUnit({ rateType: app.jobRateType }).short}</p>
                   <span style={{ fontSize:10, fontWeight:700, borderRadius:99, padding:"2px 8px", color, background:`${color}18` }}>
                     {STATUS_LABEL[app.status] ?? app.status}
                   </span>

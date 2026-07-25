@@ -9,6 +9,7 @@ import {
   getMyApplications, getWalletTransactions, applicationNetHourly,
   type ApplicationDto, type PaymentDto,
 } from "@/lib/api";
+import { rateUnit } from "@/lib/rate-unit";
 import { ST, fmt } from "@/lib/dashboard-data";
 import { StatCard, SectionHead, Dot, PageLoader } from "@/components/dashboard/ui";
 import { useLanguage } from "@/lib/language-context";
@@ -197,7 +198,7 @@ export default function SeekerJobs() {
                 {/* Rate + earnings + track link */}
                 <div style={{ textAlign:"right", flexShrink:0 }}>
                   <p style={{ margin:0, fontWeight:800, fontSize:15, color:"#f97316" }}>
-                    {fmt(applicationNetHourly(app))}<span style={{ fontSize:10, color:"#3a3a3a" }}>/hr</span>
+                    {fmt(applicationNetHourly(app))}<span style={{ fontSize:10, color:"#3a3a3a" }}>/{rateUnit({ rateType: app.jobRateType }).short}</span>
                   </p>
                   {pmt && (
                     <p style={{ margin:"4px 0 0", fontSize:12, fontWeight:700, color: isReleased ? "#22c55e" : "#f59e0b" }}>

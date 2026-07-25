@@ -4,6 +4,7 @@ import { useState } from "react";
 import Footer from "@/components/layout/footer";
 import { ApplyModal } from "@/components/jobs/apply-modal";
 import { daysAgo, workerNetHourly, workerNetTotal, type JobDto } from "@/lib/api";
+import { rateUnit } from "@/lib/rate-unit";
 import { useLanguage, usePageTitle } from "@/lib/language-context";
 import { ratingLabel } from "@/lib/rating";
 import {
@@ -240,7 +241,7 @@ export default function JobDetailView({ job }: { job: JobDto }) {
             <div style={{ width: 1, height: 28, background: "#2a2a2a", flexShrink: 0 }} />
             <p title="What you take home, after all charges"
                style={{ margin: 0, fontSize: 15, fontWeight: 900, color: "#f97316", letterSpacing: "-0.4px", whiteSpace: "nowrap" }}>
-              {fmt(workerNetHourly(job))} <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}>/hr</span>
+              {fmt(workerNetHourly(job))} <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}>/{rateUnit(job).short}</span>
             </p>
           </div>
 

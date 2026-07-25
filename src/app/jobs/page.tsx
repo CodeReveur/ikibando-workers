@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import Footer from "@/components/layout/footer";
 import { PostJobModal } from "@/components/jobs/post-job-modal";
 import { getJobs, daysAgo, workerNetHourly, type JobDto, type JobSearchParams } from "@/lib/api";
+import { rateUnit } from "@/lib/rate-unit";
 import { usePagedResults } from "@/lib/use-paged-results";
 import { CATEGORIES, categoryParam, keyForSlug } from "@/lib/browse-taxonomy";
 import {
@@ -400,7 +401,7 @@ export default function JobsPage() {
                       <span style={{ fontSize: 15, fontWeight: 800, color: "#f97316" }}
                             title={t("jobs_page.cards.you_earn_hint") || "What you take home, after all charges"}>
                         {fmt(workerNetHourly(j))}
-                        <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}>{t("common.general.per_hour") || " / hr"}</span>
+                        <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}>{" / " + rateUnit(j).short}</span>
                       </span>
                       <span style={{
                         display: "flex", alignItems: "center", gap: 4,

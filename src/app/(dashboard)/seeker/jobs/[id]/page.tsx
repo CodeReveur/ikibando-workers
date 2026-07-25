@@ -13,6 +13,7 @@ import {
   type JobDto, type ApplicationDto, type PaymentDto,
 } from "@/lib/api";
 import { ratingLabel } from "@/lib/rating";
+import { rateUnit, durationLabel } from "@/lib/rate-unit";
 import { fmt } from "@/lib/dashboard-data";
 import { RichTextDisplay } from "@/components/ui/rich-text-editor";
 import { useLanguage } from "@/lib/language-context";
@@ -283,7 +284,7 @@ export default function SeekerJobDetail() {
           )}
           <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
             <Clock size={12} color="#666" />
-            <span style={{ fontSize: 11, color: "#888" }}>{job.durationHours}h</span>
+            <span style={{ fontSize: 11, color: "#888" }}>{durationLabel(job)}</span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
             <MapPin size={12} color="#666" />
@@ -292,7 +293,7 @@ export default function SeekerJobDetail() {
           <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
             <DollarSign size={12} color="#666" />
             {/* The worker's net — never the employer's posting price. */}
-            <span style={{ fontSize: 11, color: "#888" }}>RWF {workerNetHourly(job).toLocaleString()} / hr</span>
+            <span style={{ fontSize: 11, color: "#888" }}>RWF {workerNetHourly(job).toLocaleString()} / {rateUnit(job).short}</span>
           </div>
         </div>
       ) : null,
@@ -477,8 +478,8 @@ export default function SeekerJobDetail() {
               />
             )}
             {job.locationNotes && <InfoRow label={t("seeker_job_detail.location_notes")} value={<RichTextDisplay content={job.locationNotes} />} />}
-            <InfoRow label={t("seeker_job_detail.rate")} value={`RWF ${workerNetHourly(job).toLocaleString()} / hr`} />
-            <InfoRow label={t("seeker_job_detail.duration")} value={`${job.durationHours} hours`} />
+            <InfoRow label={t("seeker_job_detail.rate")} value={`RWF ${workerNetHourly(job).toLocaleString()} / ${rateUnit(job).short}`} />
+            <InfoRow label={t("seeker_job_detail.duration")} value={durationLabel(job)} />
             <InfoRow label={t("seeker_job_detail.headcount")} value={`${job.headcount} ${job.headcount !== 1 ? t("seeker_job_detail.workers") : t("seeker_job_detail.worker")}`} />
             {job.workerPayout != null && job.headcount > 0 && (
               <InfoRow
@@ -548,7 +549,7 @@ export default function SeekerJobDetail() {
                     ? `${t("seeker_jobs.released_to_wallet") || "Paid to your wallet"} ${t("common.general.on") || "on"} ${d(txn?.releasedAt)}`
                     : myPayout != null
                     ? t("seeker_job_detail.released_on_completion")
-                    : `${t("seeker_job_detail.estimated")} · RWF ${job.ratePerHour?.toLocaleString()} × ${job.durationHours}h`}
+                    : `${t("seeker_job_detail.estimated")} · RWF ${job.ratePerHour?.toLocaleString()} × ${durationLabel(job)}`}
                 </p>
               </div>
               {isReleased && (

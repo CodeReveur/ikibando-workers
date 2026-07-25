@@ -9,6 +9,7 @@ import {
   getMyApplications, withdrawApplication, updateApplicationStatus, apiError,
   type ApplicationDto,
 } from "@/lib/api";
+import { rateUnit } from "@/lib/rate-unit";
 import { ST, fmt } from "@/lib/dashboard-data";
 import { StatCard, SectionHead, Dot, PageLoader } from "@/components/dashboard/ui";
 import { useLanguage } from "@/lib/language-context";
@@ -246,7 +247,7 @@ export default function SeekerApplications() {
 
                 {/* Actions + rate */}
                 <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:8, flexShrink:0 }}>
-                  <p style={{ margin:0, fontWeight:800, fontSize:14, color:"#f97316" }}>{fmt(app.jobRatePerHour)}<span style={{ fontSize:10, color:"#3a3a3a" }}>/hr</span></p>
+                  <p style={{ margin:0, fontWeight:800, fontSize:14, color:"#f97316" }}>{fmt(app.jobRatePerHour)}<span style={{ fontSize:10, color:"#3a3a3a" }}>/{rateUnit({ rateType: app.jobRateType }).short}</span></p>
 
                   {isActing && <Loader2 size={14} color="#555" style={{ animation:"spin 0.7s linear infinite" }} />}
 
