@@ -120,19 +120,40 @@ export function RichTextEditor({
   );
 }
 
+/**
+ * Collapse the empty paragraphs Quill leaves behind (each Enter with no text becomes
+ * `<p><br></p>`). Two or more in a row render as a big gap the author never intended, so we
+ * squash runs of them to a single blank line and trim any at the very start/end.
+ */
+function tidyHtml(html: string): string {
+  const EMPTY = /<p>(?:\s|<br\s*\/?>|&nbsp;)*<\/p>/gi;
+  return html
+    .replace(new RegExp(`(?:${EMPTY.source}\\s*){2,}`, "gi"), "<p><br></p>")
+    .replace(new RegExp(`^(?:\\s*${EMPTY.source}\\s*)+`, "i"), "")
+    .replace(new RegExp(`(?:\\s*${EMPTY.source}\\s*)+$`, "i"), "")
+    .trim();
+}
+
 export function RichTextDisplay({ content }: { content: string }) {
   if (!content) return null;
   return (
     <>
       <style>{`
+        .rich-text-display { line-height: 1.55; }
+        .rich-text-display p { margin: 0 0 6px; }
+        .rich-text-display p:last-child { margin-bottom: 0; }
+        .rich-text-display p > br:only-child { line-height: 1; }
+        .rich-text-display ul, .rich-text-display ol { margin: 4px 0; padding-left: 1.4em; }
+        .rich-text-display li { margin: 1px 0; padding-left: 0; }
+        .rich-text-display h1, .rich-text-display h2 { color: #f0f0f0; margin: 10px 0 6px; line-height: 1.3; }
+        .rich-text-display blockquote { margin: 6px 0; padding-left: 12px; border-left: 3px solid #333; color: #aaa; }
         .rich-text-display img { max-width: 100%; height: auto; border-radius: 8px; margin: 8px 0; }
         .rich-text-display a { color: #f97316; }
-        .rich-text-display h1, .rich-text-display h2 { color: #f0f0f0; }
       `}</style>
       <div
         className="ql-editor rich-text-display"
-        style={{ padding: 0, fontSize: 13, color: "#ccc", lineHeight: 1.85 }}
-        dangerouslySetInnerHTML={{ __html: content }}
+        style={{ padding: 0, fontSize: 13, color: "#ccc" }}
+        dangerouslySetInnerHTML={{ __html: tidyHtml(content) }}
       />
     </>
   );
