@@ -18,6 +18,8 @@ import { ST, fmt } from "@/lib/dashboard-data";
 import { StatCard, SectionHead, Dot, PageLoader } from "@/components/dashboard/ui";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { useLanguage } from "@/lib/language-context";
+import { rateUnit } from "@/lib/rate-unit";
+import { categoryLabel } from "@/lib/browse-taxonomy";
 
 /* ── helpers ─────────────────────────────────────────────────────────────── */
 const CSS = `
@@ -207,7 +209,7 @@ export default function OwnerOffers() {
                     )}
                   </div>
                   <div style={{ display:"flex", alignItems:"center", gap:8, marginTop:5, flexWrap:"wrap" }}>
-                    <span style={{ fontSize:12, color:"#4a4a4a" }}>{job.category}</span>
+                    <span style={{ fontSize:12, color:"#4a4a4a" }}>{categoryLabel(job.category, t)}</span>
                     <Dot />
                     <MapPin size={10} color="#333" />
                     <span style={{ fontSize:12, color:"#4a4a4a" }}>{job.district}</span>
@@ -221,7 +223,7 @@ export default function OwnerOffers() {
                 </div>
                 <div className="offer-rate-box" style={{ textAlign:"right", flexShrink:0 }}>
                   <p style={{ margin:0, fontWeight:800, fontSize:15, color:"#f97316" }}>{fmt(job.ratePerHour)}</p>
-                  <p style={{ margin:0, fontSize:10, color:"#3a3a3a" }}>{t("owner_offers.per_hr") || "per hr"}</p>
+                  <p style={{ margin:0, fontSize:10, color:"#3a3a3a" }}>per {rateUnit(job).short}</p>
                 </div>
                 <div className="offer-actions-box" style={{ display:"flex", alignItems:"center", gap:6 }}>
                   <button

@@ -10,6 +10,7 @@ import { ST, fmt } from "@/lib/dashboard-data";
 import { ratingLabel } from "@/lib/rating";
 import { StatCard, SectionHead, Dot, PageLoader } from "@/components/dashboard/ui";
 import { useLanguage } from "@/lib/language-context";
+import { rateUnit } from "@/lib/rate-unit";
 
 const CSS = `
   .wkr-card { transition:border-color 0.12s, background 0.12s; }
@@ -193,7 +194,7 @@ export default function OwnerWorkers() {
               <div style={{ flex:1 }}>
                 <p style={{ margin:0, fontSize:13, fontWeight:700, color:"#e0e0e0" }}>{job.title}</p>
                 <p style={{ margin:"2px 0 0", fontSize:11, color:"#3a3a3a" }}>
-                  {job.district} · {fmt(job.ratePerHour)}/{t("owner_offers.per_hr") || "per hr"} · {job.headcount} {Number(job.headcount) !== 1 ? (t("owner_offers.slots_plural") || "slots") : (t("owner_offers.slots") || "slot")}
+                  {job.district} · {fmt(job.ratePerHour)}/{rateUnit(job).short} · {job.headcount} {Number(job.headcount) !== 1 ? (t("owner_offers.slots_plural") || "slots") : (t("owner_offers.slots") || "slot")}
                   {(job.status as string) === "COMPLETED" && (
                     <span style={{ marginLeft:8, color:"#22c55e", fontWeight:700 }}>● {t("owner_workers.completed") || "Completed"}</span>
                   )}
