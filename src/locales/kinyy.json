@@ -1058,10 +1058,15 @@
     "errors": {
       "must_be_signed_in": "Ugomba kuba winjiye kugira ngo usabe akazi.",
       "failed": "Gusaba akazi byanze. Ongera ugerageze.",
-      "failed_title": "Ubusabe bwanzwe"
+      "failed_title": "Ubusabe bwanzwe",
+      "max_files": "Ushobora kohereza dosiye zitarenga 10.",
+      "file_too_large": "Dosiye ni nini cyane (ntarengwa 30MB): ",
+      "upload_failed": "Kohereza dosiye byanze. Ongera ugerageze."
     },
     "labels": {
-      "best_fit": "Kuki ari wewe ukwiriye aka kazi? (si ngombwa)"
+      "best_fit": "Kuki ari wewe ukwiriye aka kazi? (si ngombwa)",
+      "requirements": "Ibisabwa",
+      "attachments": "Inyongeramanota (CV, amafoto, portfolio)"
     },
     "placeholders": {
       "best_fit": "Sobanura uburambe, ubumenyi, cyangwa kuboneka kwawe bikugira uwa mbere ukwiriye uyu mwanya…"
@@ -1069,7 +1074,15 @@
     "buttons": {
       "submit": "Tanga ubusabe",
       "submitting": "Birimo koherezwa…",
-      "close": "Funga"
+      "close": "Funga",
+      "view_more": "Reba byinshi",
+      "view_less": "Reba bike",
+      "add_files": "Ongeraho dosiye",
+      "uploading": "Kohereza…",
+      "remove": "Kuraho"
+    },
+    "hints": {
+      "attachments": "Dosiye zigera kuri 10, buri imwe 30MB. Amafoto, PDF cyangwa Word."
     }
   },
   "jobs_page": {

@@ -156,6 +156,13 @@ export default function JobDetailView({ job }: { job: JobDto }) {
           </Section>
         )}
 
+        {/* REQUIREMENTS */}
+        {job.requirements && (
+          <Section title="Requirements">
+            <RichTextDisplay content={job.requirements} />
+          </Section>
+        )}
+
         {/* NOTES */}
         {job.locationNotes && (
           <Section title="Additional notes">

@@ -699,6 +699,7 @@ export interface ApplicationDto {
   status: "PENDING" | "ACCEPTED" | "REJECTED" | "WITHDRAWN";
   appliedVia: "SELF_APPLY" | "HIRE_NOW";
   bestFit: string | null;
+  attachments: string[] | null;
   responseNote: string | null;
   employerViewed: boolean;
   createdAt: string;
@@ -1092,7 +1093,7 @@ export function applicationNetTotal(a: ApplicationPayoutShape, p: PricingConfig 
 }
 
 export interface JobPayload {
-  category: string; title?: string; description?: string;
+  category: string; title?: string; description?: string; requirements?: string;
   province?: string; district: string;
   sector?: string; cell?: string; village?: string;
   latitude?: number; longitude?: number;
@@ -1207,7 +1208,7 @@ export async function acceptAllApplications(jobId: string, token: string): Promi
 // ── Applications ──────────────────────────────────────────────────────────────
 export async function applyForJob(
   jobId: string,
-  payload: { bestFit?: string; appliedVia?: string; workerId?: string },
+  payload: { bestFit?: string; appliedVia?: string; workerId?: string; attachments?: string[] },
   token: string
 ): Promise<ApplicationDto> {
   const { data } = await http.post(`/api/jobs/${jobId}/apply`, payload, { headers: authHeader(token) });

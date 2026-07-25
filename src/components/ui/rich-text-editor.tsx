@@ -2,20 +2,51 @@
 
 import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
+import { uploadFile } from "@/lib/api";
 
 const QuillNoSSRWrapper = dynamic(() => import("react-quill-new"), {
   ssr: false,
   loading: () => <div style={{ height: 100, background: "#111", border: "1px solid #2a2a2a", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", color: "#555", fontSize: 13 }}>Loading editor...</div>,
 });
 
+/**
+ * Upload the picked image to Cloudflare R2 and insert its URL — instead of Quill's default, which
+ * embeds a huge base64 blob straight into the HTML. `this` is the Quill toolbar module, so
+ * `this.quill` is the editor. Runs only in the browser (the toolbar button is a user action).
+ */
+async function imageHandler(this: { quill: { getSelection: (f?: boolean) => { index: number } | null; insertEmbed: (i: number, t: string, v: string, s: string) => void; setSelection: (i: number) => void } }) {
+  const quill = this.quill;
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.onchange = async () => {
+    const file = input.files?.[0];
+    if (!file || !file.type.startsWith("image/")) return;
+    const token = typeof window !== "undefined" ? localStorage.getItem("access_token") || "" : "";
+    try {
+      const url = await uploadFile(file, token);
+      const range = quill.getSelection(true);
+      const index = range ? range.index : 0;
+      quill.insertEmbed(index, "image", url, "user");
+      quill.setSelection(index + 1);
+    } catch {
+      alert("Couldn't upload the image. Please try again.");
+    }
+  };
+  input.click();
+}
+
 const modules = {
-  toolbar: [
-    [{ header: [1, 2, false] }],
-    ["bold", "italic", "underline", "strike", "blockquote"],
-    [{ list: "ordered" }, { list: "bullet" }],
-    ["link", "image"],
-    ["clean"],
-  ],
+  toolbar: {
+    container: [
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link", "image"],
+      ["clean"],
+    ],
+    handlers: { image: imageHandler },
+  },
 };
 
 const formats = [
@@ -92,10 +123,17 @@ export function RichTextEditor({
 export function RichTextDisplay({ content }: { content: string }) {
   if (!content) return null;
   return (
-    <div
-      className="ql-editor rich-text-display"
-      style={{ padding: 0, fontSize: 13, color: "#ccc", lineHeight: 1.85 }}
-      dangerouslySetInnerHTML={{ __html: content }}
-    />
+    <>
+      <style>{`
+        .rich-text-display img { max-width: 100%; height: auto; border-radius: 8px; margin: 8px 0; }
+        .rich-text-display a { color: #f97316; }
+        .rich-text-display h1, .rich-text-display h2 { color: #f0f0f0; }
+      `}</style>
+      <div
+        className="ql-editor rich-text-display"
+        style={{ padding: 0, fontSize: 13, color: "#ccc", lineHeight: 1.85 }}
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    </>
   );
 }

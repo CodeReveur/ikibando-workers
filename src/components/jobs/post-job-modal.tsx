@@ -102,6 +102,7 @@ interface JobForm {
   paymentMode: PaymentMode;
   paymentInterval: string;
   notes: string;
+  requirements: string;
 }
 
 const STEPS = ["Job details", "Review & post"];
@@ -193,7 +194,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
     sector: "", cell: "", village: "",
     street: "", houseNumber: "",
     latitude: null, longitude: null,
-    ratePerHour: "", rateType: "hr", paymentMode: "HOURLY", paymentInterval: "1", notes: "",
+    ratePerHour: "", rateType: "hr", paymentMode: "HOURLY", paymentInterval: "1", notes: "", requirements: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof JobForm, string>>>({});
 
@@ -414,6 +415,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
         paymentInterval,
         directRelease,
         locationNotes: job.notes || undefined,
+        requirements: job.requirements || undefined,
         donationRwf: donationRwf > 0 ? donationRwf : undefined,
       };
 
@@ -903,6 +905,15 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                       {" "}({heads} × {hours}h × {fmt(rate)})
                     </p>
                   )}
+                </FField>
+
+                {/* Requirements */}
+                <FField label={t("post_job.labels.requirements") || "Requirements (optional)"}>
+                  <RichTextEditor
+                    placeholder={t("post_job.placeholders.requirements") || "What the worker must have or bring — skills, experience, tools, photos…"}
+                    value={job.requirements}
+                    onChange={v => setJob(f => ({ ...f, requirements: v }))}
+                  />
                 </FField>
 
                 {/* Notes */}

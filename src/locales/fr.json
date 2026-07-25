@@ -1058,10 +1058,15 @@
     "errors": {
       "must_be_signed_in": "Vous devez être connecté pour postuler à des emplois.",
       "failed": "Échec de la soumission de la candidature. Veuillez réessayer.",
-      "failed_title": "Échec de la candidature"
+      "failed_title": "Échec de la candidature",
+      "max_files": "Vous pouvez joindre jusqu à 10 fichiers.",
+      "file_too_large": "Fichier trop volumineux (max 30 Mo) : ",
+      "upload_failed": "Échec du téléversement. Veuillez réessayer."
     },
     "labels": {
-      "best_fit": "Pourquoi êtes-vous le/la candidat(e) idéal(e) ? (optionnel)"
+      "best_fit": "Pourquoi êtes-vous le/la candidat(e) idéal(e) ? (optionnel)",
+      "requirements": "Exigences",
+      "attachments": "Pièces jointes (CV, photos, portfolio)"
     },
     "placeholders": {
       "best_fit": "Décrivez votre expérience, vos compétences ou vos disponibilités qui font de vous le candidat idéal pour ce rôle…"
@@ -1069,7 +1074,15 @@
     "buttons": {
       "submit": "Soumettre la candidature",
       "submitting": "Envoi en cours…",
-      "close": "Fermer"
+      "close": "Fermer",
+      "view_more": "Voir plus",
+      "view_less": "Voir moins",
+      "add_files": "Ajouter des fichiers",
+      "uploading": "Téléversement…",
+      "remove": "Retirer"
+    },
+    "hints": {
+      "attachments": "Jusqu à 10 fichiers, 30 Mo chacun. Images, PDF ou Word."
     }
   },
   "jobs_page": {

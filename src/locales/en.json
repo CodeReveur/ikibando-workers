@@ -1059,10 +1059,15 @@
     "errors": {
       "must_be_signed_in": "You must be signed in to apply for jobs.",
       "failed": "Failed to submit application. Please try again.",
-      "failed_title": "Application Failed"
+      "failed_title": "Application Failed",
+      "max_files": "You can attach up to 10 files.",
+      "file_too_large": "File is too large (max 30MB): ",
+      "upload_failed": "Failed to upload file. Please try again."
     },
     "labels": {
-      "best_fit": "Why are you the best fit? (optional)"
+      "best_fit": "Why are you the best fit? (optional)",
+      "requirements": "Requirements",
+      "attachments": "Attachments (CV, photos, portfolio)"
     },
     "placeholders": {
       "best_fit": "Describe your experience, skills, or availability that make you ideal for this role…"
@@ -1070,7 +1075,15 @@
     "buttons": {
       "submit": "Submit application",
       "submitting": "Submitting…",
-      "close": "Close"
+      "close": "Close",
+      "view_more": "View more",
+      "view_less": "View less",
+      "add_files": "Add files",
+      "uploading": "Uploading…",
+      "remove": "Remove"
+    },
+    "hints": {
+      "attachments": "Up to 10 files, 30MB each. Images, PDF or Word."
     }
   },
   "jobs_page": {

@@ -295,7 +295,8 @@ export function HireModal({ onClose }: { onClose: () => void }) {
       const paymentMode = form.paymentMode;
 
       const jobPayload = {
-        category: form.category, title: jobTitle.trim() || undefined, district: form.district,
+        category: form.category, title: jobTitle.trim() || undefined,
+        requirements: form.requirements || undefined, district: form.district,
         province: form.province || undefined,
         latitude: form.latitude ?? undefined, longitude: form.longitude ?? undefined,
         ratePerHour: parseInt(form.budget) || 0,

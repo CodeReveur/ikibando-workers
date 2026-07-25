@@ -1058,10 +1058,15 @@
     "errors": {
       "must_be_signed_in": "Lazima uingie ili kuomba kazi.",
       "failed": "Imeshindwa kuwasilisha ombi. Tafadhali jaribu tena.",
-      "failed_title": "Mchakato Umeshindwa"
+      "failed_title": "Mchakato Umeshindwa",
+      "max_files": "Unaweza kuambatisha faili hadi 10.",
+      "file_too_large": "Faili ni kubwa mno (kikomo 30MB): ",
+      "upload_failed": "Imeshindwa kupakia faili. Tafadhali jaribu tena."
     },
     "labels": {
-      "best_fit": "Kwa nini wewe ni mtu anayefaa zaidi? (hiari)"
+      "best_fit": "Kwa nini wewe ni mtu anayefaa zaidi? (hiari)",
+      "requirements": "Mahitaji",
+      "attachments": "Viambatisho (CV, picha, portfolio)"
     },
     "placeholders": {
       "best_fit": "Eleza uzoefu wako, ujuzi wako, au kupatikana kwako kunakufanya uwe bora kwa jukumu hili…"
@@ -1069,7 +1074,15 @@
     "buttons": {
       "submit": "Tuma ombi",
       "submitting": "Inatuma…",
-      "close": "Funga"
+      "close": "Funga",
+      "view_more": "Ona zaidi",
+      "view_less": "Ona kidogo",
+      "add_files": "Ongeza faili",
+      "uploading": "Inapakia…",
+      "remove": "Ondoa"
+    },
+    "hints": {
+      "attachments": "Hadi faili 10, kila moja 30MB. Picha, PDF au Word."
     }
   },
   "jobs_page": {

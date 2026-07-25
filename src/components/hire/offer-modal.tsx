@@ -6,6 +6,7 @@ import { X, Calendar, Clock, CheckCircle, Bell, MapPin, Navigation, Loader2 } fr
 import { RWANDA_PROVINCES, MIN_RATE_BY_PERIOD } from "@/lib/constants";
 import { postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, getPricingConfig, DEFAULT_PRICING, type PricingConfig, type WorkerProfileDto, type PaymentMode } from "@/lib/api";
 import { DonationAddon } from "@/components/donate/donation-addon";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { forwardGeocode } from "@/lib/geocoding";
 import { useToast } from "@/components/ui/toast";
@@ -132,6 +133,7 @@ export function OfferModal({ worker, onClose }: Props) {
   });  // defaults OFF; respects the employer account default
 
   const [title,    setTitle]    = useState("");
+  const [requirements, setRequirements] = useState("");
   const [date,     setDate]     = useState("");
   const [time,     setTime]     = useState("");
   const [rateType, setRateType] = useState<RateType>("hr");
@@ -313,6 +315,7 @@ export function OfferModal({ worker, onClose }: Props) {
         // The offer form already collects a job title (required); send it (was being dropped, so
         // the server always fell back to the category name).
         title: title.trim() || undefined,
+        requirements: requirements.trim() || undefined,
         district: district,
         province: province || undefined,
         latitude: latitude ?? undefined, longitude: longitude ?? undefined,
@@ -489,6 +492,15 @@ export function OfferModal({ worker, onClose }: Props) {
                   value={title} onChange={e => setTitle(e.target.value)} style={inp}
                   onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                   onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                />
+              </FField>
+
+              {/* requirements */}
+              <FField label={t("post_job.labels.requirements") || "Requirements (optional)"}>
+                <RichTextEditor
+                  placeholder={t("post_job.placeholders.requirements") || "What the worker must have or bring — skills, experience, tools, photos…"}
+                  value={requirements}
+                  onChange={setRequirements}
                 />
               </FField>
 
