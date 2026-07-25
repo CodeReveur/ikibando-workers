@@ -10,9 +10,9 @@ import { useLanguage } from "@/lib/language-context";
 const fmt = (n: number) => `RWF ${n.toLocaleString()}`;
 
 /**
- * Live "hiring now" ad banner for the hero. Shows up to 3 real, recently-posted jobs on desktop and
- * one on mobile, rotating through the list every few seconds so every open role gets its moment.
- * Built to read like a professional ad - it is meant to make a visitor want to look closer.
+ * Compact "hiring now" ad strip for the hero: small, left-aligned, professional. Surfaces real
+ * recently-posted jobs so every visitor sees the platform is active. Up to 3 slim strips on desktop
+ * (one per row), one on mobile, rotating through open jobs every 5s.
  */
 export function JobAlertsBanner({ jobs }: { jobs: JobDto[] }) {
   const { t } = useLanguage();
@@ -26,91 +26,92 @@ export function JobAlertsBanner({ jobs }: { jobs: JobDto[] }) {
 
   if (jobs.length === 0) return null;
 
-  // Many jobs -> a row of 3; otherwise a single ad. Mobile always shows one (CSS hides the rest).
   const count = jobs.length >= 3 ? 3 : 1;
   const cards = Array.from({ length: count }, (_, k) => jobs[(idx + k) % jobs.length]);
 
   return (
-    <div style={{ marginBottom: 26 }}>
+    <div style={{
+      display: "flex", flexDirection: "column", alignItems: "flex-start",
+      gap: 8, marginBottom: 24,
+    }}>
       <style>{`
-        .jab-row { display:flex; gap:12px; justify-content:center; align-items:stretch; flex-wrap:nowrap; }
-        .jab-card {
-          flex:1 1 0; min-width:0; max-width:300px; text-align:left; text-decoration:none;
-          background:linear-gradient(160deg,#1d1a17 0%,#181818 60%);
-          border:1px solid rgba(249,115,22,0.28); border-radius:14px; padding:13px 15px;
-          display:flex; flex-direction:column; gap:7px; position:relative; overflow:hidden;
-          box-shadow:0 6px 22px rgba(0,0,0,0.35); animation:jabIn .5s ease both;
-          transition:transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+        .jab-ad {
+          width:100%; max-width:440px; text-align:left; text-decoration:none; position:relative;
+          display:flex; align-items:center; gap:12px; overflow:hidden;
+          background:linear-gradient(120deg,#1e1a16 0%,#181818 55%);
+          border:1px solid rgba(249,115,22,0.26); border-radius:12px; padding:9px 12px 9px 15px;
+          box-shadow:0 4px 16px rgba(0,0,0,0.3); animation:jabIn .45s ease both;
+          transition:transform .14s ease, border-color .14s ease, box-shadow .14s ease;
         }
-        .jab-card:hover { transform:translateY(-3px); border-color:#f97316;
-          box-shadow:0 10px 28px rgba(249,115,22,0.18); }
-        .jab-card::before { content:""; position:absolute; inset:0 auto 0 0; width:3px;
+        .jab-ad:hover { transform:translateY(-2px); border-color:#f97316;
+          box-shadow:0 8px 22px rgba(249,115,22,0.16); }
+        .jab-ad::before { content:""; position:absolute; inset:0 auto 0 0; width:3px;
           background:linear-gradient(#f97316,#ea580c); }
         @keyframes jabIn { from{opacity:0;} to{opacity:1;} }
-        @keyframes jabDot { 0%,100%{opacity:1; transform:scale(1);} 50%{opacity:.35; transform:scale(.7);} }
-        @media (max-width:720px){ .jab-hide-mobile{ display:none !important; } .jab-card{ max-width:none; } }
+        @keyframes jabDot { 0%,100%{opacity:1; transform:scale(1);} 50%{opacity:.3; transform:scale(.65);} }
+        @media (max-width:720px){ .jab-hide-mobile{ display:none !important; } }
       `}</style>
 
-      <div className="jab-row">
-        {cards.map((j, i) => {
-          const net  = workerNetHourly(j);
-          const unit = rateUnit(j).short;
-          const emp  = j.employerName || t("home.hero.alert_default_employer") || "An employer";
-          return (
-            <a
-              key={j.id + "-" + i}
-              href={`/jobs/${j.id}`}
-              className={"jab-card" + (i > 0 ? " jab-hide-mobile" : "")}
-            >
-              {/* live tag */}
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+      {cards.map((j, i) => {
+        const net  = workerNetHourly(j);
+        const unit = rateUnit(j).short;
+        const emp  = j.employerName || t("home.hero.alert_default_employer") || "An employer";
+        return (
+          <a
+            key={j.id + "-" + i}
+            href={`/jobs/${j.id}`}
+            className={"jab-ad" + (i > 0 ? " jab-hide-mobile" : "")}
+          >
+            {/* text block */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
                 <span style={{
-                  width: 7, height: 7, borderRadius: 999, background: "#22c55e",
+                  width: 6, height: 6, borderRadius: 999, background: "#22c55e",
                   animation: "jabDot 1.4s ease-in-out infinite", flexShrink: 0,
                 }} />
                 <span style={{
-                  fontSize: 9.5, fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase",
-                  color: "#f97316",
+                  fontSize: 9, fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase",
+                  color: "#f97316", whiteSpace: "nowrap",
                 }}>
                   {t("home.hero.alert_tag") || "Hiring now"}
                 </span>
+                <span style={{
+                  fontSize: 10, color: "#7a7a7a", overflow: "hidden", textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}>
+                  · {(t("home.hero.alert_hiring", { employer: emp }) || `${emp} is hiring on MpahMapu`)}
+                </span>
               </div>
-
-              {/* who is hiring */}
-              <p style={{ margin: 0, fontSize: 11, color: "#8a8a8a", lineHeight: 1.35,
-                overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                {(t("home.hero.alert_hiring", { employer: emp }) || `${emp} is hiring on MpahMapu`)}
-              </p>
-
-              {/* job title */}
-              <p style={{ margin: 0, fontSize: 13.5, fontWeight: 800, color: "#fff", lineHeight: 1.25,
-                display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+              <p style={{
+                margin: 0, fontSize: 13, fontWeight: 800, color: "#fff", lineHeight: 1.2,
+                overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+              }}>
                 {j.title}
               </p>
-
-              {/* category + amount */}
-              <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: "#f97316",
-                  background: "rgba(249,115,22,0.12)", borderRadius: 999, padding: "2px 8px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 3 }}>
+                <span style={{
+                  fontSize: 9.5, fontWeight: 700, color: "#f97316", background: "rgba(249,115,22,0.12)",
+                  borderRadius: 999, padding: "1px 7px", whiteSpace: "nowrap",
+                }}>
                   {categoryLabel(j.category, t)}
                 </span>
-                <span style={{ fontSize: 12, fontWeight: 800, color: "#f0f0f0", whiteSpace: "nowrap" }}>
-                  {fmt(net)}<span style={{ fontSize: 10, fontWeight: 500, color: "#777" }}> / {unit}</span>
+                <span style={{ fontSize: 11.5, fontWeight: 800, color: "#e6e6e6", whiteSpace: "nowrap" }}>
+                  {fmt(net)}<span style={{ fontSize: 9.5, fontWeight: 500, color: "#777" }}> / {unit}</span>
                 </span>
               </div>
+            </div>
 
-              {/* CTA */}
-              <span style={{
-                marginTop: 2, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
-                background: "#f97316", color: "#fff", borderRadius: 9, padding: "8px 12px",
-                fontSize: 12, fontWeight: 800,
-              }}>
-                {t("home.hero.alert_cta") || "View & apply"} <ArrowRight size={13} />
-              </span>
-            </a>
-          );
-        })}
-      </div>
+            {/* CTA */}
+            <span style={{
+              flexShrink: 0, display: "inline-flex", alignItems: "center", gap: 5,
+              background: "#f97316", color: "#fff", borderRadius: 9, padding: "8px 13px",
+              fontSize: 11.5, fontWeight: 800, whiteSpace: "nowrap",
+            }}>
+              {t("home.hero.alert_cta") || "View & apply"} <ArrowRight size={12} />
+            </span>
+          </a>
+        );
+      })}
     </div>
   );
 }
