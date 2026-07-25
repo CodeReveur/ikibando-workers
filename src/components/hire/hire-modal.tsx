@@ -167,6 +167,8 @@ export function HireModal({ onClose }: { onClose: () => void }) {
   // so we only keep the selected method + the mobile-money phone here.
   const [payMethod, setPayMethod] = useState<"WALLET" | "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD">("MTN_MOMO");
   const [donationRwf, setDonationRwf] = useState(0);
+  const [jobTitle, setJobTitle] = useState("");
+  const [titleModalOpen, setTitleModalOpen] = useState(false);
   const [pricing, setPricing] = useState<PricingConfig>(DEFAULT_PRICING);
   useEffect(() => { getPricingConfig().then(setPricing).catch(() => {}); }, []);
   const [paymentPhone, setPaymentPhone] = useState("");
@@ -293,7 +295,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
       const paymentMode = form.paymentMode;
 
       const jobPayload = {
-        category: form.category, district: form.district,
+        category: form.category, title: jobTitle.trim() || undefined, district: form.district,
         province: form.province || undefined,
         latitude: form.latitude ?? undefined, longitude: form.longitude ?? undefined,
         ratePerHour: parseInt(form.budget) || 0,
@@ -1012,7 +1014,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
               </button>
             ) : (
               <button
-                onClick={handleConfirmHire}
+                onClick={() => { setJobTitle(prev => prev.trim() || cat); setTitleModalOpen(true); }}
                 disabled={submitting || !isPaymentDetailsValid}
                 style={{ ...btnPrimary, flex: 1, opacity: (isPaymentDetailsValid && !submitting) ? 1 : 0.45, cursor: (isPaymentDetailsValid && !submitting) ? "pointer" : "not-allowed" }}
               >
@@ -1026,6 +1028,40 @@ export function HireModal({ onClose }: { onClose: () => void }) {
           <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
         </div>
       </Overlay>
+
+      {titleModalOpen && (
+        <div onClick={() => !submitting && setTitleModalOpen(false)} style={{
+          position: "fixed", inset: 0, zIndex: 300, background: "rgba(0,0,0,0.82)",
+          backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 16,
+          fontFamily: "Inter, DM Sans, system-ui, sans-serif",
+        }}>
+          <div onClick={e => e.stopPropagation()} style={{
+            width: "100%", maxWidth: 420, background: "#141414", border: "1px solid #2a2a2a", borderRadius: 16, padding: 22,
+          }}>
+            <div style={{ fontSize: 16, fontWeight: 800, color: "#f0f0f0", marginBottom: 4 }}>
+              {t("post_job.title_confirm.heading") || "Name this job"}
+            </div>
+            <p style={{ fontSize: 12.5, color: "#8a8a8a", margin: "0 0 14px", lineHeight: 1.5 }}>
+              {(t("post_job.title_confirm.desc") || "Confirm the job name or edit it. It stays a {cat} job.").replace("{cat}", cat)}
+            </p>
+            <input
+              value={jobTitle} onChange={e => setJobTitle(e.target.value)} maxLength={120} autoFocus placeholder={cat}
+              onKeyDown={e => { if (e.key === "Enter" && !submitting) { setTitleModalOpen(false); handleConfirmHire(); } }}
+              style={{ width: "100%", background: "#0f0f0f", border: "1px solid #2a2a2a", borderRadius: 10, padding: "11px 13px", fontSize: 14, color: "#f0f0f0", outline: "none" }}
+            />
+            <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
+              <button disabled={submitting} onClick={() => { setTitleModalOpen(false); handleConfirmHire(); }}
+                style={{ ...btnPrimary, flex: 1, opacity: submitting ? 0.5 : 1, cursor: submitting ? "not-allowed" : "pointer" }}>
+                {t("post_job.title_confirm.confirm") || "Confirm & pay"}
+              </button>
+              <button onClick={() => setTitleModalOpen(false)} disabled={submitting}
+                style={{ flex: 1, background: "transparent", color: "#888", border: "1px solid #2a2a2a", borderRadius: 10, padding: "12px", fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                {t("common.buttons.cancel") || "Cancel"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

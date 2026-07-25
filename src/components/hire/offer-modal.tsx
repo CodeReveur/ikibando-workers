@@ -310,6 +310,9 @@ export function OfferModal({ worker, onClose }: Props) {
         : rateType === "month" ? "PER_MONTH" : "PER_YEAR";
       const jobPayload = {
         category: worker.experienceType || "OTHER",
+        // The offer form already collects a job title (required); send it (was being dropped, so
+        // the server always fell back to the category name).
+        title: title.trim() || undefined,
         district: district,
         province: province || undefined,
         latitude: latitude ?? undefined, longitude: longitude ?? undefined,
