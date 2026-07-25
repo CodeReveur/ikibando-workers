@@ -12,7 +12,7 @@ import {
   updateApplicationStatus, cancelJob, completeJob, acceptAllApplications, updateJob, apiError,
   type JobDto, type ApplicationDto, type PaymentDto, type JobUpdatePayload,
 } from "@/lib/api";
-import { RWANDA_PROVINCES } from "@/lib/constants";
+import { RWANDA_PROVINCES, JOB_CATEGORIES } from "@/lib/constants";
 import { fmt } from "@/lib/dashboard-data";
 import { ratingLabel } from "@/lib/rating";
 import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
@@ -712,9 +712,12 @@ function EditJobModal({ job, saving, onSave, onClose }: {
   // Once workers have applied/been hired, the sensitive terms (date, hours, headcount, urgency) are
   // locked - only title, location, description and requirements stay editable.
   const locked = ((job.acceptedCount ?? 0) + (job.pendingCount ?? 0)) > 0;
+  // Category is editable while no worker has been accepted (pending applicants are fine).
+  const categoryLocked = (job.acceptedCount ?? 0) > 0;
 
   const [form, setForm] = useState({
     title:         job.title ?? "",
+    category:      job.category ?? "",
     date:          existingDate,
     time:          existingTime,
     durationHours: String(job.durationHours ?? ""),
@@ -749,6 +752,7 @@ function EditJobModal({ job, saving, onSave, onClose }: {
       ? new Date(`${form.date}T${form.time}:00`).toISOString() : undefined;
     const payload: JobUpdatePayload = {
       ...(form.title                       ? { title: form.title }                      : {}),
+      ...(!categoryLocked && form.category ? { category: form.category }                : {}),
       // Sensitive fields are only sent when the job has no applicants yet.
       ...(!locked && startTime             ? { startTime }                              : {}),
       ...(!locked && form.durationHours    ? { durationHours: parseFloat(form.durationHours) } : {}),
@@ -788,6 +792,20 @@ function EditJobModal({ job, saving, onSave, onClose }: {
         <div style={{ marginBottom:14 }}>
           <label style={lbl}>{t("owner_jobs.title_label") || "Title"}</label>
           <input value={form.title} onChange={set("title")} style={s} placeholder={t("owner_jobs.title_ph") || "Job title"} />
+        </div>
+
+        <div style={{ marginBottom:14, opacity: categoryLocked ? 0.5 : 1 }}>
+          <label style={lbl}>{t("owner_offers.category") || "Category"}</label>
+          <select value={form.category} onChange={set("category")} style={s} disabled={categoryLocked}>
+            {JOB_CATEGORIES.map(c => (
+              <option key={c.value} value={c.value}>{categoryLabel(c.value, t)}</option>
+            ))}
+          </select>
+          {categoryLocked && (
+            <p style={{ margin:"4px 0 0", fontSize:10.5, color:"#666" }}>
+              {t("owner_jobs.category_locked") || "The category can't be changed once a worker has been accepted."}
+            </p>
+          )}
         </div>
 
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:14, opacity: locked ? 0.5 : 1 }}>
