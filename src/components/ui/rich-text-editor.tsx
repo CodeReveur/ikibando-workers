@@ -121,17 +121,14 @@ export function RichTextEditor({
 }
 
 /**
- * Collapse the empty paragraphs Quill leaves behind (each Enter with no text becomes
- * `<p><br></p>`). Two or more in a row render as a big gap the author never intended, so we
- * squash runs of them to a single blank line and trim any at the very start/end.
+ * Quill emits `<p><br></p>` for every blank line, and the server sanitizer pretty-prints the HTML
+ * with newlines between tags. Under Quill's `white-space: pre-wrap` those both render as large empty
+ * gaps. We drop the blank paragraphs here (spacing then comes from CSS), and the display forces
+ * `white-space: normal` so the pretty-print newlines collapse like ordinary HTML.
  */
 function tidyHtml(html: string): string {
-  const EMPTY = /<p>(?:\s|<br\s*\/?>|&nbsp;)*<\/p>/gi;
-  return html
-    .replace(new RegExp(`(?:${EMPTY.source}\\s*){2,}`, "gi"), "<p><br></p>")
-    .replace(new RegExp(`^(?:\\s*${EMPTY.source}\\s*)+`, "i"), "")
-    .replace(new RegExp(`(?:\\s*${EMPTY.source}\\s*)+$`, "i"), "")
-    .trim();
+  if (!html) return html;
+  return html.replace(/<p[^>]*>(?:\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, "").trim();
 }
 
 /** Plain-text preview of rich HTML: tags stripped and common entities decoded (SSR-safe). */
@@ -175,7 +172,7 @@ export function RichTextDisplay({ content }: { content: string }) {
       `}</style>
       <div
         className="ql-editor rich-text-display"
-        style={{ padding: 0, fontSize: 13, color: "#ccc" }}
+        style={{ padding: 0, fontSize: 13, color: "#ccc", whiteSpace: "normal" }}
         dangerouslySetInnerHTML={{ __html: tidyHtml(content) }}
       />
     </>
