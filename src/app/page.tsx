@@ -199,7 +199,7 @@ export default function Home() {
       `}</style>
 
       {/* HERO */}
-      <div style={{ maxWidth: 760, margin: "0 auto", padding: "68px 20px 52px", textAlign: "center" }}>
+      <div style={{ maxWidth: 760, margin: "0 auto", padding: "24px 20px 32px", textAlign: "center" }}>
         {jobs.length > 0 ? (
           <JobAlertsBanner jobs={jobs} />
         ) : (
