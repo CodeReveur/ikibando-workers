@@ -10,6 +10,7 @@ import { JOB_CATEGORIES, RWANDA_PROVINCES, CURRENCY, MIN_RATE_BY_PERIOD } from "
 import { geoSectors, geoCells, geoVillages } from "@/lib/rwanda-geo";
 import { forwardGeocode } from "@/lib/geocoding";
 import { postJob, postGuestJob, getWallet, apiError, checkGuestAccount, getPricingConfig, workerCommissionOf, employerServiceFeeOf, DEFAULT_PRICING, type PricingConfig, type PaymentMode } from "@/lib/api";
+import { getReferralCode } from "@/lib/referral";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { saveRedirect } from "@/lib/auth-redirect";
 import { useToast } from "@/components/ui/toast";
@@ -435,6 +436,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
           guestPhone: anonPhone,
           paymentMethod: method,
           paymentPhone: paymentPhone || anonPhone || undefined,
+          referralCode: getReferralCode(),
         };
         setPayNote(awaitingNote);
         const outcome = await runGuestPayment(guestPayload);

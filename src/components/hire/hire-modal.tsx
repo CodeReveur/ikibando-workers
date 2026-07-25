@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { JOB_CATEGORIES, RWANDA_PROVINCES, MIN_RATE_BY_PERIOD } from "@/lib/constants";
 import { getWorkers, postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, getPricingConfig, DEFAULT_PRICING, type PricingConfig, type WorkerProfileDto, type PaymentMode } from "@/lib/api";
+import { getReferralCode } from "@/lib/referral";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { DonationAddon } from "@/components/donate/donation-addon";
 import { forwardGeocode } from "@/lib/geocoding";
@@ -330,6 +331,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
           paymentPhone: paymentPhone || anonPhone || undefined,
           workerIds: selected.map(w => w.id as unknown as string),
           appliedVia: "HIRE_NOW",
+          referralCode: getReferralCode(),
         };
         setPayNote(awaitingNote);
         const outcome = await runGuestPayment(guestPayload);

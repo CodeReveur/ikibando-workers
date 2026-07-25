@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { X, Calendar, Clock, CheckCircle, Bell, MapPin, Navigation, Loader2 } from "lucide-react";
 import { RWANDA_PROVINCES, MIN_RATE_BY_PERIOD } from "@/lib/constants";
 import { postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, getPricingConfig, DEFAULT_PRICING, type PricingConfig, type WorkerProfileDto, type PaymentMode } from "@/lib/api";
+import { getReferralCode } from "@/lib/referral";
 import { DonationAddon } from "@/components/donate/donation-addon";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
@@ -350,6 +351,7 @@ export function OfferModal({ worker, onClose }: Props) {
           paymentPhone: paymentPhone || anonPhone || undefined,
           workerIds: [worker.id as unknown as string],
           appliedVia: "HIRE_NOW",
+          referralCode: getReferralCode(),
         };
         setPayNote(awaitingNote);
         const outcome = await runGuestPayment(guestPayload);

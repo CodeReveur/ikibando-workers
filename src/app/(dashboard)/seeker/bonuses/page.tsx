@@ -86,8 +86,8 @@ export default function SeekerBonuses() {
   const WAYS = [
     {
       icon: Users,
-      label: t("seeker_bonuses.refer_friend") || "Refer a friend",
-      desc: t("seeker_bonuses.refer_friend_desc") || "They complete their first job",
+      label: t("seeker_bonuses.refer_friend") || "Invite workers & employers",
+      desc: t("seeker_bonuses.refer_friend_desc") || "Earn when an invited worker completes their first job, or an employer you invited has their first job released",
       reward: fmt(reward),
       color: "#60a5fa",
     },

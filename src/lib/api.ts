@@ -1132,6 +1132,8 @@ export interface GuestJobPayload {
   appliedVia?: string;
   /** Where XentriPay returns the browser after a hosted card payment. */
   redirectUrl?: string;
+  /** Optional referral code — links a new guest employer to whoever invited them. */
+  referralCode?: string;
 }
 
 /**
