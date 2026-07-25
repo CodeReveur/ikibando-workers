@@ -8,7 +8,7 @@ import {
   AlarmClock, Search, Navigation, Loader2, Star,
 } from "lucide-react";
 import { JOB_CATEGORIES, RWANDA_PROVINCES, MIN_RATE_BY_PERIOD } from "@/lib/constants";
-import { getWorkers, postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, getPricingConfig, DEFAULT_PRICING, type PricingConfig, type WorkerProfileDto, type PaymentMode } from "@/lib/api";
+import { getWorkers, postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, getPricingConfig, employerServiceFeeOf, DEFAULT_PRICING, type PricingConfig, type WorkerProfileDto, type PaymentMode } from "@/lib/api";
 import { getReferralCode } from "@/lib/referral";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { DonationAddon } from "@/components/donate/donation-addon";
@@ -420,8 +420,9 @@ export function HireModal({ onClose }: { onClose: () => void }) {
   const interval    = Math.max(1, parseInt(form.paymentInterval, 10) || 1);
   const periodsNum  = Math.max(1, Math.ceil(durationNum / interval));
   const jobAmount   = budget * headcountNum * durationNum;
-  const fee         = Math.round(jobAmount * 0.05);
+  const fee         = employerServiceFeeOf(jobAmount, pricing);
   const total       = jobAmount + fee;
+  const feePctLabel = jobAmount > 0 ? `${Math.round((fee / jobAmount) * 100)}%` : "";
   const minRate     = MIN_RATE_BY_PERIOD[form.rateType];
   const rateOk      = budget >= minRate;
 
@@ -924,7 +925,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                         <span style={{ fontSize: 12, color: "#d0d0d0", fontWeight: 600 }}>{fmt(jobAmount)}</span>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, paddingBottom: 8, borderBottom: "1px solid #1e1e1e" }}>
-                        <span style={{ fontSize: 12, color: "#666" }}>Platform handling charge (5% fee)</span>
+                        <span style={{ fontSize: 12, color: "#666" }}>Platform fee{feePctLabel ? ` (${feePctLabel})` : ""} · non-refundable</span>
                         <span style={{ fontSize: 12, color: "#22c55e", fontWeight: 600 }}>+{fmt(fee)}</span>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between" }}>

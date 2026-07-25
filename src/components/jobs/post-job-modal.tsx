@@ -9,7 +9,7 @@ import {
 import { JOB_CATEGORIES, RWANDA_PROVINCES, CURRENCY, MIN_RATE_BY_PERIOD } from "@/lib/constants";
 import { geoSectors, geoCells, geoVillages } from "@/lib/rwanda-geo";
 import { forwardGeocode } from "@/lib/geocoding";
-import { postJob, postGuestJob, getWallet, apiError, checkGuestAccount, getPricingConfig, workerCommissionOf, employerServiceFeeOf, DEFAULT_PRICING, type PricingConfig, type PaymentMode } from "@/lib/api";
+import { postJob, postGuestJob, getWallet, apiError, checkGuestAccount, getPricingConfig, workerCommissionOf, employerServiceFeeOf, employerServiceFeeRateOf, DEFAULT_PRICING, type PricingConfig, type PaymentMode } from "@/lib/api";
 import { getReferralCode } from "@/lib/referral";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { saveRedirect } from "@/lib/auth-redirect";
@@ -507,9 +507,10 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
   const escrow      = baseCost + escrowFee;        // employer pays gross + non-refundable service fee
   const platformFee = workerCommissionOf(baseCost, pricing);
   const workerPay   = baseCost - platformFee;      // net the workers receive (all charges covered)
+  const feeRate     = employerServiceFeeRateOf(baseCost, pricing);
   const feePctLabel = pricing.employerServiceFeeFixed > 0
-    ? "service fee"
-    : `${(pricing.employerServiceFeeRate * 100).toFixed(pricing.employerServiceFeeRate * 100 % 1 === 0 ? 0 : 1)}% service fee`;
+    ? "platform fee"
+    : `platform fee (${(feeRate * 100).toFixed(feeRate * 100 % 1 === 0 ? 0 : 1)}%)`;
   const catLabel = getLocalizedCategoryLabel(job.category);
   const dateLabel = job.date
     ? new Date(job.date + "T00:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })
@@ -1000,7 +1001,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                         <span style={{ fontSize: 12, color: "#d0d0d0", fontWeight: 600 }}>{fmt(baseCost)}</span>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                        <span style={{ fontSize: 12, color: "#666" }}>Platform {feePctLabel} · non-refundable</span>
+                        <span style={{ fontSize: 12, color: "#666" }}>{feePctLabel.charAt(0).toUpperCase() + feePctLabel.slice(1)} · non-refundable</span>
                         <span style={{ fontSize: 12, color: "#22c55e", fontWeight: 600 }}>+{fmt(escrowFee)}</span>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", paddingTop: 8, paddingBottom: 8, borderTop: "1px solid #1e1e1e" }}>

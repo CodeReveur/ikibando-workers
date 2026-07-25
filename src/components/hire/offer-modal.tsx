@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { X, Calendar, Clock, CheckCircle, Bell, MapPin, Navigation, Loader2 } from "lucide-react";
 import { RWANDA_PROVINCES, MIN_RATE_BY_PERIOD } from "@/lib/constants";
-import { postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, getPricingConfig, DEFAULT_PRICING, type PricingConfig, type WorkerProfileDto, type PaymentMode } from "@/lib/api";
+import { postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, getPricingConfig, workerCommissionOf, employerServiceFeeOf, DEFAULT_PRICING, type PricingConfig, type WorkerProfileDto, type PaymentMode } from "@/lib/api";
 import { getReferralCode } from "@/lib/referral";
 import { DonationAddon } from "@/components/donate/donation-addon";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
@@ -249,10 +249,11 @@ export function OfferModal({ worker, onClose }: Props) {
   const periodsNum  = Math.max(1, Math.ceil(durationNum / interval));
   const hours       = durationNum;   // pricing uses total duration
   const baseCost    = rate * hours;
-  const escrowFee   = Math.round(baseCost * 0.05);
+  const escrowFee   = employerServiceFeeOf(baseCost, pricing);
   const total       = baseCost + escrowFee;
-  const platformFee = Math.round(baseCost * 0.25);
+  const platformFee = workerCommissionOf(baseCost, pricing);
   const workerPay   = baseCost - platformFee;
+  const feePctLabel = baseCost > 0 ? `${Math.round((escrowFee / baseCost) * 100)}%` : "";
 
   const stepsList = hasSession
     ? [t("offer.steps.details") || "Offer details", t("offer.steps.review") || "Review & Pay"]
@@ -740,7 +741,7 @@ export function OfferModal({ worker, onClose }: Props) {
                       <span style={{ fontSize: 12, color: "#d0d0d0", fontWeight: 600 }}>{fmt(baseCost)}</span>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, paddingBottom: 8, borderBottom: "1px solid #1e1e1e" }}>
-                      <span style={{ fontSize: 12, color: "#666" }}>Platform handling charge (5% fee)</span>
+                      <span style={{ fontSize: 12, color: "#666" }}>Platform fee{feePctLabel ? ` (${feePctLabel})` : ""} · non-refundable</span>
                       <span style={{ fontSize: 12, color: "#22c55e", fontWeight: 600 }}>+{fmt(escrowFee)}</span>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>

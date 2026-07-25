@@ -1011,8 +1011,12 @@ export async function getJob(id: string): Promise<JobDto> {
 export interface PricingConfig {
   workerCommissionRate: number;       // fraction of job cost taken from the worker
   workerCommissionFixed: number;      // fixed RWF override (0 = use rate)
-  employerServiceFeeRate: number;     // fraction added at posting, non-refundable
-  employerServiceFeeFixed: number;    // fixed RWF override (0 = use rate)
+  employerServiceFeeRate: number;     // fraction added at posting, non-refundable (base tier)
+  employerServiceFeeFixed: number;    // fixed RWF override (0 = use rates)
+  employerServiceFeeRateMid: number;  // rate for job cost >= employerFeeTierMid
+  employerServiceFeeRateHigh: number; // rate for job cost > employerFeeTierHigh
+  employerFeeTierMid: number;         // RWF threshold for the mid rate (1,000,000)
+  employerFeeTierHigh: number;        // RWF threshold for the high rate (10,000,000)
   cancellationPenaltyRate: number;
   cancellationWorkerCompRate: number;
   referralRewardRwf: number;
@@ -1022,8 +1026,10 @@ export interface PricingConfig {
 
 /** Defaults matching the server's fallback so the UI still works if the call fails. */
 export const DEFAULT_PRICING: PricingConfig = {
-  workerCommissionRate: 0.20, workerCommissionFixed: 0,
+  workerCommissionRate: 0.10, workerCommissionFixed: 0,
   employerServiceFeeRate: 0.05, employerServiceFeeFixed: 0,
+  employerServiceFeeRateMid: 0.04, employerServiceFeeRateHigh: 0.03,
+  employerFeeTierMid: 1_000_000, employerFeeTierHigh: 10_000_000,
   cancellationPenaltyRate: 0.10, cancellationWorkerCompRate: 0.04,
   referralRewardRwf: 1000, usdToRwf: 1300, withdrawalFeeRwf: 450,
 };
@@ -1042,9 +1048,18 @@ export function workerCommissionOf(baseCost: number, p: PricingConfig): number {
   return p.workerCommissionFixed > 0 ? p.workerCommissionFixed : Math.round(baseCost * p.workerCommissionRate);
 }
 
-/** Employer service fee for a gross job cost, honouring a fixed-amount override. */
+/** The tiered employer service-fee rate for a job cost (5% / 4% from 1M / 3% above 10M). */
+export function employerServiceFeeRateOf(baseCost: number, p: PricingConfig): number {
+  if (baseCost > p.employerFeeTierHigh) return p.employerServiceFeeRateHigh;
+  if (baseCost >= p.employerFeeTierMid) return p.employerServiceFeeRateMid;
+  return p.employerServiceFeeRate;
+}
+
+/** Employer service fee for a gross job cost, honouring a fixed-amount override and the tiers. */
 export function employerServiceFeeOf(baseCost: number, p: PricingConfig): number {
-  return p.employerServiceFeeFixed > 0 ? p.employerServiceFeeFixed : Math.round(baseCost * p.employerServiceFeeRate);
+  return p.employerServiceFeeFixed > 0
+    ? p.employerServiceFeeFixed
+    : Math.round(baseCost * employerServiceFeeRateOf(baseCost, p));
 }
 
 /* ── What a worker actually takes home ─────────────────────────────────────────
