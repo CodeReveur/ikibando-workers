@@ -350,7 +350,7 @@ export default function SeekerJobDetail() {
     <div>
       <style>{`
         @keyframes spin{to{transform:rotate(360deg)}}
-        .job-detail-grid { display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
+        .job-detail-grid { display: grid; grid-template-columns: minmax(0,1fr) 320px; gap: 20px; align-items: start; }
         @media (max-width: 900px) {
           .job-detail-grid { grid-template-columns: 1fr; }
         }

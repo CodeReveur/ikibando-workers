@@ -155,7 +155,7 @@ export function RichTextDisplay({ content }: { content: string }) {
   return (
     <>
       <style>{`
-        .rich-text-display { line-height: 1.6; }
+        .rich-text-display { line-height: 1.6; max-width: 100%; overflow-wrap: break-word; word-break: break-word; }
         .rich-text-display p { margin: 0 0 8px; }
         .rich-text-display p:last-child { margin-bottom: 0; }
         .rich-text-display h1, .rich-text-display h2, .rich-text-display h3 { color: #f0f0f0; margin: 12px 0 6px; line-height: 1.3; }

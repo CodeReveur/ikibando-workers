@@ -62,7 +62,7 @@ function Timeline({ stages }: { stages: Stage[] }) {
                 <div style={{ width: 2, flex: 1, minHeight: 32, background: lineColor, marginTop: 4 }} />
               )}
             </div>
-            <div style={{ flex: 1, paddingBottom: isLast ? 0 : 28 }}>
+            <div style={{ flex: 1, minWidth: 0, paddingBottom: isLast ? 0 : 28 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: s.content ? 10 : 0 }}>
                 <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: s.done ? "#e0e0e0" : s.active ? "#f97316" : "#444" }}>
                   {s.label}
@@ -482,7 +482,7 @@ export default function OwnerJobDetail() {
     <div>
       <style>{`
         @keyframes spin{to{transform:rotate(360deg)}}
-        .job-detail-grid { display:grid; grid-template-columns:1fr 340px; gap:20px; align-items:start; }
+        .job-detail-grid { display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; align-items:start; }
         @media (max-width: 900px) {
           .job-detail-grid { grid-template-columns:1fr; }
         }
@@ -549,7 +549,7 @@ export default function OwnerJobDetail() {
       {/* Body */}
       <div className="job-detail-grid">
         {/* Left: Timeline */}
-        <div style={{ background: "#111", border: "1px solid #1c1c1c", borderRadius: 16, padding: "24px 28px" }}>
+        <div style={{ background: "#111", border: "1px solid #1c1c1c", borderRadius: 16, padding: "24px 28px", minWidth: 0 }}>
           <p style={{ margin: "0 0 24px", fontSize: 11, fontWeight: 700, color: "#333", letterSpacing: "0.08em", textTransform: "uppercase" }}>
             {t("owner_jobs.timeline") || "Job Timeline"}
           </p>
