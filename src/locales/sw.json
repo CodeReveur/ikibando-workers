@@ -242,7 +242,11 @@
       "location": "Kigali · Rwanda",
       "title_find": "Tafuta kazi.",
       "title_hire": "Kodi aliyethibitishwa.",
-      "subtitle": "Wafanyakazi wa vibarua kwa ajili ya hafla, usafi, ulinzi na zaidi - wamethibitishwa kwa vitambulisho, wamepimwa na wanalipwa kupitia MoMo."
+      "subtitle": "Wafanyakazi wa vibarua kwa ajili ya hafla, usafi, ulinzi na zaidi - wamethibitishwa kwa vitambulisho, wamepimwa na wanalipwa kupitia MoMo.",
+      "alert_tag": "Anaajiri",
+      "alert_hiring": "{employer} anaajiri kwenye MpahMapu",
+      "alert_cta": "Angalia & omba",
+      "alert_default_employer": "Mwajiri"
     },
     "sections": {
       "categories": "Vitengo",

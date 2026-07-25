@@ -242,7 +242,11 @@
       "location": "Kigali · Rwanda",
       "title_find": "Trouvez du travail.",
       "title_hire": "Recrutez vérifié.",
-      "subtitle": "Travailleurs indépendants sur demande pour événements, nettoyage, sécurité et plus - vérifiés par carte d'identité, notés et payés via MoMo."
+      "subtitle": "Travailleurs indépendants sur demande pour événements, nettoyage, sécurité et plus - vérifiés par carte d'identité, notés et payés via MoMo.",
+      "alert_tag": "Recrute",
+      "alert_hiring": "{employer} recrute sur MpahMapu",
+      "alert_cta": "Voir & postuler",
+      "alert_default_employer": "Un employeur"
     },
     "sections": {
       "categories": "Catégories",

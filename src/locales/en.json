@@ -243,7 +243,11 @@
       "location": "Kigali · Rwanda",
       "title_find": "Find work.",
       "title_hire": "Hire verified.",
-      "subtitle": "On-demand workers for events, cleaning, security and more - ID-verified, rated, and paid via MoMo."
+      "subtitle": "On-demand workers for events, cleaning, security and more - ID-verified, rated, and paid via MoMo.",
+      "alert_tag": "Hiring now",
+      "alert_hiring": "{employer} is hiring on MpahMapu",
+      "alert_cta": "View & apply",
+      "alert_default_employer": "An employer"
     },
     "sections": {
       "categories": "Categories",

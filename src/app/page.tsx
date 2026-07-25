@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Footer from "@/components/layout/footer";
 import { PostJobModal } from "@/components/jobs/post-job-modal";
 import { getWorkers, getJobs, getCategoryStats, daysAgo, workerNetHourly, type WorkerProfileDto, type JobDto } from "@/lib/api";
+import { JobAlertsBanner } from "@/components/home/job-alerts-banner";
 import { rateUnit } from "@/lib/rate-unit";
 import { ratingInfo } from "@/lib/rating";
 import { CATEGORIES, countsForCategory, type CategoryStats } from "@/lib/browse-taxonomy";
@@ -199,13 +200,17 @@ export default function Home() {
 
       {/* HERO */}
       <div style={{ maxWidth: 760, margin: "0 auto", padding: "68px 20px 52px", textAlign: "center" }}>
-        <span style={{
-          display: "inline-block", background: "rgba(249,115,22,0.1)", color: "#f97316",
-          borderRadius: 999, padding: "4px 14px", fontSize: 11, fontWeight: 700,
-          letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 22,
-        }}>
-          {t("home.hero.location")}
-        </span>
+        {jobs.length > 0 ? (
+          <JobAlertsBanner jobs={jobs} />
+        ) : (
+          <span style={{
+            display: "inline-block", background: "rgba(249,115,22,0.1)", color: "#f97316",
+            borderRadius: 999, padding: "4px 14px", fontSize: 11, fontWeight: 700,
+            letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 22,
+          }}>
+            {t("home.hero.location")}
+          </span>
+        )}
         <h1 style={{ fontSize: "clamp(36px,9vw,54px)", fontWeight: 900, lineHeight: 1.05, letterSpacing: "-1.5px", margin: "0 0 16px", color: "#fff" }}>
           {t("home.hero.title_find")}<br />
           <span style={{ color: "#f97316" }}>{t("home.hero.title_hire")}</span>

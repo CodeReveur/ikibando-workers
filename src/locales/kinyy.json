@@ -242,7 +242,11 @@
       "location": "Kigali · Rwanda",
       "title_find": "Shaka akazi.",
       "title_hire": "Koresha uwizewe.",
-      "subtitle": "Abakozi b'akokanya mu birori, isuku, umutekano n'ibindi - Umwirondoro wabo waragenzuwe, buzuje ibisabwa, kandi bashobora kwishyurwa hifashishijwe MoMo"
+      "subtitle": "Abakozi b'akokanya mu birori, isuku, umutekano n'ibindi - Umwirondoro wabo waragenzuwe, buzuje ibisabwa, kandi bashobora kwishyurwa hifashishijwe MoMo",
+      "alert_tag": "Barashaka",
+      "alert_hiring": "{employer} arashaka abakozi kuri MpahMapu",
+      "alert_cta": "Reba & usabe",
+      "alert_default_employer": "Umukoresha"
     },
     "sections": {
       "categories": "Ibyiciro",
