@@ -26,7 +26,7 @@ export type Intent = (typeof INTENTS)[number];
 export interface DetectedIntent {
   intent: Intent;
   lang: Lang;
-  /** Extracted slots, e.g. { category: "Cleaning", quantity: 2, location: "Kigali" }. */
+  /** Extracted slots, e.g. { category: "Cleaning", quantity: 2, location: "Rwanda" }. */
   params: Record<string, string | number>;
   /** 0..1 confidence. Heuristic path is capped lower than a clean LLM parse. */
   confidence: number;
@@ -48,7 +48,7 @@ function extractSlots(message: string): Record<string, string | number> {
   if (/\btomorrow\b/i.test(message)) slots.date = "tomorrow";
   else if (/\btoday\b/i.test(message)) slots.date = "today";
   // Common Rwandan locations mentioned inline.
-  const loc = message.match(/\b(Kigali|Gasabo|Kicukiro|Nyarugenge|Musanze|Huye|Rubavu|Muhanga|Rwamagana)\b/i);
+  const loc = message.match(/\b(Rwanda|Gasabo|Kicukiro|Nyarugenge|Musanze|Huye|Rubavu|Muhanga|Rwamagana)\b/i);
   if (loc) slots.location = loc[1];
   return slots;
 }

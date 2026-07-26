@@ -265,7 +265,7 @@ export const KNOWLEDGE: QA[] = [
   { q: "Can I use someone else's referral code?", a: "Yes. Enter a referral code when you sign up to credit the person who invited you." },
 
   // ── Coverage, languages & the app ────────────────────────────────────────
-  { q: "Where does MpahMapu operate?", a: "MpahMapu operates across Rwanda, with the strongest coverage in Kigali and all provinces." },
+  { q: "Where does MpahMapu operate?", a: "MpahMapu operates across Rwanda, with the strongest coverage in Rwanda and all provinces." },
   { q: "Is MpahMapu available in my area?", a: "MpahMapu covers all of Rwanda. Set your district so we can match you with nearby jobs and workers." },
   { q: "What languages does MpahMapu support?", a: "You can use MpahMapu in English, French, Swahili and Kinyarwanda. Switch languages from the menu anytime." },
   { q: "How do I change the language?", a: "Use the language switcher in the menu to choose English, French, Swahili or Kinyarwanda." },

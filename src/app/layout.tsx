@@ -23,7 +23,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "MpahMapu - Hire Verified Workers in Kigali, Rwanda",
+    default: "MpahMapu - Hire Verified Workers in Rwanda",
     template: "%s | MpahMapu",
   },
   description:
@@ -39,12 +39,12 @@ export const metadata: Metadata = {
     "Mpamapu",
     "Mpah Mapu",
     "Rwanda jobs",
-    "Kigali jobs",
+    "Rwanda jobs",
     "hire workers Rwanda",
-    "casual work Kigali",
+    "casual work Rwanda",
     "temporary workers Rwanda",
-    "event staff Kigali",
-    "cleaners Kigali",
+    "event staff Rwanda",
+    "cleaners Rwanda",
     "security guards Rwanda",
     "gig economy Rwanda",
     "on-demand workers",
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "MpahMapu - Hire Verified Workers in Kigali, Rwanda",
+    title: "MpahMapu - Hire Verified Workers in Rwanda",
     description:
       "Find verified workers instantly or get hired for a job today. On-demand workforce for events, cleaning, security & more.",
     url: "/",
@@ -81,7 +81,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MpahMapu - Hire Verified Workers in Kigali, Rwanda",
+    title: "MpahMapu - Hire Verified Workers in Rwanda",
     description:
       "Find verified workers instantly or get hired for a job today.",
     images: ["/cover-a.png"],

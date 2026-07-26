@@ -59,9 +59,9 @@ export function explainActions(actions: AgentAction[]): string {
 export function contextualSuggestions(intent: string, role: string): Suggestion[] {
   const s = (label: string): Suggestion => ({ label, query: label });
   const byIntent: Record<string, Suggestion[]> = {
-    search_job: [s("Show remote jobs"), s("Jobs in Kigali")],
+    search_job: [s("Show remote jobs"), s("Jobs in Rwanda")],
     search_worker: [s("Find cleaners"), s("Are they verified?")],
-    search_employer: [s("Who is hiring now?"), s("Employers in Kigali")],
+    search_employer: [s("Who is hiring now?"), s("Employers in Rwanda")],
     check_wallet: [s("Show my recent transactions"), s("How do I withdraw?")],
     check_transactions: [s("What's my balance?"), s("Explain the fees")],
     check_notifications: [s("Any new jobs for me?"), s("Show my applications")],

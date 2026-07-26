@@ -87,9 +87,9 @@ export const WEBSITE_ID = `${SITE_URL}/#website`;
 export const BUSINESS_PHONE = "+250781121117";
 export const BUSINESS_EMAIL = "info@mpahmapu.com";
 export const BUSINESS_ADDRESS = {
-  streetAddress: "Kigali",
-  addressLocality: "Kigali",
-  addressRegion: "Kigali City",
+  streetAddress: "Rwanda",
+  addressLocality: "Rwanda",
+  addressRegion: "Rwanda City",
   postalCode: "00000",
   addressCountry: "RW",
 };

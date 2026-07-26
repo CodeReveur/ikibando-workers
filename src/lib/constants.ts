@@ -71,7 +71,7 @@ export const MIN_RATE_BY_PERIOD = {
   month: 15000,
   year: 120000,
 } as const;
-export const DEFAULT_CITY = "Kigali";
+export const DEFAULT_CITY = "Rwanda";
 
 export const RWANDA_PROVINCES = [
   {

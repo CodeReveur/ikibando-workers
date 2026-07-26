@@ -43,7 +43,7 @@
       "home": "Ahabanza"
     },
     "footer": {
-      "desc": "Guhuza abakozi b'abanyamyuga bashyizweho ikimenyetso i Kigali n'ibigo by'ubucuruzi ndetse n'ingo.",
+      "desc": "Guhuza abakozi b'abanyamyuga bashyizweho ikimenyetso i Rwanda n'ibigo by'ubucuruzi ndetse n'ingo.",
       "copyright": "© 2026 MpahMapu. Uburenganzira bwose burabitswe.",
       "newsletter_title": "Menya ibishya",
       "newsletter_subtitle": "Ibintu bishya n'inama, bigera kuri imeyili yawe.",
@@ -230,7 +230,7 @@
       "cancel": "Hagarika"
     },
     "provinces": {
-      "city_of_kigali": "Umujyi wa Kigali",
+      "city_of_kigali": "Umujyi wa Rwanda",
       "northern_province": "Intara y'Amajyaruguru",
       "southern_province": "Intara y'Amajyepfo",
       "eastern_province": "Intara y'Iburasirazuba",
@@ -239,7 +239,7 @@
   },
   "home": {
     "hero": {
-      "location": "Kigali · Rwanda",
+      "location": "Rwanda",
       "title_find": "Shaka akazi.",
       "title_hire": "Koresha uwizewe.",
       "subtitle": "Abakozi b'akokanya mu birori, isuku, umutekano n'ibindi - Umwirondoro wabo waragenzuwe, buzuje ibisabwa, kandi bashobora kwishyurwa hifashishijwe MoMo",
@@ -262,8 +262,8 @@
       "a3": "Yego, buri mukozi wese kuri MpahMapu abanza kugenzurwa indangamuntu ye mbere y'uko ahabwa uburenganzira bwo gukora akazi, kugira ngo abakoresha bizere umutekano.",
       "q4": "Ni bande bakozi nshobora kubona kuri MpahMapu?",
       "a4": "MpahMapu ifite abakozi mu byiciro birenze 15 harimo abahereza, abasukura, abarinzi, abashoferi, abanyashanyarazi, abafundi b'amazi, abakora mu busitani, abakozi b'ibirori n'abandi.",
-      "q5": "Ese MpahMapu ikorera hanze ya Kigali?",
-      "a5": "MpahMapu ubu ikorera cyane cyane mu mujyi wa Kigali mu Rwanda, ariko hari gahunda yo kwagura ibikorwa no mu yindi mijyi n'intara."
+      "q5": "Ese MpahMapu ikorera hanze ya Rwanda?",
+      "a5": "MpahMapu ubu ikorera cyane cyane mu mujyi wa Rwanda mu Rwanda, ariko hari gahunda yo kwagura ibikorwa no mu yindi mijyi n'intara."
     }
   },
   "about": {
@@ -308,7 +308,7 @@
       "val3_title": "Kwishyura neza",
       "val3_body": "Tugaragaza ibiciro neza mbere y'uko akazi gatangira. Nta mafaranga y'ihisho, nta makimbirane y'amafaranga - byose binyura kuri MoMo.",
       "val4_title": "Umuryango",
-      "val4_body": "Yubatswe i Kigali, ku banyarwanda. Twemera ko buri mukozi akwiriye agaciro kandi buri mukoresha akwiriye uwo kwizerwa."
+      "val4_body": "Yubatswe i Rwanda, ku banyarwanda. Twemera ko buri mukozi akwiriye agaciro kandi buri mukoresha akwiriye uwo kwizerwa."
     },
     "location": {
       "title": "Dukorera mu Rwanda",
@@ -558,7 +558,7 @@
     "slide0": {
       "tag": "Ku bakozi",
       "headline": "Bona akazi\nuyumunsi.",
-      "body": "Reba imirimo 100+ ya buri munsi muri Kigali - abatekinisiye, abakora isuku, abashoferi, abarinzi n'abandi. Nta CV ikenewe.",
+      "body": "Reba imirimo 100+ ya buri munsi muri Rwanda - abatekinisiye, abakora isuku, abashoferi, abarinzi n'abandi. Nta CV ikenewe.",
       "quote": "Ninjije RWF 45,000 muri iki cyumweru gusa.",
       "author": "Jean Pierre M.",
       "role": "Umuhazamakuru · Kacyiru"
@@ -1373,7 +1373,7 @@
     }
   },
   "titles": {
-    "home": "MpahMapu - Guhuza abakozi b'abanyamyuga bashyizweho ikimenyetso i Kigali",
+    "home": "MpahMapu - Guhuza abakozi b'abanyamyuga bashyizweho ikimenyetso i Rwanda",
     "browse": "Shaka abakozi | MpahMapu",
     "jobs": "Shaka akazi | MpahMapu",
     "blog": "Blog | MpahMapu",
@@ -2237,7 +2237,7 @@
       }
     },
     "verify": {
-      "overview": "Umutekano n'ubwizerane nibyo dushyira imbere cyane. Buri mukozi ndetse n'umukoresha kuri MpahMapu anyura mu kugenzura umwirondoro (identity verification) mbere yo gukoresha platform. Ibi bituma twubaka umuryango w'abanyamwuga bizewe kandi bagenzuwe i Kigali.",
+      "overview": "Umutekano n'ubwizerane nibyo dushyira imbere cyane. Buri mukozi ndetse n'umukoresha kuri MpahMapu anyura mu kugenzura umwirondoro (identity verification) mbere yo gukoresha platform. Ibi bituma twubaka umuryango w'abanyamwuga bizewe kandi bagenzuwe i Rwanda.",
       "process": "Mu gihe cyo kwiyandikisha, abakozi bohereza ikarita y'indangamuntu (ID), inyandiko z'ubushinjacyaha (police clearance), ndetse n'abantu bashobora kubemeza (references). Ikipe yacu isuzuma buri busabe mu masaha 24. Abakozi bagenzuwe bahabwa badge y'icyatsi kibara umutekano kuri profile yabo.",
       "guidelines": "Dukurikiranira hafi amanota (ratings) abakozi bahabwa. Iyo umukozi abonye amanota ari munsi ya 3.5 stars, profile ye ihita ishyirwa mu gihe cy'igerageza. Ibyangombwa bidasanzwe bigenzurwa kabiri mu mwaka. Ubwifatanye cyangwa imyitwarire mibi ihita itemesha badge y'umukozi.",
       "owner": {
@@ -2260,7 +2260,7 @@
       }
     },
     "job": {
-      "overview": "MpahMapu ihuza abakozi b'abanyamyuga benshi cyane n'ibigo by'ubucuruzi ndetse n'ingo zitandukanye i Kigali. Kubona akazi biroroshye cyane iyo profile yawe yuzuye neza. Gira ubumenyi, ibiciro by'isaha, ndetse n'amasaha ukoramo byuzuye kugira ngo uhure n'ubusabe bw'abakoresha.",
+      "overview": "MpahMapu ihuza abakozi b'abanyamyuga benshi cyane n'ibigo by'ubucuruzi ndetse n'ingo zitandukanye i Rwanda. Kubona akazi biroroshye cyane iyo profile yawe yuzuye neza. Gira ubumenyi, ibiciro by'isaha, ndetse n'amasaha ukoramo byuzuye kugira ngo uhure n'ubusabe bw'abakoresha.",
       "process": "Iyo abakoresha bakeneye abakozi, bashobora gutangaza akazi mu isoko ry'imirimo cyangwa bagashakira ahanditse abakozi bagenzuwe. Ushobora gushakisha mu isoko, ukareba igiciro cy'isaha, maze ugasaba. Iyo umukoresha nemeye ubusabe bwawe, akazi gahita gatangira ku munsi wagenwe.",
       "guidelines": "Abakozi bakwiriye gusaba gusa imirimo bafitiye ubumenyi buhagije. Gutinda cyangwa kutaboneka ku kazi utatanze integuza y'amasaha 24 mbere bigabanya amanota yawe kandi bishobora gutuma konti yawe ihagarikwa by'agateganyo. Koresha chat kugira ngo uvugane n'umukoresha.",
       "owner": {

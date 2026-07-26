@@ -262,7 +262,7 @@ function BrowsePageInner() {
       ]} />
       <ServiceSchema
         name="Browse Verified Workers"
-        description="Browse and hire verified workers in Kigali for events, cleaning, security, driving, and more."
+        description="Browse and hire verified workers in Rwanda for events, cleaning, security, driving, and more."
         url="https://mpahmapu.com/browse"
       />
       <style>{CSS}</style>

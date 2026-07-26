@@ -56,11 +56,11 @@ export const WORKERS: WorkerData[] = [
     location: "Kacyiru", rating: 4.9, jobs: 42, available: true,
     ratePerDay: 8000, yearsExp: 4, verified: true,
     languages: ["Kinyarwanda", "English", "French"],
-    bio: "Professional waiter with 4 years of experience at high-end hotels and corporate events in Kigali. Trained in formal table service, wine presentation, and large-scale event coordination.",
+    bio: "Professional waiter with 4 years of experience at high-end hotels and corporate events in Rwanda. Trained in formal table service, wine presentation, and large-scale event coordination.",
     reviews: [
       { author: "Amani Events", rating: 5, text: "Jean Pierre was exceptional at our gala dinner. Professional, fast, and guests loved him.", date: "2 weeks ago" },
       { author: "Sarah M.", rating: 5, text: "Showed up on time, was well-dressed and very courteous. Will hire again.", date: "1 month ago" },
-      { author: "Kigali Conf. Centre", rating: 4, text: "Great service during our 3-day conference. Slight delay on day 2 but overall excellent.", date: "2 months ago" },
+      { author: "Rwanda Conf. Centre", rating: 4, text: "Great service during our 3-day conference. Slight delay on day 2 but overall excellent.", date: "2 months ago" },
     ],
   },
   {
@@ -84,7 +84,7 @@ export const WORKERS: WorkerData[] = [
     location: "Gisozi", rating: 5.0, jobs: 28, available: true,
     ratePerDay: 12000, yearsExp: 6, verified: true,
     languages: ["Kinyarwanda", "English", "Swahili"],
-    bio: "Experienced and highly punctual driver with 6 years driving executives, tourists, and event guests around Kigali and upcountry. Clean driving record, familiar with all Kigali districts.",
+    bio: "Experienced and highly punctual driver with 6 years driving executives, tourists, and event guests around Rwanda and upcountry. Clean driving record, familiar with all Rwanda districts.",
     reviews: [
       { author: "Capital Group", rating: 5, text: "Eric drove our CEO for an entire week - always on time, professional, discreet.", date: "5 days ago" },
       { author: "Visit Rwanda", rating: 5, text: "Best tour driver we've used. Guests were very happy.", date: "2 weeks ago" },
@@ -102,7 +102,7 @@ export const WORKERS: WorkerData[] = [
     reviews: [
       { author: "Hotel Des Mille Collines", rating: 5, text: "Alice managed security for our conference - zero incidents.", date: "3 weeks ago" },
       { author: "Amani Events", rating: 4, text: "Good professional. Would use again for corporate events.", date: "2 months ago" },
-      { author: "Kigali Arena", rating: 5, text: "Very reliable for our concert nights. Firm but respectful.", date: "3 months ago" },
+      { author: "Rwanda Arena", rating: 5, text: "Very reliable for our concert nights. Firm but respectful.", date: "3 months ago" },
     ],
   },
   {
@@ -115,7 +115,7 @@ export const WORKERS: WorkerData[] = [
     bio: "Certified electrician with 8 years handling residential, commercial, and industrial wiring projects. Licensed by REMA. Clean work, compliant with Rwanda building codes.",
     reviews: [
       { author: "Nyarugenge Housing", rating: 5, text: "Patrick wired our entire 12-unit apartment block. Perfect work, on schedule.", date: "1 month ago" },
-      { author: "TechHub Kigali", rating: 5, text: "Sorted our server room power issues quickly. Knew exactly what to do.", date: "6 weeks ago" },
+      { author: "TechHub Rwanda", rating: 5, text: "Sorted our server room power issues quickly. Knew exactly what to do.", date: "6 weeks ago" },
       { author: "Jean-Claude N.", rating: 5, text: "Fixed a wiring issue that three other electricians couldn't. Legend.", date: "2 months ago" },
     ],
   },
@@ -126,7 +126,7 @@ export const WORKERS: WorkerData[] = [
     location: "Nyamirambo", rating: 4.8, jobs: 89, available: true,
     ratePerDay: 6500, yearsExp: 6, verified: true,
     languages: ["Kinyarwanda", "Swahili"],
-    bio: "Grace is one of our top-rated cleaners with 89 completed jobs. She specialises in residential cleaning, laundry, and household organisation. Trusted by families across Kigali for over 6 years.",
+    bio: "Grace is one of our top-rated cleaners with 89 completed jobs. She specialises in residential cleaning, laundry, and household organisation. Trusted by families across Rwanda for over 6 years.",
     reviews: [
       { author: "Uwimana Family", rating: 5, text: "Grace has been cleaning our home weekly for 2 years. Absolutely dependable.", date: "2 days ago" },
       { author: "Airbnb Host – Nyamirambo", rating: 5, text: "Guests always mention how clean the apartment is. Grace is the reason.", date: "2 weeks ago" },
@@ -140,9 +140,9 @@ export const WORKERS: WorkerData[] = [
     location: "Gikondo", rating: 4.6, jobs: 19, available: false,
     ratePerDay: 12000, yearsExp: 4, verified: true,
     languages: ["Kinyarwanda"],
-    bio: "Reliable plumber covering pipe installation, leak repairs, bathroom fitting, and drainage systems. Familiar with both old and new construction in Kigali.",
+    bio: "Reliable plumber covering pipe installation, leak repairs, bathroom fitting, and drainage systems. Familiar with both old and new construction in Rwanda.",
     reviews: [
-      { author: "Kigali Heights", rating: 5, text: "Installed plumbing for 4 bathrooms quickly and cleanly.", date: "3 weeks ago" },
+      { author: "Rwanda Heights", rating: 5, text: "Installed plumbing for 4 bathrooms quickly and cleanly.", date: "3 weeks ago" },
       { author: "Nshuti P.", rating: 4, text: "Fixed a burst pipe on short notice. Prices are fair.", date: "2 months ago" },
       { author: "Mireille K.", rating: 5, text: "No more leaks! Samuel found the problem in minutes.", date: "3 months ago" },
     ],
@@ -157,7 +157,7 @@ export const WORKERS: WorkerData[] = [
     bio: "Experienced housekeeper and domestic helper with 9 years in private homes. Marie handles cooking, cleaning, childcare, and household management with warmth and professionalism.",
     reviews: [
       { author: "Habimana Family", rating: 5, text: "Marie is like family. Trustworthy, caring, and incredibly hardworking.", date: "1 week ago" },
-      { author: "Expat Family – Kacyiru", rating: 5, text: "Marie made our transition to Kigali so smooth. Incredible with our kids.", date: "1 month ago" },
+      { author: "Expat Family – Kacyiru", rating: 5, text: "Marie made our transition to Rwanda so smooth. Incredible with our kids.", date: "1 month ago" },
       { author: "Ingabire A.", rating: 5, text: "Professional and discreet. Our home runs perfectly when Marie is here.", date: "2 months ago" },
     ],
   },
@@ -170,7 +170,7 @@ export const WORKERS: WorkerData[] = [
     languages: ["Kinyarwanda", "English"],
     bio: "Seasoned construction labourer with 10 years on residential and commercial sites. Skilled in masonry, plastering, painting, and general building work. Available for day jobs or multi-week projects.",
     reviews: [
-      { author: "BuildKigali Ltd", rating: 5, text: "Olivier is a great team player and knows construction inside out.", date: "3 weeks ago" },
+      { author: "BuildRwanda Ltd", rating: 5, text: "Olivier is a great team player and knows construction inside out.", date: "3 weeks ago" },
       { author: "Karangwa N.", rating: 4, text: "Solid work on our extension. Finished ahead of schedule.", date: "2 months ago" },
       { author: "Sunrise Properties", rating: 4, text: "Good worker, occasionally needs direction on complex tasks.", date: "4 months ago" },
     ],
@@ -184,7 +184,7 @@ export const WORKERS: WorkerData[] = [
     languages: ["Kinyarwanda", "English", "French"],
     bio: "Creative photographer and videographer specialising in events, portraits, and corporate shoots. Claudine delivers edited photos within 48 hours and brings a modern, clean aesthetic to every project.",
     reviews: [
-      { author: "Kigali Fashion Week", rating: 5, text: "Our best photos in years. Claudine has an incredible eye.", date: "1 week ago" },
+      { author: "Rwanda Fashion Week", rating: 5, text: "Our best photos in years. Claudine has an incredible eye.", date: "1 week ago" },
       { author: "Uwera Wedding", rating: 5, text: "Our wedding photos are stunning. We cried happy tears looking through them.", date: "3 weeks ago" },
       { author: "MTN Rwanda", rating: 5, text: "Professional, fast turnaround, and the corporate shots were perfect.", date: "2 months ago" },
     ],
@@ -214,12 +214,12 @@ export const WORKERS: WorkerData[] = [
     reviews: [
       { author: "Residence La Palme", rating: 5, text: "Our gardens have never looked better since Yvonne joined our team.", date: "2 weeks ago" },
       { author: "Cyiza P.", rating: 5, text: "Transformed our overgrown yard into a beautiful garden. Impressive.", date: "1 month ago" },
-      { author: "Kigali Heights HOA", rating: 4, text: "Consistent and knowledgeable. Knows exactly what each plant needs.", date: "2 months ago" },
+      { author: "Rwanda Heights HOA", rating: 4, text: "Consistent and knowledgeable. Knows exactly what each plant needs.", date: "2 months ago" },
     ],
   },
   {
     id: 13, slug: "kigali-clean-team",
-    name: "Kigali Clean Team", type: "team", teamSize: 5,
+    name: "Rwanda Clean Team", type: "team", teamSize: 5,
     category: "Cleaners", categories: ["Cleaners", "Domestic Help", "Event Staff"],
     location: "Nyamirambo", rating: 4.9, jobs: 120, available: true,
     ratePerDay: 30000, yearsExp: 4, verified: true,
@@ -235,13 +235,13 @@ export const WORKERS: WorkerData[] = [
     id: 14, slug: "securepro-rwanda",
     name: "SecurePro Rwanda", type: "company", teamSize: 20,
     category: "Security", categories: ["Security", "Event Staff"],
-    location: "Kigali-wide", rating: 4.8, jobs: 250, available: true,
+    location: "Rwanda-wide", rating: 4.8, jobs: 250, available: true,
     ratePerDay: 15000, yearsExp: 8, verified: true,
     languages: ["Kinyarwanda", "English", "French", "Swahili"],
-    bio: "Registered security company with 20 trained and licensed officers. SecurePro serves corporate offices, embassies, hotels, and large events across Kigali. All personnel hold valid security licences from NPPA.",
+    bio: "Registered security company with 20 trained and licensed officers. SecurePro serves corporate offices, embassies, hotels, and large events across Rwanda. All personnel hold valid security licences from NPPA.",
     reviews: [
-      { author: "US Embassy Kigali", rating: 5, text: "Professional, disciplined, and reliable. We've used SecurePro for 3 years.", date: "1 month ago" },
-      { author: "Kigali Marriott", rating: 5, text: "Excellent security provider. Our guests feel safe at all times.", date: "6 weeks ago" },
+      { author: "US Embassy Rwanda", rating: 5, text: "Professional, disciplined, and reliable. We've used SecurePro for 3 years.", date: "1 month ago" },
+      { author: "Rwanda Marriott", rating: 5, text: "Excellent security provider. Our guests feel safe at all times.", date: "6 weeks ago" },
       { author: "RDB Events", rating: 4, text: "Very good service for our national investment summit.", date: "3 months ago" },
     ],
   },
@@ -256,7 +256,7 @@ export const WORKERS: WorkerData[] = [
     reviews: [
       { author: "RSSB Offices", rating: 5, text: "Relocated our entire office of 50 people in one weekend. Flawless.", date: "2 weeks ago" },
       { author: "Mukamana C.", rating: 5, text: "Moved from Nyamirambo to Gasabo - nothing scratched, nothing lost.", date: "1 month ago" },
-      { author: "Kigali Heights Devs", rating: 4, text: "Good company, slightly pricey but worth it for the reliability.", date: "2 months ago" },
+      { author: "Rwanda Heights Devs", rating: 4, text: "Good company, slightly pricey but worth it for the reliability.", date: "2 months ago" },
     ],
   },
 ];
@@ -286,7 +286,7 @@ export const JOBS: JobData[] = [
   {
     id: 4, title: "Personal Driver", category: "Drivers",
     location: "Remera", amount: 12000, period: "day", posted: 2, slots: 1, urgent: false,
-    description: "Executive needs a personal driver for daily trips around Kigali plus occasional upcountry missions. Must be available from 7am to 7pm, Monday to Saturday.",
+    description: "Executive needs a personal driver for daily trips around Rwanda plus occasional upcountry missions. Must be available from 7am to 7pm, Monday to Saturday.",
     requirements: ["Valid Rwandan driving licence (min. Class B)", "Clean driving record", "Presentable appearance", "Punctuality is essential", "Discreet and professional"],
     employerName: "Private Client", employerJobs: 3,
   },
@@ -344,7 +344,7 @@ export const JOBS: JobData[] = [
     location: "Gikondo", amount: 8500, period: "day", posted: 5, slots: 6, urgent: false,
     description: "Construction site in Gikondo needs 6 general labourers for a 2-week project - mixing concrete, carrying materials, and assisting skilled workers. Daily pay, tools provided.",
     requirements: ["Physically fit", "Construction site experience", "Safety boot required (can be provided)", "Available Monday–Saturday for 2 weeks"],
-    employerName: "BuildKigali Ltd", employerJobs: 31,
+    employerName: "BuildRwanda Ltd", employerJobs: 31,
   },
   {
     id: 13, title: "Restaurant Waiter x2", category: "Waiters",

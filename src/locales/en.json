@@ -43,7 +43,7 @@
       "home": "Home"
     },
     "footer": {
-      "desc": "Connecting verified gig workers in Kigali with local businesses and households.",
+      "desc": "Connecting verified gig workers in Rwanda with local businesses and households.",
       "copyright": "© 2026 MpahMapu. All rights reserved.",
       "newsletter_title": "Get feature updates",
       "newsletter_subtitle": "New features and tips, straight to your inbox.",
@@ -240,7 +240,7 @@
   },
   "home": {
     "hero": {
-      "location": "Kigali · Rwanda",
+      "location": "Rwanda",
       "title_find": "Find work.",
       "title_hire": "Hire verified.",
       "subtitle": "On-demand workers for events, cleaning, security and more - ID-verified, rated, and paid via MoMo.",
@@ -263,8 +263,8 @@
       "a3": "Yes, every worker on MpahMapu undergoes ID verification before they can accept jobs, ensuring trust and safety for employers.",
       "q4": "What types of workers can I find on MpahMapu?",
       "a4": "MpahMapu offers workers across 15+ categories including waiters, cleaners, security guards, drivers, electricians, plumbers, gardeners, event staff, and more.",
-      "q5": "Is MpahMapu available outside Kigali?",
-      "a5": "MpahMapu currently operates primarily in Kigali, Rwanda, with plans to expand to other cities and provinces."
+      "q5": "Is MpahMapu available outside Rwanda?",
+      "a5": "MpahMapu currently operates primarily in Rwanda, with plans to expand to other cities and provinces."
     }
   },
   "about": {
@@ -309,7 +309,7 @@
       "val3_title": "Fair pay",
       "val3_body": "We display clear rates upfront. No hidden fees, no cash disputes - payments go through MoMo.",
       "val4_title": "Community",
-      "val4_body": "Built in Kigali, for Rwandans. We believe every worker deserves dignity and every employer deserves reliability."
+      "val4_body": "Built in Rwanda, for Rwandans. We believe every worker deserves dignity and every employer deserves reliability."
     },
     "location": {
       "title": "Based in Rwanda, Rwanda",
@@ -559,7 +559,7 @@
     "slide0": {
       "tag": "For workers",
       "headline": "Get hired\ntoday.",
-      "body": "Browse 100+ daily jobs across Kigali - waiters, cleaners, drivers, security and more. No CV needed.",
+      "body": "Browse 100+ daily jobs across Rwanda - waiters, cleaners, drivers, security and more. No CV needed.",
       "quote": "I earned RWF 45,000 this week alone.",
       "author": "Jean Pierre M.",
       "role": "Waiter · Kacyiru"
@@ -1374,7 +1374,7 @@
     }
   },
   "titles": {
-    "home": "MpahMapu - Hire Verified Workers in Kigali, Rwanda",
+    "home": "MpahMapu - Hire Verified Workers in Rwanda",
     "browse": "Browse Workers | MpahMapu",
     "jobs": "Find Jobs | MpahMapu",
     "blog": "Blog | MpahMapu",
@@ -2242,7 +2242,7 @@
       }
     },
     "verify": {
-      "overview": "Safety and reliability are our highest priorities. Every service seeker and worker on MpahMapu undergoes a rigorous identity verification process before they can interact on the platform. This builds a high-trust community of verified professionals in Kigali.",
+      "overview": "Safety and reliability are our highest priorities. Every service seeker and worker on MpahMapu undergoes a rigorous identity verification process before they can interact on the platform. This builds a high-trust community of verified professionals in Rwanda.",
       "process": "During registration, workers upload their National ID card, submit police clearance reports, and provide references from past employers. Our admin team reviews each application within 24 hours. Verified users receive a checkmark badge on their profile.",
       "guidelines": "We continuously monitor user ratings. If a worker receives reviews below 3.5 stars, their account is put under review. Background checks are re-audited biannually. Any violation of our community standards results in immediate badge suspension.",
       "owner": {
@@ -2265,7 +2265,7 @@
       }
     },
     "job": {
-      "overview": "MpahMapu connects hundreds of skilled gig workers with local businesses and households in Kigali. Getting jobs is simple when your profile stands out. Keep your specialties, hourly rates, and working hours updated to match employer requests.",
+      "overview": "MpahMapu connects hundreds of skilled gig workers with local businesses and households in Rwanda. Getting jobs is simple when your profile stands out. Keep your specialties, hourly rates, and working hours updated to match employer requests.",
       "process": "When employers need workers, they can post a job in the marketplace or browse verified profiles. You can search the marketplace, view hourly rates, and apply. Once an employer accepts your application, the job starts on the selected date.",
       "guidelines": "Workers should only apply to jobs they are fully qualified to perform. Arriving late or failing to show up without 24 hours notice will negatively impact your rating and may lead to temporary account suspension. Always communicate via chat.",
       "owner": {

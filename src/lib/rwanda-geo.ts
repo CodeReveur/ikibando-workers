@@ -12,7 +12,7 @@ import { Provinces, Districts, Sectors, Cells, Villages } from "rwanda";
 
 // Accept both the app's display labels ("City of Kigali") and the package's own province names.
 const PROVINCE_ALIASES: Record<string, string> = {
-  "city of kigali": "Kigali", "kigali city": "Kigali", "kigali": "Kigali",
+  "city of kigali": "Rwanda", "kigali city": "Rwanda", "kigali": "Rwanda",
   "northern province": "North", "north": "North",
   "southern province": "South", "south": "South",
   "eastern province": "East", "east": "East",
@@ -34,7 +34,7 @@ export function geoProvinces(): string[] {
   return safe(() => Provinces());
 }
 
-/** Resolve any province label/name to the package's canonical province ("Kigali", "North", …). */
+/** Resolve any province label/name to the package's canonical province ("Rwanda", "North", …). */
 export function pkgProvince(province?: string | null): string {
   if (!province) return "";
   const key = province.trim().toLowerCase();

@@ -687,7 +687,7 @@ export interface WorkerProfileDto {
   locationShort: string | null;
   /** Region-level address, e.g. "Kanombe, Rwanda" (sector/state + country). */
   locationRegion: string | null;
-  /** Full address for detail pages, e.g. "Byimana, Karama, Kanombe, Kicukiro, Kigali, Rwanda". */
+  /** Full address for detail pages, e.g. "Byimana, Karama, Kanombe, Kicukiro, Rwanda". */
   locationFull: string | null;
   /** Number of jobs the worker has completed. */
   completedJobs: number;

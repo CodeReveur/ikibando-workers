@@ -298,7 +298,7 @@ export function areaIsSet(a: AreaValue): boolean {
   return Boolean((a.country && a.country !== "Rwanda") || a.province || a.district || a.sector);
 }
 
-/** The narrowest level set, for a filter chip: "Kanombe" beats "Kicukiro" beats "Kigali". */
+/** The narrowest level set, for a filter chip: "Kanombe" beats "Kicukiro" beats "Rwanda". */
 export function areaLabel(a: AreaValue): string {
   return a.sector || a.district || a.province || (a.country && a.country !== "Rwanda" ? a.country : "") || "";
 }
@@ -306,7 +306,7 @@ export function areaLabel(a: AreaValue): string {
 /**
  * Province → District → Sector, from the bundled Rwanda administrative dataset.
  *
- * Both browse pages previously offered a hardcoded list of eight Kigali neighbourhood names
+ * Both browse pages previously offered a hardcoded list of eight Rwanda neighbourhood names
  * and compared the pick against the district field. Only one of those names is actually a
  * district, so the rest could never match a single row. Reading the real hierarchy means
  * every area in the country is selectable and the value matches what postings store.

@@ -3,12 +3,12 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Contact MpahMapu - Get in Touch",
   description:
-    "Contact MpahMapu for questions about hiring workers or finding jobs in Kigali, Rwanda. Reach us by email, phone, or WhatsApp.",
+    "Contact MpahMapu for questions about hiring workers or finding jobs in Rwanda. Reach us by email, phone, or WhatsApp.",
   alternates: { canonical: "/contact" },
   openGraph: {
     title: "Contact MpahMapu - Get in Touch",
     description:
-      "Contact MpahMapu for questions about hiring workers or finding jobs in Kigali, Rwanda.",
+      "Contact MpahMapu for questions about hiring workers or finding jobs in Rwanda.",
     url: "/contact",
   },
 };

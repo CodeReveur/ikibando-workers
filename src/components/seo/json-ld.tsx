@@ -110,7 +110,7 @@ export function LocalBusinessSchema() {
         url: SITE_URL,
         logo: SITE_LOGO,
         image: SITE_LOGO,
-        description: "On-demand workforce platform connecting employers with verified workers in Kigali, Rwanda.",
+        description: "On-demand workforce platform connecting employers with verified workers in Rwanda.",
         email: BUSINESS_EMAIL,
         telephone: BUSINESS_PHONE,
         ...(SOCIAL_PROFILES.length > 0 ? { sameAs: SOCIAL_PROFILES } : {}),
@@ -135,7 +135,7 @@ export function LocalBusinessSchema() {
         priceRange: "$$",
         areaServed: {
           "@type": "City",
-          name: "Kigali",
+          name: "Rwanda",
         },
       }}
     />

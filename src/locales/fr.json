@@ -43,7 +43,7 @@
       "home": "Accueil"
     },
     "footer": {
-      "desc": "Connecter des travailleurs indépendants vérifiés à Kigali avec des entreprises locales et des ménages.",
+      "desc": "Connecter des travailleurs indépendants vérifiés à Rwanda avec des entreprises locales et des ménages.",
       "copyright": "© 2026 MpahMapu. Tous droits réservés.",
       "newsletter_title": "Recevez les nouveautés",
       "newsletter_subtitle": "Nouvelles fonctionnalités et astuces, directement dans votre boîte mail.",
@@ -230,7 +230,7 @@
       "cancel": "Annuler"
     },
     "provinces": {
-      "city_of_kigali": "Ville de Kigali",
+      "city_of_kigali": "Ville de Rwanda",
       "northern_province": "Province du Nord",
       "southern_province": "Province du Sud",
       "eastern_province": "Province de l'Est",
@@ -239,7 +239,7 @@
   },
   "home": {
     "hero": {
-      "location": "Kigali · Rwanda",
+      "location": "Rwanda",
       "title_find": "Trouvez du travail.",
       "title_hire": "Recrutez vérifié.",
       "subtitle": "Travailleurs indépendants sur demande pour événements, nettoyage, sécurité et plus - vérifiés par carte d'identité, notés et payés via MoMo.",
@@ -262,8 +262,8 @@
       "a3": "Oui, chaque travailleur sur MpahMapu fait l'objet d'une vérification d'identité avant de pouvoir accepter des missions, garantissant ainsi confiance et sécurité aux employeurs.",
       "q4": "Quels types de travailleurs puis-je trouver sur MpahMapu ?",
       "a4": "MpahMapu propose des travailleurs dans plus de 15 catégories, notamment des serveurs, des nettoyeurs, des gardiens de sécurité, des chauffeurs, des électriciens, des plombiers, des jardiniers, du personnel événementiel et plus encore.",
-      "q5": "MpahMapu est-il disponible en dehors de Kigali ?",
-      "a5": "MpahMapu opère actuellement principalement à Kigali, au Rwanda, avec des projets d'expansion dans d'autres villes et provinces."
+      "q5": "MpahMapu est-il disponible en dehors de Rwanda ?",
+      "a5": "MpahMapu opère actuellement principalement à Rwanda, au Rwanda, avec des projets d'expansion dans d'autres villes et provinces."
     }
   },
   "about": {
@@ -308,7 +308,7 @@
       "val3_title": "Un salaire équitable",
       "val3_body": "Nous affichons des tarifs clairs dès le départ. Pas de frais cachés, pas de litiges sur le liquide - les paiements se font via MoMo.",
       "val4_title": "Communauté",
-      "val4_body": "Construit à Kigali, pour les Rwandais. Nous croyons que chaque travailleur mérite la dignité et chaque employeur mérite la fiabilité."
+      "val4_body": "Construit à Rwanda, pour les Rwandais. Nous croyons que chaque travailleur mérite la dignité et chaque employeur mérite la fiabilité."
     },
     "location": {
       "title": "Basé au Rwanda, Rwanda",
@@ -558,7 +558,7 @@
     "slide0": {
       "tag": "Pour les travailleurs",
       "headline": "Faites-vous embaucher\naujourd'hui.",
-      "body": "Parcourez plus de 100 emplois quotidiens à Kigali - serveurs, nettoyeurs, chauffeurs, sécurité et plus. Pas besoin de CV.",
+      "body": "Parcourez plus de 100 emplois quotidiens à Rwanda - serveurs, nettoyeurs, chauffeurs, sécurité et plus. Pas besoin de CV.",
       "quote": "J'ai gagné 45 000 RWF cette semaine seulement.",
       "author": "Jean Pierre M.",
       "role": "Serveur · Kacyiru"
@@ -1373,7 +1373,7 @@
     }
   },
   "titles": {
-    "home": "MpahMapu - Recrutez des travailleurs vérifiés à Kigali, Rwanda",
+    "home": "MpahMapu - Recrutez des travailleurs vérifiés à Rwanda",
     "browse": "Parcourir les travailleurs | MpahMapu",
     "jobs": "Trouver des emplois | MpahMapu",
     "blog": "Blog | MpahMapu",
@@ -2237,7 +2237,7 @@
       }
     },
     "verify": {
-      "overview": "La sécurité et la fiabilité sont nos priorités absolues. Chaque chercheur de services et travailleur sur MpahMapu passe par un processus de vérification d'identité rigoureux avant de pouvoir interagir sur la plateforme. Cela permet de bâtir une communauté de confiance de professionnels vérifiés à Kigali.",
+      "overview": "La sécurité et la fiabilité sont nos priorités absolues. Chaque chercheur de services et travailleur sur MpahMapu passe par un processus de vérification d'identité rigoureux avant de pouvoir interagir sur la plateforme. Cela permet de bâtir une communauté de confiance de professionnels vérifiés à Rwanda.",
       "process": "Lors de l'inscription, les travailleurs téléchargent leur carte nationale d'identité, soumettent des extraits de casier judiciaire et fournissent des références d'anciens employeurs. Notre équipe examine chaque dossier sous 24 heures. Les utilisateurs vérifiés reçoivent un badge de coche verte sur leur profil.",
       "guidelines": "Nous surveillons en permanence les évaluations. Si un travailleur reçoit des notes inférieures à 3,5 étoiles, son compte est mis sous surveillance. Les antécédents sont revérifiés deux fois par an. Tout manquement à nos normes communautaires entraîne la suspension immédiate du badge.",
       "owner": {
@@ -2260,7 +2260,7 @@
       }
     },
     "job": {
-      "overview": "MpahMapu met en relation des centaines de travailleurs qualifiés avec des entreprises et des ménages locaux à Kigali. Décrocher des missions est simple lorsque votre profil est attractif. Pensez à actualiser vos spécialités, vos tarifs horaires et vos disponibilités pour correspondre aux recherches.",
+      "overview": "MpahMapu met en relation des centaines de travailleurs qualifiés avec des entreprises et des ménages locaux à Rwanda. Décrocher des missions est simple lorsque votre profil est attractif. Pensez à actualiser vos spécialités, vos tarifs horaires et vos disponibilités pour correspondre aux recherches.",
       "process": "Lorsque les employeurs ont besoin de personnel, ils peuvent publier un emploi dans le catalogue ou parcourir les profils vérifiés. Vous pouvez explorer les offres, vérifier le tarif horaire et postuler. Dès que l'employeur valide votre demande, le travail commence à la date prévue.",
       "guidelines": "Les travailleurs doivent postuler uniquement aux missions qu'ils sont pleinement qualifiés pour accomplir. Arriver en retard ou ne pas se présenter sans prévenir 24 heures à l'avance nuira à votre note globale et pourra entraîner une suspension. Communiquez toujours via le chat interne.",
       "owner": {

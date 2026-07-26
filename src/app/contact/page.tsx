@@ -31,7 +31,7 @@ export default function ContactPage() {
     {
       Icon: MapPin,
       label: t("contact.info.location"),
-      value: "Kigali, Rwanda",
+      value: "Rwanda",
       href: "#",
     },
     {

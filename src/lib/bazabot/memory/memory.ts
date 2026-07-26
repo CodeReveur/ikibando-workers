@@ -17,7 +17,7 @@ export interface SessionMemory {
   recentToolResults: string[];
   /**
    * Learned facts about this user, accumulated across turns - e.g.
-   * { category: "Electrical", location: "Kigali", role: "worker", name: "Eric" }.
+   * { category: "Electrical", location: "Rwanda", role: "worker", name: "Eric" }.
    * Injected into the prompt so the bot "remembers" and personalises answers.
    */
   profile: Record<string, string | number>;

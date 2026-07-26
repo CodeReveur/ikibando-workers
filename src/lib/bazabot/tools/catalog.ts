@@ -45,7 +45,7 @@ export function buildCatalog(deps: CatalogDeps = {}): Tool[] {
       description: "Find open jobs in the marketplace. Filter by category, district or urgency.",
       params: [
         { name: "category", type: "string", required: false, description: "e.g. Cleaning, Security, Events" },
-        { name: "district", type: "string", required: false, description: "Rwandan district, e.g. Kigali, Gasabo" },
+        { name: "district", type: "string", required: false, description: "Rwandan district, e.g. Rwanda, Gasabo" },
         { name: "urgency", type: "string", required: false, description: "e.g. urgent" },
       ],
       schema: z.object({
