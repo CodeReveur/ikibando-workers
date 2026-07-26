@@ -424,6 +424,21 @@ export interface SchedulePeriod {
   state: string;
   requestable: boolean;
   requestId: string | null;
+  /** Time-unlocked but held back because the worker hasn't met the payout requirement. */
+  requirementBlocked?: boolean;
+  /** Un-scaled period amount before pro-rata (equals amountRwf when fully met). */
+  fullAmountRwf?: number | null;
+}
+
+export interface PayoutRequirement {
+  metric: string;
+  metricLabel: string;
+  threshold: number;
+  progress: number;
+  met: boolean;
+  proRata: boolean;
+  perPeriod: boolean;
+  message: string | null;
 }
 
 export interface PaymentScheduleDto {
@@ -435,6 +450,7 @@ export interface PaymentScheduleDto {
   startTime: string | null;
   workerPayoutTotal: number;
   releasedTotal: number;
+  requirement?: PayoutRequirement | null;
   periods: SchedulePeriod[];
 }
 

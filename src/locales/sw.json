@@ -2347,7 +2347,14 @@
     "complaint_title": "Wasilisha malalamiko",
     "complaint_placeholder": "Nini kilienda vibaya?",
     "decline_title": "Kataa malipo haya",
-    "decline_placeholder": "Sababu (si lazima)"
+    "decline_placeholder": "Sababu (si lazima)",
+    "requirement_title": "Sharti la malipo",
+    "requirement_met": "Sharti la malipo limetimizwa",
+    "requirement_reach": "Fikia",
+    "requirement_to_unlock": "ili kufungua malipo haya",
+    "requirement_prorata": "maendeleo ya sehemu hulipa sehemu",
+    "requirement_blocked": "Imefungwa hadi utimize sharti hapo juu",
+    "of": "kati ya"
   },
   "navigate": {
     "title": "Elekea kazini",

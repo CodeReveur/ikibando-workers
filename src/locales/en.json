@@ -2348,7 +2348,14 @@
     "complaint_title": "Raise a complaint",
     "complaint_placeholder": "What went wrong?",
     "decline_title": "Decline this payment",
-    "decline_placeholder": "Reason (optional)"
+    "decline_placeholder": "Reason (optional)",
+    "requirement_title": "Payout requirement",
+    "requirement_met": "Payout requirement met",
+    "requirement_reach": "Reach",
+    "requirement_to_unlock": "to unlock these payments",
+    "requirement_prorata": "partial progress pays a partial share",
+    "requirement_blocked": "Locked until you meet the payout requirement above",
+    "of": "of"
   },
   "navigate": {
     "title": "Navigate to job",

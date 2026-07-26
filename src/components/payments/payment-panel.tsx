@@ -159,6 +159,32 @@ export function PaymentPanel({ jobId, role, token }: {
           }) || `${periods.length} × ${unitLabel} · ${fmt(perWorkerReleased)} / ${fmt(perWorkerTotal)} released`}
         </p>
 
+        {schedule.requirement && (
+          <div style={{
+            background: schedule.requirement.met ? "rgba(34,197,94,0.08)" : "rgba(249,115,22,0.08)",
+            border: `1px solid ${schedule.requirement.met ? "rgba(34,197,94,0.28)" : "rgba(249,115,22,0.32)"}`,
+            borderRadius: 10, padding: "10px 12px", margin: "0 0 12px",
+          }}>
+            <div style={{ fontSize: 11.5, fontWeight: 800, letterSpacing: "0.04em", textTransform: "uppercase",
+              color: schedule.requirement.met ? "#22c55e" : "#f97316", marginBottom: 4 }}>
+              {schedule.requirement.met
+                ? (t("payments.requirement_met") || "Payout requirement met")
+                : (t("payments.requirement_title") || "Payout requirement")}
+            </div>
+            <div style={{ fontSize: 12, color: "#bbb", lineHeight: 1.55 }}>
+              {schedule.requirement.message
+                || `${t("payments.requirement_reach") || "Reach"} ${schedule.requirement.threshold} ${schedule.requirement.metricLabel} ${t("payments.requirement_to_unlock") || "to unlock these payments"}.`}
+              {" "}
+              <strong style={{ color: schedule.requirement.met ? "#22c55e" : "#f97316" }}>
+                {schedule.requirement.progress} / {schedule.requirement.threshold}
+              </strong>
+              {schedule.requirement.proRata && !schedule.requirement.met && (
+                <span style={{ color: "#777" }}> · {t("payments.requirement_prorata") || "partial progress pays a partial share"}</span>
+              )}
+            </div>
+          </div>
+        )}
+
         {periods.map(p => {
           const r = reqFor(p.index);
           const color = STATE_COLORS[p.state] || "#888";
@@ -167,9 +193,14 @@ export function PaymentPanel({ jobId, role, token }: {
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: 13.5, fontWeight: 700, color: "#e8e8e8" }}>
                   {(t("payments.period", { index: String(p.index) }) || `Period ${p.index}`)} · {fmt(p.amountRwf)}
+                  {p.fullAmountRwf != null && p.amountRwf < p.fullAmountRwf && !p.requirementBlocked && (
+                    <span style={{ fontSize: 11, fontWeight: 500, color: "#777" }}> {t("payments.of") || "of"} {fmt(p.fullAmountRwf)}</span>
+                  )}
                 </div>
-                <div style={{ fontSize: 11.5, color: "#777", marginTop: 2 }}>
-                  {p.state === "LOCKED"
+                <div style={{ fontSize: 11.5, color: p.requirementBlocked ? "#f97316" : "#777", marginTop: 2 }}>
+                  {p.requirementBlocked
+                    ? (t("payments.requirement_blocked") || "Locked until you meet the payout requirement above")
+                    : p.state === "LOCKED"
                     ? `${t("payments.unlocks", { when: relative(p.unlockAt) }) || `Unlocks ${relative(p.unlockAt)}`} (${fmtDate(p.unlockAt)})`
                     : (t("payments.completed", { when: fmtDate(p.unlockAt) }) || `Completed ${fmtDate(p.unlockAt)}`)}
                   {r?.status === "PENDING" && r.expiresAt && (

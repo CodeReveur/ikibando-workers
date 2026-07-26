@@ -2347,7 +2347,14 @@
     "complaint_title": "Déposer une réclamation",
     "complaint_placeholder": "Que s’est-il passé ?",
     "decline_title": "Refuser ce paiement",
-    "decline_placeholder": "Motif (facultatif)"
+    "decline_placeholder": "Motif (facultatif)",
+    "requirement_title": "Condition de paiement",
+    "requirement_met": "Condition de paiement remplie",
+    "requirement_reach": "Atteignez",
+    "requirement_to_unlock": "pour débloquer ces paiements",
+    "requirement_prorata": "une progression partielle paie une part partielle",
+    "requirement_blocked": "Bloqué tant que la condition ci-dessus n'est pas remplie",
+    "of": "sur"
   },
   "navigate": {
     "title": "Naviguer vers l'emploi",

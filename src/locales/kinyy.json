@@ -2347,7 +2347,14 @@
     "complaint_title": "Tanga ikibazo",
     "complaint_placeholder": "Ni iki kitagenze neza?",
     "decline_title": "Anga ubu bwishyu",
-    "decline_placeholder": "Impamvu (si ngombwa)"
+    "decline_placeholder": "Impamvu (si ngombwa)",
+    "requirement_title": "Ibisabwa byo kwishyurwa",
+    "requirement_met": "Ibisabwa byujujwe",
+    "requirement_reach": "Geza kuri",
+    "requirement_to_unlock": "kugira ngo ubone ubu bwishyu",
+    "requirement_prorata": "iterambere rya bimwe ritanga igice",
+    "requirement_blocked": "Bifunze kugeza wujuje ibisabwa haruguru",
+    "of": "kuri"
   },
   "navigate": {
     "title": "Yobora ugana ku murimo",
