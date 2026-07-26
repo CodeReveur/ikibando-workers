@@ -137,6 +137,12 @@ export function PaymentPanel({ jobId, role, token }: {
   const periods = schedule.periods || [];
   const unitLabel = schedule.paymentMode.replace("CUSTOM_", "").toLowerCase();
 
+  // The header must match the per-period rows below, which are already this worker's own share.
+  // schedule.workerPayoutTotal/releasedTotal are job-wide (all workers), so a worker would
+  // otherwise see the whole job's payout instead of their own. Sum the per-period amounts.
+  const perWorkerTotal    = periods.reduce((s, p) => s + (p.amountRwf || 0), 0);
+  const perWorkerReleased = periods.filter(p => p.state === "PAID").reduce((s, p) => s + (p.amountRwf || 0), 0);
+
   return (
     <>
       <div style={card}>
@@ -149,8 +155,8 @@ export function PaymentPanel({ jobId, role, token }: {
         <p style={{ fontSize: 12.5, color: "#888", margin: "0 0 8px" }}>
           {t("payments.summary", {
             count: String(periods.length), unit: unitLabel,
-            released: fmt(schedule.releasedTotal), total: fmt(schedule.workerPayoutTotal),
-          }) || `${periods.length} × ${unitLabel} · ${fmt(schedule.releasedTotal)} / ${fmt(schedule.workerPayoutTotal)} released`}
+            released: fmt(perWorkerReleased), total: fmt(perWorkerTotal),
+          }) || `${periods.length} × ${unitLabel} · ${fmt(perWorkerReleased)} / ${fmt(perWorkerTotal)} released`}
         </p>
 
         {periods.map(p => {
