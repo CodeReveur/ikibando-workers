@@ -1,12 +1,9 @@
 "use client";
 
-// Provider logos for the payment-method selector. Real brand marks:
-//  - /mtn.png    → MoMo from MTN   (copied from brand assets)
-//  - /airtel.png → Airtel Money    (copied from brand assets)
-//  - /visa.png   → Visa            (copied from brand assets)
-//  - Mastercard  → inline SVG (two overlapping circles) so we don't ship a raw asset
-// Each logo sits on a small white chip so it reads cleanly on the dark UI.
+import { useEffect, useState } from "react";
+import { getMobileProviders, PAY_COUNTRIES, type MobileMethod, type MobileProviders } from "@/lib/api";
 
+// Provider logos for the payment-method selector. Real brand marks live in /public.
 export function MastercardMark({ size = 22 }: { size?: number }) {
   const r = size * 0.34;
   return (
@@ -19,62 +16,131 @@ export function MastercardMark({ size = 22 }: { size?: number }) {
 
 export type PayMethodValue = "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD";
 
-// One tile per method. Visa & Mastercard share a single card tile (same gateway flow) - selecting
-// it maps to VISA, and it stays highlighted for either card value.
-const METHODS: { value: PayMethodValue; label: string; logo: React.ReactNode; match?: PayMethodValue[] }[] = [
-  { value: "MTN_MOMO",     label: "MTN Mobile Money", logo: <img src="/mtn.png"    alt="MTN Mobile Money" style={{ height: 26, width: "auto", objectFit: "contain" }} /> },
-  { value: "AIRTEL_MONEY", label: "Airtel Money",     logo: <img src="/airtel.png" alt="Airtel Money"     style={{ height: 26, width: "auto", objectFit: "contain", borderRadius: 4 }} /> },
-  {
-    value: "VISA", label: "Visa / Mastercard", match: ["VISA", "MASTERCARD"],
-    logo: (
-      <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-        <img src="/visa.png" alt="Visa" style={{ height: 15, width: "auto", objectFit: "contain" }} />
-        <MastercardMark size={24} />
-      </span>
-    ),
-  },
-];
+/** Rich info for the selected method, so a caller can route a PawaPay operator when it's not XentriPay. */
+export interface SelectedMethod extends MobileMethod { country: string; currency: string; }
+
+/** A small brand logo/chip for a method, chosen from its label/kind. */
+function MethodLogo({ m }: { m: MobileMethod }) {
+  const l = m.label.toLowerCase();
+  if (l.includes("mtn"))    return <img src="/mtn.png" alt={m.label} style={{ height: 24, width: "auto", objectFit: "contain" }} />;
+  if (l.includes("airtel")) return <img src="/airtel.png" alt={m.label} style={{ height: 24, width: "auto", objectFit: "contain", borderRadius: 4 }} />;
+  if (m.kind === "CARD") return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+      <img src="/visa.png" alt="Visa" style={{ height: 14, width: "auto", objectFit: "contain" }} /><MastercardMark size={22} />
+    </span>
+  );
+  const color = m.kind === "MPESA" ? "#0a8f3c" : l.includes("orange") ? "#ff6600" : "#111";
+  return <span style={{ fontSize: 12, fontWeight: 800, color }}>{m.label}</span>;
+}
+
+/** Map a selected method to the legacy PayMethodValue the XentriPay flow understands (null for PawaPay). */
+export function toPayMethodValue(m: MobileMethod): PayMethodValue | null {
+  if (m.provider !== "XENTRIPAY") return null;
+  if (m.code === "AIRTEL") return "AIRTEL_MONEY";
+  if (m.kind === "CARD") return "VISA";
+  return "MTN_MOMO";
+}
+
+const FLAG = (iso2: string) =>
+  iso2.length === 2 ? String.fromCodePoint(...[...iso2.toUpperCase()].map(c => 0x1f1a5 + c.charCodeAt(0))) : "";
 
 /**
- * Horizontal row of selectable payment-method tiles. Each tile shows the provider's real logo
- * on a white chip; tapping a tile selects it (no radio buttons).
+ * Country-aware payment-method selector. Auto-detects the visitor's country and lets them change it
+ * (a Rwandan can pay with Ugandan mobile money), then shows the methods available there. Backward
+ * compatible: {@code onChange} still fires the legacy PayMethodValue for XentriPay methods; use
+ * {@code onMethod} to also receive the full method (country + PawaPay operator code).
  */
-export function PayMethodSelector({ value, onChange }: {
+export function PayMethodSelector({ value, onChange, onMethod }: {
   value: PayMethodValue;
   onChange: (value: PayMethodValue) => void;
+  onMethod?: (m: SelectedMethod) => void;
 }) {
+  const [cfg, setCfg] = useState<MobileProviders | null>(null);
+  const [country, setCountry] = useState<string>("");
+  const [selCode, setSelCode] = useState<string | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    getMobileProviders(country || undefined)
+      .then(c => { if (!alive) return; setCfg(c); if (!country) setCountry(c.country); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [country]);
+
+  const select = (m: MobileMethod) => {
+    setSelCode(m.code);
+    const legacy = toPayMethodValue(m);
+    if (legacy) onChange(legacy);
+    if (onMethod && cfg) onMethod({ ...m, country: cfg.country, currency: cfg.currency });
+  };
+
+  const methods = cfg?.methods ?? [];
+
   return (
-    <div style={{ display: "flex", gap: 10 }}>
-      {METHODS.map(m => {
-        const active = m.match ? m.match.includes(value) : value === m.value;
-        return (
-          <button
-            key={m.value}
-            type="button"
-            onClick={() => onChange(m.value)}
-            aria-pressed={active}
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      {/* Country selector */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <span style={{ fontSize: 11, color: "#777" }}>Country</span>
+        <div style={{ position: "relative", flex: 1, minWidth: 0 }}>
+          <span style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", fontSize: 14, pointerEvents: "none" }}>
+            {FLAG(country || "RW")}
+          </span>
+          <select
+            value={country}
+            onChange={e => { setCountry(e.target.value); setSelCode(null); }}
             style={{
-              flex: 1, minWidth: 0,
-              display: "flex", flexDirection: "column", alignItems: "center", gap: 10,
-              background: active ? "rgba(249,115,22,0.08)" : "#141414",
-              border: active ? "1px solid #f97316" : "1px solid #2a2a2a",
-              borderRadius: 12, padding: "14px 8px", cursor: "pointer",
-              fontFamily: "inherit", transition: "border-color 0.12s, background 0.12s",
+              width: "100%", background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10,
+              padding: "9px 12px 9px 34px", fontSize: 13, color: "#eee", outline: "none", fontFamily: "inherit",
+              appearance: "none",
             }}
           >
-            <span style={{
-              background: "#fff", borderRadius: 10, height: 46, width: "100%", maxWidth: 68,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              boxSizing: "border-box", padding: "0 8px",
-            }}>
-              {m.logo}
-            </span>
-            <span style={{ fontSize: 11, fontWeight: 700, lineHeight: 1.25, textAlign: "center", color: active ? "#f97316" : "#aaa" }}>
-              {m.label}
-            </span>
-          </button>
-        );
-      })}
+            {PAY_COUNTRIES.map(c => <option key={c.iso2} value={c.iso2}>{c.name}</option>)}
+          </select>
+        </div>
+        {cfg && (
+          <span style={{ fontSize: 10, fontWeight: 700, color: "#666", border: "1px solid #2a2a2a", borderRadius: 6, padding: "2px 6px" }}>
+            {cfg.country} · {cfg.currency}
+          </span>
+        )}
+      </div>
+
+      {/* Method tiles */}
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+        {methods.map(m => {
+          const legacy = toPayMethodValue(m);
+          const active = legacy ? (legacy === value || (legacy === "VISA" && (value === "VISA" || value === "MASTERCARD")))
+                                : selCode === m.code;
+          return (
+            <button
+              key={m.code}
+              type="button"
+              onClick={() => select(m)}
+              aria-pressed={active}
+              style={{
+                flex: "1 1 90px", minWidth: 0,
+                display: "flex", flexDirection: "column", alignItems: "center", gap: 10,
+                background: active ? "rgba(249,115,22,0.08)" : "#141414",
+                border: active ? "1px solid #f97316" : "1px solid #2a2a2a",
+                borderRadius: 12, padding: "12px 8px", cursor: "pointer",
+                fontFamily: "inherit", transition: "border-color 0.12s, background 0.12s",
+              }}
+            >
+              <span style={{
+                background: "#fff", borderRadius: 10, height: 42, width: "100%", maxWidth: 66,
+                display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box", padding: "0 8px",
+              }}>
+                <MethodLogo m={m} />
+              </span>
+              <span style={{ fontSize: 10.5, fontWeight: 700, lineHeight: 1.2, textAlign: "center", color: active ? "#f97316" : "#aaa" }}>
+                {m.label}
+              </span>
+            </button>
+          );
+        })}
+        {methods.length === 0 && (
+          <span style={{ fontSize: 12, color: "#666", padding: "8px 0" }}>Loading payment methods…</span>
+        )}
+      </div>
     </div>
   );
 }

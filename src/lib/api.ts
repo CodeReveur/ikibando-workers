@@ -1060,6 +1060,44 @@ export async function getPricingConfig(): Promise<PricingConfig> {
   }
 }
 
+export interface MobileMethod {
+  code: string;   // MTN_MOMO / AIRTEL / CARD (XentriPay) or a PawaPay operator code (MPESA_KEN, ...)
+  label: string;
+  kind: "MOMO" | "MPESA" | "ORANGE" | "CARD";
+  provider: "XENTRIPAY" | "PAWAPAY";
+}
+export interface MobileProviders {
+  country: string;        // ISO-2, auto-detected or overridden
+  countryName: string;
+  currency: string;
+  supported: boolean;     // whether PawaPay covers this country
+  primary: "XENTRIPAY" | "PAWAPAY";
+  pawapayEnabled: boolean;
+  methods: MobileMethod[];
+}
+
+/** The mobile-money methods to show, resolved from the visitor's country (auto or overridden). */
+export async function getMobileProviders(country?: string): Promise<MobileProviders> {
+  const { data } = await http.get("/api/config/mobile-providers", { params: country ? { country } : {} });
+  return data.data;
+}
+
+/** The 12 PawaPay countries plus Rwanda, for the country picker. iso2 -> name. */
+export const PAY_COUNTRIES: { iso2: string; name: string }[] = [
+  { iso2: "RW", name: "Rwanda" },
+  { iso2: "BJ", name: "Benin" },
+  { iso2: "CM", name: "Cameroon" },
+  { iso2: "CI", name: "Cote d'Ivoire" },
+  { iso2: "CD", name: "DR Congo" },
+  { iso2: "GA", name: "Gabon" },
+  { iso2: "KE", name: "Kenya" },
+  { iso2: "CG", name: "Rep. of Congo" },
+  { iso2: "SN", name: "Senegal" },
+  { iso2: "SL", name: "Sierra Leone" },
+  { iso2: "UG", name: "Uganda" },
+  { iso2: "ZM", name: "Zambia" },
+];
+
 /** Worker commission for a gross job cost, honouring a fixed-amount override. */
 export function workerCommissionOf(baseCost: number, p: PricingConfig): number {
   return p.workerCommissionFixed > 0 ? p.workerCommissionFixed : Math.round(baseCost * p.workerCommissionRate);
