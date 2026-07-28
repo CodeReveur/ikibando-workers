@@ -11,8 +11,10 @@ import { Provinces, Districts, Sectors, Cells, Villages } from "rwanda";
  */
 
 // Accept both the app's display labels ("City of Kigali") and the package's own province names.
+// The package's Kigali province is "Kigali" (Provinces() = East/Kigali/North/South/West); mapping it
+// to "Rwanda" - which is not a province - made Districts() throw and left the dropdown empty.
 const PROVINCE_ALIASES: Record<string, string> = {
-  "city of kigali": "Rwanda", "kigali city": "Rwanda", "kigali": "Rwanda",
+  "city of kigali": "Kigali", "kigali city": "Kigali", "kigali": "Kigali",
   "northern province": "North", "north": "North",
   "southern province": "South", "south": "South",
   "eastern province": "East", "east": "East",
