@@ -8,7 +8,7 @@ import {
   AlarmClock, Search, Navigation, Loader2, Star,
 } from "lucide-react";
 import { JOB_CATEGORIES, RWANDA_PROVINCES, MIN_RATE_BY_PERIOD } from "@/lib/constants";
-import { getWorkers, postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, getPricingConfig, employerServiceFeeOf, DEFAULT_PRICING, type PricingConfig, type WorkerProfileDto, type PaymentMode } from "@/lib/api";
+import { getWorkers, postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, getPricingConfig, getJobCategories, employerServiceFeeOf, DEFAULT_PRICING, type PricingConfig, type WorkerProfileDto, type PaymentMode, type JobCategoryMeta } from "@/lib/api";
 import { getReferralCode } from "@/lib/referral";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { DonationAddon } from "@/components/donate/donation-addon";
@@ -172,6 +172,12 @@ export function HireModal({ onClose }: { onClose: () => void }) {
   const [titleModalOpen, setTitleModalOpen] = useState(false);
   const [pricing, setPricing] = useState<PricingConfig>(DEFAULT_PRICING);
   useEffect(() => { getPricingConfig().then(setPricing).catch(() => {}); }, []);
+  // Categories from the admin-managed DB, so newly added ones are hirable at once.
+  const [dbCats, setDbCats] = useState<JobCategoryMeta[]>([]);
+  useEffect(() => { getJobCategories().then(setDbCats).catch(() => {}); }, []);
+  const categoryOptions = dbCats.length
+    ? dbCats.map(c => ({ value: c.slug, label: c.displayName }))
+    : JOB_CATEGORIES.map(c => ({ value: c.value, label: c.label }));
   const [paymentPhone, setPaymentPhone] = useState("");
   const [payNote, setPayNote] = useState("");
   // When on, a worker's per-period payment request pays out immediately (no manual approval).
@@ -429,7 +435,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
   const selectionValid = isMulti ? selected.length === headcountNum : selected.length === 1;
 
   const locationLabel = [form.province, form.district].filter(Boolean).join(" › ");
-  const cat           = catLabel(form.category);
+  const cat           = dbCats.find(c => c.slug === form.category)?.displayName ?? catLabel(form.category);
   const dateLabel     = form.date
     ? new Date(form.date + "T00:00").toLocaleDateString("en-GB", { weekday:"short", day:"numeric", month:"short" })
     : "-";
@@ -562,7 +568,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
 
                 <FField label={t("hire_modal.details.category_label")}>
                   <SearchSelect
-                    options={JOB_CATEGORIES.map(c => ({ value: c.value, label: c.label }))}
+                    options={categoryOptions}
                     value={form.category}
                     onChange={v => setForm(f => ({ ...f, category: v }))}
                     placeholder={t("hire_modal.details.category_placeholder")}

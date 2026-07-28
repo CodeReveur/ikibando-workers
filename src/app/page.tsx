@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react";
 import Footer from "@/components/layout/footer";
 import { PostJobModal } from "@/components/jobs/post-job-modal";
-import { getWorkers, getJobs, getCategoryStats, daysAgo, workerNetHourly, type WorkerProfileDto, type JobDto } from "@/lib/api";
+import { getWorkers, getJobs, getCategoryStats, getJobCategories, daysAgo, workerNetHourly, type WorkerProfileDto, type JobDto, type JobCategoryMeta } from "@/lib/api";
 import { JobAlertsBanner } from "@/components/home/job-alerts-banner";
 import { rateUnit } from "@/lib/rate-unit";
 import { ratingInfo } from "@/lib/rating";
-import { CATEGORIES, countsForCategory, type CategoryStats } from "@/lib/browse-taxonomy";
+import { CATEGORIES, countsForCategory, keyForSlug, iconForSlug, type CategoryStats } from "@/lib/browse-taxonomy";
 import { useLanguage } from "@/lib/language-context";
 import {
   UtensilsCrossed, Sparkles, Shield, Car, Zap, Wrench, Leaf,
@@ -140,6 +140,7 @@ export default function Home() {
   const [workers, setWorkers] = useState<WorkerProfileDto[]>([]);
   const [jobs, setJobs] = useState<JobDto[]>([]);
   const [catStats, setCatStats] = useState<CategoryStats>({});
+  const [dbCats, setDbCats] = useState<JobCategoryMeta[]>([]);
 
   const fmt = (n: number) => t("common.general.currency_pattern", { amount: n.toLocaleString() });
 
@@ -148,16 +149,29 @@ export default function Home() {
     getWorkers({ size: 18 }).then(p => setWorkers(p.content)).catch(() => {});
     getJobs({ size: 16 }).then(p => setJobs(p.content)).catch(() => {});
     getCategoryStats().then(setCatStats).catch(() => {});
+    getJobCategories().then(setDbCats).catch(() => {});
   }, []);
 
-  // Category chips carry their live active-worker count and lead with the busiest.
-  const categoryCards = [...categories]
-    .map((c) => {
-      const meta = CATEGORIES.find((x) => x.key === c.key);
-      const workersCount = meta ? countsForCategory(meta, catStats).workers : 0;
-      return { ...c, workersCount };
-    })
-    .sort((a, b) => b.workersCount - a.workersCount);
+  // Categories come from the admin-managed database, so anything added there (or manually) shows up
+  // here automatically. The built-in list is only a fallback until the DB list loads. Each chip
+  // carries its live active-worker count and the busiest lead.
+  const categoryCards = (dbCats.length
+    ? dbCats.map((c) => ({
+        key: keyForSlug(c.slug),
+        label: t("common.categories." + c.slug.toLowerCase()) || c.displayName,
+        Icon: iconForSlug(c.slug),
+        workersCount: catStats[c.slug.toLowerCase()]?.workers ?? 0,
+      }))
+    : categories.map((c) => {
+        const meta = CATEGORIES.find((x) => x.key === c.key);
+        return {
+          key: c.key,
+          label: t("common.categories." + c.key) || c.label,
+          Icon: c.icon,
+          workersCount: meta ? countsForCategory(meta, catStats).workers : 0,
+        };
+      })
+  ).sort((a, b) => b.workersCount - a.workersCount);
 
   return (
     <main style={{ background: "#111", minHeight: "100vh", fontFamily: "Inter, DM Sans, system-ui, sans-serif", color: "#f5f5f5" }}>
@@ -240,7 +254,7 @@ export default function Home() {
       <section id="categories" style={{ maxWidth: 760, margin: "0 auto", padding: "0 20px 20px" }}>
         <SectionHeader title={t("home.sections.categories")} href="/categories" />
         <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 4, scrollbarWidth: "none" }}>
-          {categoryCards.map(({ icon: Icon, key, workersCount }) => (
+          {categoryCards.map(({ Icon, key, label, workersCount }) => (
             <a
               key={key}
               href={`/browse?category=${key}`}
@@ -253,7 +267,7 @@ export default function Home() {
               onMouseLeave={e => (e.currentTarget.style.borderColor = "#272727")}
             >
               <Icon size={22} color="#f97316" strokeWidth={1.75} />
-              <span style={{ fontSize: 11, fontWeight: 600, color: "#aaa", whiteSpace: "nowrap" }}>{t("common.categories." + key)}</span>
+              <span style={{ fontSize: 11, fontWeight: 600, color: "#aaa", whiteSpace: "nowrap" }}>{label}</span>
               {/* Live availability: green when workers are online, muted otherwise. */}
               <span style={{ fontSize: 10, fontWeight: 700, color: workersCount > 0 ? "#22c55e" : "#555", whiteSpace: "nowrap" }}>
                 {workersCount.toLocaleString()} {t("categories_page.workers_word") || "workers"}

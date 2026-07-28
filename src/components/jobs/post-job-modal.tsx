@@ -9,7 +9,7 @@ import {
 import { JOB_CATEGORIES, RWANDA_PROVINCES, CURRENCY, MIN_RATE_BY_PERIOD } from "@/lib/constants";
 import { geoSectors, geoCells, geoVillages } from "@/lib/rwanda-geo";
 import { forwardGeocode } from "@/lib/geocoding";
-import { postJob, postGuestJob, getWallet, apiError, checkGuestAccount, getPricingConfig, workerCommissionOf, employerServiceFeeOf, employerServiceFeeRateOf, DEFAULT_PRICING, type PricingConfig, type PaymentMode } from "@/lib/api";
+import { postJob, postGuestJob, getWallet, apiError, checkGuestAccount, getPricingConfig, getJobCategories, workerCommissionOf, employerServiceFeeOf, employerServiceFeeRateOf, DEFAULT_PRICING, type PricingConfig, type PaymentMode, type JobCategoryMeta } from "@/lib/api";
 import { getReferralCode } from "@/lib/referral";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { saveRedirect } from "@/lib/auth-redirect";
@@ -203,6 +203,11 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
   const [pricing, setPricing] = useState<PricingConfig>(DEFAULT_PRICING);
   useEffect(() => { getPricingConfig().then(setPricing).catch(() => {}); }, []);
 
+  // Job categories from the admin-managed database, so a category added there is immediately
+  // postable. Falls back to the built-in list until the DB list loads.
+  const [dbCats, setDbCats] = useState<JobCategoryMeta[]>([]);
+  useEffect(() => { getJobCategories().then(setDbCats).catch(() => {}); }, []);
+
   const DRAFT_KEY = "MpahMapu_draft_postjob";
 
   const getUnit = (rt: RateType, n: number) => {
@@ -215,9 +220,16 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
   };
 
   const getLocalizedCategoryLabel = (value: string) => {
-    const defaultLabel = JOB_CATEGORIES.find(c => c.value === value)?.label ?? value;
+    const defaultLabel = dbCats.find(c => c.slug === value)?.displayName
+      ?? JOB_CATEGORIES.find(c => c.value === value)?.label ?? value;
     return t(`common.categories.${value}`) || defaultLabel;
   };
+
+  // Category options come from the admin-managed DB (new categories appear at once); the built-in
+  // list is only a fallback until the DB list loads.
+  const categoryOptions = dbCats.length
+    ? dbCats.map(c => ({ value: c.slug, label: getLocalizedCategoryLabel(c.slug) }))
+    : JOB_CATEGORIES.map(c => ({ value: c.value, label: getLocalizedCategoryLabel(c.value) }));
 
   const getLocalizedProvinceLabel = (prov: string) => {
     if (!prov) return "";
@@ -627,7 +639,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                 {/* Category - searchable */}
                 <FField label={t("post_job.labels.category") || "Job category *"} error={errors.category}>
                   <SearchSelect
-                    options={JOB_CATEGORIES.map(c => ({ value: c.value, label: getLocalizedCategoryLabel(c.value) }))}
+                    options={categoryOptions}
                     value={job.category}
                     onChange={v => setJob(f => ({ ...f, category: v }))}
                     placeholder={t("post_job.placeholders.search_category") || "Search category…"}

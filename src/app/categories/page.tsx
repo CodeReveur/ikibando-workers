@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Footer from "@/components/layout/footer";
 import { Search, Users, Briefcase, ChevronDown } from "lucide-react";
-import { getCategoryStats } from "@/lib/api";
-import { CATEGORIES, countsForCategory, type CategoryStats } from "@/lib/browse-taxonomy";
+import { getCategoryStats, getJobCategories, type JobCategoryMeta } from "@/lib/api";
+import { CATEGORIES, countsForCategory, keyForSlug, iconForSlug, type CategoryStats } from "@/lib/browse-taxonomy";
 import { useLanguage } from "@/lib/language-context";
 import { BreadcrumbSchema } from "@/components/seo/json-ld";
 
@@ -13,31 +13,42 @@ type Sort = "workers" | "jobs" | "name";
 export default function CategoriesPage() {
   const { t } = useLanguage();
   const [stats, setStats] = useState<CategoryStats>({});
+  const [dbCats, setDbCats] = useState<JobCategoryMeta[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<Sort>("workers");
 
   useEffect(() => {
+    getJobCategories().then(setDbCats).catch(() => {});
     getCategoryStats().then(setStats).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
-  // Each category with its live counts and a localized name for search + display.
+  // Each category with its live counts and a localized name for search + display. The list comes
+  // from the admin-managed database so newly added categories appear automatically; the built-in
+  // taxonomy is only a fallback until the DB list loads.
   const rows = useMemo(() => {
-    const list = CATEGORIES.map((c) => {
-      const { workers, jobs } = countsForCategory(c, stats);
-      const name = t("common.categories." + c.key) || c.label;
-      return { ...c, workers, jobs, name };
-    });
+    const list = dbCats.length
+      ? dbCats.map((c) => {
+          const s = c.slug.toLowerCase();
+          const name = t("common.categories." + s) || c.displayName;
+          return { key: keyForSlug(c.slug), name, alt: c.displayName, Icon: iconForSlug(c.slug),
+                   workers: stats[s]?.workers ?? 0, jobs: stats[s]?.jobs ?? 0 };
+        })
+      : CATEGORIES.map((c) => {
+          const { workers, jobs } = countsForCategory(c, stats);
+          return { key: c.key, name: t("common.categories." + c.key) || c.label, alt: c.label,
+                   Icon: c.icon, workers, jobs };
+        });
     const q = search.trim().toLowerCase();
     const filtered = q
-      ? list.filter((c) => c.name.toLowerCase().includes(q) || c.label.toLowerCase().includes(q))
+      ? list.filter((c) => c.name.toLowerCase().includes(q) || c.alt.toLowerCase().includes(q))
       : list;
     filtered.sort((a, b) =>
       sort === "name" ? a.name.localeCompare(b.name)
       : sort === "jobs" ? b.jobs - a.jobs || b.workers - a.workers
       : b.workers - a.workers || b.jobs - a.jobs);
     return filtered;
-  }, [stats, search, sort, t]);
+  }, [dbCats, stats, search, sort, t]);
 
   const totalWorkers = useMemo(
     () => Object.values(stats).reduce((n, s) => n + (s.workers || 0), 0), [stats]);
@@ -111,7 +122,7 @@ export default function CategoriesPage() {
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 11, minWidth: 0 }}>
                   <div style={{ width: 40, height: 40, borderRadius: 10, background: "rgba(249,115,22,0.1)", border: "1px solid rgba(249,115,22,0.25)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <c.icon size={19} color="#f97316" />
+                    <c.Icon size={19} color="#f97316" />
                   </div>
                   <span style={{ fontSize: 13.5, fontWeight: 700, color: "#f0f0f0", overflowWrap: "anywhere", lineHeight: 1.3 }}>{c.name}</span>
                 </div>

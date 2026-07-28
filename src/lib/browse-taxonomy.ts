@@ -97,6 +97,16 @@ export function categoryByKey(key: string): BrowseCategory | undefined {
 }
 
 /**
+ * A Lucide icon for a DB category slug (e.g. "waiter", "checkout_helper"). Known slugs reuse the
+ * curated taxonomy icon; anything the admin adds later that we don't recognise falls back to a
+ * neutral briefcase, so new categories still render an icon instead of breaking.
+ */
+export function iconForSlug(slug: string): LucideIcon {
+  const s = (slug ?? "").toLowerCase();
+  return CATEGORIES.find(c => c.apiValues.includes(s))?.icon ?? Briefcase;
+}
+
+/**
  * The API `category` value for a picker key: the slugs it fans out to, comma-separated.
  * An unknown key (for example one arriving in a shared URL) is passed through as-is.
  */
