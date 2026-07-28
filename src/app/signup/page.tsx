@@ -34,8 +34,8 @@ export default function SignUpPage() {
   const [showWizard, setShowWizard] = useState(false);
   const [authResult, setAuthResult] = useState<any>(null);
   const [showRoleSelect, setShowRoleSelect] = useState(false);
-  // Manual (email/password) signups get the continuous slide flow; Google/Facebook
-  // keep the normal wizard.
+  // Every signup path (email/password and Google) runs the same continuous slide onboarding, so
+  // the profile-collection flow is identical regardless of how the account was created.
   const [slideMode, setSlideMode] = useState(false);
   const [referralCode, setReferralCode] = useState("");
   const fbReady = useRef(false);
@@ -186,7 +186,7 @@ export default function SignUpPage() {
         if (!result.user.onboardingCompleted) {
           setAuthResult(result);
           setShowRoleSelect(true);
-          setSlideMode(false); // Google → normal wizard
+          setSlideMode(true); // Google → same continuous slide onboarding as manual signup
           setShowWizard(true);
         } else {
           saveAndRedirect(result);

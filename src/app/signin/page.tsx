@@ -39,8 +39,8 @@ export default function SignInPage() {
   const [gateResult, setGateResult] = useState<any>(null);
   const fbReady = useRef(false);
 
-  /* Whether the resumed wizard uses the sliding full-page flow (email logins)
-     or the classic modal (social logins keep their original wizard). */
+  /* The resumed onboarding always uses the sliding full-page flow, so email and Google logins
+     complete the same steps in the same way. */
   const [slideResume, setSlideResume] = useState(false);
 
   /* Post-authentication routing (shared by email + social + gate resolution). */
@@ -131,7 +131,8 @@ export default function SignInPage() {
     onSuccess: async ({ access_token }) => {
       setLoading("google");
       try {
-        proceed(await loginWithGoogle(access_token));
+        // Google resumes the SAME continuous slide onboarding as an email login (slide = true).
+        proceed(await loginWithGoogle(access_token), true);
       } catch (e: unknown) {
         // Surface why Google was refused (e.g. it's a password account) instead of a generic failure.
         const { msg, action } = signInError(e, t("signin.toasts.google_fail_desc"));
