@@ -7,7 +7,9 @@ import type { BlogCategory, BlogPost, Page } from "@/lib/api";
  * server-rendered - the axios client in lib/api.ts is browser-oriented and its data would never
  * reach a crawler. Plain fetch also lets us use Next's revalidation cache.
  */
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8088";
+// Server-only backend URL (never shipped to the browser). NEXT_PUBLIC fallback kept for migration.
+const API_BASE =
+  process.env.BACKEND_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8088";
 
 /**
  * A short revalidation window so a freshly published post appears almost right

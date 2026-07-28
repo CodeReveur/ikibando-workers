@@ -2,8 +2,10 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { toGatewayUrl } from "@/lib/gateway";
 
-const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8088";
+// Beacons go through the same-origin gateway, so the backend URL never leaks in the console.
+const TRACK_URL = toGatewayUrl("/api/track");
 const SESSION_KEY = "mp_visitor_id";
 
 /** Stable anonymous per-browser id, so the backend can count unique visitors. */
@@ -49,7 +51,7 @@ export function VisitorTracker() {
     // fetch+keepalive lets us attach the auth token (to associate signed-in users); if that
     // throws synchronously we fall back to a plain sendBeacon.
     try {
-      fetch(`${BASE}/api/track`, {
+      fetch(TRACK_URL, {
         method: "POST",
         keepalive: true,
         headers: {
@@ -61,7 +63,7 @@ export function VisitorTracker() {
     } catch {
       try {
         navigator.sendBeacon?.(
-          `${BASE}/api/track`,
+          TRACK_URL,
           new Blob([JSON.stringify(payload)], { type: "application/json" }),
         );
       } catch {

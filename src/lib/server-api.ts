@@ -8,7 +8,10 @@ import type { JobDto, Page, WorkerProfileDto, WorkerReview } from "@/lib/api";
  * on the site that scales with the marketplace, so they are rendered on the server: fetched here,
  * passed down as props, and present in the initial HTML.
  */
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8088";
+// Server-only backend URL. This runs on the server (never shipped to the browser), so it uses the
+// non-public BACKEND_URL. The NEXT_PUBLIC fallback stays only for environments not yet migrated.
+const API_BASE =
+  process.env.BACKEND_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8088";
 
 /**
  * Detail pages are cheap to regenerate and change more often than blog posts (a job fills, a

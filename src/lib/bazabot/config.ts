@@ -101,7 +101,8 @@ export function loadConfig(): BazaBotConfig {
     // search is strong for the curated FAQ. Enable with a real embedding engine.
     semanticSearch: envBool("BAZABOT_SEMANTIC_SEARCH", false),
     rateLimitPerMinute: envNum("BAZABOT_RATE_LIMIT", 20),
-    backendUrl: envStr("NEXT_PUBLIC_API_URL", "http://localhost:8088").replace(/\/+$/, ""),
+    // Server-only: prefer the non-public BACKEND_URL, fall back to the legacy public var.
+    backendUrl: envStr("BACKEND_URL", envStr("NEXT_PUBLIC_API_URL", "http://localhost:8088")).replace(/\/+$/, ""),
     debug: envBool("BAZABOT_DEBUG", false),
   };
 }

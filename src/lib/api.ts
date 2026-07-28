@@ -1,6 +1,9 @@
 import axios from "axios";
+import { toGatewayUrl, GATEWAY_PREFIX } from "@/lib/gateway";
 
-const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8088";
+// The browser never talks to the backend directly. Every request below is transparently
+// rewritten to the same-origin gateway ("/api/g/<token>") by the request interceptor, so
+// the backend origin and the real endpoint paths stay out of the Network tab and console.
 
 /**
  * Extract the most useful error string from an Axios error.
@@ -23,7 +26,23 @@ export function apiError(e: unknown, fallback = "Something went wrong. Please tr
   return body.message || fallback;
 }
 
-const http = axios.create({ baseURL: BASE, withCredentials: false });
+const http = axios.create({ baseURL: "", withCredentials: false });
+
+// ── Gateway rewrite ───────────────────────────────────────────────────────────
+// Rewrite every relative request path to its opaque same-origin gateway form. Absolute
+// URLs (external services) and already-encoded gateway URLs are left untouched.
+http.interceptors.request.use(config => {
+  const url = config.url ?? "";
+  if (!url || url.startsWith(GATEWAY_PREFIX) || /^https?:\/\//i.test(url)) return config;
+  if (typeof window === "undefined") {
+    // No browser to hide anything from during SSR: call the backend directly,
+    // server-to-server, using the same server-only URL the gateway forwards to.
+    config.baseURL = process.env.BACKEND_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8088";
+    return config;
+  }
+  config.url = toGatewayUrl(url);
+  return config;
+});
 
 // ── Token refresh interceptor ─────────────────────────────────────────────────
 let _refreshing = false;
