@@ -471,6 +471,19 @@ export interface PaymentScheduleDto {
   releasedTotal: number;
   requirement?: PayoutRequirement | null;
   periods: SchedulePeriod[];
+  /**
+   * Employer view only: one entry per accepted worker, each with that worker's own installment
+   * rows and gate progress. Absent/empty for the worker's own view (they read `periods`).
+   */
+  workers?: WorkerSchedule[] | null;
+}
+
+/** One accepted worker's installment schedule, as the employer sees it. */
+export interface WorkerSchedule {
+  workerId: string;
+  workerName: string;
+  requirement?: PayoutRequirement | null;
+  periods: SchedulePeriod[];
 }
 
 export interface PaymentRequestDto {

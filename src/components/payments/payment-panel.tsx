@@ -7,6 +7,7 @@ import {
   approvePaymentRequest, declinePaymentRequest, disputePaymentRequest,
   apiError,
   type PaymentScheduleDto, type ActivityLogDto, type PaymentRequestDto, type SchedulePeriod,
+  type PayoutRequirement,
 } from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
 import { useLanguage } from "@/lib/language-context";
@@ -133,113 +134,158 @@ export function PaymentPanel({ jobId, role, token }: {
 
   if (loading) return <div style={{ ...card, color: "#666", fontSize: 13 }}>{t("payments.loading") || "Loading payments…"}</div>;
   if (!schedule) return null;
+  // Non-null alias so the nested render helpers below keep the narrowed type.
+  const sd = schedule;
 
-  const periods = schedule.periods || [];
-  const unitLabel = schedule.paymentMode.replace("CUSTOM_", "").toLowerCase();
+  const unitLabel = sd.paymentMode.replace("CUSTOM_", "").toLowerCase();
+  const isEmployer = role === "employer";
+  // Employer sees a section per accepted worker; the worker sees only their own schedule.
+  const workerBlocks = isEmployer && sd.workers && sd.workers.length ? sd.workers : null;
 
-  // The header must match the per-period rows below, which are already this worker's own share.
-  // schedule.workerPayoutTotal/releasedTotal are job-wide (all workers), so a worker would
-  // otherwise see the whole job's payout instead of their own. Sum the per-period amounts.
-  const perWorkerTotal    = periods.reduce((s, p) => s + (p.amountRwf || 0), 0);
-  const perWorkerReleased = periods.filter(p => p.state === "PAID").reduce((s, p) => s + (p.amountRwf || 0), 0);
+  // Resolve the pending request behind a period (for the expiry countdown + action ids). For the
+  // employer each period carries its own worker-scoped requestId; the worker has a single schedule.
+  const requestForPeriod = (p: SchedulePeriod): PaymentRequestDto | undefined =>
+    isEmployer ? requests.find(r => r.id === p.requestId) : reqFor(p.index);
+
+  function RequirementBanner({ requirement }: { requirement?: PayoutRequirement | null }) {
+    if (!requirement) return null;
+    return (
+      <div style={{
+        background: requirement.met ? "rgba(34,197,94,0.08)" : "rgba(249,115,22,0.08)",
+        border: `1px solid ${requirement.met ? "rgba(34,197,94,0.28)" : "rgba(249,115,22,0.32)"}`,
+        borderRadius: 10, padding: "10px 12px", margin: "0 0 12px",
+      }}>
+        <div style={{ fontSize: 11.5, fontWeight: 800, letterSpacing: "0.04em", textTransform: "uppercase",
+          color: requirement.met ? "#22c55e" : "#f97316", marginBottom: 4 }}>
+          {requirement.met
+            ? (t("payments.requirement_met") || "Payout requirement met")
+            : (t("payments.requirement_title") || "Payout requirement")}
+        </div>
+        <div style={{ fontSize: 12, color: "#bbb", lineHeight: 1.55 }}>
+          {requirement.message
+            || `${t("payments.requirement_reach") || "Reach"} ${requirement.threshold} ${requirement.metricLabel} ${t("payments.requirement_to_unlock") || "to unlock these payments"}.`}
+          {" "}
+          <strong style={{ color: requirement.met ? "#22c55e" : "#f97316" }}>
+            {requirement.progress} / {requirement.threshold}
+          </strong>
+          {requirement.proRata && !requirement.met && (
+            <span style={{ color: "#777" }}> · {t("payments.requirement_prorata") || "partial progress pays a partial share"}</span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  function PeriodRow({ p, keyPrefix }: { p: SchedulePeriod; keyPrefix?: string }) {
+    const r = requestForPeriod(p);
+    const color = STATE_COLORS[p.state] || "#888";
+    const actId = p.requestId || r?.id || "";
+    return (
+      <div key={(keyPrefix || "") + p.index} style={row}>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ fontSize: 13.5, fontWeight: 700, color: "#e8e8e8" }}>
+            {(t("payments.period", { index: String(p.index) }) || `Period ${p.index}`)} · {fmt(p.amountRwf)}
+            {p.fullAmountRwf != null && p.amountRwf < p.fullAmountRwf && !p.requirementBlocked && (
+              <span style={{ fontSize: 11, fontWeight: 500, color: "#777" }}> {t("payments.of") || "of"} {fmt(p.fullAmountRwf)}</span>
+            )}
+          </div>
+          <div style={{ fontSize: 11.5, color: p.requirementBlocked ? "#f97316" : "#777", marginTop: 2 }}>
+            {p.requirementBlocked
+              ? (t("payments.requirement_blocked") || "Locked until the payout requirement above is met")
+              : p.state === "LOCKED"
+              ? `${t("payments.unlocks", { when: relative(p.unlockAt) }) || `Unlocks ${relative(p.unlockAt)}`} (${fmtDate(p.unlockAt)})`
+              : (t("payments.completed", { when: fmtDate(p.unlockAt) }) || `Completed ${fmtDate(p.unlockAt)}`)}
+            {p.state === "PENDING" && r?.expiresAt && (
+              <> · {(sd.directRelease ? (t("payments.auto_approves_in") || "auto-approves in") : (t("payments.escalates_in") || "support case opens in"))} <Countdown to={r.expiresAt} /></>
+            )}
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>
+          <Badge label={stateLabel(p.state)} color={color} />
+          {/* Worker actions */}
+          {!isEmployer && p.requestable && (
+            <button style={btn} disabled={busy === `req-${p.index}`} onClick={() => doRequest(p)}>
+              {busy === `req-${p.index}` ? "…" : (t("payments.request_btn") || "Request payment")}
+            </button>
+          )}
+          {!isEmployer && p.state === "PENDING" && actId && (
+            <button style={btnGhost} disabled={busy === `di-${actId}`} onClick={() => doDispute(actId)}>
+              {t("payments.complaint_btn") || "Complaint"}
+            </button>
+          )}
+          {/* Employer actions - act on this worker's own request for this period */}
+          {isEmployer && p.state === "PENDING" && actId && (
+            <>
+              <button style={btn} disabled={busy === `ap-${actId}`} onClick={() => doApprove(actId)}>
+                {busy === `ap-${actId}` ? "…" : (t("payments.approve_btn") || "Approve")}
+              </button>
+              <button style={btnGhost} disabled={busy === `dc-${actId}`} onClick={() => doDecline(actId)}>
+                {t("payments.decline_btn") || "Decline"}
+              </button>
+              <button style={btnGhost} disabled={busy === `di-${actId}`} onClick={() => doDispute(actId)}>
+                {t("payments.complaint_btn") || "Complaint"}
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
-      <div style={card}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-          <h3 style={{ fontSize: 15, fontWeight: 800, color: "#f0f0f0", margin: 0 }}>
-            {t("payments.title") || "Installment payments"}
-          </h3>
-          {schedule.directRelease && <Badge label={t("payments.auto_release_on") || "Auto-release on"} color="#22c55e" />}
-        </div>
-        <p style={{ fontSize: 12.5, color: "#888", margin: "0 0 8px" }}>
-          {t("payments.summary", {
-            count: String(periods.length), unit: unitLabel,
-            released: fmt(perWorkerReleased), total: fmt(perWorkerTotal),
-          }) || `${periods.length} × ${unitLabel} · ${fmt(perWorkerReleased)} / ${fmt(perWorkerTotal)} released`}
-        </p>
-
-        {schedule.requirement && (
-          <div style={{
-            background: schedule.requirement.met ? "rgba(34,197,94,0.08)" : "rgba(249,115,22,0.08)",
-            border: `1px solid ${schedule.requirement.met ? "rgba(34,197,94,0.28)" : "rgba(249,115,22,0.32)"}`,
-            borderRadius: 10, padding: "10px 12px", margin: "0 0 12px",
-          }}>
-            <div style={{ fontSize: 11.5, fontWeight: 800, letterSpacing: "0.04em", textTransform: "uppercase",
-              color: schedule.requirement.met ? "#22c55e" : "#f97316", marginBottom: 4 }}>
-              {schedule.requirement.met
-                ? (t("payments.requirement_met") || "Payout requirement met")
-                : (t("payments.requirement_title") || "Payout requirement")}
-            </div>
-            <div style={{ fontSize: 12, color: "#bbb", lineHeight: 1.55 }}>
-              {schedule.requirement.message
-                || `${t("payments.requirement_reach") || "Reach"} ${schedule.requirement.threshold} ${schedule.requirement.metricLabel} ${t("payments.requirement_to_unlock") || "to unlock these payments"}.`}
-              {" "}
-              <strong style={{ color: schedule.requirement.met ? "#22c55e" : "#f97316" }}>
-                {schedule.requirement.progress} / {schedule.requirement.threshold}
-              </strong>
-              {schedule.requirement.proRata && !schedule.requirement.met && (
-                <span style={{ color: "#777" }}> · {t("payments.requirement_prorata") || "partial progress pays a partial share"}</span>
-              )}
-            </div>
-          </div>
-        )}
-
-        {periods.map(p => {
-          const r = reqFor(p.index);
-          const color = STATE_COLORS[p.state] || "#888";
+      {workerBlocks ? (
+        // ── Employer: one card per accepted worker ──────────────────────────────
+        workerBlocks.map(w => {
+          const paid  = w.periods.filter(p => p.state === "PAID").reduce((s, p) => s + (p.amountRwf || 0), 0);
+          const total = w.periods.reduce((s, p) => s + (p.amountRwf || 0), 0);
           return (
-            <div key={p.index} style={row}>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 13.5, fontWeight: 700, color: "#e8e8e8" }}>
-                  {(t("payments.period", { index: String(p.index) }) || `Period ${p.index}`)} · {fmt(p.amountRwf)}
-                  {p.fullAmountRwf != null && p.amountRwf < p.fullAmountRwf && !p.requirementBlocked && (
-                    <span style={{ fontSize: 11, fontWeight: 500, color: "#777" }}> {t("payments.of") || "of"} {fmt(p.fullAmountRwf)}</span>
-                  )}
-                </div>
-                <div style={{ fontSize: 11.5, color: p.requirementBlocked ? "#f97316" : "#777", marginTop: 2 }}>
-                  {p.requirementBlocked
-                    ? (t("payments.requirement_blocked") || "Locked until you meet the payout requirement above")
-                    : p.state === "LOCKED"
-                    ? `${t("payments.unlocks", { when: relative(p.unlockAt) }) || `Unlocks ${relative(p.unlockAt)}`} (${fmtDate(p.unlockAt)})`
-                    : (t("payments.completed", { when: fmtDate(p.unlockAt) }) || `Completed ${fmtDate(p.unlockAt)}`)}
-                  {r?.status === "PENDING" && r.expiresAt && (
-                    <> · {(schedule.directRelease ? (t("payments.auto_approves_in") || "auto-approves in") : (t("payments.escalates_in") || "support case opens in"))} <Countdown to={r.expiresAt} /></>
-                  )}
-                </div>
+            <div style={card} key={w.workerId}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <h3 style={{ fontSize: 15, fontWeight: 800, color: "#f0f0f0", margin: 0 }}>{w.workerName}</h3>
+                {sd.directRelease && <Badge label={t("payments.auto_release_on") || "Auto-release on"} color="#22c55e" />}
               </div>
-              <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>
-                <Badge label={stateLabel(p.state)} color={color} />
-                {/* Worker actions */}
-                {role === "worker" && p.requestable && (
-                  <button style={btn} disabled={busy === `req-${p.index}`} onClick={() => doRequest(p)}>
-                    {busy === `req-${p.index}` ? "…" : (t("payments.request_btn") || "Request payment")}
-                  </button>
-                )}
-                {role === "worker" && r?.status === "PENDING" && (
-                  <button style={btnGhost} disabled={busy === `di-${r.id}`} onClick={() => doDispute(r.id)}>
-                    {t("payments.complaint_btn") || "Complaint"}
-                  </button>
-                )}
-                {/* Employer actions */}
-                {role === "employer" && r?.status === "PENDING" && (
-                  <>
-                    <button style={btn} disabled={busy === `ap-${r.id}`} onClick={() => doApprove(r.id)}>
-                      {busy === `ap-${r.id}` ? "…" : (t("payments.approve_btn") || "Approve")}
-                    </button>
-                    <button style={btnGhost} disabled={busy === `dc-${r.id}`} onClick={() => doDecline(r.id)}>
-                      {t("payments.decline_btn") || "Decline"}
-                    </button>
-                    <button style={btnGhost} disabled={busy === `di-${r.id}`} onClick={() => doDispute(r.id)}>
-                      {t("payments.complaint_btn") || "Complaint"}
-                    </button>
-                  </>
-                )}
-              </div>
+              <p style={{ fontSize: 12.5, color: "#888", margin: "0 0 8px" }}>
+                {w.periods.length} × {unitLabel} · {fmt(paid)} / {fmt(total)} {t("payments.released") || "released"}
+              </p>
+              <RequirementBanner requirement={w.requirement} />
+              {w.periods.map(p => <PeriodRow key={w.workerId + "-" + p.index} p={p} keyPrefix={w.workerId} />)}
             </div>
           );
-        })}
-      </div>
+        })
+      ) : isEmployer ? (
+        // Employer, but no accepted workers yet.
+        <div style={{ ...card, color: "#666", fontSize: 13 }}>
+          {t("payments.no_workers") || "No workers are on installments for this job yet."}
+        </div>
+      ) : (
+        // ── Worker: their own schedule ──────────────────────────────────────────
+        (() => {
+          const periods = sd.periods || [];
+          // Sum the per-period amounts - schedule.workerPayoutTotal is job-wide (all workers), so a
+          // worker would otherwise see the whole job's payout instead of their own share.
+          const perWorkerTotal    = periods.reduce((s, p) => s + (p.amountRwf || 0), 0);
+          const perWorkerReleased = periods.filter(p => p.state === "PAID").reduce((s, p) => s + (p.amountRwf || 0), 0);
+          return (
+            <div style={card}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <h3 style={{ fontSize: 15, fontWeight: 800, color: "#f0f0f0", margin: 0 }}>
+                  {t("payments.title") || "Installment payments"}
+                </h3>
+                {sd.directRelease && <Badge label={t("payments.auto_release_on") || "Auto-release on"} color="#22c55e" />}
+              </div>
+              <p style={{ fontSize: 12.5, color: "#888", margin: "0 0 8px" }}>
+                {t("payments.summary", {
+                  count: String(periods.length), unit: unitLabel,
+                  released: fmt(perWorkerReleased), total: fmt(perWorkerTotal),
+                }) || `${periods.length} × ${unitLabel} · ${fmt(perWorkerReleased)} / ${fmt(perWorkerTotal)} released`}
+              </p>
+              <RequirementBanner requirement={sd.requirement} />
+              {periods.map(p => <PeriodRow key={p.index} p={p} />)}
+            </div>
+          );
+        })()
+      )}
 
       {/* Activity timeline */}
       <JobTimeline activity={activity} title={t("payments.activity_title") || "Activity history"} />
