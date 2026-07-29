@@ -13,7 +13,7 @@ import { forwardGeocode } from "@/lib/geocoding";
 import { useToast } from "@/components/ui/toast";
 import { useLanguage } from "@/lib/language-context";
 import { useSession, type Session } from "@/components/dashboard/session-ctx";
-import { PayMethodSelector, type PayMethodValue } from "@/components/ui/pay-logos";
+import { PayMethodSelector, payFieldsOf, type PayMethodValue, type SelectedMethod } from "@/components/ui/pay-logos";
 
 // Leaflet must render client-side only
 const MapPicker = dynamic(
@@ -122,6 +122,7 @@ export function OfferModal({ worker, onClose }: Props) {
   // Payment method fields. Card details are collected on XentriPay's secure page (redirect),
   // so we only keep the selected method + the mobile-money phone here.
   const [payMethod, setPayMethod] = useState<"WALLET" | "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD">("MTN_MOMO");
+  const [selMethod, setSelMethod] = useState<SelectedMethod | null>(null);
   const [donationRwf, setDonationRwf] = useState(0);
   const [pricing, setPricing] = useState<PricingConfig>(DEFAULT_PRICING);
   useEffect(() => { getPricingConfig().then(setPricing).catch(() => {}); }, []);
@@ -353,6 +354,7 @@ export function OfferModal({ worker, onClose }: Props) {
           workerIds: [worker.id as unknown as string],
           appliedVia: "HIRE_NOW",
           referralCode: getReferralCode(),
+          ...payFieldsOf(selMethod),
         };
         setPayNote(awaitingNote);
         const outcome = await runGuestPayment(guestPayload);
@@ -779,7 +781,7 @@ export function OfferModal({ worker, onClose }: Props) {
                     {hasSession ? `Top up ${fmt(topupAmount)} via` : "Select Payment Method"}
                   </p>
 
-                  <PayMethodSelector value={payMethod as PayMethodValue} onChange={setPayMethod} />
+                  <PayMethodSelector value={payMethod as PayMethodValue} onChange={setPayMethod} onMethod={setSelMethod} />
                   <DonationAddon usdToRwf={pricing.usdToRwf} valueRwf={donationRwf} onChange={setDonationRwf} />
                 </div>
 

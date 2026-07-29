@@ -19,6 +19,12 @@ export type PayMethodValue = "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD"
 /** Rich info for the selected method, so a caller can route a PawaPay operator when it's not XentriPay. */
 export interface SelectedMethod extends MobileMethod { country: string; currency: string; }
 
+/** The collection-payload fields (provider/operator/country) for a selected method, for any flow. */
+export function payFieldsOf(m: SelectedMethod | null | undefined):
+  { paymentProvider?: "XENTRIPAY" | "PAWAPAY"; providerCode?: string; country?: string } {
+  return m ? { paymentProvider: m.provider, providerCode: m.code, country: m.country } : {};
+}
+
 /** A small brand logo/chip for a method, chosen from its label/kind. */
 function MethodLogo({ m }: { m: MobileMethod }) {
   const l = m.label.toLowerCase();
@@ -38,6 +44,17 @@ export function toPayMethodValue(m: MobileMethod): PayMethodValue | null {
   if (m.provider !== "XENTRIPAY") return null;
   if (m.code === "AIRTEL") return "AIRTEL_MONEY";
   if (m.kind === "CARD") return "VISA";
+  return "MTN_MOMO";
+}
+
+/**
+ * A never-null legacy PayMethodValue for ANY method, including PawaPay operators. This is the value
+ * stored on the row's `method` column and used for the Rwanda XentriPay failover; the real routing
+ * uses the SelectedMethod's provider/code/country carried by `onMethod`.
+ */
+export function legacyMethodOf(m: MobileMethod): PayMethodValue {
+  if (m.kind === "CARD") return "VISA";
+  if (m.label.toLowerCase().includes("airtel") || m.code.includes("AIRTEL")) return "AIRTEL_MONEY";
   return "MTN_MOMO";
 }
 
@@ -69,8 +86,9 @@ export function PayMethodSelector({ value, onChange, onMethod }: {
 
   const select = (m: MobileMethod) => {
     setSelCode(m.code);
-    const legacy = toPayMethodValue(m);
-    if (legacy) onChange(legacy);
+    // Always set a valid legacy method (used for the row's method column + Rwanda failover); the
+    // full method - including the PawaPay operator + country - flows through onMethod for routing.
+    onChange(legacyMethodOf(m));
     if (onMethod && cfg) onMethod({ ...m, country: cfg.country, currency: cfg.currency });
   };
 

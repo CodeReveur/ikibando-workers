@@ -859,6 +859,19 @@ export async function getBonuses(token: string): Promise<BonusSummary> {
   return data.data;
 }
 
+/**
+ * Optional fields a collection payload carries when the payer picked a country-specific method via
+ * the PayMethodSelector. Absent -> the backend keeps the default XentriPay/Rwanda path.
+ */
+export interface MobilePayFields {
+  /** "PAWAPAY" or "XENTRIPAY" (default when omitted). */
+  paymentProvider?: "XENTRIPAY" | "PAWAPAY";
+  /** PawaPay operator code (e.g. MTN_MOMO_BEN), when paymentProvider is PAWAPAY. */
+  providerCode?: string;
+  /** ISO-2 country of the payer, when paymentProvider is PAWAPAY. */
+  country?: string;
+}
+
 export interface TransferDto {
   id: string;
   type: "TOPUP" | "WITHDRAWAL" | "DONATION";
@@ -881,7 +894,7 @@ export async function topupWallet(
     notes?: string;
     /** Where XentriPay returns the browser after a hosted card payment. */
     redirectUrl?: string;
-  },
+  } & MobilePayFields,
   token: string,
 ): Promise<TransferDto> {
   const { data } = await http.post("/api/wallet/topup", payload, { headers: authHeader(token) });
@@ -1227,7 +1240,7 @@ export async function postJob(payload: JobPayload, token: string): Promise<JobDt
   return data.data;
 }
 
-export interface GuestJobPayload {
+export interface GuestJobPayload extends MobilePayFields {
   job: JobPayload;
   guestName: string; guestEmail: string; guestPhone: string;
   paymentMethod: "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD";
@@ -1267,7 +1280,7 @@ export async function postGuestJob(payload: GuestJobPayload): Promise<JobDto> {
 }
 
 // ── Donations ─────────────────────────────────────────────────────────────────
-export interface DonationPayload {
+export interface DonationPayload extends MobilePayFields {
   amount: number;
   paymentMethod: "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD";
   phoneNumber?: string;

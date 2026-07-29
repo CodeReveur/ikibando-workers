@@ -10,7 +10,7 @@ import {
   topupWallet, getTopupStatus,
   initiateGuestJobPayment, getGuestPaymentStatus,
   initiateDonation, getDonationStatus,
-  type GuestJobPayload, type DonationPayload,
+  type GuestJobPayload, type DonationPayload, type MobilePayFields,
 } from "./api";
 
 export type PayMethod = "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD";
@@ -53,6 +53,8 @@ export async function runWalletTopup(args: {
   phone?: string;
   notes?: string;
   token: string;
+  /** Country-specific provider (PawaPay) selection, when the payer picked one. */
+  pay?: MobilePayFields;
 }): Promise<PayOutcome> {
   const card = isCardMethod(args.method);
   const t = await topupWallet({
@@ -61,6 +63,7 @@ export async function runWalletTopup(args: {
     paymentMethod: args.method,
     notes: args.notes,
     redirectUrl: card && typeof window !== "undefined" ? window.location.href : undefined,
+    ...args.pay,
   }, args.token);
 
   if (t.redirectUrl && typeof window !== "undefined") {

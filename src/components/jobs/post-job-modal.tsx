@@ -16,7 +16,7 @@ import { saveRedirect } from "@/lib/auth-redirect";
 import { useToast } from "@/components/ui/toast";
 import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
 import { useSession, type Session } from "@/components/dashboard/session-ctx";
-import { PayMethodSelector, type PayMethodValue } from "@/components/ui/pay-logos";
+import { PayMethodSelector, payFieldsOf, type PayMethodValue, type SelectedMethod } from "@/components/ui/pay-logos";
 import { DonationAddon } from "@/components/donate/donation-addon";
 
 // Leaflet must render client-side only
@@ -176,6 +176,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
   // Payment method fields. Card details are collected on XentriPay's secure page (redirect),
   // so we only keep the selected method + the mobile-money phone here.
   const [payMethod, setPayMethod] = useState<"WALLET" | "MTN_MOMO" | "AIRTEL_MONEY" | "VISA" | "MASTERCARD">("MTN_MOMO");
+  const [selMethod, setSelMethod] = useState<SelectedMethod | null>(null);
   const [donationRwf, setDonationRwf] = useState(0);
   // Job title: confirmed in a modal on the final Post click. Defaults to the category name,
   // but the employer can rename it (it stays a job in that category).
@@ -449,6 +450,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
           paymentMethod: method,
           paymentPhone: paymentPhone || anonPhone || undefined,
           referralCode: getReferralCode(),
+          ...payFieldsOf(selMethod),
         };
         setPayNote(awaitingNote);
         const outcome = await runGuestPayment(guestPayload);
@@ -1055,7 +1057,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                       {hasSession ? `Top up ${fmt(topupAmount)} via` : "Select Payment Method"}
                     </p>
 
-                    <PayMethodSelector value={payMethod as PayMethodValue} onChange={setPayMethod} />
+                    <PayMethodSelector value={payMethod as PayMethodValue} onChange={setPayMethod} onMethod={setSelMethod} />
                     <DonationAddon usdToRwf={pricing.usdToRwf} valueRwf={donationRwf} onChange={setDonationRwf} />
                     {donationRwf > 0 && (
                       <p style={{ margin: "6px 0 0", fontSize: 12, color: "#22c55e" }}>

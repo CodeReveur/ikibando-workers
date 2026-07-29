@@ -10,7 +10,7 @@ import { StatCard, SectionHead, PageLoader } from "@/components/dashboard/ui";
 import { fmt } from "@/lib/dashboard-data";
 import { Balance } from "@/components/ui/balance";
 import { useLanguage } from "@/lib/language-context";
-import { PayMethodSelector, type PayMethodValue } from "@/components/ui/pay-logos";
+import { PayMethodSelector, payFieldsOf, type PayMethodValue, type SelectedMethod } from "@/components/ui/pay-logos";
 import { runWalletTopup, isCardMethod } from "@/lib/pay-flow";
 
 const STATUS_STYLE: Record<string, { label: string; color: string; bg: string }> = {
@@ -41,6 +41,7 @@ export default function OwnerPayments() {
   const [topupAmt,     setTopupAmt]     = useState("");
   const [topupPhone,   setTopupPhone]   = useState("");
   const [topupMethod,  setTopupMethod]  = useState<PayMethodValue>("MTN_MOMO");
+  const [topupSel,     setTopupSel]     = useState<SelectedMethod | null>(null);
   const [topupBusy,    setTopupBusy]    = useState(false);
   const [topupErr,     setTopupErr]     = useState("");
 
@@ -78,6 +79,7 @@ export default function OwnerPayments() {
     try {
       const outcome = await runWalletTopup({
         amount, method: topupMethod, phone: card ? undefined : topupPhone.trim(), token,
+        pay: payFieldsOf(topupSel),
       });
       if (outcome !== "success") {
         setTopupErr(outcome === "pending"
@@ -332,7 +334,7 @@ export default function OwnerPayments() {
             {/* Payment method - mobile money or card */}
             <p style={{ margin:"0 0 8px", fontSize:11, fontWeight:700, color:"#3a3a3a", letterSpacing:"0.06em" }}>{t("owner_payments.pay_method") || "PAYMENT METHOD"}</p>
             <div style={{ marginBottom:18 }}>
-              <PayMethodSelector value={topupMethod} onChange={setTopupMethod} />
+              <PayMethodSelector value={topupMethod} onChange={setTopupMethod} onMethod={setTopupSel} />
             </div>
 
             <p style={{ margin:"0 0 6px", fontSize:11, fontWeight:700, color:"#3a3a3a", letterSpacing:"0.06em" }}>{t("owner_payments.amount_rwf") || "AMOUNT (RWF)"}</p>

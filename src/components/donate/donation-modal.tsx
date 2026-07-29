@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { X, HeartHandshake, Loader2, Check, AlertCircle } from "lucide-react";
-import { PayMethodSelector, type PayMethodValue } from "@/components/ui/pay-logos";
+import { PayMethodSelector, payFieldsOf, type PayMethodValue, type SelectedMethod } from "@/components/ui/pay-logos";
 import { runDonation } from "@/lib/pay-flow";
 import { useLanguage } from "@/lib/language-context";
 
@@ -21,6 +21,7 @@ export function DonationModal({ open, onClose }: { open: boolean; onClose: () =>
   const [amount, setAmount] = useState<number>(2000);
   const [custom, setCustom] = useState("");
   const [method, setMethod] = useState<PayMethodValue>("MTN_MOMO");
+  const [selMethod, setSelMethod] = useState<SelectedMethod | null>(null);
   const [phone, setPhone] = useState("");
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
@@ -59,6 +60,7 @@ export function DonationModal({ open, onClose }: { open: boolean; onClose: () =>
         name: name.trim() || undefined,
         message: message.trim() || undefined,
         anonymous,
+        ...payFieldsOf(selMethod),
       }, token);
       if (outcome === "success") setPhase("success");
       else if (outcome === "failed") { setPhase("failed"); setError(t("donate.err_failed")); }
@@ -167,7 +169,7 @@ export function DonationModal({ open, onClose }: { open: boolean; onClose: () =>
             <div style={{ margin: "16px 0 8px", fontSize: 12, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: "0.05em" }}>
               {t("donate.method")}
             </div>
-            <PayMethodSelector value={method} onChange={setMethod} />
+            <PayMethodSelector value={method} onChange={setMethod} onMethod={setSelMethod} />
 
             {!isCard && (
               <input
