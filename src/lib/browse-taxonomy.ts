@@ -137,13 +137,19 @@ export function slugCovered(slug: string): boolean {
 export function mergeWithDbCategories(
   dbCats: { slug: string; displayName: string }[] | null | undefined,
 ): BrowseCategory[] {
-  // A DB slug is skipped when the taxonomy already covers it (some display category fans out to it)
-  // OR when it collides with a taxonomy KEY (e.g. "hotel_staff" is both a taxonomy key and a DB
-  // slug) - otherwise two entries share a key and React drops one, making it vanish.
-  const taxonomyKeys = new Set(CATEGORIES.map(c => c.key));
-  const extras: BrowseCategory[] = (dbCats ?? [])
-    .filter(c => c.slug && !slugCovered(c.slug) && !taxonomyKeys.has(c.slug))
-    .map(c => ({ icon: iconForSlug(c.slug), label: c.displayName, key: c.slug, apiValues: [c.slug] }));
+  // A DB slug is added only when the taxonomy doesn't already represent it - i.e. it isn't fanned
+  // out to by any display category (slugCovered) and it isn't itself a taxonomy KEY. Several seeded
+  // slugs (hotel_staff, pet_care, phone_repair, computer_repair) are ALSO taxonomy keys; adding them
+  // again would make two cards share a React key, so one vanishes and the count reads 0. `seen`
+  // guarantees every returned key is unique, whatever the DB contains.
+  const seen = new Set(CATEGORIES.map(c => c.key));
+  const extras: BrowseCategory[] = [];
+  for (const c of dbCats ?? []) {
+    const slug = (c.slug ?? "").toLowerCase();
+    if (!slug || slugCovered(slug) || seen.has(slug)) continue;
+    seen.add(slug);
+    extras.push({ icon: iconForSlug(slug), label: c.displayName, key: slug, apiValues: [slug] });
+  }
   return [...CATEGORIES, ...extras];
 }
 
