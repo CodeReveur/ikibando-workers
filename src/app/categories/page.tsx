@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Footer from "@/components/layout/footer";
 import { Search, Users, Briefcase, ChevronDown } from "lucide-react";
 import { getCategoryStats, getJobCategories, type JobCategoryMeta } from "@/lib/api";
-import { CATEGORIES, countsForCategory, keyForSlug, iconForSlug, type CategoryStats } from "@/lib/browse-taxonomy";
+import { countsForCategory, mergeWithDbCategories, type CategoryStats } from "@/lib/browse-taxonomy";
 import { useLanguage } from "@/lib/language-context";
 import { BreadcrumbSchema } from "@/components/seo/json-ld";
 
@@ -23,22 +23,14 @@ export default function CategoriesPage() {
     getCategoryStats().then(setStats).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
-  // Each category with its live counts and a localized name for search + display. The list comes
-  // from the admin-managed database so newly added categories appear automatically; the built-in
-  // taxonomy is only a fallback until the DB list loads.
+  // The curated taxonomy COMBINED with any admin-added DB categories, each with its live counts and
+  // a localized name for search + display. Nothing is lost and new categories appear too.
   const rows = useMemo(() => {
-    const list = dbCats.length
-      ? dbCats.map((c) => {
-          const s = c.slug.toLowerCase();
-          const name = t("common.categories." + s) || c.displayName;
-          return { key: keyForSlug(c.slug), name, alt: c.displayName, Icon: iconForSlug(c.slug),
-                   workers: stats[s]?.workers ?? 0, jobs: stats[s]?.jobs ?? 0 };
-        })
-      : CATEGORIES.map((c) => {
-          const { workers, jobs } = countsForCategory(c, stats);
-          return { key: c.key, name: t("common.categories." + c.key) || c.label, alt: c.label,
-                   Icon: c.icon, workers, jobs };
-        });
+    const list = mergeWithDbCategories(dbCats).map((c) => {
+      const { workers, jobs } = countsForCategory(c, stats);
+      return { key: c.key, name: t("common.categories." + c.key) || c.label, alt: c.label,
+               Icon: c.icon, workers, jobs };
+    });
     const q = search.trim().toLowerCase();
     const filtered = q
       ? list.filter((c) => c.name.toLowerCase().includes(q) || c.alt.toLowerCase().includes(q))

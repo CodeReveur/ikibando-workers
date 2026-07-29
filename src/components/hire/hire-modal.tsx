@@ -176,9 +176,12 @@ export function HireModal({ onClose }: { onClose: () => void }) {
   // Categories from the admin-managed DB, so newly added ones are hirable at once.
   const [dbCats, setDbCats] = useState<JobCategoryMeta[]>([]);
   useEffect(() => { getJobCategories().then(setDbCats).catch(() => {}); }, []);
-  const categoryOptions = dbCats.length
-    ? dbCats.map(c => ({ value: c.slug, label: c.displayName }))
-    : JOB_CATEGORIES.map(c => ({ value: c.value, label: c.label }));
+  // Built-in categories COMBINED with any admin-added DB ones, deduped by slug - nothing lost.
+  const knownCatSlugs = new Set<string>(JOB_CATEGORIES.map(c => c.value));
+  const categoryOptions = [
+    ...JOB_CATEGORIES.map(c => ({ value: c.value, label: c.label })),
+    ...dbCats.filter(c => !knownCatSlugs.has(c.slug)).map(c => ({ value: c.slug, label: c.displayName })),
+  ];
   const [paymentPhone, setPaymentPhone] = useState("");
   const [payNote, setPayNote] = useState("");
   // When on, a worker's per-period payment request pays out immediately (no manual approval).

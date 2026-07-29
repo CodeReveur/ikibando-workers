@@ -122,6 +122,27 @@ export function keyForSlug(slug: string): string {
   return CATEGORIES.find(c => c.apiValues.includes(s))?.key ?? slug;
 }
 
+/** True when the curated taxonomy already covers this slug (some display category fans out to it). */
+export function slugCovered(slug: string): boolean {
+  const s = (slug ?? "").toLowerCase();
+  return CATEGORIES.some(c => c.apiValues.includes(s));
+}
+
+/**
+ * The full category list to show: the curated taxonomy (every display category, including the
+ * fan-outs like Baristas, Teachers, Landscapers) COMBINED with any admin-added DB categories the
+ * taxonomy doesn't already cover. Nothing is lost - the built-in richness stays, and new categories
+ * appear too. A DB category whose slug the taxonomy already covers is left to the taxonomy entry.
+ */
+export function mergeWithDbCategories(
+  dbCats: { slug: string; displayName: string }[] | null | undefined,
+): BrowseCategory[] {
+  const extras: BrowseCategory[] = (dbCats ?? [])
+    .filter(c => c.slug && !slugCovered(c.slug))
+    .map(c => ({ icon: iconForSlug(c.slug), label: c.displayName, key: c.slug, apiValues: [c.slug] }));
+  return [...CATEGORIES, ...extras];
+}
+
 /** Human display name for a category slug (never the raw slug like "sales_agent"). */
 export function categoryLabel(slug: string, t: (k: string) => string): string {
   if (!slug) return "";

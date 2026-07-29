@@ -226,11 +226,13 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
     return t(`common.categories.${value}`) || defaultLabel;
   };
 
-  // Category options come from the admin-managed DB (new categories appear at once); the built-in
-  // list is only a fallback until the DB list loads.
-  const categoryOptions = dbCats.length
-    ? dbCats.map(c => ({ value: c.slug, label: getLocalizedCategoryLabel(c.slug) }))
-    : JOB_CATEGORIES.map(c => ({ value: c.value, label: getLocalizedCategoryLabel(c.value) }));
+  // The built-in category list COMBINED with any admin-added DB categories, so nothing is lost and
+  // new ones are postable too. Deduped by slug.
+  const knownCatSlugs = new Set<string>(JOB_CATEGORIES.map(c => c.value));
+  const categoryOptions = [
+    ...JOB_CATEGORIES.map(c => ({ value: c.value, label: getLocalizedCategoryLabel(c.value) })),
+    ...dbCats.filter(c => !knownCatSlugs.has(c.slug)).map(c => ({ value: c.slug, label: getLocalizedCategoryLabel(c.slug) })),
+  ];
 
   const getLocalizedProvinceLabel = (prov: string) => {
     if (!prov) return "";

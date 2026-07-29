@@ -7,7 +7,7 @@ import { getWorkers, getJobs, getCategoryStats, getJobCategories, daysAgo, worke
 import { JobAlertsBanner } from "@/components/home/job-alerts-banner";
 import { rateUnit } from "@/lib/rate-unit";
 import { ratingInfo } from "@/lib/rating";
-import { CATEGORIES, countsForCategory, keyForSlug, iconForSlug, type CategoryStats } from "@/lib/browse-taxonomy";
+import { countsForCategory, mergeWithDbCategories, type CategoryStats } from "@/lib/browse-taxonomy";
 import { useLanguage } from "@/lib/language-context";
 import {
   UtensilsCrossed, Sparkles, Shield, Car, Zap, Wrench, Leaf,
@@ -152,26 +152,16 @@ export default function Home() {
     getJobCategories().then(setDbCats).catch(() => {});
   }, []);
 
-  // Categories come from the admin-managed database, so anything added there (or manually) shows up
-  // here automatically. The built-in list is only a fallback until the DB list loads. Each chip
-  // carries its live active-worker count and the busiest lead.
-  const categoryCards = (dbCats.length
-    ? dbCats.map((c) => ({
-        key: keyForSlug(c.slug),
-        label: t("common.categories." + c.slug.toLowerCase()) || c.displayName,
-        Icon: iconForSlug(c.slug),
-        workersCount: catStats[c.slug.toLowerCase()]?.workers ?? 0,
-      }))
-    : categories.map((c) => {
-        const meta = CATEGORIES.find((x) => x.key === c.key);
-        return {
-          key: c.key,
-          label: t("common.categories." + c.key) || c.label,
-          Icon: c.icon,
-          workersCount: meta ? countsForCategory(meta, catStats).workers : 0,
-        };
-      })
-  ).sort((a, b) => b.workersCount - a.workersCount);
+  // The curated taxonomy COMBINED with any admin-added DB categories, so nothing is lost and new
+  // ones still appear. Each chip carries its live active-worker count and leads with the busiest.
+  const categoryCards = mergeWithDbCategories(dbCats)
+    .map((c) => ({
+      key: c.key,
+      label: t("common.categories." + c.key) || c.label,
+      Icon: c.icon,
+      workersCount: countsForCategory(c, catStats).workers,
+    }))
+    .sort((a, b) => b.workersCount - a.workersCount);
 
   return (
     <main style={{ background: "#111", minHeight: "100vh", fontFamily: "Inter, DM Sans, system-ui, sans-serif", color: "#f5f5f5" }}>
