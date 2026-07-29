@@ -43,7 +43,7 @@ export const CATEGORIES: BrowseCategory[] = [
   { icon: Leaf, label: "Gardeners", key: "gardeners", apiValues: ["gardener"] },
   { icon: Trees, label: "Landscapers", key: "landscapers", apiValues: ["gardener"] },
   { icon: House, label: "Housekeepers", key: "housekeepers", apiValues: ["housekeeper"] },
-  { icon: Bed, label: "Hotel Staff", key: "hotel_staff", apiValues: ["housekeeper", "waiter"] },
+  { icon: Bed, label: "Hotel Staff", key: "hotel_staff", apiValues: ["hotel_staff", "housekeeper", "waiter"] },
   { icon: ShoppingBag, label: "Shop Attendants", key: "shop_attendants", apiValues: ["sales_agent"] },
   { icon: Store, label: "Cashiers", key: "cashiers", apiValues: ["cashier"] },
   { icon: Package, label: "Warehouse Staff", key: "warehouse_staff", apiValues: ["warehouse_worker"] },
@@ -137,8 +137,12 @@ export function slugCovered(slug: string): boolean {
 export function mergeWithDbCategories(
   dbCats: { slug: string; displayName: string }[] | null | undefined,
 ): BrowseCategory[] {
+  // A DB slug is skipped when the taxonomy already covers it (some display category fans out to it)
+  // OR when it collides with a taxonomy KEY (e.g. "hotel_staff" is both a taxonomy key and a DB
+  // slug) - otherwise two entries share a key and React drops one, making it vanish.
+  const taxonomyKeys = new Set(CATEGORIES.map(c => c.key));
   const extras: BrowseCategory[] = (dbCats ?? [])
-    .filter(c => c.slug && !slugCovered(c.slug))
+    .filter(c => c.slug && !slugCovered(c.slug) && !taxonomyKeys.has(c.slug))
     .map(c => ({ icon: iconForSlug(c.slug), label: c.displayName, key: c.slug, apiValues: [c.slug] }));
   return [...CATEGORIES, ...extras];
 }
