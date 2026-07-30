@@ -3,13 +3,13 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
-  ArrowLeft, Check, X, Edit2, Trash2, Users, Clock,
+  ArrowLeft, Check, X, Edit2, Trash2, Users, Clock, Eye, EyeOff,
   MapPin, CreditCard, CheckCircle, Circle, Loader2,
   DollarSign, User, Calendar, Briefcase, ChevronDown, ChevronUp, AlertCircle, Star, FileText, ExternalLink,
 } from "lucide-react";
 import {
   getJob, getJobApplications, getWalletTransactions,
-  updateApplicationStatus, cancelJob, completeJob, acceptAllApplications, updateJob, apiError,
+  updateApplicationStatus, cancelJob, unpublishJob, republishJob, completeJob, acceptAllApplications, updateJob, apiError,
   type JobDto, type ApplicationDto, type PaymentDto, type JobUpdatePayload,
 } from "@/lib/api";
 import { RWANDA_PROVINCES, JOB_CATEGORIES } from "@/lib/constants";
@@ -181,13 +181,30 @@ export default function OwnerJobDetail() {
   };
 
   const doCancel = async () => {
-    if (!confirm(t("owner_jobs.confirm_cancel_alert") || "Cancel this job? The escrowed amount will be refunded to your wallet.")) return;
+    if (!confirm(t("owner_jobs.confirm_cancel_alert") || "Cancel this job? The escrowed amount will be refunded to your wallet (minus any non-refundable fees).")) return;
     const token = localStorage.getItem("access_token")!;
     setBusy("cancel");
     try {
       await cancelJob(id, token);
       router.push("/owner/offers");
     } finally { setBusy(null); }
+  };
+
+  const doUnpublish = async () => {
+    if (!confirm(t("owner_jobs.confirm_unpublish") || "Unpublish this job? It's hidden from the public and stops taking new applications, but stays in your dashboard with its current applicants. You can republish anytime.")) return;
+    const token = localStorage.getItem("access_token")!;
+    setBusy("unpublish");
+    try { setJob(await unpublishJob(id, token)); }
+    catch (e) { alert(apiError(e, "Couldn't unpublish")); }
+    finally { setBusy(null); }
+  };
+
+  const doRepublish = async () => {
+    const token = localStorage.getItem("access_token")!;
+    setBusy("republish");
+    try { setJob(await republishJob(id, token)); }
+    catch (e) { alert(apiError(e, "Couldn't republish")); }
+    finally { setBusy(null); }
   };
 
   const doToggleAutoRelease = async (val: boolean) => {
@@ -537,11 +554,28 @@ export default function OwnerJobDetail() {
                 <Edit2 size={12} /> {t("common.general.edit") || "Edit"}
               </button>
             )}
+            {/* Unpublish: hide from public + pause new applications (reversible). */}
+            {isOpen && !job.unpublished && (
+              <button disabled={busy === "unpublish"} onClick={doUnpublish}
+                style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(148,163,184,0.1)", color: "#94a3b8", border: "1px solid rgba(148,163,184,0.25)", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+                {busy === "unpublish" ? <Loader2 size={12} style={{ animation: "spin 0.8s linear infinite" }} /> : <EyeOff size={12} />}
+                {t("owner_jobs.unpublish") || "Unpublish"}
+              </button>
+            )}
+            {/* Republish: back on the public feed. */}
+            {isOpen && job.unpublished && (
+              <button disabled={busy === "republish"} onClick={doRepublish}
+                style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(34,197,94,0.1)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+                {busy === "republish" ? <Loader2 size={12} style={{ animation: "spin 0.8s linear infinite" }} /> : <Eye size={12} />}
+                {t("owner_jobs.republish") || "Republish"}
+              </button>
+            )}
+            {/* Cancel: refund per policy; the record stays (only admin can delete). */}
             {isOpen && (
               <button disabled={busy === "cancel"} onClick={doCancel}
                 style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(239,68,68,0.08)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
                 {busy === "cancel" ? <Loader2 size={12} style={{ animation: "spin 0.8s linear infinite" }} /> : <Trash2 size={12} />}
-                {t("owner_jobs.unpublish") || "Unpublish"}
+                {t("owner_jobs.cancel_job") || "Cancel job"}
               </button>
             )}
           </div>

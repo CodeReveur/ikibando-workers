@@ -690,6 +690,8 @@ export interface JobDto {
   completionNotes: string | null;
   /** True once all positions are filled - no new applications accepted. */
   applicationsClosed: boolean;
+  /** Hidden from the public feed by the owner, but still live and manageable. */
+  unpublished?: boolean;
   filledAt: string | null;
   /** Live counts on detail/owner views (null on the public feed list). */
   acceptedCount: number | null;
@@ -1317,6 +1319,18 @@ export async function getMyJobs(token: string): Promise<JobDto[]> {
 
 export async function cancelJob(id: string, token: string): Promise<void> {
   await http.delete(`/api/jobs/${id}`, { headers: authHeader(token) });
+}
+
+/** Hide a job from the public feed and pause new applications (reversible; nothing deleted). */
+export async function unpublishJob(id: string, token: string): Promise<JobDto> {
+  const { data } = await http.post(`/api/jobs/${id}/unpublish`, {}, { headers: authHeader(token) });
+  return data.data;
+}
+
+/** Put an unpublished job back on the public feed. */
+export async function republishJob(id: string, token: string): Promise<JobDto> {
+  const { data } = await http.post(`/api/jobs/${id}/republish`, {}, { headers: authHeader(token) });
+  return data.data;
 }
 
 export async function getJobApplications(jobId: string, token: string): Promise<ApplicationDto[]> {
