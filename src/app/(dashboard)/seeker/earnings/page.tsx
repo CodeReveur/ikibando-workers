@@ -306,10 +306,8 @@ export default function SeekerEarnings() {
                 display:"flex", alignItems:"center", gap:12, transition:"all 0.15s",
                 width:"100%",
               }}>
-                <div style={{ width:38, height:38, borderRadius:8, background:"#ffcc00", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                  <svg width="24" height="14" viewBox="0 0 60 34" fill="none">
-                    <path d="M0 0h12l18 22L48 0h12v34H48V14L30 34 12 14v20H0V0z" fill="#000"/>
-                  </svg>
+                <div style={{ width:38, height:38, borderRadius:8, background:"#fff", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, padding:4, boxSizing:"border-box" }}>
+                  <img src="/mtn.png" alt="MTN" style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain" }} />
                 </div>
                 <div style={{ textAlign:"left" }}>
                   <p style={{ margin:0, fontSize:13, fontWeight:800, color: wdMethod === "MTN_MOMO" ? "#ffcc00" : "#d0d0d0" }}>MTN</p>
@@ -323,10 +321,8 @@ export default function SeekerEarnings() {
                 display:"flex", alignItems:"center", gap:12, transition:"all 0.15s",
                 width:"100%",
               }}>
-                <div style={{ width:38, height:38, borderRadius:8, background:"#ff0000", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                  <svg width="22" height="22" viewBox="0 0 50 50" fill="none">
-                    <path d="M25 5 C14 5 5 14 5 25 C5 36 14 45 25 45 C36 45 45 36 45 25 C45 14 36 5 25 5Z M25 38 C17 38 12 32 12 25 C12 18 17 12 25 12 C30 12 34 15 36 19 L29 22 C28 20 26 19 25 19 C21 19 19 22 19 25 C19 28 21 31 25 31 C27 31 29 30 30 28 L37 31 C35 35 30 38 25 38Z" fill="#fff"/>
-                  </svg>
+                <div style={{ width:38, height:38, borderRadius:8, background:"#fff", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, padding:4, boxSizing:"border-box" }}>
+                  <img src="/airtel.png" alt="Airtel" style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain" }} />
                 </div>
                 <div style={{ textAlign:"left" }}>
                   <p style={{ margin:0, fontSize:13, fontWeight:800, color: wdMethod === "AIRTEL_MONEY" ? "#ff4444" : "#d0d0d0" }}>Airtel</p>

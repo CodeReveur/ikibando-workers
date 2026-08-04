@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getMobileProviders, PAY_COUNTRIES, type MobileMethod, type MobileProviders } from "@/lib/api";
+import { getMobileProviders, type MobileMethod, type MobileProviders } from "@/lib/api";
 
 // Provider logos for the payment-method selector. Real brand marks live in /public.
 export function MastercardMark({ size = 22 }: { size?: number }) {
@@ -25,18 +25,34 @@ export function payFieldsOf(m: SelectedMethod | null | undefined):
   return m ? { paymentProvider: m.provider, providerCode: m.code, country: m.country } : {};
 }
 
-/** A small brand logo/chip for a method, chosen from its label/kind. */
+/**
+ * The real brand logo in /public for a method, resolved from its operator code (then label).
+ * Order matters: VODACOM_MPESA_COD carries both "VODACOM" and "MPESA", so Vodacom is checked first.
+ * Logos mirror PawaPay's own operator set (mtn, airtel, orange, moov, vodacom, mpesa, free, zamtel).
+ */
+function brandLogo(m: MobileMethod): string | null {
+  const s = `${m.code} ${m.label}`.toUpperCase();
+  if (s.includes("VODACOM")) return "/vodacom.png";
+  if (s.includes("MPESA") || s.includes("M-PESA")) return "/mpesa.png";
+  if (s.includes("MTN"))     return "/mtn.png";
+  if (s.includes("AIRTEL"))  return "/airtel.png";
+  if (s.includes("ORANGE"))  return "/orange.png";
+  if (s.includes("MOOV"))    return "/moov.png";
+  if (s.includes("ZAMTEL"))  return "/zamtel.png";
+  if (s.includes("FREE"))    return "/free.png";
+  return null;
+}
+
+/** A small brand logo/chip for a method, chosen from its operator code/kind. */
 function MethodLogo({ m }: { m: MobileMethod }) {
-  const l = m.label.toLowerCase();
-  if (l.includes("mtn"))    return <img src="/mtn.png" alt={m.label} style={{ height: 24, width: "auto", objectFit: "contain" }} />;
-  if (l.includes("airtel")) return <img src="/airtel.png" alt={m.label} style={{ height: 24, width: "auto", objectFit: "contain", borderRadius: 4 }} />;
   if (m.kind === "CARD") return (
     <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
       <img src="/visa.png" alt="Visa" style={{ height: 14, width: "auto", objectFit: "contain" }} /><MastercardMark size={22} />
     </span>
   );
-  const color = m.kind === "MPESA" ? "#0a8f3c" : l.includes("orange") ? "#ff6600" : "#111";
-  return <span style={{ fontSize: 12, fontWeight: 800, color }}>{m.label}</span>;
+  const logo = brandLogo(m);
+  if (logo) return <img src={logo} alt={m.label} style={{ height: 24, width: "auto", maxWidth: "100%", objectFit: "contain" }} />;
+  return <span style={{ fontSize: 12, fontWeight: 800, color: "#111" }}>{m.label}</span>;
 }
 
 /** Map a selected method to the legacy PayMethodValue the XentriPay flow understands (null for PawaPay). */
@@ -58,14 +74,11 @@ export function legacyMethodOf(m: MobileMethod): PayMethodValue {
   return "MTN_MOMO";
 }
 
-const FLAG = (iso2: string) =>
-  iso2.length === 2 ? String.fromCodePoint(...[...iso2.toUpperCase()].map(c => 0x1f1a5 + c.charCodeAt(0))) : "";
-
 /**
- * Country-aware payment-method selector. Auto-detects the visitor's country and lets them change it
- * (a Rwandan can pay with Ugandan mobile money), then shows the methods available there. Backward
- * compatible: {@code onChange} still fires the legacy PayMethodValue for XentriPay methods; use
- * {@code onMethod} to also receive the full method (country + PawaPay operator code).
+ * Payment-method selector. Auto-detects the visitor's country (no country picker shown) and lists
+ * the mobile-money operators available there, each with its real brand logo. Backward compatible:
+ * {@code onChange} still fires the legacy PayMethodValue for XentriPay methods; use {@code onMethod}
+ * to also receive the full method (country + PawaPay operator code) for routing.
  */
 export function PayMethodSelector({ value, onChange, onMethod }: {
   value: PayMethodValue;
@@ -96,33 +109,7 @@ export function PayMethodSelector({ value, onChange, onMethod }: {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-      {/* Country selector */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <span style={{ fontSize: 11, color: "#777" }}>Country</span>
-        <div style={{ position: "relative", flex: 1, minWidth: 0 }}>
-          <span style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", fontSize: 14, pointerEvents: "none" }}>
-            {FLAG(country || "RW")}
-          </span>
-          <select
-            value={country}
-            onChange={e => { setCountry(e.target.value); setSelCode(null); }}
-            style={{
-              width: "100%", background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10,
-              padding: "9px 12px 9px 34px", fontSize: 13, color: "#eee", outline: "none", fontFamily: "inherit",
-              appearance: "none",
-            }}
-          >
-            {PAY_COUNTRIES.map(c => <option key={c.iso2} value={c.iso2}>{c.name}</option>)}
-          </select>
-        </div>
-        {cfg && (
-          <span style={{ fontSize: 10, fontWeight: 700, color: "#666", border: "1px solid #2a2a2a", borderRadius: 6, padding: "2px 6px" }}>
-            {cfg.country} · {cfg.currency}
-          </span>
-        )}
-      </div>
-
-      {/* Method tiles */}
+      {/* Method tiles. Country is auto-detected (no picker) and drives which operators show. */}
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
         {methods.map(m => {
           const legacy = toPayMethodValue(m);
