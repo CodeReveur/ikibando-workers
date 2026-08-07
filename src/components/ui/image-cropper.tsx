@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RotateCw, ZoomIn, X, Check } from "lucide-react";
+import { Z } from "@/lib/z-layers";
 
 /**
  * Square crop/align editor for badge photos.
@@ -149,7 +150,7 @@ export function ImageCropper({
 
   return (
     <div style={{
-      position: "fixed", inset: 0, zIndex: 1300, background: "rgba(0,0,0,0.9)",
+      position: "fixed", inset: 0, zIndex: Z.modalNested, background: "rgba(0,0,0,0.9)",
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
       padding: 16, fontFamily: "Inter, DM Sans, system-ui, sans-serif",
     }}>

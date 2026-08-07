@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { X, Loader2 } from "lucide-react";
+import { Z } from "@/lib/z-layers";
 
 /**
  * In-app modal for collecting a short reason (complaint, decline note, …).
@@ -57,7 +58,7 @@ export function ReasonModal({
     <div
       onClick={onCancel}
       style={{
-        position: "fixed", inset: 0, zIndex: 1100, background: "rgba(0,0,0,0.75)",
+        position: "fixed", inset: 0, zIndex: Z.modalNested, background: "rgba(0,0,0,0.75)",
         backdropFilter: "blur(3px)", display: "flex", alignItems: "center",
         justifyContent: "center", padding: 16,
       }}

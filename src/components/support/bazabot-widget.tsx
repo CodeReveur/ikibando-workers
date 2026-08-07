@@ -5,6 +5,7 @@ import { Bot, X, HandCoins } from "lucide-react";
 import { BazaBotChat } from "./bazabot";
 import { DonationModal } from "@/components/donate/donation-modal";
 import { useLanguage } from "@/lib/language-context";
+import { Z } from "@/lib/z-layers";
 
 /**
  * Floating BazaBot launcher, mounted globally so any visitor (logged-in or not)
@@ -24,10 +25,11 @@ export function BazaBotWidget() {
   }, [open]);
 
   return (
-    /* bottom follows --fab-offset so a page with its own fixed bottom bar (the job detail
-       apply ribbon) can lift these buttons clear of it instead of having them cover its CTA. */
+    <>
+    {/* bottom follows --fab-offset so a page with its own fixed bottom bar (the job detail
+        apply ribbon) can lift these buttons clear of it instead of having them cover its CTA. */}
     <div style={{
-      position: "fixed", right: 20, bottom: "var(--fab-offset, 20px)", zIndex: 1000,
+      position: "fixed", right: 20, bottom: "var(--fab-offset, 20px)", zIndex: Z.floating,
       fontFamily: "Inter, system-ui, sans-serif",
       display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 12,
     }}>
@@ -80,9 +82,13 @@ export function BazaBotWidget() {
         {open ? <X size={24} /> : <Bot size={26} />}
       </button>
 
-      <DonationModal open={donateOpen} onClose={() => setDonateOpen(false)} />
-
       <style>{`@keyframes bb-pop { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }`}</style>
     </div>
+
+    {/* Outside the fixed launcher above: that wrapper has its own z-index, which makes it a
+        stacking context, and a dialog nested inside one cannot rise above anything painted
+        over the wrapper (the job page's apply bar did exactly that) no matter its z-index. */}
+    <DonationModal open={donateOpen} onClose={() => setDonateOpen(false)} />
+    </>
   );
 }

@@ -5,6 +5,7 @@ import { X, HeartHandshake, Loader2, Check, AlertCircle } from "lucide-react";
 import { PayMethodSelector, payFieldsOf, type PayMethodValue, type SelectedMethod } from "@/components/ui/pay-logos";
 import { runDonation } from "@/lib/pay-flow";
 import { useLanguage } from "@/lib/language-context";
+import { Z } from "@/lib/z-layers";
 
 const PRESETS = [1000, 2000, 5000, 10000, 20000];
 const ACCENT = "#f97316";
@@ -75,7 +76,7 @@ export function DonationModal({ open, onClose }: { open: boolean; onClose: () =>
     <div
       onClick={() => phase !== "processing" && onClose()}
       style={{
-        position: "fixed", inset: 0, zIndex: 1200, background: "rgba(0,0,0,0.75)",
+        position: "fixed", inset: 0, zIndex: Z.modal, background: "rgba(0,0,0,0.75)",
         backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 16,
       }}
     >

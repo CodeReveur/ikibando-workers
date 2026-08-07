@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Camera, X, RefreshCw, Loader2 } from "lucide-react";
+import { Z } from "@/lib/z-layers";
 
 /**
  * A real in-app camera.
@@ -91,7 +92,7 @@ export function CameraCapture({
 
   return (
     <div style={{
-      position: "fixed", inset: 0, zIndex: 1200, background: "rgba(0,0,0,0.92)",
+      position: "fixed", inset: 0, zIndex: Z.modalNested, background: "rgba(0,0,0,0.92)",
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 16,
     }}>
       <div style={{ width: "100%", maxWidth: 460, display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>

@@ -7,13 +7,14 @@ import { saveRedirect } from "@/lib/auth-redirect";
 import { useToast } from "@/components/ui/toast";
 import { RichTextEditor, RichTextDisplay, htmlToPlainText } from "@/components/ui/rich-text-editor";
 import { useLanguage } from "@/lib/language-context";
+import { Z } from "@/lib/z-layers";
 
 interface Props { job: JobDto; onClose: () => void; }
 
 const fmt = (n: number) => `RWF ${n.toLocaleString()}`;
 
 const overlay: React.CSSProperties = {
-  position: "fixed", inset: 0, zIndex: 999, padding: 16,
+  position: "fixed", inset: 0, zIndex: Z.modal, padding: 16,
   background: "rgba(0,0,0,0.75)",
   backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",
   display: "flex", alignItems: "center", justifyContent: "center",

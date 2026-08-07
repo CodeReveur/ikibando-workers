@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/toast";
 import { useLanguage } from "@/lib/language-context";
 import { ReasonModal } from "@/components/ui/reason-modal";
 import { Countdown } from "./countdown";
+import { Z } from "@/lib/z-layers";
 
 const fmt = (n: number) => `RWF ${Number(n || 0).toLocaleString()}`;
 
@@ -72,7 +73,7 @@ export function PaymentApprovalModal() {
 
       {open && (
         <div onClick={() => setOpen(false)} style={{
-          position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 300,
+          position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: Z.modal,
           display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "10vh 16px",
         }}>
           <div onClick={e => e.stopPropagation()} style={{

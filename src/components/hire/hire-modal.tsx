@@ -19,6 +19,7 @@ import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-edito
 import { useLanguage } from "@/lib/language-context";
 import { useSession, type Session } from "@/components/dashboard/session-ctx";
 import { PayMethodSelector, payFieldsOf, type PayMethodValue, type SelectedMethod } from "@/components/ui/pay-logos";
+import { Z } from "@/lib/z-layers";
 
 // Leaflet must render client-side only
 const MapPicker = dynamic(
@@ -1046,7 +1047,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
 
       {titleModalOpen && (
         <div onClick={() => !submitting && setTitleModalOpen(false)} style={{
-          position: "fixed", inset: 0, zIndex: 300, background: "rgba(0,0,0,0.82)",
+          position: "fixed", inset: 0, zIndex: Z.modalNested, background: "rgba(0,0,0,0.82)",
           backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 16,
           fontFamily: "Inter, DM Sans, system-ui, sans-serif",
         }}>
@@ -1254,7 +1255,7 @@ function SearchSelect({ options, value, onChange, placeholder, icon }: {
 function Overlay({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
   return (
     <div onClick={onClose} style={{
-      position: "fixed", inset: 0, zIndex: 200,
+      position: "fixed", inset: 0, zIndex: Z.modal,
       background: "rgba(0,0,0,0.88)",
       backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",
       display: "flex", alignItems: "center", justifyContent: "center",

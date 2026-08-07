@@ -12,6 +12,7 @@ import { Balance } from "@/components/ui/balance";
 import { useLanguage } from "@/lib/language-context";
 import { PayMethodSelector, payFieldsOf, type PayMethodValue, type SelectedMethod } from "@/components/ui/pay-logos";
 import { runWalletTopup, isCardMethod } from "@/lib/pay-flow";
+import { Z } from "@/lib/z-layers";
 
 const STATUS_STYLE: Record<string, { label: string; color: string; bg: string }> = {
   HELD:     { label:"In Escrow",  color:"#f59e0b", bg:"rgba(245,158,11,0.08)"  },
@@ -324,7 +325,7 @@ export default function OwnerPayments() {
 
       {/* Top-up modal */}
       {topupOpen && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", zIndex:500, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", zIndex: Z.modal, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
           <div style={{ background:"#111", border:"1px solid #222", borderRadius:18, width:"100%", maxWidth:440, padding:"28px" }}>
             <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:22 }}>
               <p style={{ margin:0, fontSize:16, fontWeight:800, color:"#fff" }}>{t("owner_payments.top_up_modal") || "Top Up Wallet"}</p>
@@ -380,7 +381,7 @@ export default function OwnerPayments() {
 
       {/* Refund modal */}
       {refundFor && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", zIndex:500, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", zIndex: Z.modal, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
           <div style={{ background:"#111", border:"1px solid #222", borderRadius:18, width:"100%", maxWidth:420, padding:"28px" }}>
             <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
               <p style={{ margin:0, fontSize:16, fontWeight:800, color:"#fff" }}>{t("owner_payments.refund_modal") || "Request Refund"}</p>
@@ -416,7 +417,7 @@ export default function OwnerPayments() {
 
       {/* General Refund modal */}
       {generalRefundOpen && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", zIndex:500, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", zIndex: Z.modal, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
           <div style={{ background:"#111", border:"1px solid #222", borderRadius:18, width:"100%", maxWidth:420, padding:"28px" }}>
             <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
               <p style={{ margin:0, fontSize:16, fontWeight:800, color:"#fff" }}>{t("owner_payments.claim_refund_title") || "Claim Escrow Refund"}</p>

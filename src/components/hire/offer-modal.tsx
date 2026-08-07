@@ -14,6 +14,7 @@ import { useToast } from "@/components/ui/toast";
 import { useLanguage } from "@/lib/language-context";
 import { useSession, type Session } from "@/components/dashboard/session-ctx";
 import { PayMethodSelector, payFieldsOf, type PayMethodValue, type SelectedMethod } from "@/components/ui/pay-logos";
+import { Z } from "@/lib/z-layers";
 
 // Leaflet must render client-side only
 const MapPicker = dynamic(
@@ -77,7 +78,7 @@ const overlay: React.CSSProperties = {
   position: "fixed", inset: 0, background: "rgba(0,0,0,0.88)",
   backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",
   display: "flex", alignItems: "center", justifyContent: "center",
-  zIndex: 999, padding: 16, fontFamily: "Inter, DM Sans, system-ui, sans-serif",
+  zIndex: Z.modal, padding: 16, fontFamily: "Inter, DM Sans, system-ui, sans-serif",
 };
 const card: React.CSSProperties = {
   background: "#1a1a1a", border: "1px solid #272727", borderRadius: 20,

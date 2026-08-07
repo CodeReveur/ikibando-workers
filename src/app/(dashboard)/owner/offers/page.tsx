@@ -20,6 +20,7 @@ import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { useLanguage } from "@/lib/language-context";
 import { rateUnit } from "@/lib/rate-unit";
 import { categoryLabel } from "@/lib/browse-taxonomy";
+import { Z } from "@/lib/z-layers";
 
 /* ── helpers ─────────────────────────────────────────────────────────────── */
 const CSS = `
@@ -430,7 +431,7 @@ function EditJobModal({ job, onClose }: { job: JobDto; onClose: () => void }) {
   const lbl: React.CSSProperties = { fontSize:10, fontWeight:700, color:"#3a3a3a", textTransform:"uppercase", letterSpacing:"0.07em", display:"block", marginBottom:5 };
 
   return (
-    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", zIndex:500, display:"flex", alignItems:"flex-start", justifyContent:"center", padding:"32px 20px", overflowY:"auto" }}>
+    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", zIndex: Z.modal, display:"flex", alignItems:"flex-start", justifyContent:"center", padding:"32px 20px", overflowY:"auto" }}>
       <div style={{ background:"#111", border:"1px solid #1e1e1e", borderRadius:18, width:"100%", maxWidth:520, padding:"28px 28px" }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:6 }}>
           <p style={{ margin:0, fontSize:16, fontWeight:800, color:"#fff" }}>{t("owner_offers.edit_job_modal") || "Edit Job"}</p>

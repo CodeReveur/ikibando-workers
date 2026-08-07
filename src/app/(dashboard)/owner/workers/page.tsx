@@ -11,6 +11,7 @@ import { ratingLabel } from "@/lib/rating";
 import { StatCard, SectionHead, Dot, PageLoader } from "@/components/dashboard/ui";
 import { useLanguage } from "@/lib/language-context";
 import { rateUnit } from "@/lib/rate-unit";
+import { Z } from "@/lib/z-layers";
 
 const CSS = `
   .wkr-card { transition:border-color 0.12s, background 0.12s; }
@@ -292,7 +293,7 @@ export default function OwnerWorkers() {
 
       {/* Release modal */}
       {releaseFor && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", zIndex:500, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", zIndex: Z.modal, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
           <div style={{ background:"#111", border:"1px solid #222", borderRadius:18, width:"100%", maxWidth:440, padding:"28px" }}>
             <p style={{ margin:"0 0 6px", fontSize:16, fontWeight:800, color:"#fff" }}>{t("owner_workers.release_payment_modal_title") || "Release Payment & Complete Job"}</p>
             <p style={{ margin:"0 0 20px", fontSize:12, color:"#444", lineHeight:1.6 }}>

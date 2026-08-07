@@ -24,6 +24,7 @@ import { useToast } from "@/components/ui/toast";
 import { PaymentPanel } from "@/components/payments/payment-panel";
 import { JobEvidence } from "@/components/jobs/job-evidence";
 import { setJobAutoRelease } from "@/lib/api";
+import { Z } from "@/lib/z-layers";
 
 const dateLocaleMap: Record<string, string> = {
   rw: "rw-RW",
@@ -671,7 +672,7 @@ export default function OwnerJobDetail() {
 
       {/* Complete job modal */}
       {showComplete && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", zIndex: 500, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", zIndex: Z.modal, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
           <div style={{ background: "#111", border: "1px solid #222", borderRadius: 18, width: "100%", maxWidth: 420, padding: 28 }}>
             <p style={{ margin: "0 0 6px", fontSize: 16, fontWeight: 800, color: "#fff" }}>{t("owner_jobs.mark_job_complete") || "Mark Job Complete"}</p>
             <p style={{ margin: "0 0 18px", fontSize: 12, color: "#555", lineHeight: 1.5 }}>
@@ -805,7 +806,7 @@ function EditJobModal({ job, saving, onSave, onClose }: {
   const lbl: React.CSSProperties = { fontSize:10, fontWeight:700, color:"#3a3a3a", textTransform:"uppercase", letterSpacing:"0.07em", display:"block", marginBottom:5 };
 
   return (
-    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", zIndex:500, display:"flex", alignItems:"flex-start", justifyContent:"center", padding:"32px 20px", overflowY:"auto" }}>
+    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", zIndex: Z.modal, display:"flex", alignItems:"flex-start", justifyContent:"center", padding:"32px 20px", overflowY:"auto" }}>
       <div style={{ background:"#111", border:"1px solid #1e1e1e", borderRadius:18, width:"100%", maxWidth:520, padding:"28px 28px" }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:6 }}>
           <p style={{ margin:0, fontSize:16, fontWeight:800, color:"#fff" }}>{t("owner_jobs.edit_job") || "Edit Job"}</p>
