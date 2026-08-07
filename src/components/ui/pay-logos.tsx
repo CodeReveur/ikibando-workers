@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getMobileProviders, type MobileMethod, type MobileProviders } from "@/lib/api";
+import { getMobileProviders, PAY_COUNTRIES, type MobileMethod, type MobileProviders } from "@/lib/api";
 
 // Provider logos for the payment-method selector. Real brand marks live in /public.
 export function MastercardMark({ size = 22 }: { size?: number }) {
@@ -74,11 +74,15 @@ export function legacyMethodOf(m: MobileMethod): PayMethodValue {
   return "MTN_MOMO";
 }
 
+const FLAG = (iso2: string) =>
+  iso2.length === 2 ? String.fromCodePoint(...[...iso2.toUpperCase()].map(c => 0x1f1a5 + c.charCodeAt(0))) : "";
+
 /**
- * Payment-method selector. Auto-detects the visitor's country (no country picker shown) and lists
- * the mobile-money operators available there, each with its real brand logo. Backward compatible:
- * {@code onChange} still fires the legacy PayMethodValue for XentriPay methods; use {@code onMethod}
- * to also receive the full method (country + PawaPay operator code) for routing.
+ * Country-aware payment-method selector. Auto-detects the visitor's country and lets them change it
+ * (a Rwandan can pay with Ugandan mobile money, and a wrong geo-IP guess stays fixable), then shows
+ * the operators available there with their real brand logos. Backward compatible: {@code onChange}
+ * still fires the legacy PayMethodValue for XentriPay methods; use {@code onMethod} to also receive
+ * the full method (country + PawaPay operator code) for routing.
  */
 export function PayMethodSelector({ value, onChange, onMethod }: {
   value: PayMethodValue;
@@ -109,7 +113,27 @@ export function PayMethodSelector({ value, onChange, onMethod }: {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-      {/* Method tiles. Country is auto-detected (no picker) and drives which operators show. */}
+      {/* Country picker: auto-detected, changeable. No text label or code/currency pill - the flag
+          and the country name in the control already say what it is. */}
+      <div style={{ position: "relative" }}>
+        <span style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", fontSize: 14, pointerEvents: "none" }}>
+          {FLAG(country || "RW")}
+        </span>
+        <select
+          value={country}
+          onChange={e => { setCountry(e.target.value); setSelCode(null); }}
+          aria-label="Payment country"
+          style={{
+            width: "100%", background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10,
+            padding: "9px 12px 9px 34px", fontSize: 13, color: "#eee", outline: "none", fontFamily: "inherit",
+            appearance: "none",
+          }}
+        >
+          {PAY_COUNTRIES.map(c => <option key={c.iso2} value={c.iso2}>{c.name}</option>)}
+        </select>
+      </div>
+
+      {/* Method tiles for the selected country. */}
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
         {methods.map(m => {
           const legacy = toPayMethodValue(m);
