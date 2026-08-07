@@ -521,7 +521,7 @@
       "email_label": "Imeri",
       "phone_label": "Numero ya telefone",
       "password_label": "Ijambo ry'ibanga",
-      "password_placeholder": "Inyuguti 8+, Aa, 0-9 n’akamenyetso",
+      "password_placeholder": "Nibura inyuguti 8",
       "referral_label": "Kode y'uwaguhaye amakuru (si ngombwa)"
     },
     "footer": {
@@ -540,7 +540,7 @@
       "password_req": "Ijambo ry'ibanga rirakenewe.",
       "password_min": "Ijambo ry'ibanga rigomba kugira inyuguti zitari munsi ya 8.",
       "name_two_words": "Andika amazina yawe yose (nibura amazina abiri)",
-      "password_weak": "Koresha ijambo ry’ibanga rikomeye: inyuguti 8+, harimo inyuguti nkuru, intoya, umubare n’akamenyetso."
+      "password_short": "Ijambo ry’ibanga rigomba kuba nibura inyuguti 8."
     },
     "toasts": {
       "google_fail_desc": "Kwiyandikisha na Google byanze. Ongera ugerageze.",

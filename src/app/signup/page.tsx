@@ -89,10 +89,8 @@ export default function SignUpPage() {
     }
     if (field === "password") {
       if (!value) return t("signup.errors.password_req");
-      // Strong password: 8+ chars with uppercase, lowercase, a number and a symbol.
-      if (value.length < 8 || !/[a-z]/.test(value) || !/[A-Z]/.test(value)
-          || !/\d/.test(value) || !/[^A-Za-z0-9]/.test(value))
-        return t("signup.errors.password_weak");
+      // Length is the only rule: at least 8 characters, no composition requirements.
+      if (value.length < 8) return t("signup.errors.password_short");
     }
     return "";
   };

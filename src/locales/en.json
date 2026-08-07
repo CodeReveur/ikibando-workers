@@ -522,7 +522,7 @@
       "email_label": "Email",
       "phone_label": "Phone Number",
       "password_label": "Password",
-      "password_placeholder": "8+ chars, Aa, 0-9 and a symbol",
+      "password_placeholder": "At least 8 characters",
       "referral_label": "Referral Code (optional)"
     },
     "footer": {
@@ -541,7 +541,7 @@
       "password_req": "Password is required.",
       "password_min": "Password must be at least 8 characters.",
       "name_two_words": "Enter your full name (at least two names)",
-      "password_weak": "Use a strong password: 8+ characters with an uppercase, a lowercase, a number and a symbol."
+      "password_short": "Password must be at least 8 characters."
     },
     "toasts": {
       "google_fail_desc": "Google sign-up failed. Please try again.",
