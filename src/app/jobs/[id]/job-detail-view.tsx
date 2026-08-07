@@ -21,6 +21,52 @@ const CSS = `
   * { box-sizing: border-box; }
   .back-btn:hover { border-color: #f97316 !important; color: #f97316 !important; }
   .apply-btn-cta:hover { background: #ea6a0a !important; }
+
+  /* Lift the floating BazaBot/donate buttons clear of this bar while it is on screen.
+     The widget reads --fab-offset, so it never lands on top of Apply. Removed with the page. */
+  body { --fab-offset: 96px; }
+
+  .apply-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    padding: 0 20px 20px;
+    /* Above the floating widgets (z 1000) so Apply always wins the tap. */
+    z-index: 1001;
+  }
+  .apply-pill {
+    max-width: 680px; margin: 0 auto;
+    background: rgba(22,22,22,0.92);
+    border: 1px solid rgba(45,45,45,0.9);
+    border-radius: 999px;
+    /* minHeight, not height: a wrapped title grows the bar instead of spilling out of it. */
+    min-height: 64px;
+    padding: 10px 10px 10px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  /* min-width:0 is what actually lets the text truncate instead of pushing the row wider. */
+  .apply-info { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
+  .apply-text { min-width: 0; }
+  .apply-title, .apply-sub {
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .apply-price-inline { display: none; }
+
+  @media (max-width: 560px) {
+    .apply-bar { padding: 0 12px 12px; }
+    .apply-pill { border-radius: 22px; padding: 10px 10px 10px 16px; gap: 8px; }
+    /* On a narrow screen the price moves onto the subtitle line, so the title keeps its
+       full width and the divider/second column stop squeezing it. */
+    .apply-divider, .apply-price { display: none; }
+    .apply-price-inline { display: inline; color: #f97316; font-weight: 800; }
+    /* Shorten the CTA so the summary line has room for the price rather than clipping it. */
+    .apply-cta-long { display: none; }
+    .apply-btn-cta { padding: 0 14px !important; }
+  }
+
+  /* Smallest phones cannot fit category + district + price on one line. Drop the district,
+     which the page header already shows with a pin, rather than clipping the price. */
+  @media (max-width: 340px) {
+    .apply-district { display: none; }
+  }
 `;
 
 /**
@@ -212,36 +258,29 @@ export default function JobDetailView({ job }: { job: JobDto }) {
       </div>
 
       {/* STICKY CTA - matches navbar pill style */}
-      <div style={{
-        position: "fixed", bottom: 0, left: 0, right: 0,
-        padding: "0 20px 20px",
+      <div className="apply-bar" style={{
         backdropFilter: "blur(14px)",
         WebkitBackdropFilter: "blur(14px)",
         fontFamily: "Inter, DM Sans, system-ui, sans-serif",
       }}>
-        <div style={{
-          maxWidth: 680, margin: "0 auto",
-          background: "rgba(22,22,22,0.85)",
-          border: "1px solid rgba(45,45,45,0.9)",
-          borderRadius: 999,
-          height: 64,
-          padding: "0 10px 0 24px",
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          boxSizing: "border-box",
-        }}>
+        <div className="apply-pill">
           {/* Left: job summary */}
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div>
-              <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#e0e0e0", letterSpacing: "-0.2px" }}>
+          <div className="apply-info">
+            <div className="apply-text">
+              <p className="apply-title" title={job.title}
+                 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#e0e0e0", letterSpacing: "-0.2px" }}>
                 {job.title}
               </p>
-              <p style={{ margin: 0, fontSize: 11, color: "#555" }}>
-                {categoryLabel(job.category, t)} · {job.district}
+              <p className="apply-sub" style={{ margin: 0, fontSize: 11, color: "#555" }}>
+                {categoryLabel(job.category, t)}
+                <span className="apply-district"> · {job.district}</span>
+                {/* Narrow screens fold the price in here, where there is room for it. */}
+                <span className="apply-price-inline"> · {fmt(workerNetHourly(job))}/{rateUnit(job).short}</span>
               </p>
             </div>
-            <div style={{ width: 1, height: 28, background: "#2a2a2a", flexShrink: 0 }} />
-            <p title="What you take home, after all charges"
-               style={{ margin: 0, fontSize: 15, fontWeight: 900, color: "#f97316", letterSpacing: "-0.4px", whiteSpace: "nowrap" }}>
+            <div className="apply-divider" style={{ width: 1, height: 28, background: "#2a2a2a", flexShrink: 0 }} />
+            <p className="apply-price" title="What you take home, after all charges"
+               style={{ margin: 0, fontSize: 15, fontWeight: 900, color: "#f97316", letterSpacing: "-0.4px", whiteSpace: "nowrap", flexShrink: 0 }}>
               {fmt(workerNetHourly(job))} <span style={{ fontSize: 11, fontWeight: 500, color: "#555" }}>/{rateUnit(job).short}</span>
             </p>
           </div>
@@ -262,7 +301,9 @@ export default function JobDetailView({ job }: { job: JobDto }) {
               whiteSpace: "nowrap", flexShrink: 0,
             }}
           >
-            {job.applicationsClosed ? "Applications closed" : <>Apply now <ArrowRight size={13} /></>}
+            {job.applicationsClosed
+              ? <>Closed<span className="apply-cta-long"> for applications</span></>
+              : <>Apply<span className="apply-cta-long"> now</span> <ArrowRight size={13} /></>}
           </button>
         </div>
       </div>

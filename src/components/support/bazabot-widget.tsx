@@ -24,8 +24,11 @@ export function BazaBotWidget() {
   }, [open]);
 
   return (
+    /* bottom follows --fab-offset so a page with its own fixed bottom bar (the job detail
+       apply ribbon) can lift these buttons clear of it instead of having them cover its CTA. */
     <div style={{
-      position: "fixed", right: 20, bottom: 20, zIndex: 1000, fontFamily: "Inter, system-ui, sans-serif",
+      position: "fixed", right: 20, bottom: "var(--fab-offset, 20px)", zIndex: 1000,
+      fontFamily: "Inter, system-ui, sans-serif",
       display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 12,
     }}>
       {open && (
