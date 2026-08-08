@@ -1087,7 +1087,7 @@
     "labels": {
       "best_fit": "Kwa nini wewe ni mtu anayefaa zaidi? (hiari)",
       "requirements": "Mahitaji",
-      "attachments": "Viambatisho (CV, picha, portfolio)"
+      "attachments": "Nyaraka za ziada"
     },
     "placeholders": {
       "best_fit": "Eleza uzoefu wako, ujuzi wako, au kupatikana kwako kunakufanya uwe bora kwa jukumu hili…"
@@ -1103,7 +1103,7 @@
       "remove": "Ondoa"
     },
     "hints": {
-      "attachments": "Hadi faili 10, kila moja 30MB. Picha, PDF au Word."
+      "attachments": "Aina yoyote ya faili. Hadi faili 10, 30MB kila moja."
     }
   },
   "jobs_page": {
@@ -2190,7 +2190,7 @@
     "track_worker": "Fuatilia mfanyakazi moja kwa moja",
     "view_profile": "Angalia wasifu kwenye jukwaa",
     "why_a_fit": "Kwa nini anafaa",
-    "attachments": "Viambatisho",
+    "attachments": "Nyaraka za ziada",
     "open_file": "Fungua"
   },
   "seeker_help": {

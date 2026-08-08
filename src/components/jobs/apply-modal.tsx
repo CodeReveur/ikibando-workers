@@ -238,10 +238,10 @@ export function ApplyModal({ job, onClose }: Props) {
             />
           </div>
 
-          {/* ATTACHMENTS */}
+          {/* SUPPORTING DOCUMENTS */}
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <label style={{ fontSize: 11, fontWeight: 700, color: "#666", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-              {t("apply.labels.attachments") || "Attachments (CV, photos, portfolio)"}
+              {t("apply.labels.attachments") || "Supporting documents"}
             </label>
 
             {attachments.length > 0 && (
@@ -281,7 +281,6 @@ export function ApplyModal({ job, onClose }: Props) {
               ref={fileInputRef}
               type="file"
               multiple
-              accept="image/*,.pdf,.doc,.docx"
               style={{ display: "none" }}
               onChange={e => handleFiles(e.target.files)}
             />
@@ -304,7 +303,7 @@ export function ApplyModal({ job, onClose }: Props) {
               </button>
             )}
             <p style={{ margin: 0, fontSize: 10.5, color: "#555" }}>
-              {t("apply.hints.attachments") || "Up to 10 files, 30MB each. Images, PDF or Word."}
+              {t("apply.hints.attachments") || "Any file type. Up to 10 files, 30MB each."}
             </p>
           </div>
         </div>

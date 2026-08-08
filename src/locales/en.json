@@ -1088,7 +1088,7 @@
     "labels": {
       "best_fit": "Why are you the best fit? (optional)",
       "requirements": "Requirements",
-      "attachments": "Attachments (CV, photos, portfolio)"
+      "attachments": "Supporting documents"
     },
     "placeholders": {
       "best_fit": "Describe your experience, skills, or availability that make you ideal for this role…"
@@ -1104,7 +1104,7 @@
       "remove": "Remove"
     },
     "hints": {
-      "attachments": "Up to 10 files, 30MB each. Images, PDF or Word."
+      "attachments": "Any file type. Up to 10 files, 30MB each."
     }
   },
   "jobs_page": {
@@ -2191,7 +2191,7 @@
     "track_worker": "Track worker live",
     "view_profile": "View profile on platform",
     "why_a_fit": "Why they're a fit",
-    "attachments": "Attachments",
+    "attachments": "Supporting documents",
     "open_file": "Open"
   },
   "seeker_help": {

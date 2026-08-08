@@ -1087,7 +1087,7 @@
     "labels": {
       "best_fit": "Pourquoi êtes-vous le/la candidat(e) idéal(e) ? (optionnel)",
       "requirements": "Exigences",
-      "attachments": "Pièces jointes (CV, photos, portfolio)"
+      "attachments": "Documents justificatifs"
     },
     "placeholders": {
       "best_fit": "Décrivez votre expérience, vos compétences ou vos disponibilités qui font de vous le candidat idéal pour ce rôle…"
@@ -1103,7 +1103,7 @@
       "remove": "Retirer"
     },
     "hints": {
-      "attachments": "Jusqu à 10 fichiers, 30 Mo chacun. Images, PDF ou Word."
+      "attachments": "Tout type de fichier. Jusqu'à 10 fichiers, 30 Mo chacun."
     }
   },
   "jobs_page": {
@@ -2190,7 +2190,7 @@
     "track_worker": "Suivre le travailleur en direct",
     "view_profile": "Voir le profil sur la plateforme",
     "why_a_fit": "Pourquoi il convient",
-    "attachments": "Pièces jointes",
+    "attachments": "Documents justificatifs",
     "open_file": "Ouvrir"
   },
   "seeker_help": {
