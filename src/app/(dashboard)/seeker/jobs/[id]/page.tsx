@@ -441,7 +441,7 @@ export default function SeekerJobDetail() {
           <Timeline stages={stages} />
 
           {token && appStatus === "ACCEPTED" && (
-            <PaymentPanel jobId={id} role="worker" token={token} />
+            <PaymentPanel jobId={id} role="worker" token={token} billingMode={job?.billingMode} />
           )}
 
           {/* Optional proof of work - the worker uploads, employer and admins can review. */}

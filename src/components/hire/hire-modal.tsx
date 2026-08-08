@@ -8,7 +8,7 @@ import {
   AlarmClock, Search, Navigation, Loader2, Star,
 } from "lucide-react";
 import { JOB_CATEGORIES, RWANDA_PROVINCES, MIN_RATE_BY_PERIOD } from "@/lib/constants";
-import { getWorkers, postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, getPricingConfig, getJobCategories, employerServiceFeeOf, DEFAULT_PRICING, type PricingConfig, type WorkerProfileDto, type PaymentMode, type JobCategoryMeta } from "@/lib/api";
+import { getWorkers, postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, getPricingConfig, getJobCategories, employerServiceFeeOf, DEFAULT_PRICING, type PricingConfig, type WorkerProfileDto, type PaymentMode, type JobCategoryMeta, type BillingMode } from "@/lib/api";
 import { getReferralCode } from "@/lib/referral";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { DonationAddon } from "@/components/donate/donation-addon";
@@ -16,6 +16,7 @@ import { forwardGeocode } from "@/lib/geocoding";
 import { ratingInfo } from "@/lib/rating";
 import { useToast } from "@/components/ui/toast";
 import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
+import { BillingModeChoice } from "@/components/jobs/billing-mode-choice";
 import { useLanguage } from "@/lib/language-context";
 import { useSession, type Session } from "@/components/dashboard/session-ctx";
 import { PayMethodSelector, payFieldsOf, type PayMethodValue, type SelectedMethod } from "@/components/ui/pay-logos";
@@ -52,7 +53,7 @@ function sinceYear(iso: string) {
 type RateType  = "hr" | "day" | "week" | "month" | "year";
 
 interface Form {
-  category: string; budget: string;
+  category: string; budget: string; budgetMin: string; billingMode: BillingMode;
   headcount: string; rateType: RateType; paymentMode: PaymentMode; paymentInterval: string; durationHours: string;
   date: string; time: string;
   province: string; district: string;
@@ -135,7 +136,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
   const { error: toastError } = useToast();
   const [step, setStep]     = useState(0);
   const [form, setForm]     = useState<Form>({
-    category:"", budget:"", headcount:"1", rateType:"day", paymentMode:"DAILY", paymentInterval:"1",
+    category:"", budget:"", budgetMin:"", billingMode:"ESCROW", headcount:"1", rateType:"day", paymentMode:"DAILY", paymentInterval:"1",
     durationHours:"4", date:"", time:"",
     province:"", district:"", latitude:null, longitude:null,
     requirements:"",
@@ -312,6 +313,8 @@ export function HireModal({ onClose }: { onClose: () => void }) {
         province: form.province || undefined,
         latitude: form.latitude ?? undefined, longitude: form.longitude ?? undefined,
         ratePerHour: parseInt(form.budget) || 0,
+        rateMin: parseInt(form.budgetMin) > 0 ? parseInt(form.budgetMin) : undefined,
+        billingMode: form.billingMode,
         headcount: selected.length || 1,
         urgency: "IMMEDIATE" as const,
         startTime, durationHours: durationNum,
@@ -434,6 +437,10 @@ export function HireModal({ onClose }: { onClose: () => void }) {
   const jobAmount   = budget * headcountNum * durationNum;
   const fee         = employerServiceFeeOf(jobAmount, pricing);
   const total       = jobAmount + fee;
+  // LISTING charges one flat fee and leaves the wage to the two parties.
+  const isListing   = form.billingMode === "LISTING";
+  const listingFee  = pricing.directListingFeeRwf;
+  const amountDue   = isListing ? listingFee : total;
   const feePctLabel = jobAmount > 0 ? `${Math.round((fee / jobAmount) * 100)}%` : "";
   const minRate     = MIN_RATE_BY_PERIOD[form.rateType];
   const rateOk      = budget >= minRate;
@@ -450,7 +457,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
 
   // Logged-in employer pays from wallet; only top up (or, for guests, pay directly)
   // via MoMo/Airtel/Card when the wallet can't cover the escrow.
-  const chargeable    = total + donationRwf;
+  const chargeable    = amountDue + donationRwf;
   const needsTopup    = walletBal === null || walletBal < chargeable;
   const topupAmount   = walletBal === null ? chargeable : Math.max(0, chargeable - walletBal);
   const showPayMethods = !hasSession || needsTopup;
@@ -672,6 +679,18 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                     )}
                   </FField>
                 </div>
+
+                {/* How this hire is paid for: fund the wage here, or pay a flat fee and settle
+                    with the worker directly. */}
+                <FField label={t("post_job.labels.billing_mode") || "How do you want to pay?"}>
+                  <BillingModeChoice
+                    value={form.billingMode}
+                    onChange={m => setForm(f => ({ ...f, billingMode: m }))}
+                    escrowAmount={total}
+                    listingFee={listingFee}
+                    t={t}
+                  />
+                </FField>
 
                 <label style={{
                   background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10,

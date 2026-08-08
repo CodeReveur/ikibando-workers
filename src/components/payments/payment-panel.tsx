@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import {
-  getPaymentSchedule, getJobActivity, requestPeriodPayment,
+  getPaymentSchedule, getJobActivity, requestPeriodPayment, type BillingMode,
   getIncomingPaymentRequests, getMyPaymentRequests,
   approvePaymentRequest, declinePaymentRequest, disputePaymentRequest,
   apiError,
@@ -49,8 +49,14 @@ function Badge({ label, color }: { label: string; color: string }) {
   );
 }
 
-export function PaymentPanel({ jobId, role, token }: {
+export function PaymentPanel({ jobId, role, token, billingMode }: {
   jobId: string; role: "worker" | "employer"; token: string;
+  /**
+   * LISTING jobs are settled between employer and worker off-platform, so there is no schedule,
+   * no approvals and no payout to show. Passing it here keeps that decision in one place instead
+   * of each dashboard hiding pieces of the panel.
+   */
+  billingMode?: BillingMode | null;
 }) {
   const { success, error: toastError } = useToast();
   const { t } = useLanguage();
@@ -131,6 +137,25 @@ export function PaymentPanel({ jobId, role, token }: {
 
   function doDecline(id: string) { setReasonFor({ id, kind: "decline" }); }
   function doDispute(id: string) { setReasonFor({ id, kind: "dispute" }); }
+
+  // Nothing about installments, approvals or payouts exists for a direct-payment job. Say so
+  // plainly rather than rendering an empty payment table that implies something is pending.
+  if (billingMode === "LISTING") {
+    return (
+      <div style={{ ...card, display: "flex", flexDirection: "column", gap: 8 }}>
+        <p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: "#fff" }}>
+          {t("payments.direct_title") || "Paid directly"}
+        </p>
+        <p style={{ margin: 0, fontSize: 12, color: "#888", lineHeight: 1.65 }}>
+          {role === "employer"
+            ? (t("payments.direct_employer")
+                || "You chose to pay this worker yourself, so MpahMapu holds no money for this job. There is nothing to approve or release here: agree the amount with the worker and pay them directly.")
+            : (t("payments.direct_worker")
+                || "This employer pays directly, so payment for this job is arranged between you and them. MpahMapu is not holding money for it, and no payout will arrive in your wallet.")}
+        </p>
+      </div>
+    );
+  }
 
   if (loading) return <div style={{ ...card, color: "#666", fontSize: 13 }}>{t("payments.loading") || "Loading payments…"}</div>;
   if (!schedule) return null;

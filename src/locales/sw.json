@@ -912,7 +912,8 @@
       "workers": "Wafanyakazi",
       "location": "Mahali",
       "rate": "Kiwango cha malipo",
-      "escrowed": "Zilizowekwa dhamana"
+      "escrowed": "Zilizowekwa dhamana",
+      "listing_fee": "Ada ya tangazo"
     },
     "step_indicator": "Hatua ya {current} kati ya {total}",
     "labels": {
@@ -934,7 +935,10 @@
       "pay_every": "Lipa kila",
       "num_payments": "Idadi ya malipo",
       "street": "Mtaa / Barabara",
-      "house_number": "Nambari ya nyumba / kiwanja"
+      "house_number": "Nambari ya nyumba / kiwanja",
+      "billing_mode": "Unataka kulipa vipi?",
+      "rate_min_label": "Kiwango cha chini (RWF)",
+      "rate_max_label": "Kiwango cha juu (RWF) *"
     },
     "placeholders": {
       "search_category": "Tafuta kategoria…",
@@ -946,7 +950,8 @@
       "cell": "Chagua kata…",
       "village": "Chagua kijiji…",
       "street": "mf. KG 7 Ave",
-      "house_number": "mf. 12"
+      "house_number": "mf. 12",
+      "rate_min": "si lazima"
     },
     "gps": {
       "detecting": "Inatafuta…",
@@ -975,7 +980,8 @@
       "agreement_hint": "Kwa kupachika unakubaliana na masharti yetu. Maelezo yako ya mawasiliano yanashirikiwa tu na wafanyakazi wanaotuma maombi.",
       "posting_btn": "Inachapisha…",
       "insufficient_balance_btn": "Salio halitoshi",
-      "submit_btn": "Chapisha & zuia fedha"
+      "submit_btn": "Chapisha & zuia fedha",
+      "listing_fee_line": "Ada ya tangazo · hairejeshwi"
     },
     "payment_modes": {
       "hourly": "Kwa saa",
@@ -994,12 +1000,21 @@
       "desc": "Mfanyakazi anaweza kuomba malipo baada ya kila {unit} kukamilika. Ikiwashwa, kiasi kilichoidhinishwa hutolewa papo hapo; vinginevyo, unaidhinisha kila ombi (huidhinishwa kiotomatiki baada ya saa 2)."
     },
     "hints": {
-      "street_or_pin": "Taja mtaa na nambari ya nyumba, au weka alama kwenye ramani hapa chini - wafanyakazi hutumia hii kukufikia."
+      "street_or_pin": "Taja mtaa na nambari ya nyumba, au weka alama kwenye ramani hapa chini - wafanyakazi hutumia hii kukufikia.",
+      "rate_range": "Acha kiwango cha chini wazi kwa bei moja. Unatozwa kwa kiwango cha juu."
     },
     "title_confirm": {
       "heading": "Taja kazi hii",
       "desc": "Thibitisha jina la kazi au libadilishe. Inabaki kuwa kazi ya {cat}.",
       "confirm": "Thibitisha na ulipe"
+    },
+    "billing": {
+      "escrow_title": "Mlipe mfanyakazi kupitia MpahMapu",
+      "escrow_desc": "Unaweka malipo sasa. Tunayashika, tunaendesha ratiba ya malipo na kuyatoa kazi inapofanyika.",
+      "listing_title": "Nitafutie wafanyakazi tu",
+      "listing_desc": "Ada moja isiyorejeshwa. Mnakubaliana malipo na mfanyakazi na kulipana wenyewe, hakuna amana wala hatua za malipo kwenye jukwaa.",
+      "now": "sasa",
+      "once": "mara moja"
     }
   },
   "offer": {
@@ -1140,7 +1155,9 @@
     "loading": "Inapakia…",
     "found_count": "Kazi {count} zimepatikana",
     "badges": {
-      "urgent": "Haraka"
+      "urgent": "Haraka",
+      "direct_pay": "Mwajiri anakulipa moja kwa moja",
+      "direct_pay_short": "Malipo ya moja kwa moja"
     },
     "cards": {
       "slots_open": "Nafasi {count} wazi",
@@ -2354,7 +2371,10 @@
     "requirement_to_unlock": "ili kufungua malipo haya",
     "requirement_prorata": "maendeleo ya sehemu hulipa sehemu",
     "requirement_blocked": "Imefungwa hadi utimize sharti hapo juu",
-    "of": "kati ya"
+    "of": "kati ya",
+    "direct_title": "Kulipwa moja kwa moja",
+    "direct_employer": "Ulichagua kumlipa mfanyakazi huyu mwenyewe, hivyo MpahMapu haishiki fedha za kazi hii. Hakuna cha kuidhinisha hapa: kubaliana kiasi na mfanyakazi na umlipe moja kwa moja.",
+    "direct_worker": "Mwajiri huyu analipa moja kwa moja, hivyo malipo ya kazi hii yanapangwa kati yenu. MpahMapu haishiki fedha, na hakuna malipo yatakayoingia kwenye pochi yako."
   },
   "navigate": {
     "title": "Elekea kazini",

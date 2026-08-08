@@ -153,7 +153,11 @@ export default function JobDetailView({ job }: { job: JobDto }) {
               You&apos;ll earn
             </p>
             <p style={{ margin: 0, fontSize: 30, fontWeight: 900, color: "#f97316", letterSpacing: "-1px", lineHeight: 1 }}>
-              {fmt(workerNetHourly(job))}
+              {/* An employer can advertise a range; show both ends so the worker sees the floor
+                  they are being offered, not just the top of it. */}
+              {job.rateMin
+                ? `${fmt(workerNetHourly({ ...job, ratePerHour: job.rateMin }))} - ${fmt(workerNetHourly(job))}`
+                : fmt(workerNetHourly(job))}
             </p>
             <p style={{ margin: "4px 0 0", fontSize: 12, color: "#555" }}>
               {(() => {
@@ -163,8 +167,21 @@ export default function JobDetailView({ job }: { job: JobDto }) {
               })()}
             </p>
             <p style={{ margin: "8px 0 0", fontSize: 12, fontWeight: 700, color: "#22c55e" }}>
-              {fmt(workerNetTotal(job))} total · all charges covered
+              {job.billingMode === "LISTING"
+                ? `${fmt(workerNetTotal(job))} total · no platform charges`
+                : `${fmt(workerNetTotal(job))} total · all charges covered`}
             </p>
+            {/* A worker must know before applying that this pay is not protected by escrow. */}
+            {job.billingMode === "LISTING" && (
+              <p style={{
+                margin: "8px 0 0", display: "inline-flex", alignItems: "center", gap: 6,
+                fontSize: 11, fontWeight: 700, color: "#eab308",
+                background: "rgba(234,179,8,0.1)", border: "1px solid rgba(234,179,8,0.3)",
+                borderRadius: 999, padding: "4px 10px",
+              }}>
+                {t("jobs_page.badges.direct_pay") || "Employer pays you directly"}
+              </p>
+            )}
           </div>
           <div style={{ textAlign: "right" }}>
             {job.applicationsClosed ? (

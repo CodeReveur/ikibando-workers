@@ -640,6 +640,18 @@ function pruneParams<T extends object>(params?: T): Partial<T> | undefined {
   return out as Partial<T>;
 }
 
+/**
+ * How an employer pays for a job.
+ *
+ * `ESCROW` is the funded flow: the whole wage is deposited upfront, the platform runs the
+ * installment/approval schedule and pays the worker, taking its commission.
+ *
+ * `LISTING` is matching only: the employer pays one flat non-refundable fee, no escrow is held,
+ * and they settle with the worker directly. Nothing about installments, approvals, payouts or
+ * commission applies to these jobs.
+ */
+export type BillingMode = "ESCROW" | "LISTING";
+
 // ── Domain DTOs ───────────────────────────────────────────────────────────────
 export interface JobDto {
   id: string;
@@ -666,7 +678,14 @@ export interface JobDto {
   houseNumber: string | null;
   /** Free-form resolved address (from map pin), if any. */
   address: string | null;
+  /** The charged rate, and the top of the advertised range. */
   ratePerHour: number;
+  /** Bottom of the advertised pay range; null for a flat rate. Display only. */
+  rateMin: number | null;
+  /** ESCROW: the platform holds the money and pays the worker. LISTING: the employer pays directly. */
+  billingMode: BillingMode;
+  /** Non-refundable fee charged to publish a LISTING job; null on ESCROW jobs. */
+  listingFee: number | null;
   rateType: string;
   paymentMode: PaymentMode;
   paymentPeriods: number;
@@ -1086,6 +1105,7 @@ export interface PricingConfig {
   referralRewardRwf: number;
   usdToRwf: number;                   // RWF per 1 USD, for donation presets
   withdrawalFeeRwf: number;           // flat fee charged per wallet withdrawal
+  directListingFeeRwf: number;        // flat non-refundable fee to publish a LISTING job
 }
 
 /** Defaults matching the server's fallback so the UI still works if the call fails. */
@@ -1096,6 +1116,7 @@ export const DEFAULT_PRICING: PricingConfig = {
   employerFeeTierMid: 1_000_000, employerFeeTierHigh: 10_000_000,
   cancellationPenaltyRate: 0.10, cancellationWorkerCompRate: 0.04,
   referralRewardRwf: 1000, usdToRwf: 1300, withdrawalFeeRwf: 450,
+  directListingFeeRwf: 2000,
 };
 
 export async function getPricingConfig(): Promise<PricingConfig> {
@@ -1175,11 +1196,19 @@ type PayoutShape = {
   headcount?: number | null;
   durationHours?: number | null;
   workerPayout?: number | null;
+  /** LISTING jobs are settled by the employer directly, so no commission is deducted. */
+  billingMode?: BillingMode | null;
 };
 
 /** Total the worker takes home for the whole job (their share, all charges deducted). */
 export function workerNetTotal(job: PayoutShape, p: PricingConfig = DEFAULT_PRICING): number {
   const heads = job.headcount && job.headcount > 0 ? job.headcount : 1;
+  // The platform never handles a LISTING wage, so it takes no commission from it: the worker is
+  // offered exactly what the employer advertised, and deducting here would understate their pay.
+  if (job.billingMode === "LISTING") {
+    const hrs = job.durationHours && job.durationHours > 0 ? job.durationHours : 1;
+    return Math.round(job.ratePerHour * hrs);
+  }
   if (job.workerPayout != null && job.workerPayout > 0) {
     return Math.round(job.workerPayout / heads);
   }
@@ -1222,6 +1251,10 @@ export interface JobPayload {
   sector?: string; cell?: string; village?: string;
   latitude?: number; longitude?: number;
   ratePerHour: number; headcount: number;
+  /** Bottom of the advertised range; omit for a flat rate. ratePerHour is the charged maximum. */
+  rateMin?: number;
+  /** ESCROW (default) funds the wage upfront; LISTING pays a flat fee and settles off-platform. */
+  billingMode?: BillingMode;
   urgency: "IMMEDIATE" | "SAME_DAY" | "SCHEDULED";
   startTime: string; durationHours: number;
   rateType?: string; locationNotes?: string;

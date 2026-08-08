@@ -913,7 +913,8 @@
       "workers": "Workers",
       "location": "Location",
       "rate": "Rate",
-      "escrowed": "Escrowed"
+      "escrowed": "Escrowed",
+      "listing_fee": "Listing fee"
     },
     "step_indicator": "Step {current} of {total}",
     "labels": {
@@ -935,7 +936,10 @@
       "pay_every": "Pay every",
       "num_payments": "Number of payments",
       "street": "Street / Avenue",
-      "house_number": "House / Plot no."
+      "house_number": "House / Plot no.",
+      "billing_mode": "How do you want to pay?",
+      "rate_min_label": "Minimum (RWF)",
+      "rate_max_label": "Maximum (RWF) *"
     },
     "placeholders": {
       "search_category": "Search category…",
@@ -947,7 +951,8 @@
       "cell": "Select cell…",
       "village": "Select village…",
       "street": "e.g. KG 7 Ave",
-      "house_number": "e.g. 12"
+      "house_number": "e.g. 12",
+      "rate_min": "optional"
     },
     "gps": {
       "detecting": "Detecting…",
@@ -976,7 +981,8 @@
       "agreement_hint": "By posting you agree to our terms. Your contact details are only shared with workers who apply.",
       "posting_btn": "Posting…",
       "insufficient_balance_btn": "Insufficient balance",
-      "submit_btn": "Post & freeze funds"
+      "submit_btn": "Post & freeze funds",
+      "listing_fee_line": "Listing fee · non-refundable"
     },
     "payment_modes": {
       "hourly": "Hourly",
@@ -995,12 +1001,21 @@
       "desc": "The worker can request payment after each {unit} is completed. With this on, approved amounts release instantly; with it off, you approve each request (auto-approves in 2h)."
     },
     "hints": {
-      "street_or_pin": "Name the street & house number, or drop a pin on the map below - workers use this to navigate to you."
+      "street_or_pin": "Name the street & house number, or drop a pin on the map below - workers use this to navigate to you.",
+      "rate_range": "Leave the minimum blank for a single flat rate. You are charged on the maximum."
     },
     "title_confirm": {
       "heading": "Name this job",
       "desc": "Confirm the job name or edit it. It stays a {cat} job.",
       "confirm": "Confirm & pay"
+    },
+    "billing": {
+      "escrow_title": "Pay the worker through MpahMapu",
+      "escrow_desc": "You deposit the wage now. We hold it, run the payment schedule and release it as the work is done.",
+      "listing_title": "Just find me workers",
+      "listing_desc": "One flat, non-refundable fee. You agree the pay with the worker and settle it yourselves, so there is no deposit and no payment steps on the platform.",
+      "now": "now",
+      "once": "once"
     }
   },
   "offer": {
@@ -1141,7 +1156,9 @@
     "loading": "Loading…",
     "found_count": "{count} jobs found",
     "badges": {
-      "urgent": "Urgent"
+      "urgent": "Urgent",
+      "direct_pay": "Employer pays you directly",
+      "direct_pay_short": "Direct pay"
     },
     "cards": {
       "slots_open": "{count} slots open",
@@ -2355,7 +2372,10 @@
     "requirement_to_unlock": "to unlock these payments",
     "requirement_prorata": "partial progress pays a partial share",
     "requirement_blocked": "Locked until you meet the payout requirement above",
-    "of": "of"
+    "of": "of",
+    "direct_title": "Paid directly",
+    "direct_employer": "You chose to pay this worker yourself, so MpahMapu holds no money for this job. There is nothing to approve or release here: agree the amount with the worker and pay them directly.",
+    "direct_worker": "This employer pays directly, so payment for this job is arranged between you and them. MpahMapu is not holding money for it, and no payout will arrive in your wallet."
   },
   "navigate": {
     "title": "Navigate to job",

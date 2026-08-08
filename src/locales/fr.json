@@ -912,7 +912,8 @@
       "workers": "Travailleurs",
       "location": "Lieu",
       "rate": "Tarif",
-      "escrowed": "Bloqué en tiers de confiance"
+      "escrowed": "Bloqué en tiers de confiance",
+      "listing_fee": "Frais de publication"
     },
     "step_indicator": "Étape {current} sur {total}",
     "labels": {
@@ -934,7 +935,10 @@
       "pay_every": "Payer tous les",
       "num_payments": "Nombre de paiements",
       "street": "Rue / Avenue",
-      "house_number": "N° maison / parcelle"
+      "house_number": "N° maison / parcelle",
+      "billing_mode": "Comment souhaitez-vous payer ?",
+      "rate_min_label": "Minimum (RWF)",
+      "rate_max_label": "Maximum (RWF) *"
     },
     "placeholders": {
       "search_category": "Rechercher une catégorie…",
@@ -946,7 +950,8 @@
       "cell": "Choisir la cellule…",
       "village": "Choisir le village…",
       "street": "ex. KG 7 Ave",
-      "house_number": "ex. 12"
+      "house_number": "ex. 12",
+      "rate_min": "facultatif"
     },
     "gps": {
       "detecting": "Détection…",
@@ -975,7 +980,8 @@
       "agreement_hint": "En publiant, vous acceptez nos conditions. Vos coordonnées ne sont partagées qu'avec les travailleurs qui postulent.",
       "posting_btn": "Publication…",
       "insufficient_balance_btn": "Solde insuffisant",
-      "submit_btn": "Publier & geler les fonds"
+      "submit_btn": "Publier & geler les fonds",
+      "listing_fee_line": "Frais de publication · non remboursable"
     },
     "payment_modes": {
       "hourly": "Par heure",
@@ -994,12 +1000,21 @@
       "desc": "Le travailleur peut demander un paiement après chaque {unit} terminé. Si activé, les montants approuvés sont versés instantanément ; sinon, vous approuvez chaque demande (approbation automatique en 2h)."
     },
     "hints": {
-      "street_or_pin": "Indiquez la rue et le numéro, ou placez un repère sur la carte ci-dessous - les travailleurs l'utilisent pour vous rejoindre."
+      "street_or_pin": "Indiquez la rue et le numéro, ou placez un repère sur la carte ci-dessous - les travailleurs l'utilisent pour vous rejoindre.",
+      "rate_range": "Laissez le minimum vide pour un tarif unique. Vous êtes facturé sur le maximum."
     },
     "title_confirm": {
       "heading": "Nommez ce travail",
       "desc": "Confirmez le nom du travail ou modifiez-le. Il reste un travail de type {cat}.",
       "confirm": "Confirmer et payer"
+    },
+    "billing": {
+      "escrow_title": "Payer le travailleur via MpahMapu",
+      "escrow_desc": "Vous déposez le salaire maintenant. Nous le conservons, gérons l'échéancier et le versons au fur et à mesure.",
+      "listing_title": "Trouvez-moi simplement des travailleurs",
+      "listing_desc": "Un forfait unique non remboursable. Vous convenez du paiement avec le travailleur et le réglez vous-mêmes : aucun dépôt ni étape de paiement sur la plateforme.",
+      "now": "maintenant",
+      "once": "une fois"
     }
   },
   "offer": {
@@ -1140,7 +1155,9 @@
     "loading": "Chargement…",
     "found_count": "{count} emplois trouvés",
     "badges": {
-      "urgent": "Urgent"
+      "urgent": "Urgent",
+      "direct_pay": "L'employeur vous paie directement",
+      "direct_pay_short": "Paiement direct"
     },
     "cards": {
       "slots_open": "{count} postes ouverts",
@@ -2354,7 +2371,10 @@
     "requirement_to_unlock": "pour débloquer ces paiements",
     "requirement_prorata": "une progression partielle paie une part partielle",
     "requirement_blocked": "Bloqué tant que la condition ci-dessus n'est pas remplie",
-    "of": "sur"
+    "of": "sur",
+    "direct_title": "Payé directement",
+    "direct_employer": "Vous avez choisi de payer ce travailleur vous-même : MpahMapu ne détient aucun fonds pour cette mission. Rien à approuver ici, convenez du montant et payez-le directement.",
+    "direct_worker": "Cet employeur paie directement : le paiement se règle entre vous et lui. MpahMapu ne détient aucun fonds et aucun versement n'arrivera dans votre portefeuille."
   },
   "navigate": {
     "title": "Naviguer vers l'emploi",

@@ -593,7 +593,7 @@ export default function OwnerJobDetail() {
           <Timeline stages={stages} />
 
           {token && hasAccepted && (
-            <PaymentPanel jobId={id} role="employer" token={token} />
+            <PaymentPanel jobId={id} role="employer" token={token} billingMode={job?.billingMode} />
           )}
 
           {/* Proof of work the worker attached - read-only here. Hides itself when empty. */}

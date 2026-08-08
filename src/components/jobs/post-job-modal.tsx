@@ -9,12 +9,13 @@ import {
 import { JOB_CATEGORIES, RWANDA_PROVINCES, CURRENCY, MIN_RATE_BY_PERIOD } from "@/lib/constants";
 import { geoSectors, geoCells, geoVillages } from "@/lib/rwanda-geo";
 import { forwardGeocode } from "@/lib/geocoding";
-import { postJob, postGuestJob, getWallet, apiError, checkGuestAccount, getPricingConfig, getJobCategories, workerCommissionOf, employerServiceFeeOf, employerServiceFeeRateOf, DEFAULT_PRICING, type PricingConfig, type PaymentMode, type JobCategoryMeta } from "@/lib/api";
+import { postJob, postGuestJob, getWallet, apiError, checkGuestAccount, getPricingConfig, getJobCategories, workerCommissionOf, employerServiceFeeOf, employerServiceFeeRateOf, DEFAULT_PRICING, type PricingConfig, type PaymentMode, type JobCategoryMeta, type BillingMode } from "@/lib/api";
 import { getReferralCode } from "@/lib/referral";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { saveRedirect } from "@/lib/auth-redirect";
 import { useToast } from "@/components/ui/toast";
 import { RichTextEditor, RichTextDisplay } from "@/components/ui/rich-text-editor";
+import { BillingModeChoice } from "@/components/jobs/billing-mode-choice";
 import { useSession, type Session } from "@/components/dashboard/session-ctx";
 import { PayMethodSelector, payFieldsOf, type PayMethodValue, type SelectedMethod } from "@/components/ui/pay-logos";
 import { DonationAddon } from "@/components/donate/donation-addon";
@@ -99,6 +100,8 @@ interface JobForm {
   latitude:  number | null;
   longitude: number | null;
   ratePerHour: string;
+  rateMin: string;
+  billingMode: BillingMode;
   rateType: RateType;
   paymentMode: PaymentMode;
   paymentInterval: string;
@@ -197,7 +200,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
     sector: "", cell: "", village: "",
     street: "", houseNumber: "",
     latitude: null, longitude: null,
-    ratePerHour: "", rateType: "hr", paymentMode: "HOURLY", paymentInterval: "1", notes: "", requirements: "",
+    ratePerHour: "", rateMin: "", billingMode: "ESCROW", rateType: "hr", paymentMode: "HOURLY", paymentInterval: "1", notes: "", requirements: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof JobForm, string>>>({});
 
@@ -422,6 +425,8 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
         street:        job.street.trim()      || undefined,
         houseNumber:   job.houseNumber.trim() || undefined,
         ratePerHour:   parseInt(job.ratePerHour),
+        rateMin:       parseInt(job.rateMin) > 0 ? parseInt(job.rateMin) : undefined,
+        billingMode:   job.billingMode,
         headcount:     parseInt(job.headcount) || 1,
         urgency:       "SAME_DAY" as const,
         startTime,
@@ -524,6 +529,11 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
   const escrow      = baseCost + escrowFee;        // employer pays gross + non-refundable service fee
   const platformFee = workerCommissionOf(baseCost, pricing);
   const workerPay   = baseCost - platformFee;      // net the workers receive (all charges covered)
+  // LISTING buys matching only: one flat fee is charged and the wage never passes through the
+  // platform, so it is the whole amount due at posting.
+  const isListing   = job.billingMode === "LISTING";
+  const listingFee  = pricing.directListingFeeRwf;
+  const amountDue   = isListing ? listingFee : escrow;
   const feeRate     = employerServiceFeeRateOf(baseCost, pricing);
   const feePctLabel = pricing.employerServiceFeeFixed > 0
     ? "platform fee"
@@ -568,7 +578,11 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                 [t("post_job.fields.workers") || "Workers",   `${heads}`],
                 [t("post_job.fields.location") || "Location",  locationLabel || job.district],
                 [t("post_job.fields.rate") || "Rate",      fmt(rate) + " " + RATE_LABEL[job.rateType]],
-                ...(escrow > 0 ? [[t("post_job.fields.escrowed") || "Escrowed", fmt(escrow)]] : []),
+                ...(amountDue > 0
+                    ? [[isListing
+                          ? (t("post_job.fields.listing_fee") || "Listing fee")
+                          : (t("post_job.fields.escrowed") || "Escrowed"), fmt(amountDue)]]
+                    : []),
               ] as [string, string][]).map(([k, v]) => <SRow key={k} k={k} v={v} />)}
             </div>
             <button onClick={onClose} style={{ ...btnPrimary, width: "100%" }}>{t("common.buttons.done") || "Done"}</button>
@@ -581,9 +595,9 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
   const isReviewStep = hasSession ? (step === 1) : (step === 2);
 
   // Logged-in employer pays from wallet; only top up (or, for guests, pay directly)
-  // via MoMo/Airtel/Card when the wallet can't cover the escrow.
-  // The employer pays the escrow plus any voluntary donation they added.
-  const chargeable    = escrow + donationRwf;
+  // via MoMo/Airtel/Card when the wallet can't cover what is due.
+  // What is due is the escrow, or just the flat listing fee, plus any voluntary donation.
+  const chargeable    = amountDue + donationRwf;
   const needsTopup    = walletBal === null || walletBal < chargeable;
   const topupAmount   = walletBal === null ? chargeable : Math.max(0, chargeable - walletBal);
   const showPayMethods = !hasSession || needsTopup;
@@ -745,20 +759,45 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                   </p>
                 )}
 
-                {/* Rate - kept right after the schedule so the amount follows the payment terms. */}
-                <FField label={(t("post_job.labels.rate_label", { period: RATE_LABEL[job.rateType] }) || `Rate per worker ${RATE_LABEL[job.rateType]} (RWF) *`)} error={errors.ratePerHour}>
-                  <input type="number" min="0" placeholder={t("post_job.placeholders.rate") || "e.g. 3000"}
-                    value={job.ratePerHour} onChange={e => setJob(f => ({ ...f, ratePerHour: e.target.value }))}
-                    style={inp}
-                    onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
-                    onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
-                  />
+                {/* Pay range - kept right after the schedule so the amount follows the payment
+                    terms. The maximum is what everything is charged from, so it is the required
+                    field; the minimum is optional and only widens what workers see. */}
+                <div className="pj-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <FField label={t("post_job.labels.rate_min_label") || `Minimum ${RATE_LABEL[job.rateType]} (RWF)`}>
+                    <input type="number" min="0" placeholder={t("post_job.placeholders.rate_min") || "optional"}
+                      value={job.rateMin} onChange={e => setJob(f => ({ ...f, rateMin: e.target.value }))}
+                      style={inp}
+                      onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
+                      onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                    />
+                  </FField>
+                  <FField label={(t("post_job.labels.rate_max_label", { period: RATE_LABEL[job.rateType] }) || `Maximum ${RATE_LABEL[job.rateType]} (RWF) *`)} error={errors.ratePerHour}>
+                    <input type="number" min="0" placeholder={t("post_job.placeholders.rate") || "e.g. 3000"}
+                      value={job.ratePerHour} onChange={e => setJob(f => ({ ...f, ratePerHour: e.target.value }))}
+                      style={inp}
+                      onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
+                      onBlur={e  => (e.currentTarget.style.borderColor = "#2a2a2a")}
+                    />
+                  </FField>
+                </div>
+                <p style={{ margin: "-4px 0 12px", fontSize: 11, color: "#555" }}>
+                  {t("post_job.hints.rate_range") || "Leave the minimum blank for a single flat rate. You are charged on the maximum."}
                   {rate > 0 && hours > 0 && (
-                    <p style={{ margin: "4px 0 0", fontSize: 11, color: "#555" }}>
-                      Job Cost: <strong style={{ color: "#f97316" }}>{fmt(baseCost)}</strong>
-                      {" "}({heads} × {hours}h × {fmt(rate)})
-                    </p>
+                    <> {" · "}Job Cost: <strong style={{ color: "#f97316" }}>{fmt(baseCost)}</strong>
+                      {" "}({heads} × {hours}h × {fmt(rate)})</>
                   )}
+                </p>
+
+                {/* How the employer pays: fund the wage on the platform, or pay a flat fee and
+                    settle with the worker themselves. */}
+                <FField label={t("post_job.labels.billing_mode") || "How do you want to pay?"}>
+                  <BillingModeChoice
+                    value={job.billingMode}
+                    onChange={m => setJob(f => ({ ...f, billingMode: m }))}
+                    escrowAmount={escrow}
+                    listingFee={listingFee}
+                    t={t}
+                  />
                 </FField>
 
                 <div className="pj-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -994,7 +1033,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                     ...(job.village ? [[t("post_job.labels.village") || "Village", job.village]] : []),
                     ...(job.latitude != null ? [["GPS", `${job.latitude.toFixed(5)}, ${job.longitude!.toFixed(5)}`]] : []),
                     [t("post_job.fields.rate") || "Rate",      fmt(rate) + " " + RATE_LABEL[job.rateType]],
-                    ...(escrow > 0 ? [[t("post_job.fields.escrowed") || "Total Deposition", fmt(escrow)]] : []),
+                    ...(amountDue > 0 ? [[isListing ? (t("post_job.fields.listing_fee") || "Listing fee") : (t("post_job.fields.escrowed") || "Total Deposition"), fmt(amountDue)]] : []),
                   ] as [string, string][]).map(([k, v]) => <SRow key={k} k={k} v={v} />)}
                   {job.notes && (
                     <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingTop: 8, marginTop: 4, borderTop: "1px solid #1a1a1a" }}>
@@ -1010,8 +1049,21 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                 <div style={{ marginTop: 8 }}>
                   <p style={{ margin: "0 0 10px", fontSize: 13, fontWeight: 700, color: "#fff" }}>{t("post_job.review.payment_title") || "Payment & Deposit Details"}</p>
 
-                  {/* escrow breakdown */}
-                  {escrow > 0 && (
+                  {/* What is actually being charged, which differs entirely by billing mode. */}
+                  {isListing ? (
+                    <div style={{ background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10, padding: "12px 14px", marginBottom: 12 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: 8 }}>
+                        <span style={{ fontSize: 13, color: "#aaa", fontWeight: 700 }}>
+                          {t("post_job.review.listing_fee_line") || "Listing fee · non-refundable"}
+                        </span>
+                        <span style={{ fontSize: 14, color: "#f97316", fontWeight: 800 }}>{fmt(listingFee)}</span>
+                      </div>
+                      <p style={{ margin: 0, paddingTop: 8, borderTop: "1px solid #1e1e1e", fontSize: 11, color: "#777", lineHeight: 1.6 }}>
+                        {t("post_job.review.listing_note")
+                          || `No deposit is held. You agree the pay with the worker and settle it directly, so the ${fmt(baseCost)} above never passes through MpahMapu and there are no payment steps to approve here.`}
+                      </p>
+                    </div>
+                  ) : escrow > 0 && (
                     <div style={{ background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10, padding: "12px 14px", marginBottom: 12 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                         <span style={{ fontSize: 12, color: "#666" }}>Job cost ({heads} × {hours}h × {fmt(rate)})</span>
@@ -1046,7 +1098,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                       </div>
                       {needsTopup && (
                         <p style={{ margin: "8px 0 0", fontSize: 12, color: "#aaa", lineHeight: 1.5 }}>
-                          Pay <strong style={{ color: "#f97316" }}>{fmt(topupAmount)}</strong> below to fund this job. It's added to your wallet and the full {fmt(escrow)} is held in escrow - it appears on your posting as a direct deposit.
+                          Pay <strong style={{ color: "#f97316" }}>{fmt(topupAmount)}</strong> below to fund this job. It's added to your wallet and the full {fmt(amountDue)} is charged for this posting - it appears on your posting as a direct deposit.
                         </p>
                       )}
                     </div>
@@ -1064,7 +1116,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                     <DonationAddon usdToRwf={pricing.usdToRwf} valueRwf={donationRwf} onChange={setDonationRwf} />
                     {donationRwf > 0 && (
                       <p style={{ margin: "6px 0 0", fontSize: 12, color: "#22c55e" }}>
-                        {fmt(escrow)} escrow + {fmt(donationRwf)} donation = <strong>{fmt(chargeable)}</strong> total
+                        {fmt(amountDue)} {isListing ? "listing fee" : "escrow"} + {fmt(donationRwf)} donation = <strong>{fmt(chargeable)}</strong> total
                       </p>
                     )}
                   </div>

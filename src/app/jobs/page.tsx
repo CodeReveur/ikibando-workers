@@ -367,13 +367,23 @@ export default function JobsPage() {
                       )}
                     </div>
 
-                    {/* category */}
-                    <span style={{
-                      alignSelf: "flex-start", fontSize: 10, fontWeight: 700, borderRadius: 999,
-                      padding: "3px 10px", background: "rgba(249,115,22,0.08)", color: "#f97316",
-                    }}>
-                      {localizedCat}
-                    </span>
+                    {/* category, plus a flag when the employer settles the pay off-platform */}
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                      <span style={{
+                        fontSize: 10, fontWeight: 700, borderRadius: 999,
+                        padding: "3px 10px", background: "rgba(249,115,22,0.08)", color: "#f97316",
+                      }}>
+                        {localizedCat}
+                      </span>
+                      {j.billingMode === "LISTING" && (
+                        <span style={{
+                          fontSize: 10, fontWeight: 700, borderRadius: 999,
+                          padding: "3px 10px", background: "rgba(234,179,8,0.1)", color: "#eab308",
+                        }}>
+                          {t("jobs_page.badges.direct_pay_short") || "Direct pay"}
+                        </span>
+                      )}
+                    </div>
 
                     {/* meta */}
                     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>

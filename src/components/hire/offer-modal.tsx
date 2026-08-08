@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { BillingModeChoice } from "@/components/jobs/billing-mode-choice";
 import dynamic from "next/dynamic";
 import { X, Calendar, Clock, CheckCircle, Bell, MapPin, Navigation, Loader2 } from "lucide-react";
 import { RWANDA_PROVINCES, MIN_RATE_BY_PERIOD } from "@/lib/constants";
-import { postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, getPricingConfig, workerCommissionOf, employerServiceFeeOf, DEFAULT_PRICING, type PricingConfig, type WorkerProfileDto, type PaymentMode } from "@/lib/api";
+import { postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, getPricingConfig, workerCommissionOf, employerServiceFeeOf, DEFAULT_PRICING, type PricingConfig, type WorkerProfileDto, type PaymentMode, type BillingMode } from "@/lib/api";
 import { getReferralCode } from "@/lib/referral";
 import { DonationAddon } from "@/components/donate/donation-addon";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
@@ -98,6 +99,7 @@ export function OfferModal({ worker, onClose }: Props) {
   const { error: toastError } = useToast();
 
   const [step, setStep]         = useState(0);
+  const [billingMode, setBillingMode] = useState<BillingMode>("ESCROW");
   const [submitting, setSub]   = useState(false);
   const [walletBal, setWalletBal] = useState<number | null>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -253,6 +255,10 @@ export function OfferModal({ worker, onClose }: Props) {
   const baseCost    = rate * hours;
   const escrowFee   = employerServiceFeeOf(baseCost, pricing);
   const total       = baseCost + escrowFee;
+  // LISTING charges one flat fee and leaves the wage to the two parties.
+  const isListing   = billingMode === "LISTING";
+  const listingFee  = pricing.directListingFeeRwf;
+  const amountDue   = isListing ? listingFee : total;
   const platformFee = workerCommissionOf(baseCost, pricing);
   const workerPay   = baseCost - platformFee;
   const feePctLabel = baseCost > 0 ? `${Math.round((escrowFee / baseCost) * 100)}%` : "";
@@ -265,7 +271,7 @@ export function OfferModal({ worker, onClose }: Props) {
 
   // Logged-in employer pays from wallet; only top up (or, for guests, pay directly)
   // via MoMo/Airtel/Card when the wallet can't cover the escrow.
-  const chargeable    = total + donationRwf;
+  const chargeable    = amountDue + donationRwf;
   const needsTopup    = walletBal === null || walletBal < chargeable;
   const topupAmount   = walletBal === null ? chargeable : Math.max(0, chargeable - walletBal);
   const showPayMethods = !hasSession || needsTopup;
@@ -324,6 +330,7 @@ export function OfferModal({ worker, onClose }: Props) {
         province: province || undefined,
         latitude: latitude ?? undefined, longitude: longitude ?? undefined,
         ratePerHour: Math.round(rate),
+        billingMode,
         headcount: 1,
         urgency: "IMMEDIATE" as const,
         startTime, durationHours: Math.round(hours),
@@ -584,7 +591,7 @@ export function OfferModal({ worker, onClose }: Props) {
                 </div>
               </FField>
 
-              {periodsNum > 0 && (
+              {periodsNum > 0 && !isListing && (
                 <p style={{ margin: "6px 0 0", fontSize: 12, color: "#8a8a8a", lineHeight: 1.6 }}>
                   {t("post_job.schedule_summary", {
                     interval: String(interval), unit: getUnit(rateType, interval),
@@ -592,6 +599,18 @@ export function OfferModal({ worker, onClose }: Props) {
                   }) || `Worker is paid every ${interval} ${getUnit(rateType, interval)}, ${periodsNum} time(s) - ${hours} ${getUnit(rateType, hours)} total.`}
                 </p>
               )}
+
+              {/* How this offer is paid for: fund the wage here, or pay a flat fee and settle
+                  with the worker directly. */}
+              <FField label={t("post_job.labels.billing_mode") || "How do you want to pay?"}>
+                <BillingModeChoice
+                  value={billingMode}
+                  onChange={setBillingMode}
+                  escrowAmount={total}
+                  listingFee={listingFee}
+                  t={t}
+                />
+              </FField>
 
               {/* offer price - kept right after the schedule so the amount follows the payment terms. */}
               <FField label={t("offer.labels.offer_price", { period: RATE_LABEL[rateType] }) || `Your offer price ${RATE_LABEL[rateType]} (RWF) *`}>

@@ -912,7 +912,8 @@
       "workers": "Abakozi",
       "location": "Aho kari",
       "rate": "Ikiguzi",
-      "escrowed": "Amafaranga abitswe"
+      "escrowed": "Amafaranga abitswe",
+      "listing_fee": "Amafaranga yo gutangaza"
     },
     "step_indicator": "Intambwe ya {current} kuri {total}",
     "labels": {
@@ -934,7 +935,10 @@
       "pay_every": "Kwishyura buri",
       "num_payments": "Umubare w'ubwishyu",
       "street": "Umuhanda / Avenue",
-      "house_number": "Nomero y'inzu / isambu"
+      "house_number": "Nomero y'inzu / isambu",
+      "billing_mode": "Ushaka kwishyura ute?",
+      "rate_min_label": "Hasi (RWF)",
+      "rate_max_label": "Hejuru (RWF) *"
     },
     "placeholders": {
       "search_category": "Shakisha ikiciro…",
@@ -946,7 +950,8 @@
       "cell": "Hitamo akagari…",
       "village": "Hitamo umudugudu…",
       "street": "urug. KG 7 Ave",
-      "house_number": "urug. 12"
+      "house_number": "urug. 12",
+      "rate_min": "si ngombwa"
     },
     "gps": {
       "detecting": "Gushakisha…",
@@ -975,7 +980,8 @@
       "agreement_hint": "Iyo utanze akazi wemera amategeko yacu. Amakuru yawe y'itumanaho ahabwa gusa abakozi basabye akazi.",
       "posting_btn": "Gushyiraho...",
       "insufficient_balance_btn": "Amafaranga ntahagije",
-      "submit_btn": "Gushyiraho akazi & kubika amafaranga"
+      "submit_btn": "Gushyiraho akazi & kubika amafaranga",
+      "listing_fee_line": "Amafaranga yo gutangaza · ntasubizwa"
     },
     "payment_modes": {
       "hourly": "Buri saha",
@@ -994,12 +1000,21 @@
       "desc": "Umukozi ashobora gusaba ubwishyu nyuma ya buri {unit} irangiye. Iyo iki gikora, amafaranga yemejwe yishyurwa ako kanya; iyo bidakora, wemeza buri busabe (byiyemeza mu masaha 2)."
     },
     "hints": {
-      "street_or_pin": "Vuga umuhanda na nomero y'inzu, cyangwa ushyire akadomo ku ikarita hepfo - abakozi babikoresha kugera aho uri."
+      "street_or_pin": "Vuga umuhanda na nomero y'inzu, cyangwa ushyire akadomo ku ikarita hepfo - abakozi babikoresha kugera aho uri.",
+      "rate_range": "Siga hasi ubusa niba ari igiciro kimwe. Wishyuzwa ku giciro cyo hejuru."
     },
     "title_confirm": {
       "heading": "Ita iyi akazi",
       "desc": "Emeza izina ry’akazi cyangwa urihindure. Rikomeza kuba akazi ka {cat}.",
       "confirm": "Emeza wishyure"
+    },
+    "billing": {
+      "escrow_title": "Wishyure umukozi unyuze kuri MpahMapu",
+      "escrow_desc": "Ushyiraho umushahara ubu. Turawubika, tugacunga gahunda y'ubwishyu, tukawutanga uko akazi karangira.",
+      "listing_title": "Nshakira gusa abakozi",
+      "listing_desc": "Amafaranga ahoraho adasubizwa. Mwumvikana ku bwishyu n'umukozi mukiyishyurana, nta ngwate cyangwa intambwe z'ubwishyu kuri iyi porogaramu.",
+      "now": "ubu",
+      "once": "rimwe"
     }
   },
   "offer": {
@@ -1140,7 +1155,9 @@
     "loading": "Birimo gushaka…",
     "found_count": "Akazi {count} kabonetse",
     "badges": {
-      "urgent": "Karihutirwa"
+      "urgent": "Karihutirwa",
+      "direct_pay": "Umukoresha akwishyura we ubwe",
+      "direct_pay_short": "Ubwishyu butaziguye"
     },
     "cards": {
       "slots_open": "Imyanya {count} isigaye",
@@ -2354,7 +2371,10 @@
     "requirement_to_unlock": "kugira ngo ubone ubu bwishyu",
     "requirement_prorata": "iterambere rya bimwe ritanga igice",
     "requirement_blocked": "Bifunze kugeza wujuje ibisabwa haruguru",
-    "of": "kuri"
+    "of": "kuri",
+    "direct_title": "Kwishyurwa butaziguye",
+    "direct_employer": "Wahisemo kwishyura uyu mukozi wowe ubwawe, bityo MpahMapu nta mafaranga ifite kuri aka kazi. Nta cyo wemeza hano: mwumvikane ku mafaranga umwishyure we ubwe.",
+    "direct_worker": "Uyu mukoresha yishyura we ubwe, bityo ubwishyu bw'aka kazi mubwumvikanaho mwembi. MpahMapu nta mafaranga ibitse, kandi nta bwishyu buzinjira muri wallet yawe."
   },
   "navigate": {
     "title": "Yobora ugana ku murimo",
