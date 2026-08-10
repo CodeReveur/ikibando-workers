@@ -9,7 +9,7 @@ import {
 import { JOB_CATEGORIES, RWANDA_PROVINCES, CURRENCY, MIN_RATE_BY_PERIOD } from "@/lib/constants";
 import { geoSectors, geoCells, geoVillages } from "@/lib/rwanda-geo";
 import { forwardGeocode } from "@/lib/geocoding";
-import { postJob, postGuestJob, getWallet, apiError, checkGuestAccount, getPricingConfig, getJobCategories, workerCommissionOf, employerServiceFeeOf, employerServiceFeeRateOf, DEFAULT_PRICING, type PricingConfig, type PaymentMode, type JobCategoryMeta, type BillingMode } from "@/lib/api";
+import { postJob, postGuestJob, getWallet, apiError, checkGuestAccount, getPricingConfig, getJobCategories, workerCommissionOf, employerServiceFeeOf, listingFeeOf, employerServiceFeeRateOf, DEFAULT_PRICING, type PricingConfig, type PaymentMode, type JobCategoryMeta, type BillingMode } from "@/lib/api";
 import { getReferralCode } from "@/lib/referral";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { saveRedirect } from "@/lib/auth-redirect";
@@ -532,7 +532,7 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
   // LISTING buys matching only: one flat fee is charged and the wage never passes through the
   // platform, so it is the whole amount due at posting.
   const isListing   = job.billingMode === "LISTING";
-  const listingFee  = pricing.directListingFeeRwf;
+  const listingFee  = listingFeeOf(baseCost, pricing);
   const amountDue   = isListing ? listingFee : escrow;
   const feeRate     = employerServiceFeeRateOf(baseCost, pricing);
   const feePctLabel = pricing.employerServiceFeeFixed > 0
@@ -788,18 +788,6 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                   )}
                 </p>
 
-                {/* How the employer pays: fund the wage on the platform, or pay a flat fee and
-                    settle with the worker themselves. */}
-                <FField label={t("post_job.labels.billing_mode") || "How do you want to pay?"}>
-                  <BillingModeChoice
-                    value={job.billingMode}
-                    onChange={m => setJob(f => ({ ...f, billingMode: m }))}
-                    escrowAmount={escrow}
-                    listingFee={listingFee}
-                    t={t}
-                  />
-                </FField>
-
                 <div className="pj-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                   <FField label={t("post_job.labels.workers_count") || "No. of workers"}>
                     <div style={{ position: "relative" }}>
@@ -1048,6 +1036,21 @@ export function PostJobModal({ onClose }: { onClose: () => void }) {
                 {/* ESCROW / WALLET BLOCK */}
                 <div style={{ marginTop: 8 }}>
                   <p style={{ margin: "0 0 10px", fontSize: 13, fontWeight: 700, color: "#fff" }}>{t("post_job.review.payment_title") || "Payment & Deposit Details"}</p>
+
+                  {/* The choice sits here, on the last step, so it is made against the final job
+                      cost and next to the amount it changes. */}
+                  <div style={{ marginBottom: 14 }}>
+                    <p style={{ margin: "0 0 8px", fontSize: 11, fontWeight: 700, color: "#666", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                      {t("post_job.labels.billing_mode") || "How do you want to pay?"}
+                    </p>
+                    <BillingModeChoice
+                      value={job.billingMode}
+                      onChange={m => setJob(f => ({ ...f, billingMode: m }))}
+                      escrowAmount={escrow}
+                      listingFee={listingFee}
+                      t={t}
+                    />
+                  </div>
 
                   {/* What is actually being charged, which differs entirely by billing mode. */}
                   {isListing ? (

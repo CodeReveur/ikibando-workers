@@ -8,7 +8,7 @@ import {
   AlarmClock, Search, Navigation, Loader2, Star,
 } from "lucide-react";
 import { JOB_CATEGORIES, RWANDA_PROVINCES, MIN_RATE_BY_PERIOD } from "@/lib/constants";
-import { getWorkers, postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, getPricingConfig, getJobCategories, employerServiceFeeOf, DEFAULT_PRICING, type PricingConfig, type WorkerProfileDto, type PaymentMode, type JobCategoryMeta, type BillingMode } from "@/lib/api";
+import { getWorkers, postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, getPricingConfig, getJobCategories, employerServiceFeeOf, listingFeeOf, DEFAULT_PRICING, type PricingConfig, type WorkerProfileDto, type PaymentMode, type JobCategoryMeta, type BillingMode } from "@/lib/api";
 import { getReferralCode } from "@/lib/referral";
 import { runWalletTopup, runGuestPayment, isCardMethod, type PayMethod } from "@/lib/pay-flow";
 import { DonationAddon } from "@/components/donate/donation-addon";
@@ -439,7 +439,7 @@ export function HireModal({ onClose }: { onClose: () => void }) {
   const total       = jobAmount + fee;
   // LISTING charges one flat fee and leaves the wage to the two parties.
   const isListing   = form.billingMode === "LISTING";
-  const listingFee  = pricing.directListingFeeRwf;
+  const listingFee  = listingFeeOf(jobAmount, pricing);
   const amountDue   = isListing ? listingFee : total;
   const feePctLabel = jobAmount > 0 ? `${Math.round((fee / jobAmount) * 100)}%` : "";
   const minRate     = MIN_RATE_BY_PERIOD[form.rateType];
@@ -680,18 +680,6 @@ export function HireModal({ onClose }: { onClose: () => void }) {
                   </FField>
                 </div>
 
-                {/* How this hire is paid for: fund the wage here, or pay a flat fee and settle
-                    with the worker directly. */}
-                <FField label={t("post_job.labels.billing_mode") || "How do you want to pay?"}>
-                  <BillingModeChoice
-                    value={form.billingMode}
-                    onChange={m => setForm(f => ({ ...f, billingMode: m }))}
-                    escrowAmount={total}
-                    listingFee={listingFee}
-                    t={t}
-                  />
-                </FField>
-
                 <label style={{
                   background: "#141414", border: "1px solid #2a2a2a", borderRadius: 10,
                   padding: "12px 14px", display: "flex", gap: 10, alignItems: "flex-start", cursor: "pointer",
@@ -899,6 +887,16 @@ export function HireModal({ onClose }: { onClose: () => void }) {
             {/* ── STEP 2 or 3: SUMMARY & PAY ── */}
             {isReviewStep && (
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                {/* The choice sits on the last step, made against the final cost. */}
+                <SCard title={t("post_job.labels.billing_mode") || "How do you want to pay?"}>
+                  <BillingModeChoice
+                    value={form.billingMode}
+                    onChange={m => setForm(f => ({ ...f, billingMode: m }))}
+                    escrowAmount={total}
+                    listingFee={listingFee}
+                    t={t}
+                  />
+                </SCard>
                 <SCard title={t("hire_modal.summary.title")}>
                   {([
                     ["Category",  cat],

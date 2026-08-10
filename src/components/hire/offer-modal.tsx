@@ -5,7 +5,7 @@ import { BillingModeChoice } from "@/components/jobs/billing-mode-choice";
 import dynamic from "next/dynamic";
 import { X, Calendar, Clock, CheckCircle, Bell, MapPin, Navigation, Loader2 } from "lucide-react";
 import { RWANDA_PROVINCES, MIN_RATE_BY_PERIOD } from "@/lib/constants";
-import { postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, getPricingConfig, workerCommissionOf, employerServiceFeeOf, DEFAULT_PRICING, type PricingConfig, type WorkerProfileDto, type PaymentMode, type BillingMode } from "@/lib/api";
+import { postJob, postGuestJob, applyForJob, getWallet, checkGuestAccount, getPricingConfig, workerCommissionOf, employerServiceFeeOf, listingFeeOf, DEFAULT_PRICING, type PricingConfig, type WorkerProfileDto, type PaymentMode, type BillingMode } from "@/lib/api";
 import { getReferralCode } from "@/lib/referral";
 import { DonationAddon } from "@/components/donate/donation-addon";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
@@ -257,7 +257,7 @@ export function OfferModal({ worker, onClose }: Props) {
   const total       = baseCost + escrowFee;
   // LISTING charges one flat fee and leaves the wage to the two parties.
   const isListing   = billingMode === "LISTING";
-  const listingFee  = pricing.directListingFeeRwf;
+  const listingFee  = listingFeeOf(baseCost, pricing);
   const amountDue   = isListing ? listingFee : total;
   const platformFee = workerCommissionOf(baseCost, pricing);
   const workerPay   = baseCost - platformFee;
@@ -600,18 +600,6 @@ export function OfferModal({ worker, onClose }: Props) {
                 </p>
               )}
 
-              {/* How this offer is paid for: fund the wage here, or pay a flat fee and settle
-                  with the worker directly. */}
-              <FField label={t("post_job.labels.billing_mode") || "How do you want to pay?"}>
-                <BillingModeChoice
-                  value={billingMode}
-                  onChange={setBillingMode}
-                  escrowAmount={total}
-                  listingFee={listingFee}
-                  t={t}
-                />
-              </FField>
-
               {/* offer price - kept right after the schedule so the amount follows the payment terms. */}
               <FField label={t("offer.labels.offer_price", { period: RATE_LABEL[rateType] }) || `Your offer price ${RATE_LABEL[rateType]} (RWF) *`}>
                 <input type="number" min={1} placeholder={`e.g. ${minRate.toLocaleString()}`}
@@ -730,6 +718,19 @@ export function OfferModal({ worker, onClose }: Props) {
           {/* ── STEP 1 or 2: REVIEW & PAYMENT ── */}
           {isReviewStep && (
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              {/* The choice sits on the last step, made against the final cost. */}
+              <div style={{ background: "#141414", border: "1px solid #1e1e1e", borderRadius: 12, padding: "14px 16px" }}>
+                <p style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                  {t("post_job.labels.billing_mode") || "How do you want to pay?"}
+                </p>
+                <BillingModeChoice
+                  value={billingMode}
+                  onChange={setBillingMode}
+                  escrowAmount={total}
+                  listingFee={listingFee}
+                  t={t}
+                />
+              </div>
               <div style={{ background: "#141414", border: "1px solid #1e1e1e", borderRadius: 12, padding: "14px 16px" }}>
                 <p style={{ margin: "0 0 10px", fontSize: 11, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: "0.06em" }}>
                   Job Details

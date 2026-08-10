@@ -1105,7 +1105,46 @@ export interface PricingConfig {
   referralRewardRwf: number;
   usdToRwf: number;                   // RWF per 1 USD, for donation presets
   withdrawalFeeRwf: number;           // flat fee charged per wallet withdrawal
-  directListingFeeRwf: number;        // flat non-refundable fee to publish a LISTING job
+  directListingFeeRwf: number;        // flat fallback, used only when no band schedule exists
+  /** The listing-fee schedule, cheapest band first. See listingFeeOf(). */
+  listingFeeTiers?: ListingFeeTier[];
+}
+
+/**
+ * One band of the listing-fee schedule: jobs costing between minAmount and maxAmount pay this to
+ * publish. A band charges either a flat amount or a percentage of the job cost, which is what lets
+ * the open-ended top band cover any job value.
+ */
+export interface ListingFeeTier {
+  id?: string;
+  minAmount: number;
+  /** null on the top band, meaning no upper limit. */
+  maxAmount: number | null;
+  fixedRwf: number | null;
+  percentRate: number | null;
+  active?: boolean;
+}
+
+/**
+ * The non-refundable fee to publish a job of this cost, resolved from the admin-managed schedule.
+ * Mirrors PricingService.directListingFee on the server so the amount shown while the employer
+ * types matches what they are actually charged.
+ */
+export function listingFeeOf(baseCost: number, p: PricingConfig = DEFAULT_PRICING): number {
+  const tiers = (p.listingFeeTiers ?? []).filter(t => t.active !== false)
+    .slice().sort((a, b) => a.minAmount - b.minAmount);
+  if (!tiers.length) return p.directListingFeeRwf;
+
+  const charge = (t: ListingFeeTier) => {
+    if (t.fixedRwf != null && t.fixedRwf > 0) return Math.round(t.fixedRwf);
+    if (t.percentRate != null && t.percentRate > 0) return Math.max(0, Math.round(baseCost * t.percentRate));
+    return 0;
+  };
+  const hit = tiers.find(t => baseCost >= t.minAmount && (t.maxAmount == null || baseCost <= t.maxAmount));
+  if (hit) return charge(hit);
+  // Below the cheapest band, or past a schedule whose top band is bounded: charge the nearest
+  // band rather than nothing, so no job can slip through free.
+  return charge(baseCost < tiers[0].minAmount ? tiers[0] : tiers[tiers.length - 1]);
 }
 
 /** Defaults matching the server's fallback so the UI still works if the call fails. */
