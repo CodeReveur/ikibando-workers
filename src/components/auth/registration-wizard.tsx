@@ -59,6 +59,13 @@ const EDUCATION_OPTIONS = [
   "Master's Degree or Higher",
 ];
 
+const GENDER_OPTIONS = [
+  { value: "MALE",              labelKey: "onboarding.personal.gender_male",   fallback: "Male" },
+  { value: "FEMALE",            labelKey: "onboarding.personal.gender_female", fallback: "Female" },
+  { value: "OTHER",             labelKey: "onboarding.personal.gender_other",  fallback: "Other" },
+  { value: "PREFER_NOT_TO_SAY", labelKey: "onboarding.personal.gender_undisclosed", fallback: "Prefer not to say" },
+] as const;
+
 const EQUIPMENT_SUGGESTIONS = [
   "Smartphone", "Laptop", "Internet Connection",
   "Safety Gear", "Vehicle", "Power Tools", "Camera", "Tablet",
@@ -162,6 +169,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
 
   // Personal
   const [dob, setDob] = useState("");
+  const [gender, setGender] = useState<string>("");
   const [education, setEducation] = useState("");
   // A worker can practise several fields - multiple categories may be selected.
   const [experiences, setExperiences] = useState<string[]>([]);
@@ -193,6 +201,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
       if (raw) {
         const d = JSON.parse(raw);
         if (d.dob)          setDob(d.dob);
+        if (d.gender)       setGender(d.gender);
         if (d.education)    setEducation(d.education);
         if (Array.isArray(d.experiences)) setExperiences(d.experiences);
         else if (d.experience) setExperiences([d.experience]);
@@ -214,6 +223,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
   const buildPayload = (): OnboardingData => ({
     role: showRoleSelect ? selectedRole : undefined,
     dob,
+    gender,
     educationLevel: education,
     experienceType: experiences[0] ?? "",
     experienceTypes: experiences,
@@ -233,6 +243,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     const p: Record<string, unknown> = {};
     if (showRoleSelect && selectedRole) p.role = selectedRole;
     if (dob) p.dob = dob;
+    if (gender) p.gender = gender;
     if (education) p.educationLevel = education;
     if (experiences.length) {
       p.experienceType = experiences[0];
@@ -819,6 +830,35 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
                   style={{ colorScheme: "dark" }}
                 />
               </div>
+
+              {/* Gender - optional, and a company is not a person so it is not asked there.
+                  "Prefer not to say" is offered as a real answer rather than leaving it blank. */}
+              {accountType !== "COMPANY" && (
+              <div>
+                <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
+                  {t("onboarding.personal.gender_label") || "Gender"}
+                  <span className="ml-1 text-gray-600 normal-case font-normal">
+                    {t("common.general.optional") || "(optional)"}
+                  </span>
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {GENDER_OPTIONS.map(({ value, labelKey, fallback }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setGender(g => (g === value ? "" : value))}
+                      className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${
+                        gender === value
+                          ? "bg-[#f97316]/20 border-[#f97316] text-[#f97316]"
+                          : "bg-[#1a1a1a] border-[#2a2a2a] text-gray-400 hover:border-gray-500"
+                      }`}
+                    >
+                      {t(labelKey) || fallback}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              )}
 
               {/* Education - not applicable to companies */}
               {accountType !== "COMPANY" && (

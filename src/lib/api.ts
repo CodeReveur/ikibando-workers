@@ -120,6 +120,7 @@ export interface AuthResult {
     rating?: number | null;
     ratingCount?: number | null;
     dob?: string;
+    gender?: string;
     educationLevel?: string;
     experienceType?: string;
     experienceTypes?: string[];
@@ -263,6 +264,8 @@ export type AccountType = "INDIVIDUAL" | "TEAM" | "COMPANY" | "CREW";
 export interface OnboardingData {
   role?: string;
   dob: string;
+  /** Optional, self-declared. See Gender on the server. */
+  gender?: string;
   educationLevel: string;
   /** Primary/legacy single category slug. */
   experienceType: string;

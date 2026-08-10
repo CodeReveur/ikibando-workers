@@ -227,7 +227,8 @@
       "pending": "Inasubiri",
       "select": "Chagua…",
       "withdrawn": "Imeondolewa",
-      "cancel": "Ghairi"
+      "cancel": "Ghairi",
+      "optional": "(si lazima)"
     },
     "provinces": {
       "city_of_kigali": "Jiji la Rwanda",
@@ -675,7 +676,12 @@
       "category_multi_hint": "- chagua vyote vinavyohusika",
       "category_selected": "zimechaguliwa",
       "category_primary": "Kuu",
-      "category_note": "Kategoria zako zote zinaonyeshwa kwenye wasifu wako. Ya kwanza unayochagua ndiyo kategoria yako kuu."
+      "category_note": "Kategoria zako zote zinaonyeshwa kwenye wasifu wako. Ya kwanza unayochagua ndiyo kategoria yako kuu.",
+      "gender_label": "Jinsia",
+      "gender_male": "Mwanaume",
+      "gender_female": "Mwanamke",
+      "gender_other": "Nyingine",
+      "gender_undisclosed": "Sipendi kusema"
     },
     "location_avail": {
       "location_label": "Mahali Pako",
@@ -1446,7 +1452,8 @@
       "bio": "Wasifu wa Kitaalamu",
       "bio_placeholder": "Tuambie kuhusu uzoefu wako...",
       "save_worker_btn": "Hifadhi Wasifu wa Mfanyakazi",
-      "availability_hint": "Chagua siku unazoweza kufanya kazi"
+      "availability_hint": "Chagua siku unazoweza kufanya kazi",
+      "gender": "Jinsia"
     },
     "security": {
       "password_title": "Badilisha Nywila",

@@ -227,7 +227,8 @@
       "pending": "Bitegereje",
       "select": "Hitamo…",
       "withdrawn": "Byakuweho",
-      "cancel": "Hagarika"
+      "cancel": "Hagarika",
+      "optional": "(si ngombwa)"
     },
     "provinces": {
       "city_of_kigali": "Umujyi wa Rwanda",
@@ -675,7 +676,12 @@
       "category_multi_hint": "- hitamo ibikwiye byose",
       "category_selected": "byatoranyijwe",
       "category_primary": "Ibanze",
-      "category_note": "Ibyiciro byawe byose bigaragara kuri profile yawe. Icya mbere watoranyije ni cyo cyiciro cyawe cy'ibanze."
+      "category_note": "Ibyiciro byawe byose bigaragara kuri profile yawe. Icya mbere watoranyije ni cyo cyiciro cyawe cy'ibanze.",
+      "gender_label": "Igitsina",
+      "gender_male": "Gabo",
+      "gender_female": "Gore",
+      "gender_other": "Ikindi",
+      "gender_undisclosed": "Sinshaka kubivuga"
     },
     "location_avail": {
       "location_label": "Aho uba",
@@ -1446,7 +1452,8 @@
       "bio": "Umwirondoro w'Umwuga",
       "bio_placeholder": "Tubwire ibyerekeye uburambe bwawe...",
       "save_worker_btn": "Bika Umwirondoro w'Umukozi",
-      "availability_hint": "Hitamo iminsi ushobora gukora"
+      "availability_hint": "Hitamo iminsi ushobora gukora",
+      "gender": "Igitsina"
     },
     "security": {
       "password_title": "Hindura Ijambo ry'Ibanga",

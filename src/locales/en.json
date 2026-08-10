@@ -228,7 +228,8 @@
       "pending": "Pending",
       "select": "Select…",
       "withdrawn": "Withdrawn",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "optional": "(optional)"
     },
     "provinces": {
       "city_of_kigali": "City of Kigali",
@@ -676,7 +677,12 @@
       "category_multi_hint": "- select all that apply",
       "category_selected": "selected",
       "category_primary": "Primary",
-      "category_note": "All your categories are shown on your profile. The first one you pick is your primary category."
+      "category_note": "All your categories are shown on your profile. The first one you pick is your primary category.",
+      "gender_label": "Gender",
+      "gender_male": "Male",
+      "gender_female": "Female",
+      "gender_other": "Other",
+      "gender_undisclosed": "Prefer not to say"
     },
     "location_avail": {
       "location_label": "Your Location",
@@ -1447,7 +1453,8 @@
       "bio": "Professional Bio",
       "bio_placeholder": "Tell us about your experience...",
       "save_worker_btn": "Save Worker Profile",
-      "availability_hint": "Pick the days you can work"
+      "availability_hint": "Pick the days you can work",
+      "gender": "Gender"
     },
     "security": {
       "password_title": "Change Password",

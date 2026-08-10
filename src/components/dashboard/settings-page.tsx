@@ -549,6 +549,14 @@ const FULL_DAYS: Record<string, string> = {
   Mon: "Monday", Tue: "Tuesday", Wed: "Wednesday", Thu: "Thursday",
   Fri: "Friday", Sat: "Saturday", Sun: "Sunday",
 };
+/** Optional and self-declared; "Prefer not to say" is an answer, not a blank. */
+const GENDER_OPTIONS = [
+  { value: "MALE",              label: "Male" },
+  { value: "FEMALE",            label: "Female" },
+  { value: "OTHER",             label: "Other" },
+  { value: "PREFER_NOT_TO_SAY", label: "Prefer not to say" },
+];
+
 const EDUCATION_OPTIONS = [
   "None", "Primary School", "High School",
   "Diploma / Certificate", "Bachelor's Degree", "Master's Degree or Higher",
@@ -563,7 +571,7 @@ function readWorkerFields() {
     const raw = localStorage.getItem("user");
     if (!raw) return null;
     return JSON.parse(raw) as {
-      dob?: string; educationLevel?: string; experienceType?: string; experienceTypes?: string[];
+      dob?: string; gender?: string; educationLevel?: string; experienceType?: string; experienceTypes?: string[];
       location?: { lat?: number; lng?: number; address?: string };
       equipment?: { name: string; available: boolean }[];
       availability?: string[];
@@ -726,6 +734,7 @@ function WorkerProfileSection({
   const stored = readWorkerFields();
 
   const [dob,          setDob]          = useState(stored?.dob ?? "");
+  const [gender,       setGender]       = useState(stored?.gender ?? "");
   const [education,    setEducation]    = useState(stored?.educationLevel ?? "");
   // A worker can practise several fields - multiple categories may be selected.
   const [experiences,  setExperiences]  = useState<string[]>(
@@ -792,6 +801,7 @@ function WorkerProfileSection({
     try {
       const payload = {
         dob,
+        gender,
         educationLevel: education,
         experienceType: experiences[0] ?? "",
         experienceTypes: experiences,
@@ -834,6 +844,28 @@ function WorkerProfileSection({
                 onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                 onBlur={e => (e.currentTarget.style.borderColor = "#222")}
               />
+            </div>
+
+            <div>
+              <label style={fieldLabel}>{t("settings_page.worker_details.gender") || "Gender"}</label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
+                {GENDER_OPTIONS.map(({ value, label }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setGender(g => (g === value ? "" : value))}
+                    style={{
+                      padding: "7px 12px", borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                      fontFamily: "inherit",
+                      background: gender === value ? "rgba(249,115,22,0.15)" : "#141414",
+                      border: `1px solid ${gender === value ? "#f97316" : "#222"}`,
+                      color: gender === value ? "#f97316" : "#888",
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div>

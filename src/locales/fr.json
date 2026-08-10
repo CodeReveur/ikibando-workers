@@ -227,7 +227,8 @@
       "pending": "En attente",
       "select": "Sélectionner…",
       "withdrawn": "Retiré",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "optional": "(facultatif)"
     },
     "provinces": {
       "city_of_kigali": "Ville de Rwanda",
@@ -675,7 +676,12 @@
       "category_multi_hint": "- sélectionnez tout ce qui s'applique",
       "category_selected": "sélectionné(s)",
       "category_primary": "Principale",
-      "category_note": "Toutes vos catégories apparaissent sur votre profil. La première que vous choisissez est votre catégorie principale."
+      "category_note": "Toutes vos catégories apparaissent sur votre profil. La première que vous choisissez est votre catégorie principale.",
+      "gender_label": "Genre",
+      "gender_male": "Homme",
+      "gender_female": "Femme",
+      "gender_other": "Autre",
+      "gender_undisclosed": "Je préfère ne pas répondre"
     },
     "location_avail": {
       "location_label": "Votre emplacement",
@@ -1446,7 +1452,8 @@
       "bio": "Biographie professionnelle",
       "bio_placeholder": "Parlez-nous de votre expérience...",
       "save_worker_btn": "Enregistrer le profil de travailleur",
-      "availability_hint": "Choisissez les jours où vous pouvez travailler"
+      "availability_hint": "Choisissez les jours où vous pouvez travailler",
+      "gender": "Genre"
     },
     "security": {
       "password_title": "Modifier le mot de passe",
