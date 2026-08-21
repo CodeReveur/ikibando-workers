@@ -11,7 +11,7 @@ import {
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
 import {
-  Bike, Phone, Power, Banknote, Smartphone, CheckCircle2, X, Star, LogOut, ChevronDown, ChevronUp,
+  Bike, Phone, Power, Banknote, Smartphone, CheckCircle2, X, Star, LogOut, ChevronDown, ChevronUp, Globe,
 } from "lucide-react";
 
 const POLL_MS = 5000;
@@ -30,7 +30,8 @@ type Tab = "rides" | "money" | "trips" | "more";
  * trips, raise a complaint. The session persists until an explicit logout.
  */
 export default function MotariDrivePage() {
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
+  const [langOpen, setLangOpen] = useState(false);
 
   const [state, setState] = useState<MotariState | null>(null);
   const [history, setHistory] = useState<MotariHistory | null>(null);
@@ -282,6 +283,35 @@ export default function MotariDrivePage() {
         }}>
           <Bike size={11} color="#f97316" />
           {state?.profile?.plateNumber || "Motari"}
+        </div>
+
+        {/* Language, top centre: a motari picks their own language here. */}
+        <div style={{ position: "absolute", top: 14, left: "50%", transform: "translateX(-50%)", zIndex: 1002 }}>
+          <button onClick={() => setLangOpen(o => !o)} aria-label="Language" style={{
+            ...glass, borderRadius: 999, padding: "7px 12px", display: "flex", alignItems: "center",
+            gap: 5, cursor: "pointer", color: "#fff", fontSize: 9.5, fontWeight: 800,
+            letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "inherit",
+          }}>
+            <Globe size={12} color="#f97316" />
+            {language === "kinyy" ? "RW" : language.toUpperCase()}
+          </button>
+          {langOpen && (
+            <div style={{ ...glass, position: "absolute", top: 38, left: "50%", transform: "translateX(-50%)", borderRadius: 12, overflow: "hidden", width: 128 }}>
+              {([
+                ["en", "English"], ["fr", "Français"], ["kinyy", "Kinyarwanda"], ["sw", "Kiswahili"],
+              ] as const).map(([code, label]) => (
+                <button key={code} onClick={() => { setLanguage(code); setLangOpen(false); }} style={{
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  width: "100%", padding: "9px 12px", background: "none", border: "none",
+                  borderBottom: "1px solid #1a1a1a", cursor: "pointer", fontFamily: "inherit",
+                  color: language === code ? "#f97316" : "#ccc", fontSize: 11, fontWeight: 600,
+                }}>
+                  {label}
+                  {language === code && <span style={{ fontSize: 9 }}>✓</span>}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Online toggle, top right */}
