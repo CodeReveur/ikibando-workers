@@ -43,6 +43,33 @@ export function playSound(key: SoundKey) {
 }
 
 /**
+ * Ring continuously until stopped — for an alert the user must answer, like a
+ * ride offer that expires in 30 seconds. Calling it again while the same sound
+ * is already ringing does nothing, so a poll can call it freely.
+ */
+export function startSoundLoop(key: SoundKey) {
+  try {
+    const el = element(key);
+    if (!el) return;
+    if (el.loop && !el.paused) return;
+    el.loop = true;
+    el.currentTime = 0;
+    void el.play().catch(() => {});
+  } catch { /* ignore */ }
+}
+
+/** Stop a looping sound: the offer was answered, expired, or moved on. */
+export function stopSoundLoop(key: SoundKey) {
+  try {
+    const el = cache.get(key);
+    if (!el) return;
+    el.loop = false;
+    el.pause();
+    el.currentTime = 0;
+  } catch { /* ignore */ }
+}
+
+/**
  * Prime playback on the first user gesture, so the first real notification is
  * audible instead of being swallowed by the browser's autoplay policy.
  */

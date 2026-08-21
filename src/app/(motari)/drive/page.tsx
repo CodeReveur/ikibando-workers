@@ -10,7 +10,7 @@ import {
   type MotariState, type MotariHistory, type RideDto,
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
-import { playSound, unlockSounds } from "@/lib/sounds";
+import { playSound, startSoundLoop, stopSoundLoop, unlockSounds } from "@/lib/sounds";
 import {
   Bike, Phone, Power, Banknote, Smartphone, CheckCircle2, X, Star, LogOut, ChevronDown, ChevronUp, Globe,
 } from "lucide-react";
@@ -90,15 +90,11 @@ export default function MotariDrivePage() {
     };
   }, []);
 
-  // A ring for each new offer, and one for a ride ending or a fare landing.
-  const lastOfferId = useRef<string | null>(null);
+  // The offer keeps ringing for its whole window, like a phone call, and stops
+  // the moment it is accepted, passed, or expires.
   const prevRideStatus = useRef<string | null>(null);
   const prevPaidStatus = useRef<string | undefined>(undefined);
   useEffect(() => {
-    const id = state?.offer?.rideId ?? null;
-    if (id && id !== lastOfferId.current) playSound("incoming-ride");
-    lastOfferId.current = id;
-
     const active = state?.activeRide;
     const before = prevRideStatus.current;
     if (!active && before && ["ASSIGNED", "ARRIVED", "IN_RIDE"].includes(before)) {
@@ -110,7 +106,16 @@ export default function MotariDrivePage() {
     }
     prevRideStatus.current = active?.status ?? null;
     prevPaidStatus.current = active?.paymentStatus;
-  }, [state?.offer?.rideId, state?.activeRide?.status, state?.activeRide?.paymentStatus, state]);
+  }, [state?.activeRide?.status, state?.activeRide?.paymentStatus, state]);
+
+  // Ring while an offer is live and its countdown still has time; silence it as
+  // soon as the card goes away for any reason, including leaving the page.
+  const ringing = !!state?.offer && !state?.activeRide && offerLeft > 0;
+  useEffect(() => {
+    if (ringing) startSoundLoop("incoming-ride");
+    else stopSoundLoop("incoming-ride");
+  }, [ringing]);
+  useEffect(() => () => stopSoundLoop("incoming-ride"), []);
 
   /* ── session: present until logout; a dead session goes to sign in ──────── */
   useEffect(() => {
