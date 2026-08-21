@@ -183,10 +183,19 @@ export default function Footer() {
         </div>
         {/* Two deliberate rows instead of one long wrapping line: site links on
             top, company/legal plus Donate below. Each row still wraps on tiny screens. */}
-        {/* The block sits on the footer's right; the rows inside share a left edge. */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 10, alignItems: "flex-start" }}>
+        {/* Mobile: one wrapping row, as it always was. Large screens: two rows
+            sharing a left edge inside the right-aligned block. */}
+        <style>{`
+          .foot-links { display: flex; flex-wrap: wrap; gap: 18px; font-size: 12px; align-items: center; }
+          .foot-row { display: contents; }
+          @media (min-width: 720px) {
+            .foot-links { flex-direction: column; flex-wrap: nowrap; gap: 10px; align-items: flex-start; }
+            .foot-row { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; }
+          }
+        `}</style>
+        <div className="foot-links">
           {[links.slice(0, 4), links.slice(4)].map((row, i) => (
-            <div key={i} style={{ display: "flex", flexWrap: "wrap", gap: 18, fontSize: 12, alignItems: "center" }}>
+            <div key={i} className="foot-row">
               {row.map(({ href, label }) => (
                 <a key={href} href={href} style={{ color: "#444", textDecoration: "none" }}
                   onMouseEnter={e => (e.currentTarget.style.color = "#f97316")}
