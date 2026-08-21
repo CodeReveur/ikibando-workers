@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { MotariMap, type MapPoint } from "@/components/motari/MotariMap";
+import { MotariMap, type MapPoint, type ExtraPoint } from "@/components/motari/MotariMap";
 import { NavigationMap } from "@/components/map/NavigationMap";
 import {
   getMotariState, getMotariHistory, saveMotariProfile, setMotariOnline, motariHeartbeat,
@@ -203,8 +203,16 @@ export default function MotariDrivePage() {
   const mapPickup: MapPoint | null = ride ? { latitude: ride.pickupLat, longitude: ride.pickupLng } : null;
   const mapDest: MapPoint | null = ride && ride.destLat != null && ride.destLng != null
     ? { latitude: ride.destLat, longitude: ride.destLng } : null;
-  const seekers: MapPoint[] = !ride && online
-    ? (state?.nearby ?? []).map(n => ({ latitude: n.pickupLat, longitude: n.pickupLng }))
+  // Waiting passengers as tappable pins: name the place and the fare so a driver
+  // can judge a request from the map alone, then tap to accept it.
+  const seekers: ExtraPoint[] = !ride && online
+    ? (state?.nearby ?? []).map(n => ({
+        id: n.id,
+        latitude: n.pickupLat,
+        longitude: n.pickupLng,
+        label: `${n.pickupName || (t("motari.dash.waiting_here") || "Waiting here")} · ${km(n.distanceToPickupM)}`
+             + (n.quotedFareRwf != null ? ` · ${fmt(n.quotedFareRwf)}` : ""),
+      }))
     : [];
 
   /* ── styles (passenger-app vocabulary) ──────────────────────────────────── */
@@ -242,7 +250,11 @@ export default function MotariDrivePage() {
       <div className="drive-frame" style={{ position: "relative", width: "100%", maxWidth: 480, height: "100%", background: "#000", overflow: "hidden" }}>
 
         {/* MAP — the driver is the moto icon, ringed by the device's accuracy circle */}
-        <MotariMap pickup={mapPickup} destination={mapDest} driver={me} selfAccuracyM={gpsAcc} extras={seekers} />
+        <MotariMap
+          pickup={mapPickup} destination={mapDest} driver={me}
+          selfAccuracyM={gpsAcc} extras={seekers}
+          onExtraClick={id => act(() => acceptRide(id, token()))}
+        />
 
         {/* Brand chip */}
         <div style={{

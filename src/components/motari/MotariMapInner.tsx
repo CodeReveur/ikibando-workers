@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { MapContainer, TileLayer, Marker, Polyline, useMap, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Polyline, Tooltip, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { MotariMapProps, MapPoint } from "./MotariMap";
@@ -35,15 +35,18 @@ const driverIcon = L.divIcon({
  * destination added, driver appeared, route drawn) — not on every driver tick,
  * so a panning passenger isn't fought by the camera.
  */
-function Reframe({ pickup, destination, driver, self, routeLen }: {
+function Reframe({ pickup, destination, driver, self, extras, routeLen }: {
   pickup?: MapPoint | null; destination?: MapPoint | null; driver?: MapPoint | null;
-  self?: MapPoint | null; routeLen: number;
+  self?: MapPoint | null; extras?: MapPoint[] | null; routeLen: number;
 }) {
   const map = useMap();
   // The device dot centers the map only while nothing else is placed: once a
   // pickup or ride exists, those own the frame and the dot just follows along.
-  const selfLeads = !!self && !pickup && !destination && !driver;
-  const signature = [!!pickup, !!destination, !!driver, routeLen > 0, selfLeads].join("|");
+  const hasTrip = !!pickup || !!destination;
+  const selfLeads = !!self && !hasTrip && !driver;
+  // Waiting passengers only widen the frame while there is no trip in progress.
+  const waiting = !hasTrip ? (extras ?? []) : [];
+  const signature = [!!pickup, !!destination, !!driver, routeLen > 0, selfLeads, waiting.length].join("|");
   const lastSig = useRef("");
   useEffect(() => {
     if (signature === lastSig.current) return;
@@ -52,10 +55,11 @@ function Reframe({ pickup, destination, driver, self, routeLen }: {
     if (pickup) pts.push([pickup.latitude, pickup.longitude]);
     if (destination) pts.push([destination.latitude, destination.longitude]);
     if (driver) pts.push([driver.latitude, driver.longitude]);
+    waiting.forEach(w => pts.push([w.latitude, w.longitude]));
     if (pts.length === 0 && selfLeads && self) pts.push([self.latitude, self.longitude]);
     if (pts.length === 0) return;
     if (pts.length === 1) map.flyTo(pts[0], 16, { duration: 0.8 });
-    else map.flyToBounds(L.latLngBounds(pts), { padding: [60, 60], duration: 0.8 });
+    else map.flyToBounds(L.latLngBounds(pts), { padding: [60, 60], maxZoom: 16, duration: 0.8 });
   }, [signature, pickup, destination, driver, self, map]);
   return null;
 }
@@ -109,15 +113,19 @@ const selfIcon = L.divIcon({
   iconAnchor: [9, 9],
 });
 
-const extraIcon = L.divIcon({
-  className: "motari-extra",
-  html: `<div style="width:14px;height:14px;border-radius:50%;background:#f97316;border:2px solid #fff;
-         box-shadow:0 1px 6px rgba(0,0,0,0.5)"></div>`,
-  iconSize: [14, 14],
-  iconAnchor: [7, 7],
+// A passenger waiting for a moto: teardrop pin with a person, so drivers can
+// read the demand around them at a glance.
+const waitingIcon = L.divIcon({
+  className: "motari-waiting",
+  html: `<div style="width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);
+           background:#f97316;border:2px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,0.55);
+           display:flex;align-items:center;justify-content:center">
+           <span style="transform:rotate(45deg);font-size:13px;line-height:1">🙋</span></div>`,
+  iconSize: [28, 28],
+  iconAnchor: [14, 28],
 });
 
-export default function MotariMapInner({ pickup, destination, driver, route, extras, self, selfAccuracyM, onPick }: MotariMapProps) {
+export default function MotariMapInner({ pickup, destination, driver, route, extras, self, selfAccuracyM, onPick, onExtraClick }: MotariMapProps) {
   return (
     <MapContainer
       center={KIGALI}
@@ -129,7 +137,7 @@ export default function MotariMapInner({ pickup, destination, driver, route, ext
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Reframe pickup={pickup} destination={destination} driver={driver} self={self} routeLen={route?.length ?? 0} />
+      <Reframe pickup={pickup} destination={destination} driver={driver} self={self} extras={extras} routeLen={route?.length ?? 0} />
       <TapToPick onPick={onPick} />
       {route && route.length > 1 && (
         <>
@@ -141,7 +149,19 @@ export default function MotariMapInner({ pickup, destination, driver, route, ext
       {destination && <Marker position={[destination.latitude, destination.longitude]} icon={destIcon} />}
       {driver && <Marker position={[driver.latitude, driver.longitude]} icon={driverIcon} />}
       {extras?.map((p, i) => (
-        <Marker key={i} position={[p.latitude, p.longitude]} icon={extraIcon} />
+        <Marker
+          key={p.id ?? i}
+          position={[p.latitude, p.longitude]}
+          icon={waitingIcon}
+          zIndexOffset={300}
+          eventHandlers={p.id && onExtraClick ? { click: () => onExtraClick(p.id!) } : undefined}
+        >
+          {p.label && (
+            <Tooltip direction="top" offset={[0, -26]} opacity={1} permanent={extras.length <= 3}>
+              {p.label}
+            </Tooltip>
+          )}
+        </Marker>
       ))}
       {/* Accuracy circle around whichever marker represents this device: the blue
           dot (passenger) or, when only an accuracy is given, the moto (driver). */}

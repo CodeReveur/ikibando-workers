@@ -2629,7 +2629,8 @@
       "decline": "Acha",
       "btn_platform": "Amelipa kupitia platform",
       "paid_platform": "Imelipwa kupitia platform. Pochi imejazwa.",
-      "platform_pending": "Abiria analipa kupitia platform. Cash bado inawezekana."
+      "platform_pending": "Abiria analipa kupitia platform. Cash bado inawezekana.",
+      "waiting_here": "Anasubiri hapa"
     },
     "login": {
       "title": "Ingia",

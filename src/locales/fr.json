@@ -2629,7 +2629,8 @@
       "decline": "Passer",
       "btn_platform": "Payé via la plateforme",
       "paid_platform": "Payé via la plateforme. Portefeuille crédité.",
-      "platform_pending": "Le passager paie via la plateforme. Le cash reste possible."
+      "platform_pending": "Le passager paie via la plateforme. Le cash reste possible.",
+      "waiting_here": "En attente ici"
     },
     "login": {
       "title": "Se connecter",

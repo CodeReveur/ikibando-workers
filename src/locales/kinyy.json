@@ -2629,7 +2629,8 @@
       "decline": "Reka",
       "btn_platform": "Yishyuye kuri platform",
       "paid_platform": "Yishyuwe kuri platform. Konti yawe yongewemo.",
-      "platform_pending": "Umugenzi arishyura kuri platform. Cash iracyashoboka."
+      "platform_pending": "Umugenzi arishyura kuri platform. Cash iracyashoboka.",
+      "waiting_here": "Ategereje hano"
     },
     "login": {
       "title": "Injira",

@@ -7,14 +7,22 @@ export interface MapPoint {
   longitude: number;
 }
 
+/** A waiting passenger on the driver's map: pin plus a short label. */
+export interface ExtraPoint extends MapPoint {
+  id?: string;
+  label?: string;
+}
+
 export interface MotariMapProps {
   pickup?: MapPoint | null;
   destination?: MapPoint | null;
   driver?: MapPoint | null;
   /** Road geometry between pickup and destination, ready for a polyline. */
   route?: [number, number][] | null;
-  /** Extra small markers, e.g. pickups of passengers currently seeking a ride. */
-  extras?: MapPoint[] | null;
+  /** Waiting passengers: pickup pins the driver can see and tap. */
+  extras?: ExtraPoint[] | null;
+  /** Fired when a waiting-passenger pin is tapped. */
+  onExtraClick?: (id: string) => void;
   /** The device's live GPS position: a pulsing blue dot that follows the user. */
   self?: MapPoint | null;
   /** Reported accuracy of the fix in metres; drawn as a circle so a coarse
