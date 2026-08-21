@@ -99,20 +99,6 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
   const [selectedRole, setSelectedRole] = useState<"WORKER" | "EMPLOYER">(
     (authResult?.user?.role as "WORKER" | "EMPLOYER") || "WORKER"
   );
-  // Motari is a WORKER account with driver intent: after onboarding they land on
-  // /seeker/motari to register the moto. The flag survives the wizard via localStorage.
-  const [asMotari, setAsMotari] = useState<boolean>(() => {
-    try { return typeof window !== "undefined" && localStorage.getItem("register_as_motari") === "1"; }
-    catch { return false; }
-  });
-  const pickRole = (r: "WORKER" | "EMPLOYER" | "MOTARI") => {
-    setSelectedRole(r === "EMPLOYER" ? "EMPLOYER" : "WORKER");
-    setAsMotari(r === "MOTARI");
-    try {
-      if (r === "MOTARI") localStorage.setItem("register_as_motari", "1");
-      else localStorage.removeItem("register_as_motari");
-    } catch {}
-  };
 
   const ACCOUNT_TYPES_LOCALIZED = [
     { value: "INDIVIDUAL" as AccountType, label: t("onboarding.account_types.individual.label") || "Individual", icon: "🧍", desc: t("onboarding.account_types.individual.desc") || "Just me, working solo" },
@@ -592,48 +578,42 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
           {/* ── Role Select ── */}
           {step === "ROLE_SELECT" && (
             <div className="space-y-4">
-              <div className="grid grid-cols-3 gap-3">
-                {(["WORKER", "MOTARI", "EMPLOYER"] as const).map((r) => {
-                  const active = r === "MOTARI" ? asMotari
-                    : r === "WORKER" ? selectedRole === "WORKER" && !asMotari
-                    : selectedRole === "EMPLOYER";
-                  const label = r === "WORKER" ? t("onboarding.roles.worker_label")
-                    : r === "MOTARI" ? (t("onboarding.roles.motari_label") || "Motari")
-                    : t("onboarding.roles.employer_label");
-                  const desc = r === "WORKER" ? t("onboarding.roles.worker_desc")
-                    : r === "MOTARI" ? (t("onboarding.roles.motari_desc") || "Moto taxi driver")
-                    : t("onboarding.roles.employer_desc");
+              <div className="grid grid-cols-2 gap-3">
+                {(["WORKER", "EMPLOYER"] as const).map((r) => {
+                  const active = selectedRole === r;
                   return (
                     <button
                       key={r}
                       type="button"
-                      onClick={() => pickRole(r)}
-                      className={`flex flex-col items-center justify-center gap-3 rounded-xl border p-4 transition-all ${
+                      onClick={() => setSelectedRole(r)}
+                      className={`flex flex-col items-center justify-center gap-3 rounded-xl border p-5 transition-all ${
                         active
                           ? "bg-[#f97316]/10 border-[#f97316]"
                           : "bg-[#1a1a1a] border-[#2a2a2a] hover:border-gray-500"
                       }`}
                     >
-                      <span className="text-3xl">{r === "WORKER" ? "👷" : r === "MOTARI" ? "🏍️" : "🏢"}</span>
+                      <span className="text-3xl">{r === "WORKER" ? "👷" : "🏢"}</span>
                       <div className="text-center">
                         <p className={`text-sm font-bold ${active ? "text-[#f97316]" : "text-white"}`}>
-                          {label}
+                          {r === "WORKER" ? t("onboarding.roles.worker_label") : t("onboarding.roles.employer_label")}
                         </p>
                         <p className="text-[11px] text-gray-500 mt-0.5">
-                          {desc}
+                          {r === "WORKER" ? t("onboarding.roles.worker_desc") : t("onboarding.roles.employer_desc")}
                         </p>
                       </div>
                     </button>
                   );
                 })}
               </div>
+              {/* Motari never signs up here: their field set (plate, brand, permit) has
+                  its own dedicated modal, linked below the form and on the map page. */}
               <button
                 onClick={handleRoleSelectContinue}
                 disabled={loading}
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-50 text-white text-sm font-bold py-3 rounded-xl transition-colors mt-2 flex items-center justify-center gap-2"
               >
                 {loading && <Loader2 size={15} className="animate-spin" />}
-                {t("onboarding.roles.continue_btn", { role: asMotari ? (t("onboarding.roles.motari_label") || "Motari") : selectedRole === "WORKER" ? t("common.nav.job_seeker") || "Job Seeker" : t("common.nav.employer") || "Employer" })}
+                {t("onboarding.roles.continue_btn", { role: selectedRole === "WORKER" ? t("common.nav.job_seeker") || "Job Seeker" : t("common.nav.employer") || "Employer" })}
               </button>
             </div>
           )}

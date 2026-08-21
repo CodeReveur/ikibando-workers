@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { MotariMap, type MapPoint } from "@/components/motari/MotariMap";
+import { MotariRegisterModal } from "@/components/motari/MotariRegisterModal";
 import { searchPlaces, reverseGeocode, type PlaceSuggestion } from "@/lib/geocoding";
 import { getRoute, fmtDistance, fmtDuration, type RouteResult } from "@/lib/routing";
 import {
@@ -36,6 +37,14 @@ export default function AskMotariPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [minimized, setMinimized] = useState(false);
+  const [registerOpen, setRegisterOpen] = useState(false);
+
+  // /motari?register=1 (footer and signup links) opens the motari signup modal.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("register") === "1") {
+      setRegisterOpen(true);
+    }
+  }, []);
 
   // request form
   const [pickup, setPickup] = useState<Picked | null>(null);
@@ -278,21 +287,31 @@ export default function AskMotariPage() {
             ...glass, position: "absolute", top: 40, left: 0,
             borderRadius: 12, overflow: "hidden", width: 168,
           }}>
-            {[
+            {([
               { href: "/", Icon: Home, label: t("common.nav.home") || "Home" },
               { href: "/browse", Icon: Users, label: t("common.nav.browse") || "Browse workers" },
-              { href: "/motari/register", Icon: Bike, label: t("motari.menu.register") || "Register as motari" },
+              { onClick: () => { setRegisterOpen(true); setMenuOpen(false); }, Icon: Bike, label: t("motari.menu.register") || "Register as motari" },
               { href: "/seeker/motari", Icon: Bike, label: t("motari.menu.drive") || "Drive a motari" },
               { href: "/help", Icon: HelpCircle, label: t("common.nav.help") || "Help" },
-            ].map(({ href, Icon, label }) => (
-              <a key={href} href={href} style={{
+            ] as { href?: string; onClick?: () => void; Icon: typeof Home; label: string }[]).map(({ href, onClick, Icon, label }) => {
+              const style: React.CSSProperties = {
                 display: "flex", alignItems: "center", gap: 9, padding: "10px 13px",
                 color: "#ccc", fontSize: 11, fontWeight: 600, textDecoration: "none",
-                borderBottom: "1px solid #1a1a1a",
-              }}>
-                <Icon size={13} color="#f97316" /> {label}
-              </a>
-            ))}
+                borderBottom: "1px solid #1a1a1a", width: "100%", background: "none",
+                border: "none", borderBottomWidth: 1, borderBottomStyle: "solid",
+                borderBottomColor: "#1a1a1a", cursor: "pointer", fontFamily: "inherit",
+                textAlign: "left",
+              };
+              return href ? (
+                <a key={label} href={href} style={style}>
+                  <Icon size={13} color="#f97316" /> {label}
+                </a>
+              ) : (
+                <button key={label} onClick={onClick} style={style}>
+                  <Icon size={13} color="#f97316" /> {label}
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
@@ -652,6 +671,7 @@ export default function AskMotariPage() {
         </div>
       </div>
 
+      <MotariRegisterModal open={registerOpen} onClose={() => setRegisterOpen(false)} />
       </div>
 
       <style>{`

@@ -66,11 +66,6 @@ export default function SignUpPage() {
   useEffect(() => {
     const ref = new URLSearchParams(window.location.search).get("ref");
     if (ref) setReferralCode(ref.trim().toUpperCase());
-    // /signup?as=motari (from the Ask Motari menu) preselects the Motari role
-    // in the wizard and routes the finished signup to /seeker/motari.
-    if (new URLSearchParams(window.location.search).get("as") === "motari") {
-      try { localStorage.setItem("register_as_motari", "1"); } catch {}
-    }
   }, []);
 
   /** One rule set for blur, live typing and submit. Returns "" when the value is valid. */
@@ -704,6 +699,13 @@ export default function SignUpPage() {
                 }}
               >{t("signup.footer.signin_link")}</a>
             </p>
+            {/* Motari have their own signup: different field set (plate, brand, permit). */}
+            <p style={{ textAlign: "center", fontSize: 12.5, color: "#666", marginTop: 6 }}>
+              {t("motari.register.signup_prompt") || "Driving a moto taxi?"}{" "}
+              <a href="/motari?register=1" style={{ color: "#f97316", fontWeight: 700, textDecoration: "none" }}>
+                {t("motari.menu.register") || "Register as motari"}
+              </a>
+            </p>
           </div>
         </div>
       </div>
@@ -729,15 +731,7 @@ function saveAndRedirect(result: AuthResult) {
   localStorage.setItem("refresh_token", result.refreshToken);
   localStorage.setItem("user", JSON.stringify(result.user));
   const stored = getAndClearRedirect();
-  // A signup that chose the Motari role lands on the moto registration to
-  // finish becoming a driver (plate, brand, permit).
-  let defaultDest = result.user.role === "EMPLOYER" ? "/owner" : "/seeker";
-  try {
-    if (result.user.role === "WORKER" && localStorage.getItem("register_as_motari") === "1") {
-      localStorage.removeItem("register_as_motari");
-      defaultDest = "/seeker/motari";
-    }
-  } catch {}
+  const defaultDest = result.user.role === "EMPLOYER" ? "/owner" : "/seeker";
   window.location.href = stored || defaultDest;
 }
 

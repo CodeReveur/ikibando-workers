@@ -616,9 +616,7 @@
       "worker_desc": "Browse & apply for jobs",
       "employer_label": "Hire Workers",
       "employer_desc": "Post jobs & hire talent",
-      "continue_btn": "Continue as {role}",
-      "motari_label": "Motari",
-      "motari_desc": "Moto taxi driver"
+      "continue_btn": "Continue as {role}"
     },
     "otp": {
       "placeholder": "6-digit code",
@@ -2562,7 +2560,8 @@
       "resend": "Resend code",
       "back": "Back to Ask Motari",
       "have_account": "Already registered?",
-      "signin": "Sign in"
+      "signin": "Sign in",
+      "signup_prompt": "Driving a moto taxi?"
     }
   }
 }

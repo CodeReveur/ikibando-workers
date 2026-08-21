@@ -615,9 +615,7 @@
       "worker_desc": "Vinjari & omba kazi",
       "employer_label": "Ajiri Wafanyakazi",
       "employer_desc": "Chapisha kazi & ajiri vipaji",
-      "continue_btn": "Endelea kama {role}",
-      "motari_label": "Motari",
-      "motari_desc": "Dereva wa pikipiki"
+      "continue_btn": "Endelea kama {role}"
     },
     "otp": {
       "placeholder": "Nambari ya siri yenye tarakimu 6",
@@ -2561,7 +2559,8 @@
       "resend": "Tuma msimbo tena",
       "back": "Rudi kwa Omba Motari",
       "have_account": "Tayari umejisajili?",
-      "signin": "Ingia"
+      "signin": "Ingia",
+      "signup_prompt": "Unaendesha pikipiki?"
     }
   }
 }

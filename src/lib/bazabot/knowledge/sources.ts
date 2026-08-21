@@ -55,6 +55,47 @@ const DOCS: KnowledgeDoc[] = [
       "employers browse, and unlocks the verified badge. Approval is usually reviewed within a short time.",
   },
   {
+    id: "guide-ask-motari",
+    title: "Ask Motari: request a moto taxi ride",
+    category: "guide",
+    text: "Ask Motari is the platform's moto taxi service. Open the Ask Motari page from the home button or the Browse tab. " +
+      "Set your pickup by typing a place, tapping the map, or using your current location. The destination is optional: " +
+      "with a destination you get a fixed fare shown before you request; without one the ride runs on a fair meter " +
+      "(base fare plus a per kilometre rate). Enter your name and phone number and request. No account or login is needed. " +
+      "You will see the matched motari's name, photo, plate number and rating, track them live on the map, and pay cash or " +
+      "mobile money at the end. You can rate the driver after the ride.",
+  },
+  {
+    id: "guide-become-motari",
+    title: "Become a motari (moto taxi driver)",
+    category: "guide",
+    text: "Motari have their own registration, separate from worker and employer signup. Open Ask Motari and choose " +
+      "'Register as motari' in the menu (also linked from the site footer and the signup page). One form collects your " +
+      "legal name, plate number, moto brand or model, phone number, email and password. Verify the code emailed to you " +
+      "and you land on the driver dashboard. There you go online, receive nearby ride requests, accept, navigate to the " +
+      "pickup, run the ride, and confirm payment in cash or MoMo. Your earnings and total rides are tracked, and " +
+      "passengers rate you after each trip. When you sign in later, a motari account goes straight to the driver dashboard.",
+  },
+  {
+    id: "policy-motari-fares",
+    title: "Motari fares",
+    category: "policy",
+    text: "Motari rides have two fare modes. Quoted: when the passenger gives a destination, the fare is fixed up front " +
+      "from the road distance and honored at the end, no haggling. Metered: with no destination, the passenger sees the " +
+      "base fare and per kilometre rate before requesting, and the final fare comes from the distance actually ridden. " +
+      "Both modes have a minimum fare. Payment is cash or mobile money, confirmed by the driver at the end of the ride.",
+  },
+  {
+    id: "help-motari-ride",
+    title: "During a motari ride: tracking, cancelling, problems",
+    category: "help",
+    text: "After requesting, your ride page shows the search countdown, then your motari approaching on the live map. " +
+      "Check the plate number before you get on. You can cancel while searching or before pickup; a ride in progress is " +
+      "finished with the driver. If no motari is found nearby the request ends honestly and you can ask again with one tap. " +
+      "Your ride link works on any device, so losing connection never loses the ride. For problems use the Support button " +
+      "on the ride panel.",
+  },
+  {
     id: "help-login",
     title: "Login and password help",
     category: "help",

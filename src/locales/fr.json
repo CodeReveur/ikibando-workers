@@ -615,9 +615,7 @@
       "worker_desc": "Parcourir & postuler à des emplois",
       "employer_label": "Embaucher des travailleurs",
       "employer_desc": "Publier des offres & recruter des talents",
-      "continue_btn": "Continuer en tant que {role}",
-      "motari_label": "Motari",
-      "motari_desc": "Chauffeur de moto-taxi"
+      "continue_btn": "Continuer en tant que {role}"
     },
     "otp": {
       "placeholder": "Code à 6 chiffres",
@@ -2561,7 +2559,8 @@
       "resend": "Renvoyer le code",
       "back": "Retour à Ask Motari",
       "have_account": "Déjà inscrit ?",
-      "signin": "Se connecter"
+      "signin": "Se connecter",
+      "signup_prompt": "Vous conduisez une moto-taxi ?"
     }
   }
 }

@@ -615,9 +615,7 @@
       "worker_desc": "Reba & andikira akazi",
       "employer_label": "Tanga akazi",
       "employer_desc": "Shyiraho akazi & tanga akazi",
-      "continue_btn": "Komeza nka {role}",
-      "motari_label": "Motari",
-      "motari_desc": "Umushoferi wa moto"
+      "continue_btn": "Komeza nka {role}"
     },
     "otp": {
       "placeholder": "Kode y'imfashanyo y'imibare 6",
@@ -2561,7 +2559,8 @@
       "resend": "Ohereza indi kode",
       "back": "Subira kuri Saba Motari",
       "have_account": "Usanzwe wiyandikishije?",
-      "signin": "Injira"
+      "signin": "Injira",
+      "signup_prompt": "Utwara moto?"
     }
   }
 }
