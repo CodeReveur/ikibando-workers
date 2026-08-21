@@ -2491,7 +2491,6 @@
   },
   "motari": {
     "menu": {
-      "drive": "Drive a motari",
       "register": "Register as motari"
     },
     "request": {

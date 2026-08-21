@@ -12,7 +12,7 @@ import {
 import { useLanguage } from "@/lib/language-context";
 import {
   Menu, X, MapPin, Flag, Phone, User, Star, ChevronDown, ChevronUp,
-  LocateFixed, Home, Users, HelpCircle, Bike, Globe,
+  LocateFixed, Home, Users, HelpCircle, Bike, Globe, LogIn,
 } from "lucide-react";
 
 const ACTIVE_TOKEN_KEY = "motari_ride_token";
@@ -291,7 +291,8 @@ export default function AskMotariPage() {
               { href: "/", Icon: Home, label: t("common.nav.home") || "Home" },
               { href: "/browse", Icon: Users, label: t("common.nav.browse") || "Browse workers" },
               { onClick: () => { setRegisterOpen(true); setMenuOpen(false); }, Icon: Bike, label: t("motari.menu.register") || "Register as motari" },
-              { href: "/seeker/motari", Icon: Bike, label: t("motari.menu.drive") || "Drive a motari" },
+              // Sign-in already routes motari accounts to the driver dashboard.
+              { href: "/signin", Icon: LogIn, label: t("common.buttons.signin") || "Sign in" },
               { href: "/help", Icon: HelpCircle, label: t("common.nav.help") || "Help" },
             ] as { href?: string; onClick?: () => void; Icon: typeof Home; label: string }[]).map(({ href, onClick, Icon, label }) => {
               const style: React.CSSProperties = {
