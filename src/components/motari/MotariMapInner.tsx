@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { MapContainer, TileLayer, Marker, Polyline, useMap, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Polyline, Circle, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { MotariMapProps, MapPoint } from "./MotariMap";
@@ -88,7 +88,7 @@ const extraIcon = L.divIcon({
   iconAnchor: [7, 7],
 });
 
-export default function MotariMapInner({ pickup, destination, driver, route, extras, self, onPick }: MotariMapProps) {
+export default function MotariMapInner({ pickup, destination, driver, route, extras, self, selfAccuracyM, onPick }: MotariMapProps) {
   return (
     <MapContainer
       center={KIGALI}
@@ -114,6 +114,13 @@ export default function MotariMapInner({ pickup, destination, driver, route, ext
       {extras?.map((p, i) => (
         <Marker key={i} position={[p.latitude, p.longitude]} icon={extraIcon} />
       ))}
+      {self && selfAccuracyM != null && selfAccuracyM > 30 && (
+        <Circle
+          center={[self.latitude, self.longitude]}
+          radius={selfAccuracyM}
+          pathOptions={{ color: "#3b82f6", weight: 1, opacity: 0.35, fillColor: "#3b82f6", fillOpacity: 0.08 }}
+        />
+      )}
       {self && <Marker position={[self.latitude, self.longitude]} icon={selfIcon} zIndexOffset={500} />}
     </MapContainer>
   );

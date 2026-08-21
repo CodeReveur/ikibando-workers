@@ -17,6 +17,9 @@ export interface MotariMapProps {
   extras?: MapPoint[] | null;
   /** The device's live GPS position: a pulsing blue dot that follows the user. */
   self?: MapPoint | null;
+  /** Reported accuracy of the fix in metres; drawn as a circle so a coarse
+   *  network fix is visibly a guess, not a point. */
+  selfAccuracyM?: number | null;
   /** Fired when the user taps the map with no pickup set yet (pin-drop fallback). */
   onPick?: (p: MapPoint) => void;
 }

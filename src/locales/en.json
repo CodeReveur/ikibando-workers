@@ -2608,7 +2608,8 @@
       "logout": "Log out",
       "gps_off": "Enable location to receive rides.",
       "no_profile": "Register your moto to start driving.",
-      "save_moto": "Save moto"
+      "save_moto": "Save moto",
+      "gps_coarse": "Approximate location. Turn on precise GPS."
     },
     "login": {
       "title": "Sign in",

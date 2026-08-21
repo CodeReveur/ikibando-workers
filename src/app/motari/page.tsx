@@ -71,6 +71,7 @@ export default function AskMotariPage() {
   // Live device position: watched continuously, so the blue dot always shows
   // where the phone actually is and keeps refreshing as it moves.
   const [device, setDevice] = useState<MapPoint | null>(null);
+  const [deviceAcc, setDeviceAcc] = useState<number | null>(null);
   const deviceRef = useRef<{ lat: number; lng: number } | null>(null);
   useEffect(() => {
     if (!navigator.geolocation) return;
@@ -80,6 +81,7 @@ export default function AskMotariPage() {
         if (p.coords.accuracy != null && p.coords.accuracy > 5000) return;
         deviceRef.current = { lat: p.coords.latitude, lng: p.coords.longitude };
         setDevice({ latitude: p.coords.latitude, longitude: p.coords.longitude });
+        setDeviceAcc(p.coords.accuracy ?? null);
       },
       () => { /* permission denied or unavailable: the dot simply stays hidden */ },
       { enableHighAccuracy: true, maximumAge: 2000, timeout: 15000 },
@@ -303,6 +305,7 @@ export default function AskMotariPage() {
         destination={mapDest}
         driver={mapDriver}
         self={device}
+        selfAccuracyM={deviceAcc}
         route={!ride && route ? route.coordinates : null}
         onPick={ride ? undefined : pickOnMap}
       />

@@ -2607,7 +2607,8 @@
       "logout": "Se déconnecter",
       "gps_off": "Activez la localisation pour recevoir des courses.",
       "no_profile": "Enregistrez votre moto pour commencer.",
-      "save_moto": "Enregistrer la moto"
+      "save_moto": "Enregistrer la moto",
+      "gps_coarse": "Position approximative. Activez le GPS précis."
     },
     "login": {
       "title": "Se connecter",

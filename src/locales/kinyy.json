@@ -2607,7 +2607,8 @@
       "logout": "Sohoka",
       "gps_off": "Fungura location kugira ngo ubone ingendo.",
       "no_profile": "Andikisha moto yawe utangire.",
-      "save_moto": "Bika moto"
+      "save_moto": "Bika moto",
+      "gps_coarse": "Aho uri si ho nyaho. Fungura GPS nyayo."
     },
     "login": {
       "title": "Injira",

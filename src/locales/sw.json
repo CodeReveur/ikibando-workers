@@ -2607,7 +2607,8 @@
       "logout": "Toka",
       "gps_off": "Washa location ili upokee safari.",
       "no_profile": "Sajili pikipiki yako uanze.",
-      "save_moto": "Hifadhi pikipiki"
+      "save_moto": "Hifadhi pikipiki",
+      "gps_coarse": "Mahali pa makadirio. Washa GPS kamili."
     },
     "login": {
       "title": "Ingia",

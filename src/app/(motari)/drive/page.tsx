@@ -44,6 +44,7 @@ export default function MotariDrivePage() {
   // GPS position as STATE so the map marker re-renders and moves with every fix
   // (a ref alone updates silently and the marker appears frozen or missing).
   const [myPos, setMyPos] = useState<MapPoint | null>(null);
+  const [gpsAcc, setGpsAcc] = useState<number | null>(null);
 
   // profile form (only when the account has no moto yet)
   const [legalName, setLegalName] = useState("");
@@ -107,6 +108,7 @@ export default function MotariDrivePage() {
         if (p.coords.accuracy != null && p.coords.accuracy > 5000) return;
         posRef.current = { lat: p.coords.latitude, lng: p.coords.longitude };
         setMyPos({ latitude: p.coords.latitude, longitude: p.coords.longitude });
+        setGpsAcc(p.coords.accuracy ?? null);
         setGpsError("");
       },
       () => setGpsError(t("motari.dash.gps_off") || "Enable location to receive rides."),
@@ -227,8 +229,8 @@ export default function MotariDrivePage() {
     <div style={{ position: "fixed", inset: 0, background: "#000", overflow: "hidden", display: "flex", justifyContent: "center" }}>
       <div className="drive-frame" style={{ position: "relative", width: "100%", maxWidth: 480, height: "100%", background: "#000", overflow: "hidden" }}>
 
-        {/* MAP */}
-        <MotariMap pickup={mapPickup} destination={mapDest} driver={me} extras={seekers} />
+        {/* MAP — the device is the driver: blue dot + honest accuracy circle */}
+        <MotariMap pickup={mapPickup} destination={mapDest} self={me} selfAccuracyM={gpsAcc} extras={seekers} />
 
         {/* Brand chip */}
         <div style={{
@@ -255,6 +257,18 @@ export default function MotariDrivePage() {
           <Power size={11} />
           {online ? (t("motari.dash.online") || "Online") : (t("motari.dash.offline") || "Offline")}
         </button>
+
+        {/* Coarse-fix warning: the browser is guessing from the network, not GPS */}
+        {gpsAcc != null && gpsAcc > 150 && (
+          <div style={{
+            position: "absolute", top: 54, right: 14, zIndex: 998, ...glass,
+            borderRadius: 8, padding: "5px 10px", fontSize: 8.5, fontWeight: 800,
+            letterSpacing: "0.08em", textTransform: "uppercase", color: "#fbbf24", maxWidth: 200,
+          }}>
+            {(t("motari.dash.gps_coarse") || "Approximate location. Turn on precise GPS.")}
+            {" "}±{gpsAcc >= 1000 ? (gpsAcc / 1000).toFixed(1) + " km" : Math.round(gpsAcc) + " m"}
+          </div>
+        )}
 
         {/* BOTTOM SHEET */}
         <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 1000 }}>
