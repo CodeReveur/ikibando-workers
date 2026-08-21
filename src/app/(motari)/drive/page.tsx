@@ -41,6 +41,9 @@ export default function MotariDrivePage() {
   const [error, setError] = useState("");
   const [gpsError, setGpsError] = useState("");
   const posRef = useRef<{ lat: number; lng: number } | null>(null);
+  // GPS position as STATE so the map marker re-renders and moves with every fix
+  // (a ref alone updates silently and the marker appears frozen or missing).
+  const [myPos, setMyPos] = useState<MapPoint | null>(null);
 
   // profile form (only when the account has no moto yet)
   const [legalName, setLegalName] = useState("");
@@ -91,21 +94,37 @@ export default function MotariDrivePage() {
     }
   }, [tab, state?.activeRide?.status]);
 
-  /* ── GPS heartbeat while online ─────────────────────────────────────────── */
+  /* ── GPS: always watched, so the map shows the exact device position and
+        auto-refreshes as it moves — online or not. ──────────────────────────── */
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setGpsError(t("motari.dash.gps_off") || "Enable location to receive rides.");
+      return;
+    }
+    const watchId = navigator.geolocation.watchPosition(
+      p => {
+        // Kilometre-scale accuracy is an IP guess, not a GPS fix: don't draw it.
+        if (p.coords.accuracy != null && p.coords.accuracy > 5000) return;
+        posRef.current = { lat: p.coords.latitude, lng: p.coords.longitude };
+        setMyPos({ latitude: p.coords.latitude, longitude: p.coords.longitude });
+        setGpsError("");
+      },
+      () => setGpsError(t("motari.dash.gps_off") || "Enable location to receive rides."),
+      { enableHighAccuracy: true, maximumAge: 2000 },
+    );
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, [t]);
+
+  /* ── Heartbeat to the platform only while online ────────────────────────── */
   const online = !!state?.profile?.online;
   useEffect(() => {
-    if (!online || !navigator.geolocation) return;
-    const watchId = navigator.geolocation.watchPosition(
-      p => { posRef.current = { lat: p.coords.latitude, lng: p.coords.longitude }; setGpsError(""); },
-      () => setGpsError(t("motari.dash.gps_off") || "Enable location to receive rides."),
-      { enableHighAccuracy: true, maximumAge: 3000 },
-    );
+    if (!online) return;
     const beat = setInterval(() => {
       const pos = posRef.current;
       if (pos) motariHeartbeat(pos.lat, pos.lng, token()).then(setState).catch(() => {});
     }, HEARTBEAT_MS);
-    return () => { navigator.geolocation.clearWatch(watchId); clearInterval(beat); };
-  }, [online, t]);
+    return () => clearInterval(beat);
+  }, [online]);
 
   const act = async (fn: () => Promise<MotariState>) => {
     setBusy(true);
@@ -166,7 +185,7 @@ export default function MotariDrivePage() {
 
   /* ── map contents ───────────────────────────────────────────────────────── */
   const ride: RideDto | undefined = state?.activeRide;
-  const me: MapPoint | null = posRef.current ? { latitude: posRef.current.lat, longitude: posRef.current.lng } : null;
+  const me: MapPoint | null = myPos;
   const mapPickup: MapPoint | null = ride ? { latitude: ride.pickupLat, longitude: ride.pickupLng } : null;
   const mapDest: MapPoint | null = ride && ride.destLat != null && ride.destLng != null
     ? { latitude: ride.destLat, longitude: ride.destLng } : null;
@@ -568,6 +587,7 @@ export default function MotariDrivePage() {
 
       <style>{`
         .drive-frame input::placeholder, .drive-frame textarea::placeholder { color: #4a4a4a; font-weight: 400; opacity: 1; }
+        @keyframes gpspulse { 0% { transform: scale(0.6); opacity: 0.9 } 100% { transform: scale(1.8); opacity: 0 } }
         @media (min-width: 520px) {
           .drive-frame { border-left: 1px solid #1f1f1f; border-right: 1px solid #1f1f1f; box-shadow: 0 0 80px rgba(0,0,0,0.9); }
         }

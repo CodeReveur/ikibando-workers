@@ -68,6 +68,25 @@ export default function AskMotariPage() {
   const [stars, setStars] = useState(0);
   const tokenRef = useRef<string | null>(null);
 
+  // Live device position: watched continuously, so the blue dot always shows
+  // where the phone actually is and keeps refreshing as it moves.
+  const [device, setDevice] = useState<MapPoint | null>(null);
+  const deviceRef = useRef<{ lat: number; lng: number } | null>(null);
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    const id = navigator.geolocation.watchPosition(
+      p => {
+        // An accuracy in the kilometres is an IP-level guess, not a GPS fix.
+        if (p.coords.accuracy != null && p.coords.accuracy > 5000) return;
+        deviceRef.current = { lat: p.coords.latitude, lng: p.coords.longitude };
+        setDevice({ latitude: p.coords.latitude, longitude: p.coords.longitude });
+      },
+      () => { /* permission denied or unavailable: the dot simply stays hidden */ },
+      { enableHighAccuracy: true, maximumAge: 2000, timeout: 15000 },
+    );
+    return () => navigator.geolocation.clearWatch(id);
+  }, []);
+
   /* ── resume an active ride ─────────────────────────────────────────────── */
   useEffect(() => {
     const token = localStorage.getItem(ACTIVE_TOKEN_KEY);
@@ -121,7 +140,19 @@ export default function AskMotariPage() {
     }
   }, [pickup, dest]);
 
-  const useMyLocation = () => {
+  const useMyLocation = async () => {
+    // The continuous watch usually already holds a fresh, accurate fix: use it
+    // instantly instead of waiting for a new one-shot reading.
+    const fix = deviceRef.current;
+    if (fix) {
+      setLocating(true);
+      const loc = await reverseGeocode(fix.lat, fix.lng);
+      const label = loc.address.split(",").slice(0, 2).join(",").trim();
+      setPickup({ latitude: fix.lat, longitude: fix.lng, label });
+      setPickupQ(label);
+      setLocating(false);
+      return;
+    }
     if (!navigator.geolocation) return;
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
@@ -271,6 +302,7 @@ export default function AskMotariPage() {
         pickup={mapPickup}
         destination={mapDest}
         driver={mapDriver}
+        self={device}
         route={!ride && route ? route.coordinates : null}
         onPick={ride ? undefined : pickOnMap}
       />
@@ -682,6 +714,7 @@ export default function AskMotariPage() {
 
       <style>{`
         @keyframes mspin { to { transform: rotate(360deg) } }
+        @keyframes gpspulse { 0% { transform: scale(0.6); opacity: 0.9 } 100% { transform: scale(1.8); opacity: 0 } }
         /* Placeholders read as hints, never as typed text. */
         .motari-frame input::placeholder { color: #4a4a4a; font-weight: 400; opacity: 1; }
         /* Only on wide screens: outline the app frame so it reads as a device. */

@@ -15,6 +15,8 @@ export interface MotariMapProps {
   route?: [number, number][] | null;
   /** Extra small markers, e.g. pickups of passengers currently seeking a ride. */
   extras?: MapPoint[] | null;
+  /** The device's live GPS position: a pulsing blue dot that follows the user. */
+  self?: MapPoint | null;
   /** Fired when the user taps the map with no pickup set yet (pin-drop fallback). */
   onPick?: (p: MapPoint) => void;
 }
