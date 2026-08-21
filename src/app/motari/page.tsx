@@ -292,7 +292,7 @@ export default function AskMotariPage() {
               { href: "/browse", Icon: Users, label: t("common.nav.browse") || "Browse workers" },
               { onClick: () => { setRegisterOpen(true); setMenuOpen(false); }, Icon: Bike, label: t("motari.menu.register") || "Register as motari" },
               // Sign-in already routes motari accounts to the driver dashboard.
-              { href: "/signin", Icon: LogIn, label: t("common.buttons.signin") || "Sign in" },
+              { href: "/signin", Icon: LogIn, label: t("common.nav.signin") || "Sign in" },
               { href: "/help", Icon: HelpCircle, label: t("common.nav.help") || "Help" },
             ] as { href?: string; onClick?: () => void; Icon: typeof Home; label: string }[]).map(({ href, onClick, Icon, label }) => {
               const style: React.CSSProperties = {
