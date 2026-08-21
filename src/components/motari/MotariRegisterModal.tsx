@@ -52,7 +52,7 @@ export function MotariRegisterModal({ open, onClose }: { open: boolean; onClose:
         email: email.trim(),
         phone: phone.trim(),
         password,
-        role: "WORKER",
+        role: "MOTARI",
       });
       setAuth(result);
       localStorage.setItem("access_token", result.accessToken);

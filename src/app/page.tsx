@@ -137,6 +137,11 @@ const categories = [
 export default function Home() {
   const { t } = useLanguage();
   const [showPostJob, setShowPostJob] = useState(false);
+  // The hero serves each role its own next step; MOTARI goes to the driver app.
+  const [role, setRole] = useState<string | null>(null);
+  useEffect(() => {
+    try { setRole(JSON.parse(localStorage.getItem("user") || "null")?.role ?? null); } catch {}
+  }, []);
   const [workers, setWorkers] = useState<WorkerProfileDto[]>([]);
   const [jobs, setJobs] = useState<JobDto[]>([]);
   const [catStats, setCatStats] = useState<CategoryStats>({});
@@ -239,13 +244,23 @@ export default function Home() {
             <Bike size={16} strokeWidth={2} />
             {t("common.buttons.ask_motari") || "Ask Motari"}
           </a>
-          <a href="/signup" style={{
-            background: "transparent", color: "#aaa", borderRadius: 999,
-            padding: "12px 26px", fontWeight: 600, fontSize: 14, textDecoration: "none",
-            border: "1px solid #2a2a2a",
-          }}>
-            {t("common.buttons.become_worker")}
-          </a>
+          {role === "MOTARI" ? (
+            <a href="/drive" style={{
+              background: "transparent", color: "#aaa", borderRadius: 999,
+              padding: "12px 26px", fontWeight: 600, fontSize: 14, textDecoration: "none",
+              border: "1px solid #2a2a2a",
+            }}>
+              {t("common.nav.dashboard") || "Dashboard"}
+            </a>
+          ) : (
+            <a href="/signup" style={{
+              background: "transparent", color: "#aaa", borderRadius: 999,
+              padding: "12px 26px", fontWeight: 600, fontSize: 14, textDecoration: "none",
+              border: "1px solid #2a2a2a",
+            }}>
+              {t("common.buttons.become_worker")}
+            </a>
+          )}
         </div>
       </div>
 

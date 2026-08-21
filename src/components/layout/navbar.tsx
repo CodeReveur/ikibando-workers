@@ -80,7 +80,10 @@ export default function Navbar() {
     .toUpperCase() ?? "?";
 
   const firstName = user?.name?.split(" ")[0] ?? "";
-  const roleLabel = user?.role === "EMPLOYER" ? t("common.nav.employer") : t("common.nav.job_seeker");
+  const roleLabel =
+    user?.role === "EMPLOYER" ? t("common.nav.employer")
+    : user?.role === "MOTARI" ? "Motari"
+    : t("common.nav.job_seeker");
 
   const dashboardLinks = user?.role === "EMPLOYER"
     ? [
@@ -88,6 +91,11 @@ export default function Navbar() {
         { href: "/owner/offers",   icon: <Briefcase size={14} />, label: t("common.nav.offers")       },
         { href: "/owner/workers",  icon: <Users size={14} />,     label: t("common.nav.requests")     },
         { href: "/owner/settings", icon: <Settings size={14} />,  label: t("common.nav.settings")     },
+      ]
+    : user?.role === "MOTARI"
+    ? [
+        { href: "/drive",  icon: <Home size={14} />, label: t("common.nav.dashboard") },
+        { href: "/motari", icon: <Users size={14} />, label: t("common.buttons.ask_motari") || "Ask Motari" },
       ]
     : [
         { href: "/seeker",               icon: <Home size={14} />,      label: t("common.nav.dashboard")    },

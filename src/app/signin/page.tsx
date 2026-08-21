@@ -5,7 +5,7 @@ import { Eye, EyeOff, Mail, Lock, ArrowLeft } from "lucide-react";
 import { AuthCarousel } from "@/components/auth/auth-carousel";
 import { saveRedirect } from "@/lib/auth-redirect";
 import { GoogleLoginGate, GOOGLE_AUTH_ENABLED } from "@/components/auth/google-login-gate";
-import { loginWithGoogle, loginWithFacebook, loginWithEmail, getMotariState, apiError, apiErrorCode } from "@/lib/api";
+import { loginWithGoogle, loginWithFacebook, loginWithEmail, apiError, apiErrorCode } from "@/lib/api";
 import { getAndClearRedirect } from "@/lib/auth-redirect";
 import { RegistrationWizard } from "@/components/auth/registration-wizard";
 import { BadgeSubmissionWizard } from "@/components/auth/badge-submission-wizard";
@@ -46,7 +46,10 @@ export default function SignInPage() {
   /* Post-authentication routing (shared by email + social + gate resolution). */
   const proceed = (result: any, slide = false) => {
     setSlideResume(slide);
-    if (!result.user.onboardingCompleted) {
+    // Motari have no job-side onboarding or badge: straight to the driver app.
+    if (result.user.role === "MOTARI") {
+      saveAndRedirect(result);
+    } else if (!result.user.onboardingCompleted) {
       setAuthResult(result);
       setShowWizard(true);
     } else if (result.user.role === "WORKER" && !result.user.badgeSubmitted) {
@@ -649,14 +652,10 @@ async function saveAndRedirect(result: AuthResult) {
   localStorage.setItem("refresh_token", result.refreshToken);
   localStorage.setItem("user", JSON.stringify(result.user));
   const stored = getAndClearRedirect();
-  let defaultDest = result.user.role === "EMPLOYER" ? "/owner" : "/seeker";
-  // A worker whose account is a registered motari lands on the driver surface.
-  if (result.user.role === "WORKER") {
-    try {
-      const s = await getMotariState(result.accessToken);
-      if (s.profile) defaultDest = "/drive";
-    } catch { /* backend hiccup: fall through to the normal dashboard */ }
-  }
+  const defaultDest =
+    result.user.role === "EMPLOYER" ? "/owner"
+    : result.user.role === "MOTARI" ? "/drive"
+    : "/seeker";
   window.location.href = stored || defaultDest;
 }
 

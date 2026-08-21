@@ -153,7 +153,7 @@ export async function registerWithEmail(payload: {
   email: string;
   phone: string;
   password: string;
-  role: "WORKER" | "EMPLOYER";
+  role: "WORKER" | "EMPLOYER" | "MOTARI";
   referralCode?: string;
 }): Promise<AuthResult> {
   const { data } = await http.post("/api/auth/register", payload);
