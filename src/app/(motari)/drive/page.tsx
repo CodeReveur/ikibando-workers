@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { MotariMap, type MapPoint, type ExtraPoint } from "@/components/motari/MotariMap";
-import { NavigationMap } from "@/components/map/NavigationMap";
+import { getRoute, fmtDistance, fmtDuration, type RouteResult } from "@/lib/routing";
 import {
   getMotariState, getMotariHistory, saveMotariProfile, setMotariOnline, motariHeartbeat,
   acceptRide, declineRide, motariArrived, motariStart, motariComplete, motariPaid, motariCancelRide,
@@ -205,6 +205,23 @@ export default function MotariDrivePage() {
     ? { latitude: ride.destLat, longitude: ride.destLng } : null;
   // Waiting passengers as tappable pins: name the place and the fare so a driver
   // can judge a request from the map alone, then tap to accept it.
+  // While on a ride the main map draws the road ahead: to the pickup first,
+  // then to the destination once the passenger is on board.
+  const [navRoute, setNavRoute] = useState<RouteResult | null>(null);
+  const target: MapPoint | null = ride
+    ? (ride.status === "IN_RIDE" && ride.destLat != null && ride.destLng != null
+        ? { latitude: ride.destLat, longitude: ride.destLng }
+        : { latitude: ride.pickupLat, longitude: ride.pickupLng })
+    : null;
+  const targetKey = target ? `${ride?.status}:${target.latitude},${target.longitude}` : "";
+  const legKey = myPos ? `${myPos.latitude.toFixed(3)},${myPos.longitude.toFixed(3)}` : "";
+  useEffect(() => {
+    if (!target || !myPos) { setNavRoute(null); return; }
+    getRoute(myPos, target).then(setNavRoute).catch(() => {});
+    // Recompute per leg and roughly every 100 m of movement, not on every fix.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetKey, legKey]);
+
   const seekers: ExtraPoint[] = !ride && online
     ? (state?.nearby ?? []).map(n => ({
         id: n.id,
@@ -253,6 +270,7 @@ export default function MotariDrivePage() {
         <MotariMap
           pickup={mapPickup} destination={mapDest} driver={me}
           selfAccuracyM={gpsAcc} extras={seekers}
+          route={navRoute ? navRoute.coordinates : null}
           onExtraClick={id => act(() => acceptRide(id, token()))}
         />
 
@@ -432,6 +450,14 @@ export default function MotariDrivePage() {
                           <span style={{ color: "#f97316" }}>●</span> {ride.pickupName || "Pinned pickup"}<br />
                           <span style={{ color: "#16a34a" }}>●</span> {ride.destName || (t("motari.dash.open_dest") || "Passenger directs you. Meter runs.")}
                         </div>
+                        {navRoute && ["ASSIGNED", "ARRIVED", "IN_RIDE"].includes(ride.status) && (
+                          <div style={{ ...micro, color: "#f97316" }}>
+                            {ride.status === "IN_RIDE"
+                              ? (t("motari.dash.to_dest") || "To destination")
+                              : (t("motari.dash.to_pickup") || "To pickup")}
+                            {" · "}{fmtDistance(navRoute.distanceM)} · {fmtDuration(navRoute.durationS)}
+                          </div>
+                        )}
                         <div style={{ color: "#fff", fontWeight: 900 }}>
                           {ride.finalFareRwf != null ? fmt(ride.finalFareRwf)
                             : ride.offeredFareRwf != null ? `${fmt(ride.offeredFareRwf)} · ${t("motari.dash.their_price") || "their price"}`
@@ -440,15 +466,6 @@ export default function MotariDrivePage() {
                         </div>
                       </div>
 
-                      {["ASSIGNED", "ARRIVED", "IN_RIDE"].includes(ride.status) && (
-                        <NavigationMap
-                          destination={
-                            ride.status === "IN_RIDE" && ride.destLat != null && ride.destLng != null
-                              ? { latitude: ride.destLat, longitude: ride.destLng, label: ride.destName || "Destination" }
-                              : { latitude: ride.pickupLat, longitude: ride.pickupLng, label: ride.pickupName || "Pickup" }
-                          }
-                        />
-                      )}
 
                       {ride.status === "ASSIGNED" && (
                         <button disabled={busy} onClick={() => act(() => motariArrived(ride.id, token()))} style={cta(!busy)}>

@@ -2630,7 +2630,9 @@
       "btn_platform": "Yishyuye kuri platform",
       "paid_platform": "Yishyuwe kuri platform. Konti yawe yongewemo.",
       "platform_pending": "Umugenzi arishyura kuri platform. Cash iracyashoboka.",
-      "waiting_here": "Ategereje hano"
+      "waiting_here": "Ategereje hano",
+      "to_pickup": "Ku mugenzi",
+      "to_dest": "Aho mujya"
     },
     "login": {
       "title": "Injira",

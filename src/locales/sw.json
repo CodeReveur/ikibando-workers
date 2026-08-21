@@ -2630,7 +2630,9 @@
       "btn_platform": "Amelipa kupitia platform",
       "paid_platform": "Imelipwa kupitia platform. Pochi imejazwa.",
       "platform_pending": "Abiria analipa kupitia platform. Cash bado inawezekana.",
-      "waiting_here": "Anasubiri hapa"
+      "waiting_here": "Anasubiri hapa",
+      "to_pickup": "Kwa abiria",
+      "to_dest": "Hadi mwisho"
     },
     "login": {
       "title": "Ingia",

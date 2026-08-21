@@ -2630,7 +2630,9 @@
       "btn_platform": "Payé via la plateforme",
       "paid_platform": "Payé via la plateforme. Portefeuille crédité.",
       "platform_pending": "Le passager paie via la plateforme. Le cash reste possible.",
-      "waiting_here": "En attente ici"
+      "waiting_here": "En attente ici",
+      "to_pickup": "Vers le départ",
+      "to_dest": "Vers la destination"
     },
     "login": {
       "title": "Se connecter",

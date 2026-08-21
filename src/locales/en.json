@@ -2631,7 +2631,9 @@
       "btn_platform": "Paid via platform",
       "paid_platform": "Paid via platform. Wallet credited.",
       "platform_pending": "Passenger is paying via platform. You can still take cash if they change their mind.",
-      "waiting_here": "Waiting here"
+      "waiting_here": "Waiting here",
+      "to_pickup": "To pickup",
+      "to_dest": "To destination"
     },
     "login": {
       "title": "Sign in",
