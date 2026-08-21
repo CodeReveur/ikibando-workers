@@ -98,6 +98,11 @@ async function handle(req: Request, seg: string[]): Promise<Response> {
     if (!STRIP_RESPONSE.has(key.toLowerCase())) respHeaders.set(key, value);
   });
 
+  // 204/205/304 are null-body statuses: the Response constructor throws if given
+  // a body (even an empty buffer) with one of them.
+  if (upstream.status === 204 || upstream.status === 205 || upstream.status === 304) {
+    return new Response(null, { status: upstream.status, headers: respHeaders });
+  }
   const buf = await upstream.arrayBuffer();
   return new Response(buf, { status: upstream.status, headers: respHeaders });
 }
