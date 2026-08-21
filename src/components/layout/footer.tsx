@@ -181,24 +181,32 @@ export default function Footer() {
           <p style={{ margin: 0, fontWeight: 900, fontSize: 15, color: "#f97316" }}>MpahMapu</p>
           <p style={{ margin: "3px 0 0", fontSize: 11, color: "#444" }}>{t("common.footer.copyright")}</p>
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 18, fontSize: 12, alignItems: "center" }}>
-          {links.map(({ href, label }) => (
-            <a key={href} href={href} style={{ color: "#444", textDecoration: "none" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "#f97316")}
-              onMouseLeave={e => (e.currentTarget.style.color = "#444")}
-            >
-              {label}
-            </a>
+        {/* Two deliberate rows instead of one long wrapping line: site links on
+            top, company/legal plus Donate below. Each row still wraps on tiny screens. */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, alignItems: "flex-end" }}>
+          {[links.slice(0, 4), links.slice(4)].map((row, i) => (
+            <div key={i} style={{ display: "flex", flexWrap: "wrap", gap: 18, fontSize: 12, alignItems: "center", justifyContent: "flex-end" }}>
+              {row.map(({ href, label }) => (
+                <a key={href} href={href} style={{ color: "#444", textDecoration: "none" }}
+                  onMouseEnter={e => (e.currentTarget.style.color = "#f97316")}
+                  onMouseLeave={e => (e.currentTarget.style.color = "#444")}
+                >
+                  {label}
+                </a>
+              ))}
+              {i === 1 && (
+                <a
+                  href="/donate"
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: 6,
+                    fontSize: 12, fontWeight: 700, color: "#f97316", textDecoration: "none",
+                  }}
+                >
+                  <HandCoins size={13} /> {t("donate.cta")}
+                </a>
+              )}
+            </div>
           ))}
-          <a
-            href="/donate"
-            style={{
-              display: "inline-flex", alignItems: "center", gap: 6,
-              fontSize: 12, fontWeight: 700, color: "#f97316", textDecoration: "none",
-            }}
-          >
-            <HandCoins size={13} /> {t("donate.cta")}
-          </a>
         </div>
       </div>
     </footer>
