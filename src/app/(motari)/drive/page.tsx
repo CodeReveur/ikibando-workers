@@ -369,7 +369,7 @@ export default function MotariDrivePage() {
           {online ? (t("motari.dash.online") || "Online") : (t("motari.dash.offline") || "Offline")}
         </button>
 
-        {/* INCOMING OFFER — top left, 30s countdown, then it moves to the next motari */}
+        {/* INCOMING OFFER — top left; when the countdown ends it moves to the next motari */}
         {state?.offer && !ride && offerLeft > 0 && (
           <div style={{
             position: "absolute", top: 54, left: 14, zIndex: 1001, ...glass,

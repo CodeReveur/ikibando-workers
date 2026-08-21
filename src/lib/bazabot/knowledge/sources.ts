@@ -89,7 +89,7 @@ const DOCS: KnowledgeDoc[] = [
       "Both modes have a minimum fare. Optionally the passenger can propose their own price when requesting, and that " +
       "agreed amount becomes the fare. Payment is cash or mobile money, confirmed by the driver at the end of the ride; " +
       "the passenger can also choose to settle through the platform. When a request is searching, it is offered to one " +
-      "nearby motari at a time for 30 seconds, and the scan widens 1 km at a time up to 15 km until a motari accepts.",
+      "nearby motari at a time for 40 seconds, and the scan widens 1 km at a time up to 15 km until a motari accepts.",
   },
   {
     id: "help-motari-ride",
