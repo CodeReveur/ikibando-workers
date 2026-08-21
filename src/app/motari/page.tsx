@@ -15,7 +15,7 @@ import { playSound, unlockSounds } from "@/lib/sounds";
 import { formatRwPhone, isValidRwPhone } from "@/lib/phone";
 import {
   Menu, X, MapPin, Flag, Phone, User, Star, ChevronDown, ChevronUp,
-  LocateFixed, Home, Users, HelpCircle, Bike, Globe, LogIn, Pencil, Check,
+  LocateFixed, Home, Users, HelpCircle, Bike, Globe, LogIn, LogOut, LayoutDashboard, Pencil, Check,
 } from "lucide-react";
 
 const ACTIVE_TOKEN_KEY = "motari_ride_token";
@@ -49,6 +49,26 @@ export default function AskMotariPage() {
       setRegisterOpen(true);
     }
   }, []);
+
+  // A signed-in visitor sees their account in the menu instead of the two ways in.
+  const [account, setAccount] = useState<{ name: string; role: string } | null>(null);
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("user");
+      const u = raw ? JSON.parse(raw) : null;
+      if (u?.name && localStorage.getItem("access_token")) {
+        setAccount({ name: u.name, role: u.role ?? "WORKER" });
+      }
+    } catch { /* unreadable session: treat as signed out */ }
+  }, []);
+
+  const signOut = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user");
+    setAccount(null);
+    setMenuOpen(false);
+  };
 
   // request form
   const [pickup, setPickup] = useState<Picked | null>(null);
@@ -396,12 +416,43 @@ export default function AskMotariPage() {
             ...glass, position: "absolute", top: 40, left: 0,
             borderRadius: 12, overflow: "hidden", width: 168,
           }}>
+            {/* Signed in: the account itself, its dashboard and a way out.
+                Signed out: the two ways in. */}
+            {account && (
+              <div style={{ padding: "10px 13px", borderBottom: "1px solid #1a1a1a", display: "flex", alignItems: "center", gap: 9 }}>
+                <span style={{
+                  width: 26, height: 26, borderRadius: "50%", background: "#f97316", color: "#000",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontWeight: 900, fontSize: 11, flexShrink: 0,
+                }}>
+                  {(account.name || "?").charAt(0).toUpperCase()}
+                </span>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ color: "#fff", fontSize: 11, fontWeight: 800, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {account.name}
+                  </div>
+                  <div style={{ ...micro, fontSize: 8 }}>
+                    {account.role === "MOTARI" ? "Motari"
+                      : account.role === "EMPLOYER" ? (t("common.nav.employer") || "Employer")
+                      : (t("common.nav.job_seeker") || "Job seeker")}
+                  </div>
+                </div>
+              </div>
+            )}
             {([
               { href: "/", Icon: Home, label: t("common.nav.home") || "Home" },
               { href: "/browse", Icon: Users, label: t("common.nav.browse") || "Browse workers" },
-              { onClick: () => { setRegisterOpen(true); setMenuOpen(false); }, Icon: Bike, label: t("motari.menu.register") || "Register as motari" },
-              // Motari sign in right here; the modal routes each role to its dashboard.
-              { onClick: () => { setLoginOpen(true); setMenuOpen(false); }, Icon: LogIn, label: t("common.nav.signin") || "Sign in" },
+              ...(account
+                ? [
+                    { href: account.role === "MOTARI" ? "/drive" : account.role === "EMPLOYER" ? "/owner" : "/seeker",
+                      Icon: LayoutDashboard, label: t("common.nav.dashboard") || "Dashboard" },
+                    { onClick: signOut, Icon: LogOut, label: t("common.nav.sign_out") || "Sign out" },
+                  ]
+                : [
+                    { onClick: () => { setRegisterOpen(true); setMenuOpen(false); }, Icon: Bike, label: t("motari.menu.register") || "Register as motari" },
+                    // Motari sign in right here; the modal routes each role to its dashboard.
+                    { onClick: () => { setLoginOpen(true); setMenuOpen(false); }, Icon: LogIn, label: t("common.nav.signin") || "Sign in" },
+                  ]),
               { href: "/help", Icon: HelpCircle, label: t("common.nav.help") || "Help" },
             ] as { href?: string; onClick?: () => void; Icon: typeof Home; label: string }[]).map(({ href, onClick, Icon, label }) => {
               const style: React.CSSProperties = {
