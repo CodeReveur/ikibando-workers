@@ -56,6 +56,8 @@ export default function AskMotariPage() {
   const [destQ, setDestQ] = useState("");
   const [pickupSug, setPickupSug] = useState<PlaceSuggestion[]>([]);
   const [destSug, setDestSug] = useState<PlaceSuggestion[]>([]);
+  const [searchingPickup, setSearchingPickup] = useState(false);
+  const [searchingDest, setSearchingDest] = useState(false);
   const [locating, setLocating] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -156,18 +158,34 @@ export default function AskMotariPage() {
     return () => clearInterval(id);
   }, [ride?.status, ride]);
 
-  /* ── type-ahead: search as the user types, debounced ───────────────────── */
+  /* ── type-ahead: search as the user types, biased to where they are ────── */
   useEffect(() => {
-    if (pickup && pickupQ === pickup.label) { setPickupSug([]); return; }
-    const id = setTimeout(() => searchPlaces(pickupQ).then(setPickupSug), 400);
+    if (pickup && pickupQ === pickup.label) { setPickupSug([]); setSearchingPickup(false); return; }
+    if (pickupQ.trim().length < 2) { setPickupSug([]); setSearchingPickup(false); return; }
+    setSearchingPickup(true);
+    const id = setTimeout(() => {
+      searchPlaces(pickupQ, deviceRef.current
+        ? { latitude: deviceRef.current.lat, longitude: deviceRef.current.lng } : null)
+        .then(setPickupSug)
+        .finally(() => setSearchingPickup(false));
+    }, 300);
     return () => clearTimeout(id);
   }, [pickupQ, pickup]);
 
   useEffect(() => {
-    if (dest && destQ === dest.label) { setDestSug([]); return; }
-    const id = setTimeout(() => searchPlaces(destQ).then(setDestSug), 400);
+    if (dest && destQ === dest.label) { setDestSug([]); setSearchingDest(false); return; }
+    if (destQ.trim().length < 2) { setDestSug([]); setSearchingDest(false); return; }
+    setSearchingDest(true);
+    const id = setTimeout(() => {
+      // Bias destinations around the pickup, else around the device.
+      const near = pickup ?? (deviceRef.current
+        ? { latitude: deviceRef.current.lat, longitude: deviceRef.current.lng } : null);
+      searchPlaces(destQ, near)
+        .then(setDestSug)
+        .finally(() => setSearchingDest(false));
+    }, 300);
     return () => clearTimeout(id);
-  }, [destQ, dest]);
+  }, [destQ, dest, pickup]);
 
   /* ── quote + road route once points exist ──────────────────────────────── */
   useEffect(() => {
@@ -508,6 +526,13 @@ export default function AskMotariPage() {
                 }}>
                   <LocateFixed size={12} />
                 </button>
+                {(searchingPickup || (pickupSug.length === 0 && pickupQ.trim().length >= 2 && !pickup)) && (
+                  <div style={{ ...suggestBox, padding: "10px 13px", fontSize: 11.5, color: "#666" }}>
+                    {searchingPickup
+                      ? (t("motari.request.searching") || "Searching…")
+                      : (t("motari.request.no_match") || "No match. Tap the map to drop a pin.")}
+                  </div>
+                )}
                 {pickupSug.length > 0 && (
                   <div style={suggestBox}>
                     {pickupSug.map((s, i) => (
@@ -541,6 +566,13 @@ export default function AskMotariPage() {
                     <X size={13} />
                   </button>
                 )}
+                {(searchingDest || (destSug.length === 0 && destQ.trim().length >= 2 && !dest)) && (
+                  <div style={{ ...suggestBox, padding: "10px 13px", fontSize: 11.5, color: "#666" }}>
+                    {searchingDest
+                      ? (t("motari.request.searching") || "Searching…")
+                      : (t("motari.request.no_match") || "No match. Tap the map to drop a pin.")}
+                  </div>
+                )}
                 {destSug.length > 0 && (
                   <div style={suggestBox}>
                     {destSug.map((s, i) => (
@@ -570,12 +602,22 @@ export default function AskMotariPage() {
                       </span>
                     </>
                   )}
-                  {!editingFare ? (
+                  {/* No destination means no distance to price: the passenger
+                      simply says what they will pay. */}
+                  {!dest && parseInt(offerFare || "0", 10) <= 0 ? (
+                    <input
+                      style={{ ...input, width: 190, padding: "7px 12px" }}
+                      value={offerFare}
+                      onChange={e => setOfferFare(e.target.value.replace(/\D/g, ""))}
+                      inputMode="numeric" maxLength={7}
+                      placeholder={t("motari.request.name_price") || "What will you pay? RWF"}
+                    />
+                  ) : !editingFare ? (
                     <>
                       <span style={{ background: "#f97316", borderRadius: 999, padding: "5px 12px", fontSize: 11.5, color: "#000", fontWeight: 900, letterSpacing: "0.03em" }}>
                         {parseInt(offerFare || "0", 10) > 0
                           ? fmt(parseInt(offerFare, 10))
-                          : quote.fareMode === "QUOTED" && quote.quotedFareRwf
+                          : quote.quotedFareRwf
                             ? fmt(quote.quotedFareRwf)
                             : `${fmt(quote.baseFareRwf)} + ${fmt(quote.perKmRwf)}/km`}
                       </span>
@@ -598,9 +640,7 @@ export default function AskMotariPage() {
                       <span style={{ ...micro, marginLeft: 2 }}>
                         {parseInt(offerFare || "0", 10) > 0
                           ? (t("motari.request.your_price") || "Your price.")
-                          : quote.fareMode === "QUOTED"
-                            ? (t("motari.request.no_haggle") || "Fixed. No haggling.")
-                            : (t("motari.request.meter_note") || "Fair meter.")}
+                          : (t("motari.request.no_haggle") || "Fixed. No haggling.")}
                       </span>
                     </>
                   ) : (
@@ -744,7 +784,8 @@ export default function AskMotariPage() {
                 <span style={{ ...micro }}>
                   {/* A price the passenger set themselves replaces the calculated one. */}
                   {ride.offeredFareRwf != null
-                    ? `${t("motari.request.your_price") || "Your price."} · ${km(ride.fareMode === "QUOTED" ? ride.quotedDistanceM : ride.riddenDistanceM)}`
+                    ? (t("motari.request.your_price") || "Your price.")
+                       + (ride.fareMode === "QUOTED" ? ` · ${km(ride.quotedDistanceM)}` : "")
                     : ride.fareMode === "QUOTED"
                       ? `${t("motari.ride.fixed_fare") || "Fixed fare"} · ${km(ride.quotedDistanceM)}`
                       : `${t("motari.ride.metered") || "Meter"} · ${km(ride.riddenDistanceM)}`}

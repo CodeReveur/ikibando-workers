@@ -113,34 +113,35 @@ export interface PlaceSuggestion {
 const suggestCache = new Map<string, PlaceSuggestion[]>();
 
 /**
- * Multi-result place search (Rwanda-restricted) for type-ahead pickers: the user
- * types, sees up to 5 candidates, and selects the right one. Never throws —
- * returns [] on error so the UI just shows no suggestions.
+ * Multi-result place search for type-ahead pickers: the user types, sees
+ * candidates, and picks the right one. Runs through our own /api/places proxy,
+ * so results are identified, cached and biased to the user's area instead of
+ * being throttled by Nominatim. Never throws - returns [] on any failure.
+ *
+ * @param near optional current position, used to rank nearby places first
  */
-export async function searchPlaces(query: string): Promise<PlaceSuggestion[]> {
-  const q = (query || "").trim();
-  if (q.length < 3) return [];
-  if (suggestCache.has(q)) return suggestCache.get(q)!;
+export async function searchPlaces(
+  query: string,
+  near?: { latitude: number; longitude: number } | null,
+): Promise<PlaceSuggestion[]> {
+  const q = (query || '').trim();
+  if (q.length < 2) return [];
+  const key = near ? q + '|' + near.latitude.toFixed(2) + ',' + near.longitude.toFixed(2) : q;
+  if (suggestCache.has(key)) return suggestCache.get(key)!;
 
-  const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=rw&q=${encodeURIComponent(q)}`;
+  const params = new URLSearchParams({ q });
+  if (near) {
+    params.set('lat', String(near.latitude));
+    params.set('lng', String(near.longitude));
+  }
   try {
-    const response = await fetch(url, {
-      headers: { "User-Agent": "Ikibando-Workers-MpahMapu-App" },
-    });
-    if (!response.ok) throw new Error(`Nominatim search error: status ${response.status}`);
-    const data = await response.json();
-    const out: PlaceSuggestion[] = (Array.isArray(data) ? data : [])
-      .map((d: any) => ({
-        latitude: parseFloat(d.lat),
-        longitude: parseFloat(d.lon),
-        label: String(d.display_name || "").split(",").slice(0, 2).join(",").trim(),
-        fullName: String(d.display_name || ""),
-      }))
-      .filter(s => Number.isFinite(s.latitude) && Number.isFinite(s.longitude) && s.label);
-    suggestCache.set(q, out);
+    const response = await fetch('/api/places?' + params);
+    if (!response.ok) return [];
+    const out = (await response.json()) as PlaceSuggestion[];
+    suggestCache.set(key, out);
     return out;
   } catch (error) {
-    console.error("Place search failed:", error);
+    console.error('Place search failed:', error);
     return [];
   }
 }

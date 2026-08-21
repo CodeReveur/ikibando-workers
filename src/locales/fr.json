@@ -2506,7 +2506,10 @@
       "your_phone": "Téléphone (07xx…)",
       "offer_fare": "Votre prix, RWF (facultatif)",
       "edit_price": "Modifier le prix",
-      "your_price": "Votre prix."
+      "your_price": "Votre prix.",
+      "searching": "Recherche…",
+      "no_match": "Aucun résultat. Touchez la carte pour placer un point.",
+      "name_price": "Combien allez-vous payer ? RWF"
     },
     "ride": {
       "ongoing": "Course en cours",

@@ -2506,7 +2506,10 @@
       "your_phone": "Telefoni (07xx…)",
       "offer_fare": "Igiciro cyawe, RWF (si itegeko)",
       "edit_price": "Hindura igiciro",
-      "your_price": "Igiciro cyawe."
+      "your_price": "Igiciro cyawe.",
+      "searching": "Turashakisha…",
+      "no_match": "Nta byabonetse. Kanda ku ikarita ushyireho akadomo.",
+      "name_price": "Uzatanga angahe? RWF"
     },
     "ride": {
       "ongoing": "Urugendo rurimo",

@@ -2506,7 +2506,10 @@
       "your_phone": "Simu (07xx…)",
       "offer_fare": "Bei yako, RWF (si lazima)",
       "edit_price": "Badilisha bei",
-      "your_price": "Bei yako."
+      "your_price": "Bei yako.",
+      "searching": "Inatafuta…",
+      "no_match": "Hakuna matokeo. Gusa ramani kuweka alama.",
+      "name_price": "Utalipa kiasi gani? RWF"
     },
     "ride": {
       "ongoing": "Safari inayoendelea",

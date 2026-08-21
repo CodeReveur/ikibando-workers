@@ -2507,7 +2507,10 @@
       "your_phone": "Phone (07xx…)",
       "offer_fare": "Your price, RWF (optional)",
       "edit_price": "Edit price",
-      "your_price": "Your price."
+      "your_price": "Your price.",
+      "searching": "Searching…",
+      "no_match": "No match. Tap the map to drop a pin.",
+      "name_price": "What will you pay? RWF"
     },
     "ride": {
       "ongoing": "Ongoing trip",
