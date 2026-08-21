@@ -2608,6 +2608,16 @@
       "gps_off": "Fungura location kugira ngo ubone ingendo.",
       "no_profile": "Andikisha moto yawe utangire.",
       "save_moto": "Bika moto"
+    },
+    "login": {
+      "title": "Injira",
+      "subtitle": "Motari ajya ako kanya ku kibaho cy'umushoferi.",
+      "cta": "Injira",
+      "signing": "Kwinjira…",
+      "forgot": "Wibagiwe ijambobanga?",
+      "totp": "Kode ya authenticator",
+      "verify_note": "Email yawe ntiremezwa. Andika kode twohereje.",
+      "verify_cta": "Emeza winjire"
     }
   }
 }

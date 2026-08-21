@@ -2608,6 +2608,16 @@
       "gps_off": "Activez la localisation pour recevoir des courses.",
       "no_profile": "Enregistrez votre moto pour commencer.",
       "save_moto": "Enregistrer la moto"
+    },
+    "login": {
+      "title": "Se connecter",
+      "subtitle": "Les motari arrivent directement sur le tableau de bord conducteur.",
+      "cta": "Se connecter",
+      "signing": "Connexion…",
+      "forgot": "Mot de passe oublié ?",
+      "totp": "Code authenticator",
+      "verify_note": "Votre email n'est pas encore vérifié. Entrez le code envoyé.",
+      "verify_cta": "Vérifier et se connecter"
     }
   }
 }

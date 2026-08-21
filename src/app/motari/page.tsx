@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { MotariMap, type MapPoint } from "@/components/motari/MotariMap";
 import { MotariRegisterModal } from "@/components/motari/MotariRegisterModal";
+import { MotariLoginModal } from "@/components/motari/MotariLoginModal";
 import { searchPlaces, reverseGeocode, type PlaceSuggestion } from "@/lib/geocoding";
 import { getRoute, fmtDistance, fmtDuration, type RouteResult } from "@/lib/routing";
 import {
@@ -38,6 +39,7 @@ export default function AskMotariPage() {
   const [langOpen, setLangOpen] = useState(false);
   const [minimized, setMinimized] = useState(false);
   const [registerOpen, setRegisterOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
 
   // /motari?register=1 (footer and signup links) opens the motari signup modal.
   useEffect(() => {
@@ -291,8 +293,8 @@ export default function AskMotariPage() {
               { href: "/", Icon: Home, label: t("common.nav.home") || "Home" },
               { href: "/browse", Icon: Users, label: t("common.nav.browse") || "Browse workers" },
               { onClick: () => { setRegisterOpen(true); setMenuOpen(false); }, Icon: Bike, label: t("motari.menu.register") || "Register as motari" },
-              // Sign-in already routes motari accounts to the driver dashboard.
-              { href: "/signin", Icon: LogIn, label: t("common.nav.signin") || "Sign in" },
+              // Motari sign in right here; the modal routes each role to its dashboard.
+              { onClick: () => { setLoginOpen(true); setMenuOpen(false); }, Icon: LogIn, label: t("common.nav.signin") || "Sign in" },
               { href: "/help", Icon: HelpCircle, label: t("common.nav.help") || "Help" },
             ] as { href?: string; onClick?: () => void; Icon: typeof Home; label: string }[]).map(({ href, onClick, Icon, label }) => {
               const style: React.CSSProperties = {
@@ -672,7 +674,10 @@ export default function AskMotariPage() {
         </div>
       </div>
 
-      <MotariRegisterModal open={registerOpen} onClose={() => setRegisterOpen(false)} />
+      <MotariRegisterModal open={registerOpen} onClose={() => setRegisterOpen(false)}
+        onSignIn={() => { setRegisterOpen(false); setLoginOpen(true); }} />
+      <MotariLoginModal open={loginOpen} onClose={() => setLoginOpen(false)}
+        onRegister={() => { setLoginOpen(false); setRegisterOpen(true); }} />
       </div>
 
       <style>{`

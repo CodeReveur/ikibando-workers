@@ -2609,6 +2609,16 @@
       "gps_off": "Enable location to receive rides.",
       "no_profile": "Register your moto to start driving.",
       "save_moto": "Save moto"
+    },
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Motari go straight to the driver dashboard.",
+      "cta": "Sign in",
+      "signing": "Signing in…",
+      "forgot": "Forgot password?",
+      "totp": "Authenticator code",
+      "verify_note": "Your email is not verified yet. Enter the code we just sent.",
+      "verify_cta": "Verify and sign in"
     }
   }
 }

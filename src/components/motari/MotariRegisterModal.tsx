@@ -17,7 +17,12 @@ import { Bike, X } from "lucide-react";
  * Openable from anywhere: the Ask Motari menu, the footer, and the signup page
  * all reach it (links use /motari?register=1, which auto-opens it on the map).
  */
-export function MotariRegisterModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function MotariRegisterModal({ open, onClose, onSignIn }: {
+  open: boolean;
+  onClose: () => void;
+  /** Switch to the sign-in modal; falls back to the /signin page when absent. */
+  onSignIn?: () => void;
+}) {
   const { t } = useLanguage();
 
   const [step, setStep] = useState<"FORM" | "VERIFY">("FORM");
@@ -180,9 +185,15 @@ export function MotariRegisterModal({ open, onClose }: { open: boolean; onClose:
 
             <p style={{ color: "#555", fontSize: 11, textAlign: "center", margin: 0 }}>
               {t("motari.register.have_account") || "Already registered?"}{" "}
-              <a href="/signin" style={{ color: "#f97316", fontWeight: 700, textDecoration: "none" }}>
-                {t("motari.register.signin") || "Sign in"}
-              </a>
+              {onSignIn ? (
+                <button onClick={onSignIn} style={{ background: "none", border: "none", color: "#f97316", fontWeight: 700, cursor: "pointer", fontFamily: "inherit", fontSize: 11, padding: 0 }}>
+                  {t("motari.register.signin") || "Sign in"}
+                </button>
+              ) : (
+                <a href="/signin" style={{ color: "#f97316", fontWeight: 700, textDecoration: "none" }}>
+                  {t("motari.register.signin") || "Sign in"}
+                </a>
+              )}
             </p>
           </div>
         ) : (

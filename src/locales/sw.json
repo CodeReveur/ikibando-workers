@@ -2608,6 +2608,16 @@
       "gps_off": "Washa location ili upokee safari.",
       "no_profile": "Sajili pikipiki yako uanze.",
       "save_moto": "Hifadhi pikipiki"
+    },
+    "login": {
+      "title": "Ingia",
+      "subtitle": "Motari huenda moja kwa moja kwenye dashibodi ya dereva.",
+      "cta": "Ingia",
+      "signing": "Inaingia…",
+      "forgot": "Umesahau nenosiri?",
+      "totp": "Msimbo wa authenticator",
+      "verify_note": "Barua pepe yako haijathibitishwa. Weka msimbo tuliotuma.",
+      "verify_cta": "Thibitisha uingie"
     }
   }
 }
