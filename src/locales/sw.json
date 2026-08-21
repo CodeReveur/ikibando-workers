@@ -2539,6 +2539,29 @@
       "rated": "Umempa alama",
       "new_ride": "Safari mpya",
       "try_again": "Omba tena"
+    },
+    "register": {
+      "title": "Jisajili kama motari",
+      "subtitle": "Fomu moja. Namba ya gari lako ndiyo abiria wanayothibitisha.",
+      "legal_name": "Jina rasmi",
+      "legal_name_hint": "Kama ilivyo kwenye kitambulisho",
+      "plate": "Namba ya gari",
+      "brand": "Aina au modeli",
+      "phone": "Namba ya simu",
+      "email": "Barua pepe",
+      "password": "Nenosiri",
+      "password_hint": "Angalau herufi 8",
+      "cta": "Fungua akaunti ya motari",
+      "creating": "Inafungua akaunti…",
+      "code": "Msimbo wa uthibitisho",
+      "code_sent": "Tumekutumia msimbo wa tarakimu 6 kwa barua pepe.",
+      "code_resent": "Msimbo mpya umetumwa.",
+      "verify_cta": "Thibitisha uanze kuendesha",
+      "verifying": "Inathibitisha…",
+      "resend": "Tuma msimbo tena",
+      "back": "Rudi kwa Omba Motari",
+      "have_account": "Tayari umejisajili?",
+      "signin": "Ingia"
     }
   }
 }

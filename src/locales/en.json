@@ -2540,6 +2540,29 @@
       "rated": "Rated",
       "new_ride": "New ride",
       "try_again": "Ask again"
+    },
+    "register": {
+      "title": "Register as motari",
+      "subtitle": "One form. Your plate is what passengers check before they ride.",
+      "legal_name": "Legal name",
+      "legal_name_hint": "As written on your ID",
+      "plate": "Plate number",
+      "brand": "Brand or model",
+      "phone": "Phone number",
+      "email": "Email",
+      "password": "Password",
+      "password_hint": "At least 8 characters",
+      "cta": "Create motari account",
+      "creating": "Creating account…",
+      "code": "Verification code",
+      "code_sent": "We emailed you a 6 digit code.",
+      "code_resent": "New code sent.",
+      "verify_cta": "Verify and start driving",
+      "verifying": "Verifying…",
+      "resend": "Resend code",
+      "back": "Back to Ask Motari",
+      "have_account": "Already registered?",
+      "signin": "Sign in"
     }
   }
 }

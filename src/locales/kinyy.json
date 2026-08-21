@@ -2539,6 +2539,29 @@
       "rated": "Watanze amanota",
       "new_ride": "Urugendo rushya",
       "try_again": "Ongera usabe"
+    },
+    "register": {
+      "title": "Iyandikishe nka motari",
+      "subtitle": "Ifishi imwe. Plaque yawe ni yo abagenzi bareba mbere yo kugenda.",
+      "legal_name": "Izina ryemewe",
+      "legal_name_hint": "Nkuko ryanditse ku ndangamuntu",
+      "plate": "Numero ya plaque",
+      "brand": "Ubwoko bwa moto",
+      "phone": "Telefoni",
+      "email": "Email",
+      "password": "Ijambobanga",
+      "password_hint": "Byibuze inyuguti 8",
+      "cta": "Fungura konti ya motari",
+      "creating": "Gufungura konti…",
+      "code": "Kode yo kwemeza",
+      "code_sent": "Twakoherereje kode y'imibare 6 kuri email.",
+      "code_resent": "Kode nshya yoherejwe.",
+      "verify_cta": "Emeza utangire gutwara",
+      "verifying": "Kwemeza…",
+      "resend": "Ohereza indi kode",
+      "back": "Subira kuri Saba Motari",
+      "have_account": "Usanzwe wiyandikishije?",
+      "signin": "Injira"
     }
   }
 }
