@@ -440,7 +440,7 @@ export default function MotariDrivePage() {
         <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 1000 }}>
           <div style={{
             ...glass, borderRadius: "18px 18px 0 0", borderBottom: "none",
-            padding: "8px 14px 16px", maxHeight: "70dvh", overflowY: "auto",
+            padding: "8px 14px 16px", maxHeight: "70dvh", overflowY: "auto", overflowX: "hidden",
           }}>
             <button
               onClick={() => setMinimized(m => !m)}
@@ -607,7 +607,7 @@ export default function MotariDrivePage() {
                             state!.nearby!.map(n => (
                               <div key={n.id} style={{ ...card, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
                                 <div style={{ minWidth: 0 }}>
-                                  <div style={{ fontSize: 12.5, fontWeight: 700, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                  <div style={{ fontSize: 12.5, fontWeight: 700, color: "#fff", lineHeight: 1.4, overflowWrap: "anywhere" }}>
                                     {n.pickupName || "Pinned pickup"}
                                   </div>
                                   <div style={{ fontSize: 11, color: "#888", marginTop: 2 }}>
@@ -722,7 +722,7 @@ export default function MotariDrivePage() {
                                 </span>
                               )}
                             </div>
-                            <div style={{ fontSize: 10.5, color: "#888", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            <div style={{ fontSize: 10.5, color: "#888", marginTop: 2, lineHeight: 1.5, overflowWrap: "anywhere" }}>
                               {when(r.requestedAt)} · {r.pickupName || "pickup"} {r.destName ? `→ ${r.destName}` : ""}
                             </div>
                           </div>

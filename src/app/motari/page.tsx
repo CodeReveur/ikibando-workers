@@ -479,7 +479,7 @@ export default function AskMotariPage() {
           ...glass, pointerEvents: "auto", width: "100%", maxWidth: 560,
           borderRadius: "20px 20px 0 0", borderBottom: "none",
           padding: minimized ? "8px 14px 12px" : "8px 14px 16px",
-          maxHeight: "72dvh", overflowY: "auto",
+          maxHeight: "72dvh", overflowY: "auto", overflowX: "hidden",
         }}>
           {/* handle + minimize toggle */}
           <button
@@ -729,11 +729,11 @@ export default function AskMotariPage() {
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ ...micro, marginBottom: 1 }}>{t("motari.ride.from") || "From"}</div>
-                    <div style={{ color: "#fff", fontSize: 12, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <div style={{ color: "#fff", fontSize: 12, fontWeight: 600, lineHeight: 1.4, overflowWrap: "anywhere" }}>
                       {ride.pickupName || "Pinned pickup"}
                     </div>
                     <div style={{ ...micro, margin: "11px 0 1px" }}>{t("motari.ride.to") || "To"}</div>
-                    <div style={{ color: ride.destName ? "#fff" : "#888", fontSize: 12, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <div style={{ color: ride.destName ? "#fff" : "#888", fontSize: 12, fontWeight: 600, lineHeight: 1.4, overflowWrap: "anywhere" }}>
                       {ride.destName || (t("motari.ride.open_destination") || "Tell your driver. The meter keeps it fair.")}
                     </div>
                   </div>
