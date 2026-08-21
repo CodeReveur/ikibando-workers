@@ -5,7 +5,7 @@ import { MotariMap, type MapPoint } from "@/components/motari/MotariMap";
 import { NavigationMap } from "@/components/map/NavigationMap";
 import {
   getMotariState, getMotariHistory, saveMotariProfile, setMotariOnline, motariHeartbeat,
-  acceptRide, motariArrived, motariStart, motariComplete, motariPaid, motariCancelRide,
+  acceptRide, declineRide, motariArrived, motariStart, motariComplete, motariPaid, motariCancelRide,
   requestWithdrawalOtp, confirmWithdrawal, submitContact, apiError,
   type MotariState, type MotariHistory, type RideDto,
 } from "@/lib/api";
@@ -45,6 +45,18 @@ export default function MotariDrivePage() {
   // (a ref alone updates silently and the marker appears frozen or missing).
   const [myPos, setMyPos] = useState<MapPoint | null>(null);
   const [gpsAcc, setGpsAcc] = useState<number | null>(null);
+
+  // Local 1s countdown for the dispatch offer; the server clock is authoritative
+  // and re-syncs it on every poll/heartbeat.
+  const [offerLeft, setOfferLeft] = useState(0);
+  const offerId = state?.offer?.rideId;
+  useEffect(() => {
+    if (!state?.offer) { setOfferLeft(0); return; }
+    setOfferLeft(Math.ceil(state.offer.expiresInSeconds));
+    const id = setInterval(() => setOfferLeft(s => Math.max(0, s - 1)), 1000);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [offerId, state?.offer?.expiresInSeconds]);
 
   // profile form (only when the account has no moto yet)
   const [legalName, setLegalName] = useState("");
@@ -258,6 +270,61 @@ export default function MotariDrivePage() {
           {online ? (t("motari.dash.online") || "Online") : (t("motari.dash.offline") || "Offline")}
         </button>
 
+        {/* INCOMING OFFER — top left, 30s countdown, then it moves to the next motari */}
+        {state?.offer && !ride && offerLeft > 0 && (
+          <div style={{
+            position: "absolute", top: 54, left: 14, zIndex: 1001, ...glass,
+            borderRadius: 14, padding: "12px 14px", width: 240,
+            borderColor: "#f97316", boxShadow: "0 12px 40px rgba(0,0,0,0.7)",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+              <span style={{ ...micro, color: "#f97316", flex: 1 }}>
+                {t("motari.dash.offer_title") || "New ride for you"}
+              </span>
+              <span style={{
+                fontWeight: 900, fontSize: 15, fontVariantNumeric: "tabular-nums",
+                color: offerLeft <= 10 ? "#f87171" : "#fff",
+              }}>
+                {offerLeft}s
+              </span>
+            </div>
+            <div style={{ height: 3, background: "#1a1a1a", borderRadius: 999, marginBottom: 10 }}>
+              <div style={{
+                height: "100%", borderRadius: 999, background: offerLeft <= 10 ? "#f87171" : "#f97316",
+                width: `${Math.min(100, (offerLeft / Math.max(1, state.offer.expiresInSeconds)) * 100)}%`,
+                transition: "width 1s linear",
+              }} />
+            </div>
+            <div style={{ fontSize: 11.5, color: "#ccc", lineHeight: 1.7, marginBottom: 10 }}>
+              <b style={{ color: "#fff" }}>{state.offer.passengerName}</b>
+              {" · "}{km(state.offer.distanceToPickupM)} {t("motari.dash.away") || "away"}
+              <br />
+              <span style={{ color: "#f97316" }}>●</span> {state.offer.pickupName || "Pinned pickup"}
+              <br />
+              <span style={{ color: "#16a34a" }}>●</span> {state.offer.destName || (t("motari.dash.open_ride") || "open ride")}
+              <br />
+              <b style={{ color: "#f97316" }}>
+                {state.offer.offeredFareRwf != null ? `${fmt(state.offer.offeredFareRwf)} · ${t("motari.dash.their_price") || "their price"}`
+                  : state.offer.quotedFareRwf != null ? fmt(state.offer.quotedFareRwf)
+                  : (t("motari.dash.meter_ride") || "Meter ride")}
+              </b>
+              {state.offer.payViaPlatform && (
+                <span style={{ ...micro, color: "#4ade80", marginLeft: 6 }}>{t("motari.dash.platform_pay") || "Platform pay"}</span>
+              )}
+            </div>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button disabled={busy} onClick={() => act(() => acceptRide(state.offer!.rideId, token()))}
+                style={{ flex: 1.4, background: "#f97316", color: "#000", borderRadius: 9, padding: "9px 8px", fontWeight: 900, fontSize: 10.5, border: "none", cursor: "pointer", fontFamily: "inherit", textTransform: "uppercase" }}>
+                {t("motari.dash.accept") || "Accept"}
+              </button>
+              <button disabled={busy} onClick={() => act(() => declineRide(state.offer!.rideId, token()))}
+                style={{ flex: 1, background: "transparent", color: "#888", borderRadius: 9, padding: "9px 8px", fontWeight: 800, fontSize: 10.5, border: "1px solid #2a2a2a", cursor: "pointer", fontFamily: "inherit", textTransform: "uppercase" }}>
+                {t("motari.dash.decline") || "Pass"}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Coarse-fix warning: the browser is guessing from the network, not GPS */}
         {gpsAcc != null && gpsAcc > 150 && (
           <div style={{
@@ -388,12 +455,19 @@ export default function MotariDrivePage() {
                       )}
                       {ride.status === "COMPLETED" && (
                         <div style={{ display: "flex", gap: 8 }}>
+                          {ride.payViaPlatform && (
+                            <button disabled={busy} onClick={() => act(() => motariPaid(ride.id, "PLATFORM", token()))} style={{ ...cta(!busy, "#16a34a"), color: busy ? "#555" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                              <Smartphone size={13} /> {t("motari.dash.btn_platform") || "Paid via platform"}
+                            </button>
+                          )}
                           <button disabled={busy} onClick={() => act(() => motariPaid(ride.id, "CASH", token()))} style={{ ...cta(!busy), display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
                             <Banknote size={13} /> {t("motari.dash.btn_cash") || "Paid cash"}
                           </button>
-                          <button disabled={busy} onClick={() => act(() => motariPaid(ride.id, "MOMO", token()))} style={{ ...cta(!busy, "#16a34a"), color: busy ? "#555" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-                            <Smartphone size={13} /> {t("motari.dash.btn_momo") || "Paid by MoMo"}
-                          </button>
+                          {!ride.payViaPlatform && (
+                            <button disabled={busy} onClick={() => act(() => motariPaid(ride.id, "MOMO", token()))} style={{ ...cta(!busy, "#16a34a"), color: busy ? "#555" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                              <Smartphone size={13} /> {t("motari.dash.btn_momo") || "Paid by MoMo"}
+                            </button>
+                          )}
                         </div>
                       )}
                       {["ASSIGNED", "ARRIVED"].includes(ride.status) && (

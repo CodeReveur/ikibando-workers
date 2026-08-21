@@ -2504,7 +2504,9 @@
       "set_pickup_first": "Set your pickup",
       "trust": "Verified drivers · Plates you can check · Cash or MoMo",
       "your_name": "Your name",
-      "your_phone": "Phone (07xx…)"
+      "your_phone": "Phone (07xx…)",
+      "offer_fare": "Your price, RWF (optional)",
+      "pay_platform": "Pay via platform"
     },
     "ride": {
       "ongoing": "Ongoing trip",
@@ -2536,7 +2538,8 @@
       "rate_prompt": "Rate your motari. It keeps the good ones busy.",
       "rated": "Rated",
       "new_ride": "New ride",
-      "try_again": "Ask again"
+      "try_again": "Ask again",
+      "scanning": "Scanning"
     },
     "register": {
       "title": "Register as motari",
@@ -2609,7 +2612,13 @@
       "gps_off": "Enable location to receive rides.",
       "no_profile": "Register your moto to start driving.",
       "save_moto": "Save moto",
-      "gps_coarse": "Approximate location. Turn on precise GPS."
+      "gps_coarse": "Approximate location. Turn on precise GPS.",
+      "offer_title": "New ride for you",
+      "their_price": "their price",
+      "meter_ride": "Meter ride",
+      "platform_pay": "Platform pay",
+      "decline": "Pass",
+      "btn_platform": "Paid via platform"
     },
     "login": {
       "title": "Sign in",

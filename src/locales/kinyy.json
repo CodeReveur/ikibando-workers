@@ -2503,7 +2503,9 @@
       "set_pickup_first": "Shyiramo aho uzafatirwa",
       "trust": "Abashoferi bemejwe · Plaque igaragara · Cash cyangwa MoMo",
       "your_name": "Izina ryawe",
-      "your_phone": "Telefoni (07xx…)"
+      "your_phone": "Telefoni (07xx…)",
+      "offer_fare": "Igiciro cyawe, RWF (si itegeko)",
+      "pay_platform": "Ishyura kuri platform"
     },
     "ride": {
       "ongoing": "Urugendo rurimo",
@@ -2535,7 +2537,8 @@
       "rate_prompt": "Tanga amanota kuri motari wawe.",
       "rated": "Watanze amanota",
       "new_ride": "Urugendo rushya",
-      "try_again": "Ongera usabe"
+      "try_again": "Ongera usabe",
+      "scanning": "Gushakisha muri"
     },
     "register": {
       "title": "Iyandikishe nka motari",
@@ -2608,7 +2611,13 @@
       "gps_off": "Fungura location kugira ngo ubone ingendo.",
       "no_profile": "Andikisha moto yawe utangire.",
       "save_moto": "Bika moto",
-      "gps_coarse": "Aho uri si ho nyaho. Fungura GPS nyayo."
+      "gps_coarse": "Aho uri si ho nyaho. Fungura GPS nyayo.",
+      "offer_title": "Urugendo rushya kuri wewe",
+      "their_price": "igiciro cye",
+      "meter_ride": "Urugendo ku gipimo",
+      "platform_pay": "Kwishyura kuri platform",
+      "decline": "Reka",
+      "btn_platform": "Yishyuye kuri platform"
     },
     "login": {
       "title": "Injira",

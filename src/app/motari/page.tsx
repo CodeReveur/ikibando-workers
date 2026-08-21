@@ -58,6 +58,8 @@ export default function AskMotariPage() {
   const [locating, setLocating] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [offerFare, setOfferFare] = useState("");
+  const [payPlatform, setPayPlatform] = useState(false);
   const [quote, setQuote] = useState<RideQuote | null>(null);
   const [route, setRoute] = useState<RouteResult | null>(null);
   const [busy, setBusy] = useState(false);
@@ -190,6 +192,8 @@ export default function AskMotariPage() {
         phone: phone.trim(),
         pickupLat: pickup.latitude, pickupLng: pickup.longitude, pickupName: pickup.label,
         ...(dest ? { destLat: dest.latitude, destLng: dest.longitude, destName: dest.label } : {}),
+        ...(parseInt(offerFare || "0", 10) > 0 ? { offeredFareRwf: parseInt(offerFare, 10) } : {}),
+        ...(payPlatform ? { payViaPlatform: true } : {}),
       });
       if (r.token) { localStorage.setItem(ACTIVE_TOKEN_KEY, r.token); tokenRef.current = r.token; }
       setRide(r);
@@ -530,6 +534,29 @@ export default function AskMotariPage() {
                 </div>
               )}
 
+              {/* optional: propose a fare, settle through the platform */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 8 }}>
+                <input
+                  style={input}
+                  placeholder={t("motari.request.offer_fare") || "Your price, RWF (optional)"}
+                  value={offerFare}
+                  onChange={e => setOfferFare(e.target.value.replace(/\D/g, ""))}
+                  inputMode="numeric" maxLength={7}
+                />
+                <button
+                  onClick={() => setPayPlatform(v => !v)}
+                  style={{
+                    borderRadius: 9, padding: "9px 10px", fontSize: 10.5, fontWeight: 800,
+                    letterSpacing: "0.04em", cursor: "pointer", fontFamily: "inherit",
+                    background: payPlatform ? "#f97316" : "#0a0a0a",
+                    color: payPlatform ? "#000" : "#888",
+                    border: payPlatform ? "none" : "1px solid #1f1f1f",
+                  }}
+                >
+                  {payPlatform ? "✓ " : ""}{t("motari.request.pay_platform") || "Pay via platform"}
+                </button>
+              </div>
+
               {/* contact */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
                 <div style={{ position: "relative" }}>
@@ -571,8 +598,11 @@ export default function AskMotariPage() {
                   <span style={{ width: 18, height: 18, borderRadius: "50%", border: "2.5px solid #2a2a2a", borderTopColor: "#f97316", animation: "mspin 1s linear infinite", flexShrink: 0 }} />
                 )}
                 <div style={{ color: "#fff", fontWeight: 900, fontSize: 15, letterSpacing: "-0.01em" }}>{statusTitle[ride.status]}</div>
-                {ride.status === "SEARCHING" && typeof ride.searchSecondsLeft === "number" && (
-                  <span style={{ marginLeft: "auto", color: "#666", fontSize: 12 }}>{Math.ceil(ride.searchSecondsLeft)}s</span>
+                {ride.status === "SEARCHING" && (
+                  <span style={{ marginLeft: "auto", color: "#666", fontSize: 11, fontWeight: 700 }}>
+                    {ride.searchRadiusKm != null && `${t("motari.ride.scanning") || "Scanning"} ${ride.searchRadiusKm} km`}
+                    {typeof ride.searchSecondsLeft === "number" && ` · ${Math.ceil(ride.searchSecondsLeft)}s`}
+                  </span>
                 )}
               </div>
 

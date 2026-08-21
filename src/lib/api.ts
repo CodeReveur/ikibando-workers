@@ -1729,8 +1729,11 @@ export interface RideDto {
   finalFareRwf?: number;
   quotedDistanceM?: number;
   riddenDistanceM?: number;
-  paymentMethod?: "CASH" | "MOMO";
+  paymentMethod?: "CASH" | "MOMO" | "PLATFORM";
   paymentStatus?: "PENDING" | "PAID";
+  offeredFareRwf?: number;
+  payViaPlatform?: boolean;
+  searchRadiusKm?: number;
   rating?: number;
   cancelledBy?: string;
   cancelReason?: string;
@@ -1754,7 +1757,23 @@ export interface MotariNearbyRide {
   distanceToPickupM: number;
 }
 
+export interface MotariOffer {
+  rideId: string;
+  passengerName: string;
+  fareMode: FareMode;
+  pickupLat: number;
+  pickupLng: number;
+  pickupName?: string;
+  destName?: string;
+  quotedFareRwf?: number;
+  offeredFareRwf?: number;
+  payViaPlatform: boolean;
+  distanceToPickupM: number;
+  expiresInSeconds: number;
+}
+
 export interface MotariState {
+  offer?: MotariOffer;
   profile?: {
     plateNumber: string;
     licenseNumber?: string;
@@ -1787,6 +1806,8 @@ export async function requestRide(payload: {
   destLat?: number;
   destLng?: number;
   destName?: string;
+  offeredFareRwf?: number;
+  payViaPlatform?: boolean;
 }): Promise<RideDto> {
   const { data } = await http.post("/api/rides/public", payload);
   return data.data;
@@ -1848,10 +1869,11 @@ async function motariAction(rideId: string, action: string, token: string, body:
 }
 
 export const acceptRide   = (rideId: string, token: string) => motariAction(rideId, "accept", token);
+export const declineRide  = (rideId: string, token: string) => motariAction(rideId, "decline", token);
 export const motariArrived = (rideId: string, token: string) => motariAction(rideId, "arrived", token);
 export const motariStart   = (rideId: string, token: string) => motariAction(rideId, "start", token);
 export const motariComplete = (rideId: string, token: string) => motariAction(rideId, "complete", token);
-export const motariPaid = (rideId: string, method: "CASH" | "MOMO", token: string) =>
+export const motariPaid = (rideId: string, method: "CASH" | "MOMO" | "PLATFORM", token: string) =>
   motariAction(rideId, "paid", token, { method });
 export const motariCancelRide = (rideId: string, reason: string | undefined, token: string) =>
   motariAction(rideId, "cancel", token, { reason });

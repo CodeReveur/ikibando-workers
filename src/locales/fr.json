@@ -2503,7 +2503,9 @@
       "set_pickup_first": "Choisissez votre départ",
       "trust": "Chauffeurs vérifiés · Plaques vérifiables · Cash ou MoMo",
       "your_name": "Votre nom",
-      "your_phone": "Téléphone (07xx…)"
+      "your_phone": "Téléphone (07xx…)",
+      "offer_fare": "Votre prix, RWF (facultatif)",
+      "pay_platform": "Payer via la plateforme"
     },
     "ride": {
       "ongoing": "Course en cours",
@@ -2535,7 +2537,8 @@
       "rate_prompt": "Notez votre motari. Ça récompense les meilleurs.",
       "rated": "Noté",
       "new_ride": "Nouvelle course",
-      "try_again": "Redemander"
+      "try_again": "Redemander",
+      "scanning": "Recherche sur"
     },
     "register": {
       "title": "Devenir motari",
@@ -2608,7 +2611,13 @@
       "gps_off": "Activez la localisation pour recevoir des courses.",
       "no_profile": "Enregistrez votre moto pour commencer.",
       "save_moto": "Enregistrer la moto",
-      "gps_coarse": "Position approximative. Activez le GPS précis."
+      "gps_coarse": "Position approximative. Activez le GPS précis.",
+      "offer_title": "Nouvelle course pour vous",
+      "their_price": "son prix",
+      "meter_ride": "Course au compteur",
+      "platform_pay": "Paiement plateforme",
+      "decline": "Passer",
+      "btn_platform": "Payé via la plateforme"
     },
     "login": {
       "title": "Se connecter",

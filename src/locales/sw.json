@@ -2503,7 +2503,9 @@
       "set_pickup_first": "Weka mahali pa kuchukuliwa",
       "trust": "Madereva waliothibitishwa · Namba za kuthibitisha · Cash au MoMo",
       "your_name": "Jina lako",
-      "your_phone": "Simu (07xx…)"
+      "your_phone": "Simu (07xx…)",
+      "offer_fare": "Bei yako, RWF (si lazima)",
+      "pay_platform": "Lipa kupitia platform"
     },
     "ride": {
       "ongoing": "Safari inayoendelea",
@@ -2535,7 +2537,8 @@
       "rate_prompt": "Mpe motari wako alama.",
       "rated": "Umempa alama",
       "new_ride": "Safari mpya",
-      "try_again": "Omba tena"
+      "try_again": "Omba tena",
+      "scanning": "Inatafuta"
     },
     "register": {
       "title": "Jisajili kama motari",
@@ -2608,7 +2611,13 @@
       "gps_off": "Washa location ili upokee safari.",
       "no_profile": "Sajili pikipiki yako uanze.",
       "save_moto": "Hifadhi pikipiki",
-      "gps_coarse": "Mahali pa makadirio. Washa GPS kamili."
+      "gps_coarse": "Mahali pa makadirio. Washa GPS kamili.",
+      "offer_title": "Safari mpya kwako",
+      "their_price": "bei yake",
+      "meter_ride": "Safari ya mita",
+      "platform_pay": "Malipo ya platform",
+      "decline": "Acha",
+      "btn_platform": "Amelipa kupitia platform"
     },
     "login": {
       "title": "Ingia",
