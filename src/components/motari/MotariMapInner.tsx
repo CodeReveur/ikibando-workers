@@ -114,10 +114,10 @@ export default function MotariMapInner({ pickup, destination, driver, route, ext
       {extras?.map((p, i) => (
         <Marker key={i} position={[p.latitude, p.longitude]} icon={extraIcon} />
       ))}
-      {self && selfAccuracyM != null && selfAccuracyM > 30 && (
+      {self && (
         <Circle
           center={[self.latitude, self.longitude]}
-          radius={selfAccuracyM}
+          radius={Math.max(10, selfAccuracyM ?? 10)}
           pathOptions={{ color: "#3b82f6", weight: 1, opacity: 0.35, fillColor: "#3b82f6", fillOpacity: 0.08 }}
         />
       )}
