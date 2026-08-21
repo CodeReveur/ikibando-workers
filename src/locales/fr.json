@@ -207,7 +207,8 @@
       "done": "Terminé",
       "cancel": "Annuler",
       "submit": "Envoyer",
-      "sending": "Envoi…"
+      "sending": "Envoi…",
+      "ask_motari": "Demander un Motari"
     },
     "general": {
       "new": "Nouveau",
@@ -1200,7 +1201,8 @@
     },
     "tabs": {
       "workers": "Travailleurs",
-      "jobs": "Emplois"
+      "jobs": "Emplois",
+      "ask_motari": "Demander un Motari"
     },
     "placeholders": {
       "search_workers": "Rechercher des travailleurs ou catégories…"
@@ -2485,5 +2487,55 @@
     "later": "Plus tard",
     "enable": "Activer les notifications",
     "enabling": "Activation…"
+  },
+  "motari": {
+    "menu": {
+      "drive": "Conduire un motari"
+    },
+    "request": {
+      "pickup_placeholder": "De",
+      "destination_placeholder": "À (facultatif)",
+      "gps_denied": "Position introuvable. Tapez votre point de départ.",
+      "meter_note": "Compteur équitable.",
+      "no_haggle": "Prix fixe. Sans marchander.",
+      "requesting": "Demande en cours…",
+      "set_pickup": "Choisissez votre départ",
+      "set_pickup_first": "Choisissez votre départ",
+      "trust": "Chauffeurs vérifiés · Plaques vérifiables · Cash ou MoMo",
+      "your_name": "Votre nom",
+      "your_phone": "Téléphone (07xx…)"
+    },
+    "ride": {
+      "ongoing": "Course en cours",
+      "searching": "Recherche de votre moto…",
+      "searching_hint": "Les motari proches voient votre demande.",
+      "seconds_left": "Abandon dans",
+      "assigned": "Votre motari arrive",
+      "arrived": "Il est là. Vérifiez la plaque.",
+      "in_ride": "En route",
+      "completed": "Vous êtes arrivé. Payez maintenant.",
+      "closed": "Terminé. Merci !",
+      "cancelled": "Course annulée",
+      "no_match": "Aucune moto à proximité pour l'instant",
+      "not_found": "Ce lien de course n'est plus valide.",
+      "from": "De",
+      "to": "À",
+      "open_destination": "Dites-le au chauffeur. Le compteur reste équitable.",
+      "fixed_fare": "Prix fixe",
+      "metered": "Compteur",
+      "verified": "Vérifié",
+      "cancel": "Annuler la demande",
+      "cancel_ride": "Annuler la course",
+      "support": "Assistance",
+      "pay_hint": "Payez votre motari, cash ou MoMo. Il confirme, votre reçu s'affiche ici.",
+      "receipt": "Reçu de course",
+      "receipt_driver": "Motari",
+      "receipt_distance": "Distance",
+      "receipt_paid": "Payé",
+      "rate_prompt": "Notez votre motari. Ça récompense les meilleurs.",
+      "rated": "Noté",
+      "new_ride": "Nouvelle course",
+      "try_again": "Redemander"
+    }
   }
 }

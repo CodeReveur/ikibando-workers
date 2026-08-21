@@ -66,7 +66,9 @@ export default function Navbar() {
     pathname === "/forgot-password" || pathname === "/reset-password" ||
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/seeker") ||
-    pathname.startsWith("/owner")
+    pathname.startsWith("/owner") ||
+    // Ask Motari is a full-screen map experience with its own hamburger menu.
+    pathname.startsWith("/motari")
   ) return null;
 
   const initials = user?.name

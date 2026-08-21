@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, Mail, Lock, ArrowLeft } from "lucide-react";
 import { AuthCarousel } from "@/components/auth/auth-carousel";
 import { saveRedirect } from "@/lib/auth-redirect";
-import { useGoogleLogin } from "@react-oauth/google";
+import { GoogleLoginGate, GOOGLE_AUTH_ENABLED } from "@/components/auth/google-login-gate";
 import { loginWithGoogle, loginWithFacebook, loginWithEmail, apiError, apiErrorCode } from "@/lib/api";
 import { getAndClearRedirect } from "@/lib/auth-redirect";
 import { RegistrationWizard } from "@/components/auth/registration-wizard";
@@ -126,23 +126,22 @@ export default function SignInPage() {
     }
   };
 
-  /* ── Google handler ─────────────────────────────────────────────────── */
-  const handleGoogle = useGoogleLogin({
-    onSuccess: async ({ access_token }) => {
-      setLoading("google");
-      try {
-        // Google resumes the SAME continuous slide onboarding as an email login (slide = true).
-        proceed(await loginWithGoogle(access_token), true);
-      } catch (e: unknown) {
-        // Surface why Google was refused (e.g. it's a password account) instead of a generic failure.
-        const { msg, action } = signInError(e, t("signin.toasts.google_fail_desc"));
-        toastError(msg, { title: t("signin.toasts.login_failed_title"), action });
-      } finally {
-        setLoading(null);
-      }
-    },
-    onError: () => toastError(t("signin.toasts.google_cancelled_desc"), { title: t("signin.toasts.login_failed_title") }),
-  });
+  /* ── Google handler (button mounts only when a client id is configured) ── */
+  const onGoogleSuccess = async ({ access_token }: { access_token: string }) => {
+    setLoading("google");
+    try {
+      // Google resumes the SAME continuous slide onboarding as an email login (slide = true).
+      proceed(await loginWithGoogle(access_token), true);
+    } catch (e: unknown) {
+      // Surface why Google was refused (e.g. it's a password account) instead of a generic failure.
+      const { msg, action } = signInError(e, t("signin.toasts.google_fail_desc"));
+      toastError(msg, { title: t("signin.toasts.login_failed_title"), action });
+    } finally {
+      setLoading(null);
+    }
+  };
+  const onGoogleError = () =>
+    toastError(t("signin.toasts.google_cancelled_desc"), { title: t("signin.toasts.login_failed_title") });
 
   /* ── Facebook handler (Disabled for v1) ─────────────────────────────── */
   /*
@@ -527,12 +526,18 @@ export default function SignInPage() {
 
             {/* Social */}
             <div className="auth-social-group">
-              <SocialBtn
-                icon={<GoogleIcon />}
-                label={loading === "google" ? t("signin.buttons.signing_in") : t("signin.buttons.continue_google")}
-                disabled={loading !== null}
-                onClick={() => handleGoogle()}
-              />
+              {GOOGLE_AUTH_ENABLED && (
+                <GoogleLoginGate onSuccess={onGoogleSuccess} onError={onGoogleError}>
+                  {(start) => (
+                    <SocialBtn
+                      icon={<GoogleIcon />}
+                      label={loading === "google" ? t("signin.buttons.signing_in") : t("signin.buttons.continue_google")}
+                      disabled={loading !== null}
+                      onClick={start}
+                    />
+                  )}
+                </GoogleLoginGate>
+              )}
               {/* Facebook auth disabled in v1
               <SocialBtn
                 icon={<FacebookIcon />}

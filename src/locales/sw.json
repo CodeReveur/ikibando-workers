@@ -207,7 +207,8 @@
       "done": "Imekamilika",
       "cancel": "Ghairi",
       "submit": "Wasilisha",
-      "sending": "Inatuma…"
+      "sending": "Inatuma…",
+      "ask_motari": "Omba Motari"
     },
     "general": {
       "new": "Mpya",
@@ -1200,7 +1201,8 @@
     },
     "tabs": {
       "workers": "Wafanyakazi",
-      "jobs": "Kazi"
+      "jobs": "Kazi",
+      "ask_motari": "Omba Motari"
     },
     "placeholders": {
       "search_workers": "Tafuta wafanyakazi au kategoria…"
@@ -2485,5 +2487,55 @@
     "later": "Baadaye",
     "enable": "Washa arifa",
     "enabling": "Inawasha…"
+  },
+  "motari": {
+    "menu": {
+      "drive": "Endesha kama motari"
+    },
+    "request": {
+      "pickup_placeholder": "Kutoka",
+      "destination_placeholder": "Kwenda (si lazima)",
+      "gps_denied": "Imeshindwa kupata mahali ulipo. Andika mahali pa kuchukuliwa.",
+      "meter_note": "Mita ya haki.",
+      "no_haggle": "Bei kamili. Hakuna majadiliano.",
+      "requesting": "Inaomba…",
+      "set_pickup": "Weka mahali pa kuchukuliwa",
+      "set_pickup_first": "Weka mahali pa kuchukuliwa",
+      "trust": "Madereva waliothibitishwa · Namba za kuthibitisha · Cash au MoMo",
+      "your_name": "Jina lako",
+      "your_phone": "Simu (07xx…)"
+    },
+    "ride": {
+      "ongoing": "Safari inayoendelea",
+      "searching": "Tunatafuta moto yako…",
+      "searching_hint": "Motari walio karibu wanaona ombi lako.",
+      "seconds_left": "Tutaacha baada ya",
+      "assigned": "Motari wako anakuja",
+      "arrived": "Amefika. Angalia namba.",
+      "in_ride": "Safarini",
+      "completed": "Umefika. Lipa sasa.",
+      "closed": "Imekamilika. Asante!",
+      "cancelled": "Safari imeghairiwa",
+      "no_match": "Hakuna moto karibu kwa sasa",
+      "not_found": "Kiungo hiki cha safari hakifanyi kazi tena.",
+      "from": "Kutoka",
+      "to": "Kwenda",
+      "open_destination": "Mwambie dereva. Mita inaweka haki.",
+      "fixed_fare": "Bei kamili",
+      "metered": "Mita",
+      "verified": "Amethibitishwa",
+      "cancel": "Ghairi ombi",
+      "cancel_ride": "Ghairi safari",
+      "support": "Msaada",
+      "pay_hint": "Mlipe motari wako, cash au MoMo. Atathibitisha, rekodi yako itaonekana hapa.",
+      "receipt": "Rekodi ya safari",
+      "receipt_driver": "Motari",
+      "receipt_distance": "Umbali",
+      "receipt_paid": "Imelipwa",
+      "rate_prompt": "Mpe motari wako alama.",
+      "rated": "Umempa alama",
+      "new_ride": "Safari mpya",
+      "try_again": "Omba tena"
+    }
   }
 }

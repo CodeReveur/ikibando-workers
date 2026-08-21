@@ -99,3 +99,48 @@ export async function reverseGeocode(
     };
   }
 }
+
+/** One suggestion from a place search — enough to pin it and show a readable label. */
+export interface PlaceSuggestion {
+  latitude: number;
+  longitude: number;
+  /** Short display label, e.g. "Kimironko Market, Gasabo". */
+  label: string;
+  /** Full Nominatim display name for disambiguation. */
+  fullName: string;
+}
+
+const suggestCache = new Map<string, PlaceSuggestion[]>();
+
+/**
+ * Multi-result place search (Rwanda-restricted) for type-ahead pickers: the user
+ * types, sees up to 5 candidates, and selects the right one. Never throws —
+ * returns [] on error so the UI just shows no suggestions.
+ */
+export async function searchPlaces(query: string): Promise<PlaceSuggestion[]> {
+  const q = (query || "").trim();
+  if (q.length < 3) return [];
+  if (suggestCache.has(q)) return suggestCache.get(q)!;
+
+  const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=rw&q=${encodeURIComponent(q)}`;
+  try {
+    const response = await fetch(url, {
+      headers: { "User-Agent": "Ikibando-Workers-MpahMapu-App" },
+    });
+    if (!response.ok) throw new Error(`Nominatim search error: status ${response.status}`);
+    const data = await response.json();
+    const out: PlaceSuggestion[] = (Array.isArray(data) ? data : [])
+      .map((d: any) => ({
+        latitude: parseFloat(d.lat),
+        longitude: parseFloat(d.lon),
+        label: String(d.display_name || "").split(",").slice(0, 2).join(",").trim(),
+        fullName: String(d.display_name || ""),
+      }))
+      .filter(s => Number.isFinite(s.latitude) && Number.isFinite(s.longitude) && s.label);
+    suggestCache.set(q, out);
+    return out;
+  } catch (error) {
+    console.error("Place search failed:", error);
+    return [];
+  }
+}

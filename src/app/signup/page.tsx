@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowLeft } from "lucide-react";
 import { AuthCarousel } from "@/components/auth/auth-carousel";
 import { saveRedirect } from "@/lib/auth-redirect";
-import { useGoogleLogin } from "@react-oauth/google";
+import { GoogleLoginGate, GOOGLE_AUTH_ENABLED } from "@/components/auth/google-login-gate";
 import { signupWithGoogle, registerWithEmail, apiError, apiErrorCode } from "@/lib/api";
 import { getAndClearRedirect } from "@/lib/auth-redirect";
 import { RegistrationWizard } from "@/components/auth/registration-wizard";
@@ -175,9 +175,8 @@ export default function SignUpPage() {
       });
   }, []);
 
-  /* ── Google handler ─────────────────────────────────────────────────── */
-  const handleGoogle = useGoogleLogin({
-    onSuccess: async ({ access_token }) => {
+  /* ── Google handler (button mounts only when a client id is configured) ── */
+  const onGoogleSuccess = async ({ access_token }: { access_token: string }) => {
       setLoading("google");
       try {
         const result = await signupWithGoogle(access_token);
@@ -197,9 +196,9 @@ export default function SignUpPage() {
       } finally {
         setLoading(null);
       }
-    },
-    onError: () => toastError(t("signup.toasts.google_cancelled_desc"), { title: t("signup.toasts.signup_failed_title") }),
-  });
+  };
+  const onGoogleError = () =>
+    toastError(t("signup.toasts.google_cancelled_desc"), { title: t("signup.toasts.signup_failed_title") });
 
   /* ── Facebook handler (Disabled for v1) ─────────────────────────────── */
   /*
@@ -608,12 +607,18 @@ export default function SignUpPage() {
 
             {/* Social */}
             <div className="auth-social-group">
-              <SocialBtn
-                icon={<GoogleIcon />}
-                label={loading === "google" ? t("signup.buttons.signing_in") : t("signup.buttons.continue_google")}
-                disabled={loading !== null}
-                onClick={() => handleGoogle()}
-              />
+              {GOOGLE_AUTH_ENABLED && (
+                <GoogleLoginGate onSuccess={onGoogleSuccess} onError={onGoogleError}>
+                  {(start) => (
+                    <SocialBtn
+                      icon={<GoogleIcon />}
+                      label={loading === "google" ? t("signup.buttons.signing_in") : t("signup.buttons.continue_google")}
+                      disabled={loading !== null}
+                      onClick={start}
+                    />
+                  )}
+                </GoogleLoginGate>
+              )}
               {/* Facebook auth disabled in v1
               <SocialBtn
                 icon={<FacebookIcon />}

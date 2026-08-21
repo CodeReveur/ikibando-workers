@@ -207,7 +207,8 @@
       "done": "Yego",
       "cancel": "Gukuraho",
       "submit": "Kohereza",
-      "sending": "Kohereza…"
+      "sending": "Kohereza…",
+      "ask_motari": "Saba Motari"
     },
     "general": {
       "new": "Mushya",
@@ -1200,7 +1201,8 @@
     },
     "tabs": {
       "workers": "Abakozi",
-      "jobs": "Akazi"
+      "jobs": "Akazi",
+      "ask_motari": "Saba Motari"
     },
     "placeholders": {
       "search_workers": "Shakisha abakozi cyangwa ibyiciro…"
@@ -2485,5 +2487,55 @@
     "later": "Nyuma",
     "enable": "Fungura imenyesha",
     "enabling": "Birafungura…"
+  },
+  "motari": {
+    "menu": {
+      "drive": "Twara nka motari"
+    },
+    "request": {
+      "pickup_placeholder": "Uva",
+      "destination_placeholder": "Ujya (si itegeko)",
+      "gps_denied": "Ntibishoboye kubona aho uri. Andika aho uzafatirwa.",
+      "meter_note": "Igipimo kizira uburiganya.",
+      "no_haggle": "Igiciro ntakuka. Nta mpaka.",
+      "requesting": "Gusaba birakorwa…",
+      "set_pickup": "Shyiramo aho uzafatirwa",
+      "set_pickup_first": "Shyiramo aho uzafatirwa",
+      "trust": "Abashoferi bemejwe · Plaque igaragara · Cash cyangwa MoMo",
+      "your_name": "Izina ryawe",
+      "your_phone": "Telefoni (07xx…)"
+    },
+    "ride": {
+      "ongoing": "Urugendo rurimo",
+      "searching": "Turimo gushaka moto yawe…",
+      "searching_hint": "Motari ziri hafi zibona ubusabe bwawe.",
+      "seconds_left": "Bizahagarara mu",
+      "assigned": "Motari wawe araje",
+      "arrived": "Yageze. Reba plaque.",
+      "in_ride": "Muri urugendo",
+      "completed": "Mugeze. Ishyura nonaha.",
+      "closed": "Byarangiye. Urakoze!",
+      "cancelled": "Urugendo rwahagaritswe",
+      "no_match": "Nta moto iri hafi ubu",
+      "not_found": "Iyi link y'urugendo ntikigikora.",
+      "from": "Uva",
+      "to": "Ujya",
+      "open_destination": "Bwira umushoferi. Igipimo kirinda uburiganya.",
+      "fixed_fare": "Igiciro ntakuka",
+      "metered": "Igipimo",
+      "verified": "Byemejwe",
+      "cancel": "Hagarika gusaba",
+      "cancel_ride": "Hagarika urugendo",
+      "support": "Ubufasha",
+      "pay_hint": "Ishyura motari wawe, cash cyangwa MoMo. Aremeza, inyandiko yawe igaragara hano.",
+      "receipt": "Inyandiko y'urugendo",
+      "receipt_driver": "Motari",
+      "receipt_distance": "Intera",
+      "receipt_paid": "Yishyuwe",
+      "rate_prompt": "Tanga amanota kuri motari wawe.",
+      "rated": "Watanze amanota",
+      "new_ride": "Urugendo rushya",
+      "try_again": "Ongera usabe"
+    }
   }
 }

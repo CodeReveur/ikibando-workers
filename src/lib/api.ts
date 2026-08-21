@@ -1678,4 +1678,170 @@ export async function getContactStatus(email: string): Promise<{ status: "OPEN" 
   return data.data;
 }
 
+// ── Ask Motari (motorcycle-taxi rides) ───────────────────────────────────────
+// Passenger endpoints are public: a guest holds a private ride token instead of
+// an account. Driver endpoints require a signed-in worker with a motari profile.
+
+export type RideStatus =
+  | "SEARCHING" | "ASSIGNED" | "ARRIVED" | "IN_RIDE"
+  | "COMPLETED" | "CLOSED" | "CANCELLED" | "NO_MATCH";
+
+export type FareMode = "QUOTED" | "METERED";
+
+export interface RideQuote {
+  fareMode: FareMode;
+  baseFareRwf: number;
+  perKmRwf: number;
+  minFareRwf: number;
+  quotedFareRwf?: number;
+  distanceM?: number;
+}
+
+export interface RideDriverInfo {
+  name: string;
+  phone?: string;
+  photoUrl?: string;
+  plateNumber?: string;
+  brandModel?: string;
+  rating?: number;
+  latitude?: number;
+  longitude?: number;
+  lastSeenAt?: string;
+}
+
+export interface RideDto {
+  id: string;
+  token?: string;
+  status: RideStatus;
+  fareMode: FareMode;
+  passengerName: string;
+  passengerPhone?: string;
+  pickupLat: number;
+  pickupLng: number;
+  pickupName?: string;
+  destLat?: number;
+  destLng?: number;
+  destName?: string;
+  baseFareRwf: number;
+  perKmRwf: number;
+  minFareRwf: number;
+  quotedFareRwf?: number;
+  finalFareRwf?: number;
+  quotedDistanceM?: number;
+  riddenDistanceM?: number;
+  paymentMethod?: "CASH" | "MOMO";
+  paymentStatus?: "PENDING" | "PAID";
+  rating?: number;
+  cancelledBy?: string;
+  cancelReason?: string;
+  requestedAt: string;
+  assignedAt?: string;
+  arrivedAt?: string;
+  startedAt?: string;
+  completedAt?: string;
+  searchSecondsLeft?: number;
+  driver?: RideDriverInfo;
+}
+
+export interface MotariNearbyRide {
+  id: string;
+  fareMode: FareMode;
+  pickupLat: number;
+  pickupLng: number;
+  pickupName?: string;
+  destName?: string;
+  quotedFareRwf?: number;
+  distanceToPickupM: number;
+}
+
+export interface MotariState {
+  profile?: {
+    plateNumber: string;
+    licenseNumber?: string;
+    brandModel?: string;
+    legalName?: string;
+    verified: boolean;
+    online: boolean;
+    totalRides: number;
+  };
+  activeRide?: RideDto;
+  nearby?: MotariNearbyRide[];
+}
+
+export async function getRideQuote(
+  pickup: { lat: number; lng: number },
+  dest?: { lat: number; lng: number } | null,
+): Promise<RideQuote> {
+  const params = new URLSearchParams({ pickupLat: String(pickup.lat), pickupLng: String(pickup.lng) });
+  if (dest) { params.set("destLat", String(dest.lat)); params.set("destLng", String(dest.lng)); }
+  const { data } = await http.get(`/api/rides/public/quote?${params}`);
+  return data.data;
+}
+
+export async function requestRide(payload: {
+  name: string;
+  phone: string;
+  pickupLat: number;
+  pickupLng: number;
+  pickupName?: string;
+  destLat?: number;
+  destLng?: number;
+  destName?: string;
+}): Promise<RideDto> {
+  const { data } = await http.post("/api/rides/public", payload);
+  return data.data;
+}
+
+export async function trackRide(token: string): Promise<RideDto> {
+  const { data } = await http.get(`/api/rides/public/${token}`);
+  return data.data;
+}
+
+export async function cancelRide(token: string, reason?: string): Promise<RideDto> {
+  const { data } = await http.post(`/api/rides/public/${token}/cancel`, { reason });
+  return data.data;
+}
+
+export async function rateRide(token: string, stars: number): Promise<RideDto> {
+  const { data } = await http.post(`/api/rides/public/${token}/rate`, { stars });
+  return data.data;
+}
+
+export async function getMotariState(token: string): Promise<MotariState> {
+  const { data } = await http.get("/api/rides/driver/state", { headers: authHeader(token) });
+  return data.data;
+}
+
+export async function saveMotariProfile(
+  payload: { plateNumber: string; licenseNumber?: string; brandModel?: string; legalName?: string },
+  token: string,
+): Promise<MotariState> {
+  const { data } = await http.post("/api/rides/driver/profile", payload, { headers: authHeader(token) });
+  return data.data;
+}
+
+export async function setMotariOnline(online: boolean, token: string): Promise<MotariState> {
+  const { data } = await http.post("/api/rides/driver/online", { online }, { headers: authHeader(token) });
+  return data.data;
+}
+
+export async function motariHeartbeat(lat: number, lng: number, token: string): Promise<MotariState> {
+  const { data } = await http.post("/api/rides/driver/heartbeat", { lat, lng }, { headers: authHeader(token) });
+  return data.data;
+}
+
+async function motariAction(rideId: string, action: string, token: string, body: object = {}): Promise<MotariState> {
+  const { data } = await http.post(`/api/rides/driver/${rideId}/${action}`, body, { headers: authHeader(token) });
+  return data.data;
+}
+
+export const acceptRide   = (rideId: string, token: string) => motariAction(rideId, "accept", token);
+export const motariArrived = (rideId: string, token: string) => motariAction(rideId, "arrived", token);
+export const motariStart   = (rideId: string, token: string) => motariAction(rideId, "start", token);
+export const motariComplete = (rideId: string, token: string) => motariAction(rideId, "complete", token);
+export const motariPaid = (rideId: string, method: "CASH" | "MOMO", token: string) =>
+  motariAction(rideId, "paid", token, { method });
+export const motariCancelRide = (rideId: string, reason: string | undefined, token: string) =>
+  motariAction(rideId, "cancel", token, { reason });
+
 export { daysAgo };

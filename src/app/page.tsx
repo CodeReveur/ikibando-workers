@@ -230,6 +230,15 @@ export default function Home() {
           }}>
             {t("common.buttons.post_request")}
           </button>
+          <a href="/motari" style={{
+            display: "inline-flex", alignItems: "center", gap: 7,
+            background: "transparent", color: "#f97316", borderRadius: 999,
+            padding: "12px 26px", fontWeight: 700, fontSize: 14, textDecoration: "none",
+            border: "1px solid #f97316",
+          }}>
+            <Bike size={16} strokeWidth={2} />
+            {t("common.buttons.ask_motari") || "Ask Motari"}
+          </a>
           <a href="/signup" style={{
             background: "transparent", color: "#aaa", borderRadius: 999,
             padding: "12px 26px", fontWeight: 600, fontSize: 14, textDecoration: "none",

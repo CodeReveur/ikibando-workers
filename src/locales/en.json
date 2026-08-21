@@ -208,7 +208,8 @@
       "done": "Done",
       "cancel": "Cancel",
       "submit": "Submit",
-      "sending": "Sending…"
+      "sending": "Sending…",
+      "ask_motari": "Ask Motari"
     },
     "general": {
       "new": "New",
@@ -1201,7 +1202,8 @@
     },
     "tabs": {
       "workers": "Workers",
-      "jobs": "Jobs"
+      "jobs": "Jobs",
+      "ask_motari": "Ask Motari"
     },
     "placeholders": {
       "search_workers": "Search workers or categories…"
@@ -2486,5 +2488,55 @@
     "later": "Not now",
     "enable": "Enable notifications",
     "enabling": "Enabling…"
+  },
+  "motari": {
+    "menu": {
+      "drive": "Drive a motari"
+    },
+    "request": {
+      "pickup_placeholder": "From",
+      "destination_placeholder": "To (optional)",
+      "gps_denied": "Could not read your location. Type your pickup instead.",
+      "meter_note": "Fair meter.",
+      "no_haggle": "Fixed. No haggling.",
+      "requesting": "Requesting…",
+      "set_pickup": "Set your pickup",
+      "set_pickup_first": "Set your pickup",
+      "trust": "Verified drivers · Plates you can check · Cash or MoMo",
+      "your_name": "Your name",
+      "your_phone": "Phone (07xx…)"
+    },
+    "ride": {
+      "ongoing": "Ongoing trip",
+      "searching": "Finding your moto…",
+      "searching_hint": "Nearby motari can see your request.",
+      "seconds_left": "Giving up in",
+      "assigned": "Your motari is coming",
+      "arrived": "He's here. Check the plate.",
+      "in_ride": "On the move",
+      "completed": "You've arrived. Pay now.",
+      "closed": "Done. Thanks for riding.",
+      "cancelled": "Ride cancelled",
+      "no_match": "No moto nearby right now",
+      "not_found": "This ride link isn't valid anymore.",
+      "from": "From",
+      "to": "To",
+      "open_destination": "Tell your driver. The meter keeps it fair.",
+      "fixed_fare": "Fixed fare",
+      "metered": "Meter",
+      "verified": "Verified",
+      "cancel": "Cancel request",
+      "cancel_ride": "Cancel trip",
+      "support": "Support",
+      "pay_hint": "Hand over the fare, cash or MoMo. Your driver confirms, your record lands here.",
+      "receipt": "Ride record",
+      "receipt_driver": "Motari",
+      "receipt_distance": "Distance",
+      "receipt_paid": "Paid",
+      "rate_prompt": "Rate your motari. It keeps the good ones busy.",
+      "rated": "Rated",
+      "new_ride": "New ride",
+      "try_again": "Ask again"
+    }
   }
 }

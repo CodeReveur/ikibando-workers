@@ -17,7 +17,7 @@ import {
 import { ratingInfo } from "@/lib/rating";
 import { useLanguage } from "@/lib/language-context";
 import {
-  Search, SlidersHorizontal, MapPin, Briefcase, Users, Star, ChevronDown,
+  Search, SlidersHorizontal, MapPin, Briefcase, Users, Star, ChevronDown, Bike,
 } from "lucide-react";
 import { BreadcrumbSchema, ServiceSchema } from "@/components/seo/json-ld";
 
@@ -303,6 +303,19 @@ function BrowsePageInner() {
               {label}
             </button>
           ))}
+          {/* Ask Motari is its own guest flow, not a filterable listing — the pill navigates. */}
+          <a
+            href="/motari"
+            style={{
+              display: "flex", alignItems: "center", gap: 6,
+              borderRadius: 999, padding: "8px 18px", cursor: "pointer",
+              fontSize: 13, fontWeight: 700, textDecoration: "none",
+              background: "transparent", color: "#f97316",
+            }}
+          >
+            <Bike size={14} />
+            {t("browse_page.tabs.ask_motari") || "Ask Motari"}
+          </a>
         </div>
 
         {/* SEARCH + FILTER TOGGLE */}
