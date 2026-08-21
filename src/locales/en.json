@@ -616,7 +616,9 @@
       "worker_desc": "Browse & apply for jobs",
       "employer_label": "Hire Workers",
       "employer_desc": "Post jobs & hire talent",
-      "continue_btn": "Continue as {role}"
+      "continue_btn": "Continue as {role}",
+      "motari_label": "Motari",
+      "motari_desc": "Moto taxi driver"
     },
     "otp": {
       "placeholder": "6-digit code",
@@ -2491,7 +2493,8 @@
   },
   "motari": {
     "menu": {
-      "drive": "Drive a motari"
+      "drive": "Drive a motari",
+      "register": "Register as motari"
     },
     "request": {
       "pickup_placeholder": "From",

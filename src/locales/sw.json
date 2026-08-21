@@ -615,7 +615,9 @@
       "worker_desc": "Vinjari & omba kazi",
       "employer_label": "Ajiri Wafanyakazi",
       "employer_desc": "Chapisha kazi & ajiri vipaji",
-      "continue_btn": "Endelea kama {role}"
+      "continue_btn": "Endelea kama {role}",
+      "motari_label": "Motari",
+      "motari_desc": "Dereva wa pikipiki"
     },
     "otp": {
       "placeholder": "Nambari ya siri yenye tarakimu 6",
@@ -2490,7 +2492,8 @@
   },
   "motari": {
     "menu": {
-      "drive": "Endesha kama motari"
+      "drive": "Endesha kama motari",
+      "register": "Jisajili kama motari"
     },
     "request": {
       "pickup_placeholder": "Kutoka",

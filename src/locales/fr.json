@@ -615,7 +615,9 @@
       "worker_desc": "Parcourir & postuler à des emplois",
       "employer_label": "Embaucher des travailleurs",
       "employer_desc": "Publier des offres & recruter des talents",
-      "continue_btn": "Continuer en tant que {role}"
+      "continue_btn": "Continuer en tant que {role}",
+      "motari_label": "Motari",
+      "motari_desc": "Chauffeur de moto-taxi"
     },
     "otp": {
       "placeholder": "Code à 6 chiffres",
@@ -2490,7 +2492,8 @@
   },
   "motari": {
     "menu": {
-      "drive": "Conduire un motari"
+      "drive": "Conduire un motari",
+      "register": "Devenir motari"
     },
     "request": {
       "pickup_placeholder": "De",

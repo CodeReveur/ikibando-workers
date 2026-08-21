@@ -615,7 +615,9 @@
       "worker_desc": "Reba & andikira akazi",
       "employer_label": "Tanga akazi",
       "employer_desc": "Shyiraho akazi & tanga akazi",
-      "continue_btn": "Komeza nka {role}"
+      "continue_btn": "Komeza nka {role}",
+      "motari_label": "Motari",
+      "motari_desc": "Umushoferi wa moto"
     },
     "otp": {
       "placeholder": "Kode y'imfashanyo y'imibare 6",
@@ -2490,7 +2492,8 @@
   },
   "motari": {
     "menu": {
-      "drive": "Twara nka motari"
+      "drive": "Twara nka motari",
+      "register": "Iyandikishe nka motari"
     },
     "request": {
       "pickup_placeholder": "Uva",

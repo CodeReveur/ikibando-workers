@@ -281,6 +281,7 @@ export default function AskMotariPage() {
             {[
               { href: "/", Icon: Home, label: t("common.nav.home") || "Home" },
               { href: "/browse", Icon: Users, label: t("common.nav.browse") || "Browse workers" },
+              { href: "/signup?as=motari", Icon: Bike, label: t("motari.menu.register") || "Register as motari" },
               { href: "/seeker/motari", Icon: Bike, label: t("motari.menu.drive") || "Drive a motari" },
               { href: "/help", Icon: HelpCircle, label: t("common.nav.help") || "Help" },
             ].map(({ href, Icon, label }) => (

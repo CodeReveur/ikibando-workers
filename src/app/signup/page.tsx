@@ -66,6 +66,11 @@ export default function SignUpPage() {
   useEffect(() => {
     const ref = new URLSearchParams(window.location.search).get("ref");
     if (ref) setReferralCode(ref.trim().toUpperCase());
+    // /signup?as=motari (from the Ask Motari menu) preselects the Motari role
+    // in the wizard and routes the finished signup to /seeker/motari.
+    if (new URLSearchParams(window.location.search).get("as") === "motari") {
+      try { localStorage.setItem("register_as_motari", "1"); } catch {}
+    }
   }, []);
 
   /** One rule set for blur, live typing and submit. Returns "" when the value is valid. */
@@ -724,7 +729,15 @@ function saveAndRedirect(result: AuthResult) {
   localStorage.setItem("refresh_token", result.refreshToken);
   localStorage.setItem("user", JSON.stringify(result.user));
   const stored = getAndClearRedirect();
-  const defaultDest = result.user.role === "EMPLOYER" ? "/owner" : "/seeker";
+  // A signup that chose the Motari role lands on the moto registration to
+  // finish becoming a driver (plate, brand, permit).
+  let defaultDest = result.user.role === "EMPLOYER" ? "/owner" : "/seeker";
+  try {
+    if (result.user.role === "WORKER" && localStorage.getItem("register_as_motari") === "1") {
+      localStorage.removeItem("register_as_motari");
+      defaultDest = "/seeker/motari";
+    }
+  } catch {}
   window.location.href = stored || defaultDest;
 }
 

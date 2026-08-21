@@ -5,7 +5,7 @@ import { Eye, EyeOff, Mail, Lock, ArrowLeft } from "lucide-react";
 import { AuthCarousel } from "@/components/auth/auth-carousel";
 import { saveRedirect } from "@/lib/auth-redirect";
 import { GoogleLoginGate, GOOGLE_AUTH_ENABLED } from "@/components/auth/google-login-gate";
-import { loginWithGoogle, loginWithFacebook, loginWithEmail, apiError, apiErrorCode } from "@/lib/api";
+import { loginWithGoogle, loginWithFacebook, loginWithEmail, getMotariState, apiError, apiErrorCode } from "@/lib/api";
 import { getAndClearRedirect } from "@/lib/auth-redirect";
 import { RegistrationWizard } from "@/components/auth/registration-wizard";
 import { BadgeSubmissionWizard } from "@/components/auth/badge-submission-wizard";
@@ -644,12 +644,19 @@ export default function SignInPage() {
 
 type AuthResult = Awaited<ReturnType<typeof loginWithEmail>>;
 
-function saveAndRedirect(result: AuthResult) {
+async function saveAndRedirect(result: AuthResult) {
   localStorage.setItem("access_token", result.accessToken);
   localStorage.setItem("refresh_token", result.refreshToken);
   localStorage.setItem("user", JSON.stringify(result.user));
   const stored = getAndClearRedirect();
-  const defaultDest = result.user.role === "EMPLOYER" ? "/owner" : "/seeker";
+  let defaultDest = result.user.role === "EMPLOYER" ? "/owner" : "/seeker";
+  // A worker whose account is a registered motari lands on the driver surface.
+  if (result.user.role === "WORKER") {
+    try {
+      const s = await getMotariState(result.accessToken);
+      if (s.profile) defaultDest = "/seeker/motari";
+    } catch { /* backend hiccup: fall through to the normal dashboard */ }
+  }
   window.location.href = stored || defaultDest;
 }
 
