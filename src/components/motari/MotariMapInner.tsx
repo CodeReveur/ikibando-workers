@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { MapContainer, TileLayer, Marker, Polyline, Circle, useMap, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Polyline, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { MotariMapProps, MapPoint } from "./MotariMap";
@@ -57,6 +57,35 @@ function Reframe({ pickup, destination, driver, self, routeLen }: {
     if (pts.length === 1) map.flyTo(pts[0], 16, { duration: 0.8 });
     else map.flyToBounds(L.latLngBounds(pts), { padding: [60, 60], duration: 0.8 });
   }, [signature, pickup, destination, driver, self, map]);
+  return null;
+}
+
+/**
+ * GPS accuracy circle managed imperatively: react-leaflet's <Circle> can mount
+ * against a map that dev-mode remounting already destroyed (its panes are gone,
+ * crashing with "reading 'appendChild'"); adding via the map instance with a
+ * guarded effect and proper cleanup sidesteps that entirely.
+ */
+function AccuracyCircle({ center, radius }: { center: MapPoint; radius: number }) {
+  const map = useMap();
+  const circleRef = useRef<L.Circle | null>(null);
+  useEffect(() => {
+    let circle: L.Circle | null = null;
+    try {
+      circle = L.circle([center.latitude, center.longitude], {
+        radius,
+        color: "#3b82f6", weight: 1, opacity: 0.35,
+        fillColor: "#3b82f6", fillOpacity: 0.08,
+      }).addTo(map);
+      circleRef.current = circle;
+    } catch { /* map torn down mid-mount: skip drawing this cycle */ }
+    return () => { try { circle?.remove(); } catch {} circleRef.current = null; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map]);
+  useEffect(() => {
+    circleRef.current?.setLatLng([center.latitude, center.longitude]);
+    circleRef.current?.setRadius(radius);
+  }, [center.latitude, center.longitude, radius]);
   return null;
 }
 
@@ -116,13 +145,12 @@ export default function MotariMapInner({ pickup, destination, driver, route, ext
       ))}
       {/* Accuracy circle around whichever marker represents this device: the blue
           dot (passenger) or, when only an accuracy is given, the moto (driver). */}
-      {(self ?? (selfAccuracyM != null ? driver : null)) && (
-        <Circle
-          center={[(self ?? driver)!.latitude, (self ?? driver)!.longitude]}
-          radius={Math.max(10, selfAccuracyM ?? 10)}
-          pathOptions={{ color: "#3b82f6", weight: 1, opacity: 0.35, fillColor: "#3b82f6", fillOpacity: 0.08 }}
-        />
-      )}
+      {(() => {
+        const anchor = self ?? (selfAccuracyM != null ? driver : null);
+        return anchor
+          ? <AccuracyCircle center={anchor} radius={Math.max(10, selfAccuracyM ?? 10)} />
+          : null;
+      })()}
       {self && <Marker position={[self.latitude, self.longitude]} icon={selfIcon} zIndexOffset={500} />}
     </MapContainer>
   );
