@@ -13,6 +13,8 @@ export interface MotariMapProps {
   driver?: MapPoint | null;
   /** Road geometry between pickup and destination, ready for a polyline. */
   route?: [number, number][] | null;
+  /** Extra small markers, e.g. pickups of passengers currently seeking a ride. */
+  extras?: MapPoint[] | null;
   /** Fired when the user taps the map with no pickup set yet (pin-drop fallback). */
   onPick?: (p: MapPoint) => void;
 }

@@ -1807,6 +1807,18 @@ export async function rateRide(token: string, stars: number): Promise<RideDto> {
   return data.data;
 }
 
+export interface MotariHistory {
+  totalCollectedRwf: number;
+  totalRides: number;
+  walletBalanceRwf: number;
+  rides: RideDto[];
+}
+
+export async function getMotariHistory(token: string): Promise<MotariHistory> {
+  const { data } = await http.get("/api/rides/driver/history", { headers: authHeader(token) });
+  return data.data;
+}
+
 export async function getMotariState(token: string): Promise<MotariState> {
   const { data } = await http.get("/api/rides/driver/state", { headers: authHeader(token) });
   return data.data;

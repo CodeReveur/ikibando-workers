@@ -72,9 +72,12 @@ const DOCS: KnowledgeDoc[] = [
     text: "Motari have their own registration, separate from worker and employer signup. Open Ask Motari and choose " +
       "'Register as motari' in the menu (also linked from the site footer and the signup page). One form collects your " +
       "legal name, plate number, moto brand or model, phone number, email and password. Verify the code emailed to you " +
-      "and you land on the driver dashboard. There you go online, receive nearby ride requests, accept, navigate to the " +
-      "pickup, run the ride, and confirm payment in cash or MoMo. Your earnings and total rides are tracked, and " +
-      "passengers rate you after each trip. When you sign in later, a motari account goes straight to the driver dashboard.",
+      "and you land on the driver dashboard at /drive. It works like the passenger app: a live map with passengers " +
+      "seeking rides shown as pins, an online/offline toggle, and a bottom panel with four tabs. Rides: accept nearby " +
+      "requests and run the trip. Money: your wallet balance, total collected, and instant withdrawal to MTN MoMo or " +
+      "Airtel Money (cash fares are yours on the spot; MoMo fares land in the wallet minus commission). Trips: recent " +
+      "travels and travellers with fares and ratings. More: raise a complaint to support and log out. The session " +
+      "stays signed in until you log out, and signing in with a motari account always goes straight to /drive.",
   },
   {
     id: "policy-motari-fares",

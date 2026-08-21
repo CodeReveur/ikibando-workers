@@ -64,7 +64,15 @@ function TapToPick({ onPick }: { onPick?: (p: MapPoint) => void }) {
   return null;
 }
 
-export default function MotariMapInner({ pickup, destination, driver, route, onPick }: MotariMapProps) {
+const extraIcon = L.divIcon({
+  className: "motari-extra",
+  html: `<div style="width:14px;height:14px;border-radius:50%;background:#f97316;border:2px solid #fff;
+         box-shadow:0 1px 6px rgba(0,0,0,0.5)"></div>`,
+  iconSize: [14, 14],
+  iconAnchor: [7, 7],
+});
+
+export default function MotariMapInner({ pickup, destination, driver, route, extras, onPick }: MotariMapProps) {
   return (
     <MapContainer
       center={KIGALI}
@@ -87,6 +95,9 @@ export default function MotariMapInner({ pickup, destination, driver, route, onP
       {pickup && <Marker position={[pickup.latitude, pickup.longitude]} icon={pickupIcon} />}
       {destination && <Marker position={[destination.latitude, destination.longitude]} icon={destIcon} />}
       {driver && <Marker position={[driver.latitude, driver.longitude]} icon={driverIcon} />}
+      {extras?.map((p, i) => (
+        <Marker key={i} position={[p.latitude, p.longitude]} icon={extraIcon} />
+      ))}
     </MapContainer>
   );
 }

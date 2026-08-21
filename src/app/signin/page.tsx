@@ -654,7 +654,7 @@ async function saveAndRedirect(result: AuthResult) {
   if (result.user.role === "WORKER") {
     try {
       const s = await getMotariState(result.accessToken);
-      if (s.profile) defaultDest = "/seeker/motari";
+      if (s.profile) defaultDest = "/drive";
     } catch { /* backend hiccup: fall through to the normal dashboard */ }
   }
   window.location.href = stored || defaultDest;

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   FileText, Briefcase, Wallet, Gift, BarChart2, Settings,
-  Send, CreditCard, Users, HelpCircle, LogOut, Home, Bell, Bike
+  Send, CreditCard, Users, HelpCircle, LogOut, Home, Bell
 } from "lucide-react";
 import { useSession } from "./session-ctx";
 import { useLanguage } from "@/lib/language-context";
@@ -17,7 +17,6 @@ const SEEKER_NAV = [
   // Applications and jobs are one journey, so they live under a single entry;
   // notifications are reachable from the bell dropdown's "See all".
   { href:"/seeker/jobs",         label:"Jobs",            icon:Briefcase },
-  { href:"/seeker/motari",       label:"Motari",          icon:Bike      },
   { href:"/seeker/earnings",     label:"My Earnings",     icon:Wallet    },
   { href:"/seeker/bonuses",      label:"Bonuses",         icon:Gift      },
 { href:"/seeker/analytics",   label:"Analytics",       icon:BarChart2 },

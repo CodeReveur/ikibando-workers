@@ -76,7 +76,7 @@ export function MotariRegisterModal({ open, onClose }: { open: boolean; onClose:
         { plateNumber: plate, brandModel: brand || undefined, legalName: legalName.trim() },
         auth.accessToken,
       );
-      window.location.href = "/seeker/motari";
+      window.location.href = "/drive";
       return;
     } catch (e) { setError(apiError(e)); }
     setBusy(false);

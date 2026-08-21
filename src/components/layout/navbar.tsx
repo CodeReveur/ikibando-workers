@@ -67,8 +67,9 @@ export default function Navbar() {
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/seeker") ||
     pathname.startsWith("/owner") ||
-    // Ask Motari is a full-screen map experience with its own hamburger menu.
-    pathname.startsWith("/motari")
+    // Ask Motari and the driver app are full-screen map experiences with their own chrome.
+    pathname.startsWith("/motari") ||
+    pathname.startsWith("/drive")
   ) return null;
 
   const initials = user?.name
