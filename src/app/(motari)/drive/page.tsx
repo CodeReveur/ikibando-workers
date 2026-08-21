@@ -10,6 +10,7 @@ import {
   type MotariState, type MotariHistory, type RideDto,
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
+import { playSound, unlockSounds } from "@/lib/sounds";
 import {
   Bike, Phone, Power, Banknote, Smartphone, CheckCircle2, X, Star, LogOut, ChevronDown, ChevronUp, Globe,
 } from "lucide-react";
@@ -77,6 +78,39 @@ export default function MotariDrivePage() {
   const [complaintSent, setComplaintSent] = useState(false);
 
   const token = () => localStorage.getItem("access_token") ?? "";
+
+  /* ── notification sounds ───────────────────────────────────────────────── */
+  useEffect(() => {
+    const once = () => unlockSounds();
+    window.addEventListener("pointerdown", once, { once: true });
+    window.addEventListener("keydown", once, { once: true });
+    return () => {
+      window.removeEventListener("pointerdown", once);
+      window.removeEventListener("keydown", once);
+    };
+  }, []);
+
+  // A ring for each new offer, and one for a ride ending or a fare landing.
+  const lastOfferId = useRef<string | null>(null);
+  const prevRideStatus = useRef<string | null>(null);
+  const prevPaidStatus = useRef<string | undefined>(undefined);
+  useEffect(() => {
+    const id = state?.offer?.rideId ?? null;
+    if (id && id !== lastOfferId.current) playSound("incoming-ride");
+    lastOfferId.current = id;
+
+    const active = state?.activeRide;
+    const before = prevRideStatus.current;
+    if (!active && before && ["ASSIGNED", "ARRIVED", "IN_RIDE"].includes(before)) {
+      // The ride left this driver: the passenger cancelled or it was handed back.
+      playSound("payment-arrived-canceled");
+    }
+    if (prevPaidStatus.current !== "PAID" && active?.paymentStatus === "PAID") {
+      playSound("payment-arrived-canceled");
+    }
+    prevRideStatus.current = active?.status ?? null;
+    prevPaidStatus.current = active?.paymentStatus;
+  }, [state?.offer?.rideId, state?.activeRide?.status, state?.activeRide?.paymentStatus, state]);
 
   /* ── session: present until logout; a dead session goes to sign in ──────── */
   useEffect(() => {

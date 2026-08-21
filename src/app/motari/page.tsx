@@ -11,6 +11,7 @@ import {
   type RideQuote, type RideDto,
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
+import { playSound, unlockSounds } from "@/lib/sounds";
 import {
   Menu, X, MapPin, Flag, Phone, User, Star, ChevronDown, ChevronUp,
   LocateFixed, Home, Users, HelpCircle, Bike, Globe, LogIn, Pencil, Check,
@@ -96,6 +97,38 @@ export default function AskMotariPage() {
     );
     return () => navigator.geolocation.clearWatch(id);
   }, []);
+
+  /* ── notification sounds ───────────────────────────────────────────────── */
+  // Browsers only allow audio after a gesture, so prime the clips on first tap.
+  useEffect(() => {
+    const once = () => unlockSounds();
+    window.addEventListener("pointerdown", once, { once: true });
+    window.addEventListener("keydown", once, { once: true });
+    return () => {
+      window.removeEventListener("pointerdown", once);
+      window.removeEventListener("keydown", once);
+    };
+  }, []);
+
+  // Announce what just changed: a motari accepted, they arrived, the fare was
+  // paid, or the ride ended without one.
+  const prevStatus = useRef<string | null>(null);
+  const prevPaid = useRef<string | undefined>(undefined);
+  useEffect(() => {
+    if (!ride) { prevStatus.current = null; prevPaid.current = undefined; return; }
+    const before = prevStatus.current;
+    if (before && before !== ride.status) {
+      if (ride.status === "ASSIGNED") playSound("accepted");
+      else if (["ARRIVED", "CANCELLED", "NO_MATCH", "CLOSED"].includes(ride.status)) {
+        playSound("payment-arrived-canceled");
+      }
+    }
+    if (prevPaid.current !== "PAID" && ride.paymentStatus === "PAID") {
+      playSound("payment-arrived-canceled");
+    }
+    prevStatus.current = ride.status;
+    prevPaid.current = ride.paymentStatus;
+  }, [ride?.status, ride?.paymentStatus, ride]);
 
   /* ── resume an active ride ─────────────────────────────────────────────── */
   useEffect(() => {
