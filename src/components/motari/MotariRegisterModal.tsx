@@ -6,6 +6,7 @@ import {
   apiError, type AuthResult,
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
+import { formatRwPhone, isValidRwPhone } from "@/lib/phone";
 import { Bike, X } from "lucide-react";
 
 /**
@@ -43,7 +44,7 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
   const formValid =
     legalName.trim().split(/\s+/).length >= 2 &&
     plate.trim().length >= 4 &&
-    phone.replace(/\D/g, "").length >= 9 &&
+    isValidRwPhone(phone) &&
     /.+@.+\..+/.test(email) &&
     password.length >= 8;
 
@@ -163,8 +164,8 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
             </div>
             <div>
               <span style={label}>{t("motari.register.phone") || "Phone number"}</span>
-              <input style={input} value={phone} onChange={e => setPhone(e.target.value)}
-                     placeholder="07xx xxx xxx" inputMode="tel" maxLength={20} />
+              <input style={input} value={phone} onChange={e => setPhone(formatRwPhone(e.target.value))}
+                     placeholder="07xxxxxxxx" inputMode="numeric" maxLength={10} />
             </div>
             <div>
               <span style={label}>{t("motari.register.email") || "Email"}</span>

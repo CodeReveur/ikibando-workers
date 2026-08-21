@@ -12,6 +12,7 @@ import {
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
 import { playSound, unlockSounds } from "@/lib/sounds";
+import { formatRwPhone, isValidRwPhone } from "@/lib/phone";
 import {
   Menu, X, MapPin, Flag, Phone, User, Star, ChevronDown, ChevronUp,
   LocateFixed, Home, Users, HelpCircle, Bike, Globe, LogIn, Pencil, Check,
@@ -237,7 +238,7 @@ export default function AskMotariPage() {
     else if (!dest) { setDest({ ...p, label }); setDestQ(label); }
   }, [pickup, dest]);
 
-  const canSubmit = !!pickup && name.trim().length >= 2 && phone.replace(/\D/g, "").length >= 9 && !busy;
+  const canSubmit = !!pickup && name.trim().length >= 2 && isValidRwPhone(phone) && !busy;
 
   const submit = async () => {
     if (!canSubmit || !pickup) return;
@@ -680,7 +681,7 @@ export default function AskMotariPage() {
                 <div style={{ position: "relative" }}>
                   <Phone size={12} color="#555" style={iconLeft} />
                   <input style={input} placeholder={t("motari.request.your_phone") || "07xx…"}
-                         value={phone} onChange={e => setPhone(e.target.value)} inputMode="tel" maxLength={20} />
+                         value={phone} onChange={e => setPhone(formatRwPhone(e.target.value))} inputMode="numeric" maxLength={10} />
                 </div>
               </div>
 
@@ -832,12 +833,12 @@ export default function AskMotariPage() {
                       <input
                         style={input}
                         value={payPhone}
-                        onChange={e => setPayPhone(e.target.value)}
-                        inputMode="tel" maxLength={20}
-                        placeholder="07xx xxx xxx"
+                        onChange={e => setPayPhone(formatRwPhone(e.target.value))}
+                        inputMode="numeric" maxLength={10}
+                        placeholder="07xxxxxxxx"
                       />
                       <div style={{ display: "flex", gap: 8 }}>
-                        <button disabled={paying || payPhone.replace(/\D/g, "").length < 9} onClick={doPayNow} style={{ ...cta(!paying && payPhone.replace(/\D/g, "").length >= 9), flex: 1.6 }}>
+                        <button disabled={paying || !isValidRwPhone(payPhone)} onClick={doPayNow} style={{ ...cta(!paying && isValidRwPhone(payPhone)), flex: 1.6 }}>
                           {paying ? (t("motari.ride.sending_prompt") || "Sending…") : (t("motari.ride.send_prompt") || "Send payment prompt")}
                         </button>
                         <button onClick={() => setPayOpen(false)} style={{ flex: 1, background: "none", border: "1px solid #1f1f1f", borderRadius: 10, color: "#888", fontWeight: 800, fontSize: 10.5, cursor: "pointer", fontFamily: "inherit", textTransform: "uppercase" }}>
@@ -852,7 +853,7 @@ export default function AskMotariPage() {
                     <div style={{ display: "flex", gap: 8 }}>
                       <button
                         disabled={!amountKnown}
-                        onClick={() => { setPayOpen(true); setPayPhone(ride.passengerPhone || phone || ""); }}
+                        onClick={() => { setPayOpen(true); setPayPhone(formatRwPhone(ride.passengerPhone || phone || "")); }}
                         style={{ ...cta(amountKnown, "#16a34a"), color: amountKnown ? "#fff" : "#555", flex: 1 }}
                       >
                         {t("motari.ride.pay_now") || "Pay now"}

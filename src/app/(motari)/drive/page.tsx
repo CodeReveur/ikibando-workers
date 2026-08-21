@@ -11,6 +11,7 @@ import {
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
 import { playSound, startSoundLoop, stopSoundLoop, unlockSounds } from "@/lib/sounds";
+import { formatRwPhone, isValidRwPhone } from "@/lib/phone";
 import {
   Bike, Phone, Power, Banknote, Smartphone, CheckCircle2, X, Star, LogOut, ChevronDown, ChevronUp, Globe,
 } from "lucide-react";
@@ -196,7 +197,7 @@ export default function MotariDrivePage() {
 
   const withdraw = async () => {
     const amount = parseInt(wAmount, 10);
-    if (!amount || amount < 500 || wPhone.replace(/\D/g, "").length < 9) return;
+    if (!amount || amount < 500 || !isValidRwPhone(wPhone)) return;
     setBusy(true);
     setWMsg("");
     try {
@@ -508,12 +509,20 @@ export default function MotariDrivePage() {
                         <span style={{ ...micro, color: "#f97316" }}>{ride.fareMode}</span>
                       </div>
 
-                      <div style={{ ...card, fontSize: 12, color: "#bbb", lineHeight: 1.8 }}>
+                      <div style={{ ...card, fontSize: 12, color: "#bbb", lineHeight: 1.8, position: "relative" }}>
                         <b style={{ color: "#fff" }}>{ride.passengerName}</b>
                         {ride.passengerPhone && (
-                          <a href={`tel:${ride.passengerPhone}`} style={{ marginLeft: 10, color: "#f97316", textDecoration: "none", fontWeight: 800 }}>
-                            <Phone size={11} style={{ display: "inline", verticalAlign: "-1px" }} /> {ride.passengerPhone}
-                          </a>
+                          <>
+                            <span style={{ marginLeft: 10, color: "#f97316", fontWeight: 800 }}>{ride.passengerPhone}</span>
+                            {/* The call button mirrors the passenger's: one tap to reach the client. */}
+                            <a href={`tel:${ride.passengerPhone}`} aria-label="Call passenger" style={{
+                              position: "absolute", top: 10, right: 10,
+                              background: "#f97316", borderRadius: "50%", width: 38, height: 38,
+                              display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none",
+                            }}>
+                              <Phone size={15} color="#000" />
+                            </a>
+                          </>
                         )}
                         <div style={{ color: "#999" }}>
                           <span style={{ color: "#f97316" }}>●</span> {ride.pickupName || "Pinned pickup"}<br />
@@ -661,7 +670,7 @@ export default function MotariDrivePage() {
                           <input style={input} placeholder={t("motari.dash.w_amount") || "Amount (min 500)"} value={wAmount}
                                  onChange={e => setWAmount(e.target.value.replace(/\D/g, ""))} inputMode="numeric" />
                           <input style={input} placeholder="07xx xxx xxx" value={wPhone}
-                                 onChange={e => setWPhone(e.target.value)} inputMode="tel" maxLength={20} />
+                                 onChange={e => setWPhone(formatRwPhone(e.target.value))} inputMode="numeric" maxLength={10} />
                         </div>
                         <div style={{ display: "flex", gap: 8 }}>
                           {(["MTN_MOMO", "AIRTEL_MONEY"] as const).map(p => (
@@ -676,9 +685,9 @@ export default function MotariDrivePage() {
                             </button>
                           ))}
                         </div>
-                        <button disabled={busy || !parseInt(wAmount || "0", 10) || parseInt(wAmount, 10) < 500 || wPhone.replace(/\D/g, "").length < 9}
+                        <button disabled={busy || !parseInt(wAmount || "0", 10) || parseInt(wAmount, 10) < 500 || !isValidRwPhone(wPhone)}
                           onClick={withdraw}
-                          style={cta(!busy && parseInt(wAmount || "0", 10) >= 500 && wPhone.replace(/\D/g, "").length >= 9)}>
+                          style={cta(!busy && parseInt(wAmount || "0", 10) >= 500 && isValidRwPhone(wPhone))}>
                           {t("motari.dash.w_cta") || "Withdraw"}
                         </button>
                       </>
