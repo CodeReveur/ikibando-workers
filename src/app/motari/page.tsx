@@ -7,13 +7,13 @@ import { MotariLoginModal } from "@/components/motari/MotariLoginModal";
 import { searchPlaces, reverseGeocode, type PlaceSuggestion } from "@/lib/geocoding";
 import { getRoute, fmtDistance, fmtDuration, type RouteResult } from "@/lib/routing";
 import {
-  getRideQuote, requestRide, trackRide, cancelRide, rateRide, apiError,
+  getRideQuote, requestRide, trackRide, cancelRide, rateRide, payRideNow, apiError,
   type RideQuote, type RideDto,
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
 import {
   Menu, X, MapPin, Flag, Phone, User, Star, ChevronDown, ChevronUp,
-  LocateFixed, Home, Users, HelpCircle, Bike, Globe, LogIn,
+  LocateFixed, Home, Users, HelpCircle, Bike, Globe, LogIn, Pencil, Check,
 } from "lucide-react";
 
 const ACTIVE_TOKEN_KEY = "motari_ride_token";
@@ -59,7 +59,13 @@ export default function AskMotariPage() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [offerFare, setOfferFare] = useState("");
-  const [payPlatform, setPayPlatform] = useState(false);
+  const [editingFare, setEditingFare] = useState(false);
+
+  // payment choice once a motari accepted: platform prompt or cash
+  const [payOpen, setPayOpen] = useState(false);
+  const [payPhone, setPayPhone] = useState("");
+  const [payChoice, setPayChoice] = useState<"" | "cash">("");
+  const [paying, setPaying] = useState(false);
   const [quote, setQuote] = useState<RideQuote | null>(null);
   const [route, setRoute] = useState<RouteResult | null>(null);
   const [busy, setBusy] = useState(false);
@@ -193,7 +199,6 @@ export default function AskMotariPage() {
         pickupLat: pickup.latitude, pickupLng: pickup.longitude, pickupName: pickup.label,
         ...(dest ? { destLat: dest.latitude, destLng: dest.longitude, destName: dest.label } : {}),
         ...(parseInt(offerFare || "0", 10) > 0 ? { offeredFareRwf: parseInt(offerFare, 10) } : {}),
-        ...(payPlatform ? { payViaPlatform: true } : {}),
       });
       if (r.token) { localStorage.setItem(ACTIVE_TOKEN_KEY, r.token); tokenRef.current = r.token; }
       setRide(r);
@@ -211,6 +216,17 @@ export default function AskMotariPage() {
       localStorage.removeItem(ACTIVE_TOKEN_KEY);
     } catch (e) { setError(apiError(e)); }
     setBusy(false);
+  };
+
+  const doPayNow = async () => {
+    if (!tokenRef.current || paying) return;
+    setPaying(true);
+    setError("");
+    try {
+      setRide(await payRideNow(tokenRef.current, payPhone.trim()));
+      setPayOpen(false);
+    } catch (e) { setError(apiError(e)); }
+    setPaying(false);
   };
 
   const doRate = async (n: number) => {
@@ -283,8 +299,8 @@ export default function AskMotariPage() {
     background: "none", border: "none", borderBottom: "1px solid #1a1a1a",
     color: "#eee", fontSize: 12.5, cursor: "pointer", fontFamily: "inherit",
   };
-  const cta = (enabled: boolean): React.CSSProperties => ({
-    width: "100%", background: enabled ? "#f97316" : "#1a1a1a",
+  const cta = (enabled: boolean, bg = "#f97316"): React.CSSProperties => ({
+    width: "100%", background: enabled ? bg : "#1a1a1a",
     color: enabled ? "#000" : "#555", borderRadius: 10, padding: "10px 20px",
     fontWeight: 900, fontSize: 11, letterSpacing: "0.04em", border: "none",
     cursor: enabled ? "pointer" : "not-allowed", fontFamily: "inherit",
@@ -521,41 +537,65 @@ export default function AskMotariPage() {
                       </span>
                     </>
                   )}
-                  <span style={{ background: "#f97316", borderRadius: 999, padding: "5px 12px", fontSize: 11.5, color: "#000", fontWeight: 900, letterSpacing: "0.03em" }}>
-                    {quote.fareMode === "QUOTED" && quote.quotedFareRwf
-                      ? fmt(quote.quotedFareRwf)
-                      : `${fmt(quote.baseFareRwf)} + ${fmt(quote.perKmRwf)}/km`}
-                  </span>
-                  <span style={{ ...micro, marginLeft: 2 }}>
-                    {quote.fareMode === "QUOTED"
-                      ? (t("motari.request.no_haggle") || "Fixed. No haggling.")
-                      : (t("motari.request.meter_note") || "Fair meter.")}
-                  </span>
+                  {!editingFare ? (
+                    <>
+                      <span style={{ background: "#f97316", borderRadius: 999, padding: "5px 12px", fontSize: 11.5, color: "#000", fontWeight: 900, letterSpacing: "0.03em" }}>
+                        {parseInt(offerFare || "0", 10) > 0
+                          ? fmt(parseInt(offerFare, 10))
+                          : quote.fareMode === "QUOTED" && quote.quotedFareRwf
+                            ? fmt(quote.quotedFareRwf)
+                            : `${fmt(quote.baseFareRwf)} + ${fmt(quote.perKmRwf)}/km`}
+                      </span>
+                      {/* The calculated price is a starting point: too big or too
+                          small, the passenger edits it into their own offer. */}
+                      <button
+                        onClick={() => {
+                          if (!offerFare && quote.quotedFareRwf) setOfferFare(String(quote.quotedFareRwf));
+                          setEditingFare(true);
+                        }}
+                        aria-label={t("motari.request.edit_price") || "Edit price"}
+                        style={{
+                          background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 999,
+                          width: 26, height: 26, display: "flex", alignItems: "center",
+                          justifyContent: "center", cursor: "pointer", color: "#f97316",
+                        }}
+                      >
+                        <Pencil size={11} />
+                      </button>
+                      <span style={{ ...micro, marginLeft: 2 }}>
+                        {parseInt(offerFare || "0", 10) > 0
+                          ? (t("motari.request.your_price") || "Your price.")
+                          : quote.fareMode === "QUOTED"
+                            ? (t("motari.request.no_haggle") || "Fixed. No haggling.")
+                            : (t("motari.request.meter_note") || "Fair meter.")}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <input
+                        style={{ ...input, width: 120, padding: "6px 10px" }}
+                        value={offerFare}
+                        onChange={e => setOfferFare(e.target.value.replace(/\D/g, ""))}
+                        inputMode="numeric" maxLength={7} autoFocus
+                        placeholder="RWF"
+                        onKeyDown={e => e.key === "Enter" && setEditingFare(false)}
+                      />
+                      <button onClick={() => setEditingFare(false)} aria-label="Apply" style={{
+                        background: "#f97316", border: "none", borderRadius: 999, width: 26, height: 26,
+                        display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#000",
+                      }}>
+                        <Check size={13} />
+                      </button>
+                      <button onClick={() => { setOfferFare(""); setEditingFare(false); }} aria-label="Reset" style={{
+                        background: "none", border: "1px solid #1f1f1f", borderRadius: 999, width: 26, height: 26,
+                        display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#888",
+                      }}>
+                        <X size={12} />
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
-
-              {/* optional: propose a fare, settle through the platform */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 8 }}>
-                <input
-                  style={input}
-                  placeholder={t("motari.request.offer_fare") || "Your price, RWF (optional)"}
-                  value={offerFare}
-                  onChange={e => setOfferFare(e.target.value.replace(/\D/g, ""))}
-                  inputMode="numeric" maxLength={7}
-                />
-                <button
-                  onClick={() => setPayPlatform(v => !v)}
-                  style={{
-                    borderRadius: 9, padding: "9px 10px", fontSize: 10.5, fontWeight: 800,
-                    letterSpacing: "0.04em", cursor: "pointer", fontFamily: "inherit",
-                    background: payPlatform ? "#f97316" : "#0a0a0a",
-                    color: payPlatform ? "#000" : "#888",
-                    border: payPlatform ? "none" : "1px solid #1f1f1f",
-                  }}
-                >
-                  {payPlatform ? "✓ " : ""}{t("motari.request.pay_platform") || "Pay via platform"}
-                </button>
-              </div>
 
               {/* contact */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
@@ -680,6 +720,77 @@ export default function AskMotariPage() {
                     : `${fmt(ride.perKmRwf)}/km`}
                 </span>
               </div>
+
+              {/* payment: once a motari accepted, pay now (platform prompt) or cash */}
+              {ride.driver && ["ASSIGNED", "ARRIVED", "IN_RIDE", "COMPLETED"].includes(ride.status) && (() => {
+                const amountKnown = (ride.finalFareRwf ?? ride.offeredFareRwf ?? ride.quotedFareRwf) != null;
+                if (ride.paymentStatus === "PAID") {
+                  return (
+                    <div style={{ color: "#4ade80", fontSize: 12, fontWeight: 800, marginBottom: 12 }}>
+                      ✓ {t("motari.ride.paid_platform") || "Paid via platform"}
+                    </div>
+                  );
+                }
+                if (ride.paymentMethod === "PLATFORM" && ride.paymentStatus === "PENDING") {
+                  return (
+                    <div style={{ color: "#fbbf24", fontSize: 12, fontWeight: 700, marginBottom: 12 }}>
+                      {t("motari.ride.approve_prompt") || "Approve the payment prompt on your phone."}
+                    </div>
+                  );
+                }
+                if (payChoice === "cash") {
+                  return (
+                    <div style={{ ...micro, marginBottom: 12 }}>
+                      {t("motari.ride.paying_cash") || "Paying cash."}{" "}
+                      <button onClick={() => setPayChoice("")} style={{ background: "none", border: "none", color: "#f97316", cursor: "pointer", fontFamily: "inherit", fontSize: 8.5, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", padding: 0 }}>
+                        {t("motari.ride.change") || "Change"}
+                      </button>
+                    </div>
+                  );
+                }
+                if (payOpen) {
+                  return (
+                    <div style={{ display: "grid", gap: 8, marginBottom: 12 }}>
+                      <input
+                        style={input}
+                        value={payPhone}
+                        onChange={e => setPayPhone(e.target.value)}
+                        inputMode="tel" maxLength={20}
+                        placeholder="07xx xxx xxx"
+                      />
+                      <div style={{ display: "flex", gap: 8 }}>
+                        <button disabled={paying || payPhone.replace(/\D/g, "").length < 9} onClick={doPayNow} style={{ ...cta(!paying && payPhone.replace(/\D/g, "").length >= 9), flex: 1.6 }}>
+                          {paying ? (t("motari.ride.sending_prompt") || "Sending…") : (t("motari.ride.send_prompt") || "Send payment prompt")}
+                        </button>
+                        <button onClick={() => setPayOpen(false)} style={{ flex: 1, background: "none", border: "1px solid #1f1f1f", borderRadius: 10, color: "#888", fontWeight: 800, fontSize: 10.5, cursor: "pointer", fontFamily: "inherit", textTransform: "uppercase" }}>
+                          {t("common.buttons.cancel") || "Cancel"}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                }
+                return (
+                  <div style={{ marginBottom: 12 }}>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button
+                        disabled={!amountKnown}
+                        onClick={() => { setPayOpen(true); setPayPhone(ride.passengerPhone || phone || ""); }}
+                        style={{ ...cta(amountKnown, "#16a34a"), color: amountKnown ? "#fff" : "#555", flex: 1 }}
+                      >
+                        {t("motari.ride.pay_now") || "Pay now"}
+                      </button>
+                      <button onClick={() => setPayChoice("cash")} style={{ flex: 1, background: "none", border: "1px solid #1f1f1f", borderRadius: 10, color: "#ccc", fontWeight: 800, fontSize: 10.5, cursor: "pointer", fontFamily: "inherit", textTransform: "uppercase", padding: "10px 8px" }}>
+                        {t("motari.ride.pay_cash") || "I'll pay cash"}
+                      </button>
+                    </div>
+                    {!amountKnown && (
+                      <div style={{ ...micro, marginTop: 6 }}>
+                        {t("motari.ride.pay_after_meter") || "Open meter: pay when the ride completes."}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
 
               {/* actions per state */}
               {["SEARCHING", "ASSIGNED", "ARRIVED", "IN_RIDE"].includes(ride.status) && (

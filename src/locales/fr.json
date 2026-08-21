@@ -2505,7 +2505,8 @@
       "your_name": "Votre nom",
       "your_phone": "Téléphone (07xx…)",
       "offer_fare": "Votre prix, RWF (facultatif)",
-      "pay_platform": "Payer via la plateforme"
+      "edit_price": "Modifier le prix",
+      "your_price": "Votre prix."
     },
     "ride": {
       "ongoing": "Course en cours",
@@ -2538,7 +2539,16 @@
       "rated": "Noté",
       "new_ride": "Nouvelle course",
       "try_again": "Redemander",
-      "scanning": "Recherche sur"
+      "scanning": "Recherche sur",
+      "paid_platform": "Payé via la plateforme",
+      "approve_prompt": "Approuvez la demande de paiement sur votre téléphone.",
+      "paying_cash": "Paiement en cash.",
+      "change": "Changer",
+      "pay_now": "Payer maintenant",
+      "pay_cash": "Je paierai en cash",
+      "send_prompt": "Envoyer la demande de paiement",
+      "sending_prompt": "Envoi…",
+      "pay_after_meter": "Compteur ouvert : payez à la fin de la course."
     },
     "register": {
       "title": "Devenir motari",
@@ -2617,7 +2627,9 @@
       "meter_ride": "Course au compteur",
       "platform_pay": "Paiement plateforme",
       "decline": "Passer",
-      "btn_platform": "Payé via la plateforme"
+      "btn_platform": "Payé via la plateforme",
+      "paid_platform": "Payé via la plateforme. Portefeuille crédité.",
+      "platform_pending": "Le passager paie via la plateforme. Le cash reste possible."
     },
     "login": {
       "title": "Se connecter",

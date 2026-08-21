@@ -2505,7 +2505,8 @@
       "your_name": "Jina lako",
       "your_phone": "Simu (07xx…)",
       "offer_fare": "Bei yako, RWF (si lazima)",
-      "pay_platform": "Lipa kupitia platform"
+      "edit_price": "Badilisha bei",
+      "your_price": "Bei yako."
     },
     "ride": {
       "ongoing": "Safari inayoendelea",
@@ -2538,7 +2539,16 @@
       "rated": "Umempa alama",
       "new_ride": "Safari mpya",
       "try_again": "Omba tena",
-      "scanning": "Inatafuta"
+      "scanning": "Inatafuta",
+      "paid_platform": "Imelipwa kupitia platform",
+      "approve_prompt": "Idhinisha ombi la malipo kwenye simu yako.",
+      "paying_cash": "Kulipa cash.",
+      "change": "Badilisha",
+      "pay_now": "Lipa sasa",
+      "pay_cash": "Nitalipa cash",
+      "send_prompt": "Tuma ombi la malipo",
+      "sending_prompt": "Inatuma…",
+      "pay_after_meter": "Mita wazi: lipa safari ikiisha."
     },
     "register": {
       "title": "Jisajili kama motari",
@@ -2617,7 +2627,9 @@
       "meter_ride": "Safari ya mita",
       "platform_pay": "Malipo ya platform",
       "decline": "Acha",
-      "btn_platform": "Amelipa kupitia platform"
+      "btn_platform": "Amelipa kupitia platform",
+      "paid_platform": "Imelipwa kupitia platform. Pochi imejazwa.",
+      "platform_pending": "Abiria analipa kupitia platform. Cash bado inawezekana."
     },
     "login": {
       "title": "Ingia",

@@ -2505,7 +2505,8 @@
       "your_name": "Izina ryawe",
       "your_phone": "Telefoni (07xx…)",
       "offer_fare": "Igiciro cyawe, RWF (si itegeko)",
-      "pay_platform": "Ishyura kuri platform"
+      "edit_price": "Hindura igiciro",
+      "your_price": "Igiciro cyawe."
     },
     "ride": {
       "ongoing": "Urugendo rurimo",
@@ -2538,7 +2539,16 @@
       "rated": "Watanze amanota",
       "new_ride": "Urugendo rushya",
       "try_again": "Ongera usabe",
-      "scanning": "Gushakisha muri"
+      "scanning": "Gushakisha muri",
+      "paid_platform": "Yishyuwe kuri platform",
+      "approve_prompt": "Emeza ubutumwa bwo kwishyura kuri telefoni yawe.",
+      "paying_cash": "Kwishyura cash.",
+      "change": "Hindura",
+      "pay_now": "Ishyura nonaha",
+      "pay_cash": "Nzishyura cash",
+      "send_prompt": "Ohereza ubutumwa bwo kwishyura",
+      "sending_prompt": "Byoherejwe…",
+      "pay_after_meter": "Igipimo gifunguye: ishyura urugendo rurangiye."
     },
     "register": {
       "title": "Iyandikishe nka motari",
@@ -2617,7 +2627,9 @@
       "meter_ride": "Urugendo ku gipimo",
       "platform_pay": "Kwishyura kuri platform",
       "decline": "Reka",
-      "btn_platform": "Yishyuye kuri platform"
+      "btn_platform": "Yishyuye kuri platform",
+      "paid_platform": "Yishyuwe kuri platform. Konti yawe yongewemo.",
+      "platform_pending": "Umugenzi arishyura kuri platform. Cash iracyashoboka."
     },
     "login": {
       "title": "Injira",

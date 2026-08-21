@@ -454,21 +454,27 @@ export default function MotariDrivePage() {
                         </button>
                       )}
                       {ride.status === "COMPLETED" && (
-                        <div style={{ display: "flex", gap: 8 }}>
-                          {ride.payViaPlatform && (
-                            <button disabled={busy} onClick={() => act(() => motariPaid(ride.id, "PLATFORM", token()))} style={{ ...cta(!busy, "#16a34a"), color: busy ? "#555" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-                              <Smartphone size={13} /> {t("motari.dash.btn_platform") || "Paid via platform"}
-                            </button>
-                          )}
-                          <button disabled={busy} onClick={() => act(() => motariPaid(ride.id, "CASH", token()))} style={{ ...cta(!busy), display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-                            <Banknote size={13} /> {t("motari.dash.btn_cash") || "Paid cash"}
-                          </button>
-                          {!ride.payViaPlatform && (
-                            <button disabled={busy} onClick={() => act(() => motariPaid(ride.id, "MOMO", token()))} style={{ ...cta(!busy, "#16a34a"), color: busy ? "#555" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-                              <Smartphone size={13} /> {t("motari.dash.btn_momo") || "Paid by MoMo"}
-                            </button>
-                          )}
-                        </div>
+                        ride.paymentStatus === "PAID" ? (
+                          <div style={{ color: "#4ade80", fontSize: 12, fontWeight: 800 }}>
+                            ✓ {t("motari.dash.paid_platform") || "Paid via platform. Wallet credited."}
+                          </div>
+                        ) : (
+                          <>
+                            {ride.paymentMethod === "PLATFORM" && ride.paymentStatus === "PENDING" && (
+                              <div style={{ color: "#fbbf24", fontSize: 11.5, fontWeight: 700 }}>
+                                {t("motari.dash.platform_pending") || "Passenger is paying via platform. You can still take cash if they change their mind."}
+                              </div>
+                            )}
+                            <div style={{ display: "flex", gap: 8 }}>
+                              <button disabled={busy} onClick={() => act(() => motariPaid(ride.id, "CASH", token()))} style={{ ...cta(!busy), display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                                <Banknote size={13} /> {t("motari.dash.btn_cash") || "Paid cash"}
+                              </button>
+                              <button disabled={busy} onClick={() => act(() => motariPaid(ride.id, "MOMO", token()))} style={{ ...cta(!busy, "#16a34a"), color: busy ? "#555" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                                <Smartphone size={13} /> {t("motari.dash.btn_momo") || "Paid by MoMo"}
+                              </button>
+                            </div>
+                          </>
+                        )
                       )}
                       {["ASSIGNED", "ARRIVED"].includes(ride.status) && (
                         <button disabled={busy} onClick={() => act(() => motariCancelRide(ride.id, undefined, token()))} style={{

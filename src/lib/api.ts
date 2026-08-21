@@ -1823,6 +1823,12 @@ export async function cancelRide(token: string, reason?: string): Promise<RideDt
   return data.data;
 }
 
+/** Pay through the platform: pushes a mobile money prompt to the given phone. */
+export async function payRideNow(token: string, phone: string): Promise<RideDto> {
+  const { data } = await http.post(`/api/rides/public/${token}/pay`, { phone });
+  return data.data;
+}
+
 export async function rateRide(token: string, stars: number): Promise<RideDto> {
   const { data } = await http.post(`/api/rides/public/${token}/rate`, { stars });
   return data.data;

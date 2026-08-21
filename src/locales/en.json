@@ -2506,7 +2506,8 @@
       "your_name": "Your name",
       "your_phone": "Phone (07xx…)",
       "offer_fare": "Your price, RWF (optional)",
-      "pay_platform": "Pay via platform"
+      "edit_price": "Edit price",
+      "your_price": "Your price."
     },
     "ride": {
       "ongoing": "Ongoing trip",
@@ -2539,7 +2540,16 @@
       "rated": "Rated",
       "new_ride": "New ride",
       "try_again": "Ask again",
-      "scanning": "Scanning"
+      "scanning": "Scanning",
+      "paid_platform": "Paid via platform",
+      "approve_prompt": "Approve the payment prompt on your phone.",
+      "paying_cash": "Paying cash.",
+      "change": "Change",
+      "pay_now": "Pay now",
+      "pay_cash": "I will pay cash",
+      "send_prompt": "Send payment prompt",
+      "sending_prompt": "Sending…",
+      "pay_after_meter": "Open meter: pay when the ride completes."
     },
     "register": {
       "title": "Register as motari",
@@ -2618,7 +2628,9 @@
       "meter_ride": "Meter ride",
       "platform_pay": "Platform pay",
       "decline": "Pass",
-      "btn_platform": "Paid via platform"
+      "btn_platform": "Paid via platform",
+      "paid_platform": "Paid via platform. Wallet credited.",
+      "platform_pending": "Passenger is paying via platform. You can still take cash if they change their mind."
     },
     "login": {
       "title": "Sign in",
