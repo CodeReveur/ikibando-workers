@@ -229,8 +229,8 @@ export default function MotariDrivePage() {
     <div style={{ position: "fixed", inset: 0, background: "#000", overflow: "hidden", display: "flex", justifyContent: "center" }}>
       <div className="drive-frame" style={{ position: "relative", width: "100%", maxWidth: 480, height: "100%", background: "#000", overflow: "hidden" }}>
 
-        {/* MAP — the device is the driver: blue dot + honest accuracy circle */}
-        <MotariMap pickup={mapPickup} destination={mapDest} self={me} selfAccuracyM={gpsAcc} extras={seekers} />
+        {/* MAP — the driver is the moto icon, ringed by the device's accuracy circle */}
+        <MotariMap pickup={mapPickup} destination={mapDest} driver={me} selfAccuracyM={gpsAcc} extras={seekers} />
 
         {/* Brand chip */}
         <div style={{
