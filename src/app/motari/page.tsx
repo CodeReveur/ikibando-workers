@@ -709,12 +709,16 @@ export default function AskMotariPage() {
               {/* fare line */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 12, padding: "10px 14px" }}>
                 <span style={{ ...micro }}>
-                  {ride.fareMode === "QUOTED"
-                    ? `${t("motari.ride.fixed_fare") || "Fixed fare"} · ${km(ride.quotedDistanceM)}`
-                    : `${t("motari.ride.metered") || "Meter"} · ${km(ride.riddenDistanceM)}`}
+                  {/* A price the passenger set themselves replaces the calculated one. */}
+                  {ride.offeredFareRwf != null
+                    ? `${t("motari.request.your_price") || "Your price."} · ${km(ride.fareMode === "QUOTED" ? ride.quotedDistanceM : ride.riddenDistanceM)}`
+                    : ride.fareMode === "QUOTED"
+                      ? `${t("motari.ride.fixed_fare") || "Fixed fare"} · ${km(ride.quotedDistanceM)}`
+                      : `${t("motari.ride.metered") || "Meter"} · ${km(ride.riddenDistanceM)}`}
                 </span>
                 <span style={{ color: "#fff", fontWeight: 900, fontSize: 17, letterSpacing: "-0.01em" }}>
                   {ride.finalFareRwf != null ? fmt(ride.finalFareRwf)
+                    : ride.offeredFareRwf != null ? fmt(ride.offeredFareRwf)
                     : ride.fareMode === "QUOTED" && ride.quotedFareRwf != null ? fmt(ride.quotedFareRwf)
                     : ride.status === "IN_RIDE" && meteredSoFar != null ? `≈ ${fmt(meteredSoFar)}`
                     : `${fmt(ride.perKmRwf)}/km`}

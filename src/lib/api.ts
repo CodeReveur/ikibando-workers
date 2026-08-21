@@ -1754,6 +1754,7 @@ export interface MotariNearbyRide {
   pickupName?: string;
   destName?: string;
   quotedFareRwf?: number;
+  offeredFareRwf?: number;
   distanceToPickupM: number;
 }
 

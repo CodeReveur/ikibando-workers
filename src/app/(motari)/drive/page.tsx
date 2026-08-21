@@ -211,7 +211,7 @@ export default function MotariDrivePage() {
         latitude: n.pickupLat,
         longitude: n.pickupLng,
         label: `${n.pickupName || (t("motari.dash.waiting_here") || "Waiting here")} · ${km(n.distanceToPickupM)}`
-             + (n.quotedFareRwf != null ? ` · ${fmt(n.quotedFareRwf)}` : ""),
+             + ((n.offeredFareRwf ?? n.quotedFareRwf) != null ? ` · ${fmt((n.offeredFareRwf ?? n.quotedFareRwf)!)}` : ""),
       }))
     : [];
 
@@ -434,6 +434,7 @@ export default function MotariDrivePage() {
                         </div>
                         <div style={{ color: "#fff", fontWeight: 900 }}>
                           {ride.finalFareRwf != null ? fmt(ride.finalFareRwf)
+                            : ride.offeredFareRwf != null ? `${fmt(ride.offeredFareRwf)} · ${t("motari.dash.their_price") || "their price"}`
                             : ride.fareMode === "QUOTED" && ride.quotedFareRwf != null ? fmt(ride.quotedFareRwf)
                             : `${km(ride.riddenDistanceM)} · ${fmt(ride.baseFareRwf)} + ${fmt(ride.perKmRwf)}/km`}
                         </div>
@@ -525,7 +526,12 @@ export default function MotariDrivePage() {
                                   </div>
                                   <div style={{ fontSize: 11, color: "#888", marginTop: 2 }}>
                                     {km(n.distanceToPickupM)} {t("motari.dash.away") || "away"} · {n.destName ? `→ ${n.destName}` : (t("motari.dash.open_ride") || "open ride")}
-                                    {n.quotedFareRwf != null && <b style={{ color: "#f97316" }}> · {fmt(n.quotedFareRwf)}</b>}
+                                    {(n.offeredFareRwf ?? n.quotedFareRwf) != null && (
+                                      <b style={{ color: "#f97316" }}>
+                                        {" · "}{fmt((n.offeredFareRwf ?? n.quotedFareRwf)!)}
+                                        {n.offeredFareRwf != null && ` · ${t("motari.dash.their_price") || "their price"}`}
+                                      </b>
+                                    )}
                                   </div>
                                 </div>
                                 <button disabled={busy} onClick={() => act(() => acceptRide(n.id, token()))} style={{
