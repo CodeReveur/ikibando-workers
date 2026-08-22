@@ -2671,6 +2671,18 @@
       "totp": "Msimbo wa authenticator",
       "verify_note": "Barua pepe yako haijathibitishwa. Weka msimbo tuliotuma.",
       "verify_cta": "Thibitisha uingie"
+    },
+    "fee": {
+      "title": "Ada ya kila siku",
+      "due": "Ada ya kila siku inadaiwa",
+      "paused": "Akaunti yako haifanyi kazi. Lipa ada ili ifunguke tena.",
+      "days": "siku",
+      "pay_now": "Lipa sasa",
+      "pending": "Idhinisha ombi kwenye simu yako",
+      "pending_short": "Idhinisha kwa simu",
+      "try_again": "Jaribu tena",
+      "clear": "Hakuna deni",
+      "rule": "Siku zenye safari chache kuliko kiwango ni bure."
     }
   }
 }

@@ -6,7 +6,7 @@ import { getRoute, fmtDistance, fmtDuration, type RouteResult } from "@/lib/rout
 import {
   getMotariState, getMotariHistory, saveMotariProfile, setMotariOnline, motariHeartbeat,
   acceptRide, declineRide, motariArrived, motariStart, motariComplete, motariPaid, motariCancelRide,
-  setMotariCourier, setMotariPayout, submitContact, apiError,
+  setMotariCourier, setMotariPayout, payMotariFees, submitContact, apiError,
   type MotariState, type MotariHistory, type RideDto,
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
@@ -14,6 +14,7 @@ import { playSound, startSoundLoop, stopSoundLoop, unlockSounds } from "@/lib/so
 import { formatRwPhone, isValidRwPhone } from "@/lib/phone";
 import {
   Bike, Phone, Power, Banknote, Smartphone, CheckCircle2, X, Star, LogOut, ChevronDown, ChevronUp, Globe, Package,
+  AlertTriangle,
 } from "lucide-react";
 
 const POLL_MS = 5000;
@@ -77,6 +78,23 @@ export default function MotariDrivePage() {
   const [complaintSent, setComplaintSent] = useState(false);
 
   const token = () => localStorage.getItem("access_token") ?? "";
+
+  // The fee sits on the top bar through the evening and night, when a motari is
+  // counting the day's takings; in the working day it lives in the Money tab.
+  const [feeError, setFeeError] = useState("");
+  const hour = new Date().getHours();
+  const feeHours = hour >= 16 || hour < 8;
+  const fees = state?.fees;
+  const feeOwing = !!fees && fees.dueAmountRwf > 0;
+
+  const payFees = async () => {
+    if (busy) return;
+    setBusy(true);
+    setFeeError("");
+    try { setState(await payMotariFees(undefined, token())); }
+    catch (e) { setFeeError(apiError(e)); }
+    setBusy(false);
+  };
 
   /* ── notification sounds ───────────────────────────────────────────────── */
   useEffect(() => {
@@ -328,6 +346,56 @@ export default function MotariDrivePage() {
           {state?.profile?.plateNumber || "Motari"}
         </div>
 
+        {/* The daily fee, impossible to miss: paused accounts and evening
+            reminders both sit right on the map. */}
+        {(fees?.paused || (feeOwing && feeHours)) && (
+          <div style={{
+            position: "absolute", top: 52, left: 14, right: 14, zIndex: 1004, ...glass,
+            borderRadius: 12, padding: "10px 12px",
+            borderColor: fees?.paused ? "#7f1d1d" : "#7c3a10",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <AlertTriangle size={13} color={fees?.paused ? "#f87171" : "#fbbf24"} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  color: fees?.paused ? "#f87171" : "#fff",
+                  fontSize: 11.5, fontWeight: 800, lineHeight: 1.4,
+                }}>
+                  {fees?.paused
+                    ? (t("motari.fee.paused") || "Your account is inactive. Pay the fee to open it again.")
+                    : (t("motari.fee.due") || "Daily fee due")}
+                </div>
+                <div style={{ ...micro, marginTop: 2 }}>
+                  {fmt(fees?.dueAmountRwf ?? 0)}
+                  {(fees?.dueDays ?? 0) > 1 && ` · ${fees!.dueDays} ${t("motari.fee.days") || "days"}`}
+                </div>
+              </div>
+              <button
+                disabled={busy || fees?.paymentPending}
+                onClick={payFees}
+                style={{
+                  borderRadius: 9, padding: "8px 14px", fontSize: 9.5, fontWeight: 900,
+                  letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer",
+                  fontFamily: "inherit", flexShrink: 0, border: "none",
+                  background: fees?.paymentPending ? "#1a1a1a" : "#f97316",
+                  color: fees?.paymentPending ? "#888" : "#000",
+                }}
+              >
+                {fees?.paymentPending
+                  ? (t("motari.fee.pending_short") || "Approve on phone")
+                  : (t("motari.fee.pay_now") || "Pay now")}
+              </button>
+            </div>
+            {feeError && (
+              <div style={{ color: "#f87171", fontSize: 10.5, marginTop: 6 }}>
+                {feeError} <button onClick={payFees} style={{ background: "none", border: "none", color: "#f97316", cursor: "pointer", fontFamily: "inherit", fontSize: 10.5, fontWeight: 800, padding: 0 }}>
+                  {t("motari.fee.try_again") || "Try again"}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Parcel demand, in the top row: tap it to see the waiting parcels. */}
         {online && !ride && (() => {
           const parcels = (state?.nearby ?? []).filter(n => n.kind === "COURIER");
@@ -564,6 +632,28 @@ export default function MotariDrivePage() {
                         {t("motari.dash.save_moto") || "Save moto"}
                       </button>
                     </div>
+                  ) : fees?.paused ? (
+                    <div style={{ display: "grid", gap: 10 }}>
+                      <div style={{ color: "#f87171", fontSize: 12.5, fontWeight: 800, lineHeight: 1.5 }}>
+                        {t("motari.fee.paused") || "Your account is inactive. Pay the fee to open it again."}
+                      </div>
+                      <div style={micro}>
+                        {fmt(fees.dueAmountRwf)} · {fees.dueDays} {t("motari.fee.days") || "days"}
+                      </div>
+                      <button disabled={busy || fees.paymentPending} onClick={payFees} style={cta(!busy && !fees.paymentPending)}>
+                        {fees.paymentPending
+                          ? (t("motari.fee.pending") || "Approve the prompt on your phone")
+                          : `${t("motari.fee.pay_now") || "Pay now"} · ${fmt(fees.dueAmountRwf)}`}
+                      </button>
+                      {feeError && (
+                        <div style={{ color: "#f87171", fontSize: 11.5 }}>
+                          {feeError}{" "}
+                          <button onClick={payFees} style={{ background: "none", border: "none", color: "#f97316", cursor: "pointer", fontFamily: "inherit", fontSize: 11.5, fontWeight: 800, padding: 0 }}>
+                            {t("motari.fee.try_again") || "Try again"}
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   ) : ride ? (
                     <div style={{ display: "grid", gap: 10 }}>
                       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
@@ -750,6 +840,51 @@ export default function MotariDrivePage() {
                         <div style={{ color: "#fff", fontWeight: 900, fontSize: 14, marginTop: 3 }}>{history.totalRides}</div>
                       </div>
                     </div>
+
+                    {/* The daily platform fee, always visible here. */}
+                    {fees && (
+                      <div style={{
+                        ...card, padding: "10px 12px",
+                        borderColor: fees.paused ? "#7f1d1d" : fees.dueAmountRwf > 0 ? "#7c3a10" : "#1f1f1f",
+                      }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+                          <div style={{ minWidth: 0 }}>
+                            <div style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>
+                              {t("motari.fee.title") || "Daily fee"}
+                            </div>
+                            <div style={{ ...micro, marginTop: 2 }}>
+                              {fees.dueAmountRwf > 0
+                                ? `${fmt(fees.dueAmountRwf)} · ${fees.dueDays} ${t("motari.fee.days") || "days"}`
+                                : (t("motari.fee.clear") || "Nothing owed")}
+                            </div>
+                          </div>
+                          {fees.dueAmountRwf > 0 && (
+                            <button disabled={busy || fees.paymentPending} onClick={payFees} style={{
+                              borderRadius: 9, padding: "8px 14px", fontSize: 9.5, fontWeight: 900,
+                              letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer",
+                              fontFamily: "inherit", flexShrink: 0, border: "none",
+                              background: fees.paymentPending ? "#1a1a1a" : "#f97316",
+                              color: fees.paymentPending ? "#888" : "#000",
+                            }}>
+                              {fees.paymentPending
+                                ? (t("motari.fee.pending_short") || "Approve on phone")
+                                : (t("motari.fee.pay_now") || "Pay now")}
+                            </button>
+                          )}
+                        </div>
+                        <div style={{ ...micro, color: "#555", marginTop: 6 }}>
+                          {t("motari.fee.rule") || "Days with fewer rides than the minimum are free."}
+                          {" "}{fees.todayRides}/{fees.minRides} {t("motari.dash.rides") || "Rides"} · {fmt(fees.dailyFeeRwf)}
+                        </div>
+                        {feeError && (
+                          <div style={{ color: "#f87171", fontSize: 10.5, marginTop: 6 }}>
+                            {feeError} <button onClick={payFees} style={{ background: "none", border: "none", color: "#f97316", cursor: "pointer", fontFamily: "inherit", fontSize: 10.5, fontWeight: 800, padding: 0 }}>
+                              {t("motari.fee.try_again") || "Try again"}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     {/* Where the money goes, and every movement out. */}
                     <div style={{ ...card, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>

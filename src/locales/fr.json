@@ -2671,6 +2671,18 @@
       "totp": "Code authenticator",
       "verify_note": "Votre email n'est pas encore vérifié. Entrez le code envoyé.",
       "verify_cta": "Vérifier et se connecter"
+    },
+    "fee": {
+      "title": "Frais journaliers",
+      "due": "Frais journaliers à payer",
+      "paused": "Votre compte est inactif. Payez les frais pour le rouvrir.",
+      "days": "jours",
+      "pay_now": "Payer",
+      "pending": "Approuvez la demande sur votre téléphone",
+      "pending_short": "Approuvez sur le téléphone",
+      "try_again": "Réessayer",
+      "clear": "Rien à payer",
+      "rule": "Les journées sous le minimum de courses sont gratuites."
     }
   }
 }

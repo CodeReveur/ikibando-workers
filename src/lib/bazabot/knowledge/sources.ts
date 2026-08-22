@@ -66,6 +66,18 @@ const DOCS: KnowledgeDoc[] = [
       "mobile money at the end. You can rate the driver after the ride.",
   },
   {
+    id: "policy-motari-daily-fee",
+    title: "The motari daily fee",
+    category: "policy",
+    text: "A motari pays a flat daily platform fee of 500 RWF, but only for a day they actually worked: a day with " +
+      "fewer than 3 rides costs nothing at all. The fee for a day appears once that day ends, and unpaid days add up. " +
+      "After 3 unpaid days (1,500 RWF) the account is paused: no ride or courier requests reach the motari and they " +
+      "cannot accept until the balance is cleared, with the app saying the account is inactive. Paying is one tap: " +
+      "Pay now sends a mobile money prompt for the outstanding amount to the motari's phone, and the account reopens " +
+      "as soon as the money lands. If a prompt fails or expires, the app offers Try again. The fee is shown on the " +
+      "top bar of the driver app from 4pm through 8am, and any time of day in the Money tab.",
+  },
+  {
     id: "guide-courier",
     title: "Courier: send a parcel by motari (gutwara imizigo)",
     category: "guide",

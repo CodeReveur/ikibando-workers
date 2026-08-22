@@ -2672,6 +2672,18 @@
       "totp": "Authenticator code",
       "verify_note": "Your email is not verified yet. Enter the code we just sent.",
       "verify_cta": "Verify and sign in"
+    },
+    "fee": {
+      "title": "Daily fee",
+      "due": "Daily fee due",
+      "paused": "Your account is inactive. Pay the fee to open it again.",
+      "days": "days",
+      "pay_now": "Pay now",
+      "pending": "Approve the prompt on your phone",
+      "pending_short": "Approve on phone",
+      "try_again": "Try again",
+      "clear": "Nothing owed",
+      "rule": "Days with fewer rides than the minimum are free."
     }
   }
 }

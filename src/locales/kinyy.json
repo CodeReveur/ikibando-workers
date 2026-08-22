@@ -2671,6 +2671,18 @@
       "totp": "Kode ya authenticator",
       "verify_note": "Email yawe ntiremezwa. Andika kode twohereje.",
       "verify_cta": "Emeza winjire"
+    },
+    "fee": {
+      "title": "Amafaranga ya buri munsi",
+      "due": "Ufite amafaranga ya buri munsi",
+      "paused": "Konti yawe yahagaritswe. Ishyura kugira ngo ikomeze.",
+      "days": "iminsi",
+      "pay_now": "Ishyura",
+      "pending": "Emeza ubutumwa kuri telefoni yawe",
+      "pending_short": "Emeza kuri telefoni",
+      "try_again": "Ongera ugerageze",
+      "clear": "Nta wishyura",
+      "rule": "Umunsi ufite ingendo nkeya ntacyo wishyura."
     }
   }
 }

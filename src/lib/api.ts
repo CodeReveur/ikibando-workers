@@ -1792,8 +1792,21 @@ export interface MotariOffer {
   expiresInSeconds: number;
 }
 
+export interface MotariFees {
+  dueDays: number;
+  dueAmountRwf: number;
+  /** Unpaid days have paused the account: no offers, no accepting. */
+  paused: boolean;
+  paymentPending: boolean;
+  todayRides: number;
+  minRides: number;
+  dailyFeeRwf: number;
+  maxDueDays: number;
+}
+
 export interface MotariState {
   offer?: MotariOffer;
+  fees?: MotariFees;
   profile?: {
     plateNumber: string;
     licenseNumber?: string;
@@ -1912,6 +1925,12 @@ export async function setMotariPayout(
   token: string,
 ): Promise<MotariState> {
   const { data } = await http.post("/api/rides/driver/payout", payload, { headers: authHeader(token) });
+  return data.data;
+}
+
+/** Pay the outstanding daily fee: pushes a mobile money prompt. */
+export async function payMotariFees(phone: string | undefined, token: string): Promise<MotariState> {
+  const { data } = await http.post("/api/rides/driver/fees/pay", { phone }, { headers: authHeader(token) });
   return data.data;
 }
 
