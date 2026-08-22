@@ -113,16 +113,20 @@ const selfIcon = L.divIcon({
   iconAnchor: [9, 9],
 });
 
-// A passenger waiting for a moto: teardrop pin with a person, so drivers can
-// read the demand around them at a glance.
+// A passenger waiting for a moto: a teardrop pin holding a simple person glyph,
+// drawn rather than an emoji so it reads the same on every device.
 const waitingIcon = L.divIcon({
   className: "motari-waiting",
-  html: `<div style="width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);
+  html: `<div style="width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);
            background:#f97316;border:2px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,0.55);
            display:flex;align-items:center;justify-content:center">
-           <span style="transform:rotate(45deg);font-size:13px;line-height:1">🙋</span></div>`,
-  iconSize: [28, 28],
-  iconAnchor: [14, 28],
+           <svg viewBox="0 0 24 24" width="15" height="15" fill="#fff" style="transform:rotate(45deg)"
+                aria-hidden="true">
+             <circle cx="12" cy="7.5" r="3.6"/>
+             <path d="M12 12.6c-3.6 0-6.4 2.1-6.4 4.7v1.3h12.8v-1.3c0-2.6-2.8-4.7-6.4-4.7z"/>
+           </svg></div>`,
+  iconSize: [30, 30],
+  iconAnchor: [15, 30],
 });
 
 export default function MotariMapInner({ pickup, destination, driver, route, extras, self, selfAccuracyM, onPick, onExtraClick }: MotariMapProps) {
