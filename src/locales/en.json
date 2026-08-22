@@ -2517,7 +2517,8 @@
       "courier_min": "Parcels start at",
       "send_parcel": "Send parcel",
       "destination_required": "To (required for parcels)",
-      "set_destination": "Set the destination"
+      "set_destination": "Set the destination",
+      "pick_destination": "Pick the destination from the list"
     },
     "ride": {
       "ongoing": "Ongoing trip",

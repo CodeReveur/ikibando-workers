@@ -2515,8 +2515,9 @@
       "parcel_note": "Ni iki ugiye kohereza? (si itegeko)",
       "courier_min": "Igiciro cy'imizigo gitangirira kuri",
       "send_parcel": "Ohereza umuzigo",
-      "destination_required": "Aho ujya (ngombwa ku mizigo)",
-      "set_destination": "Shyiramo aho umuzigo ujya"
+      "destination_required": "Aho ijya ni ngombwa",
+      "set_destination": "Shyiramo aho umuzigo ujya",
+      "pick_destination": "Hitamo aho ujya ku rutonde"
     },
     "ride": {
       "ongoing": "Urugendo rurimo",

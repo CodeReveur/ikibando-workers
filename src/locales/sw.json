@@ -2516,7 +2516,8 @@
       "courier_min": "Vifurushi vinaanzia",
       "send_parcel": "Tuma kifurushi",
       "destination_required": "Kwenda (lazima kwa vifurushi)",
-      "set_destination": "Weka unakoenda"
+      "set_destination": "Weka unakoenda",
+      "pick_destination": "Chagua unakoenda kwenye orodha"
     },
     "ride": {
       "ongoing": "Safari inayoendelea",

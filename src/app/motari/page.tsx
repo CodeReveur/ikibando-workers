@@ -658,9 +658,10 @@ export default function AskMotariPage() {
 
               {/* destination (optional) */}
               <div style={{ position: "relative", marginBottom: 10 }}>
-                <Flag size={12} color="#16a34a" style={iconLeft} />
+                <Flag size={12} color={kind === "COURIER" && !dest ? "#f97316" : "#16a34a"} style={iconLeft} />
                 <input
-                  style={input}
+                  // A parcel's destination is required: the field says so until it is picked.
+                  style={kind === "COURIER" && !dest ? { ...input, borderColor: "#7c3a10" } : input}
                   placeholder={kind === "COURIER"
                     ? (t("motari.request.destination_required") || "To (required for parcels)")
                     : (t("motari.request.destination_placeholder") || "To (optional)")}
@@ -825,7 +826,10 @@ export default function AskMotariPage() {
                   : !pickup
                     ? (t("motari.request.set_pickup_first") || "Set your pickup")
                     : kind === "COURIER" && !dest
-                      ? (t("motari.request.set_destination") || "Set the destination")
+                      // Typed but unpicked is the common trap: say so explicitly.
+                      ? destQ.trim().length >= 2
+                        ? (t("motari.request.pick_destination") || "Pick the destination from the list")
+                        : (t("motari.request.set_destination") || "Set the destination")
                     : !courierOk
                       ? `${t("motari.request.courier_min") || "Parcels start at"} ${fmt(courierMin)}`
                       : kind === "COURIER"
