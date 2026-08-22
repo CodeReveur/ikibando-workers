@@ -1688,8 +1688,21 @@ export type RideStatus =
 
 export type FareMode = "QUOTED" | "METERED";
 
+/** What the motari carries: a passenger, or a parcel (gutwara imizigo). */
+export type RideKind = "RIDE" | "COURIER";
+
+export interface MotariSupply {
+  kind: RideKind;
+  /** Motari online, fresh and able to take this kind of request nearby. */
+  active: number;
+  /** Distance to the closest one, metres. */
+  nearestM?: number;
+  minFareRwf: number;
+}
+
 export interface RideQuote {
   fareMode: FareMode;
+  kind: RideKind;
   baseFareRwf: number;
   perKmRwf: number;
   minFareRwf: number;
@@ -1714,6 +1727,8 @@ export interface RideDto {
   token?: string;
   status: RideStatus;
   fareMode: FareMode;
+  kind: RideKind;
+  parcelNote?: string;
   passengerName: string;
   passengerPhone?: string;
   pickupLat: number;
@@ -1749,6 +1764,8 @@ export interface RideDto {
 export interface MotariNearbyRide {
   id: string;
   fareMode: FareMode;
+  kind: RideKind;
+  parcelNote?: string;
   pickupLat: number;
   pickupLng: number;
   pickupName?: string;
@@ -1762,6 +1779,8 @@ export interface MotariOffer {
   rideId: string;
   passengerName: string;
   fareMode: FareMode;
+  kind: RideKind;
+  parcelNote?: string;
   pickupLat: number;
   pickupLng: number;
   pickupName?: string;
@@ -1782,6 +1801,7 @@ export interface MotariState {
     legalName?: string;
     verified: boolean;
     online: boolean;
+    courier: boolean;
     totalRides: number;
   };
   activeRide?: RideDto;
@@ -1791,8 +1811,9 @@ export interface MotariState {
 export async function getRideQuote(
   pickup: { lat: number; lng: number },
   dest?: { lat: number; lng: number } | null,
+  kind: RideKind = "RIDE",
 ): Promise<RideQuote> {
-  const params = new URLSearchParams({ pickupLat: String(pickup.lat), pickupLng: String(pickup.lng) });
+  const params = new URLSearchParams({ pickupLat: String(pickup.lat), pickupLng: String(pickup.lng), kind });
   if (dest) { params.set("destLat", String(dest.lat)); params.set("destLng", String(dest.lng)); }
   const { data } = await http.get(`/api/rides/public/quote?${params}`);
   return data.data;
@@ -1809,8 +1830,19 @@ export async function requestRide(payload: {
   destName?: string;
   offeredFareRwf?: number;
   payViaPlatform?: boolean;
+  kind?: RideKind;
+  parcelNote?: string;
 }): Promise<RideDto> {
   const { data } = await http.post("/api/rides/public", payload);
+  return data.data;
+}
+
+/** Supply around a point: how many motari can take this kind of request. */
+export async function getMotariSupply(
+  at: { lat: number; lng: number }, kind: RideKind = "RIDE",
+): Promise<MotariSupply> {
+  const params = new URLSearchParams({ lat: String(at.lat), lng: String(at.lng), kind });
+  const { data } = await http.get("/api/rides/public/supply?" + params);
   return data.data;
 }
 
@@ -1857,6 +1889,11 @@ export async function saveMotariProfile(
   token: string,
 ): Promise<MotariState> {
   const { data } = await http.post("/api/rides/driver/profile", payload, { headers: authHeader(token) });
+  return data.data;
+}
+
+export async function setMotariCourier(courier: boolean, token: string): Promise<MotariState> {
+  const { data } = await http.post("/api/rides/driver/courier", { courier }, { headers: authHeader(token) });
   return data.data;
 }
 

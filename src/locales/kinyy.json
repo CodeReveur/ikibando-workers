@@ -2509,7 +2509,12 @@
       "your_price": "Igiciro cyawe.",
       "searching": "Turashakisha…",
       "no_match": "Nta byabonetse. Kanda ku ikarita ushyireho akadomo.",
-      "name_price": "Uzatanga angahe? RWF"
+      "name_price": "Uzatanga angahe? RWF",
+      "courier": "Imizigo",
+      "available": "bahari",
+      "parcel_note": "Woherereza iki? (si itegeko)",
+      "courier_min": "Imizigo itangirira kuri",
+      "send_parcel": "Ohereza umuzigo"
     },
     "ride": {
       "ongoing": "Urugendo rurimo",
@@ -2635,7 +2640,12 @@
       "platform_pending": "Umugenzi arishyura kuri platform. Cash iracyashoboka.",
       "waiting_here": "Ategerereje hano",
       "to_pickup": "Ku mugenzi",
-      "to_dest": "Aho mujya"
+      "to_dest": "Aho mujya",
+      "offer_parcel": "Umuzigo kuri wewe",
+      "carry_parcels": "Gutwara imizigo",
+      "carry_parcels_hint": "Ubusabe bw'imizigo na bwo buraza",
+      "on": "Yego",
+      "off": "Oya"
     },
     "login": {
       "title": "Injira",

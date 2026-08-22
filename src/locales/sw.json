@@ -2509,7 +2509,12 @@
       "your_price": "Bei yako.",
       "searching": "Inatafuta…",
       "no_match": "Hakuna matokeo. Gusa ramani kuweka alama.",
-      "name_price": "Utalipa kiasi gani? RWF"
+      "name_price": "Utalipa kiasi gani? RWF",
+      "courier": "Vifurushi",
+      "available": "wapo",
+      "parcel_note": "Unatuma nini? (si lazima)",
+      "courier_min": "Vifurushi vinaanzia",
+      "send_parcel": "Tuma kifurushi"
     },
     "ride": {
       "ongoing": "Safari inayoendelea",
@@ -2635,7 +2640,12 @@
       "platform_pending": "Abiria analipa kupitia platform. Cash bado inawezekana.",
       "waiting_here": "Anasubiri hapa",
       "to_pickup": "Kwa abiria",
-      "to_dest": "Hadi mwisho"
+      "to_dest": "Hadi mwisho",
+      "offer_parcel": "Kifurushi kwako",
+      "carry_parcels": "Beba vifurushi",
+      "carry_parcels_hint": "Maombi ya vifurushi yatakufikia pia",
+      "on": "Ndiyo",
+      "off": "Hapana"
     },
     "login": {
       "title": "Ingia",

@@ -6,6 +6,7 @@ import { getRoute, fmtDistance, fmtDuration, type RouteResult } from "@/lib/rout
 import {
   getMotariState, getMotariHistory, saveMotariProfile, setMotariOnline, motariHeartbeat,
   acceptRide, declineRide, motariArrived, motariStart, motariComplete, motariPaid, motariCancelRide,
+  setMotariCourier,
   requestWithdrawalOtp, confirmWithdrawal, submitContact, apiError,
   type MotariState, type MotariHistory, type RideDto,
 } from "@/lib/api";
@@ -13,7 +14,7 @@ import { useLanguage } from "@/lib/language-context";
 import { playSound, startSoundLoop, stopSoundLoop, unlockSounds } from "@/lib/sounds";
 import { formatRwPhone, isValidRwPhone } from "@/lib/phone";
 import {
-  Bike, Phone, Power, Banknote, Smartphone, CheckCircle2, X, Star, LogOut, ChevronDown, ChevronUp, Globe,
+  Bike, Phone, Power, Banknote, Smartphone, CheckCircle2, X, Star, LogOut, ChevronDown, ChevronUp, Globe, Package,
 } from "lucide-react";
 
 const POLL_MS = 5000;
@@ -325,6 +326,23 @@ export default function MotariDrivePage() {
           {state?.profile?.plateNumber || "Motari"}
         </div>
 
+        {/* Parcel demand around this motari, next to the plate. */}
+        {online && !ride && (() => {
+          const parcels = (state?.nearby ?? []).filter(n => n.kind === "COURIER");
+          if (parcels.length === 0) return null;
+          const nearest = Math.min(...parcels.map(p => p.distanceToPickupM));
+          return (
+            <div style={{
+              position: "absolute", top: 52, left: 14, zIndex: 998, ...glass,
+              borderRadius: 999, padding: "5px 11px", display: "flex", alignItems: "center", gap: 5,
+              color: "#f97316", fontSize: 9, fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase",
+            }}>
+              <Package size={10} />
+              {parcels.length} {t("motari.request.courier") || "Courier"} · {km(nearest)}
+            </div>
+          );
+        })()}
+
         {/* Language, top centre: a motari picks their own language here. */}
         <div style={{ position: "absolute", top: 14, left: "50%", transform: "translateX(-50%)", zIndex: 1002 }}>
           <button onClick={() => setLangOpen(o => !o)} aria-label="Language" style={{
@@ -378,8 +396,11 @@ export default function MotariDrivePage() {
             borderColor: "#f97316", boxShadow: "0 12px 40px rgba(0,0,0,0.7)",
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <span style={{ ...micro, color: "#f97316", flex: 1 }}>
-                {t("motari.dash.offer_title") || "New ride for you"}
+              <span style={{ ...micro, color: "#f97316", flex: 1, display: "flex", alignItems: "center", gap: 5 }}>
+                {state.offer.kind === "COURIER" && <Package size={11} />}
+                {state.offer.kind === "COURIER"
+                  ? (t("motari.dash.offer_parcel") || "Parcel for you")
+                  : (t("motari.dash.offer_title") || "New ride for you")}
               </span>
               <span style={{
                 fontWeight: 900, fontSize: 15, fontVariantNumeric: "tabular-nums",
@@ -399,6 +420,12 @@ export default function MotariDrivePage() {
               <b style={{ color: "#fff" }}>{state.offer.passengerName}</b>
               {" · "}{km(state.offer.distanceToPickupM)} {t("motari.dash.away") || "away"}
               <br />
+              {state.offer.parcelNote && (
+                <>
+                  <span style={{ color: "#f97316" }}>{state.offer.parcelNote}</span>
+                  <br />
+                </>
+              )}
               <span style={{ color: "#f97316" }}>●</span> {state.offer.pickupName || "Pinned pickup"}
               <br />
               <span style={{ color: "#16a34a" }}>●</span> {state.offer.destName || (t("motari.dash.open_ride") || "open ride")}
@@ -524,6 +551,12 @@ export default function MotariDrivePage() {
                             </a>
                           </>
                         )}
+                        {ride.kind === "COURIER" && (
+                          <div style={{ ...micro, color: "#f97316" }}>
+                            {t("motari.request.courier") || "Courier"}
+                            {ride.parcelNote ? " · " + ride.parcelNote : ""}
+                          </div>
+                        )}
                         <div style={{ color: "#999" }}>
                           <span style={{ color: "#f97316" }}>●</span> {ride.pickupName || "Pinned pickup"}<br />
                           <span style={{ color: "#16a34a" }}>●</span> {ride.destName || (t("motari.dash.open_dest") || "Passenger directs you. Meter runs.")}
@@ -617,7 +650,22 @@ export default function MotariDrivePage() {
                               <div key={n.id} style={{ ...card, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
                                 <div style={{ minWidth: 0 }}>
                                   <div style={{ fontSize: 12.5, fontWeight: 700, color: "#fff", lineHeight: 1.4, overflowWrap: "anywhere" }}>
+                                    {n.kind === "COURIER" && (
+                                      <span style={{
+                                        display: "inline-flex", alignItems: "center", gap: 3, marginRight: 6,
+                                        background: "#f97316", color: "#000", borderRadius: 5, padding: "1px 6px",
+                                        fontSize: 8.5, fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase",
+                                        verticalAlign: "middle",
+                                      }}>
+                                        <Package size={9} /> {t("motari.request.courier") || "Courier"}
+                                      </span>
+                                    )}
                                     {n.pickupName || "Pinned pickup"}
+                                    {n.parcelNote && (
+                                      <span style={{ display: "block", fontSize: 11, color: "#aaa", fontWeight: 500 }}>
+                                        {n.parcelNote}
+                                      </span>
+                                    )}
                                   </div>
                                   <div style={{ fontSize: 11, color: "#888", marginTop: 2 }}>
                                     {km(n.distanceToPickupM)} {t("motari.dash.away") || "away"} · {n.destName ? `→ ${n.destName}` : (t("motari.dash.open_ride") || "open ride")}
@@ -768,6 +816,33 @@ export default function MotariDrivePage() {
                           {t("motari.dash.complaint_cta") || "Send complaint"}
                         </button>
                       </>
+                    )}
+
+                    {state?.profile && (
+                      <div style={{ borderTop: "1px solid #1a1a1a", paddingTop: 10, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+                        <div>
+                          <div style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>
+                            {t("motari.dash.carry_parcels") || "Carry parcels"}
+                          </div>
+                          <div style={{ ...micro }}>
+                            {t("motari.dash.carry_parcels_hint") || "Courier requests reach you too"}
+                          </div>
+                        </div>
+                        <button
+                          disabled={busy}
+                          onClick={() => act(() => setMotariCourier(!state.profile!.courier, token()))}
+                          style={{
+                            borderRadius: 999, padding: "7px 16px", fontSize: 9.5, fontWeight: 900,
+                            letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer",
+                            fontFamily: "inherit", flexShrink: 0,
+                            background: state.profile.courier ? "#f97316" : "transparent",
+                            color: state.profile.courier ? "#000" : "#888",
+                            border: state.profile.courier ? "none" : "1px solid #1f1f1f",
+                          }}
+                        >
+                          {state.profile.courier ? (t("motari.dash.on") || "On") : (t("motari.dash.off") || "Off")}
+                        </button>
+                      </div>
                     )}
 
                     <div style={{ borderTop: "1px solid #1a1a1a", paddingTop: 10, display: "grid", gap: 8 }}>

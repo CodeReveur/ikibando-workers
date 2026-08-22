@@ -7,15 +7,16 @@ import { MotariLoginModal } from "@/components/motari/MotariLoginModal";
 import { searchPlaces, reverseGeocode, type PlaceSuggestion } from "@/lib/geocoding";
 import { getRoute, fmtDistance, fmtDuration, type RouteResult } from "@/lib/routing";
 import {
-  getRideQuote, requestRide, trackRide, cancelRide, rateRide, payRideNow, apiError,
-  type RideQuote, type RideDto,
+  getRideQuote, requestRide, trackRide, cancelRide, rateRide, payRideNow,
+  getMotariSupply, apiError,
+  type RideQuote, type RideDto, type RideKind, type MotariSupply,
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
 import { playSound, unlockSounds } from "@/lib/sounds";
 import { formatRwPhone, isValidRwPhone } from "@/lib/phone";
 import {
   Menu, X, MapPin, Flag, Phone, User, Star, ChevronDown, ChevronUp,
-  LocateFixed, Home, Users, HelpCircle, Bike, Globe, LogIn, LogOut, LayoutDashboard, Pencil, Check,
+  LocateFixed, Home, Users, HelpCircle, Bike, Globe, LogIn, LogOut, LayoutDashboard, Pencil, Check, Package,
 } from "lucide-react";
 
 const ACTIVE_TOKEN_KEY = "motari_ride_token";
@@ -84,6 +85,11 @@ export default function AskMotariPage() {
   const [phone, setPhone] = useState("");
   const [offerFare, setOfferFare] = useState("");
   const [editingFare, setEditingFare] = useState(false);
+
+  // Passenger or parcel. Courier keeps its own minimum fare.
+  const [kind, setKind] = useState<RideKind>("RIDE");
+  const [parcelNote, setParcelNote] = useState("");
+  const [supply, setSupply] = useState<MotariSupply | null>(null);
 
   // payment choice once a motari accepted: platform prompt or cash
   const [payOpen, setPayOpen] = useState(false);
@@ -208,19 +214,33 @@ export default function AskMotariPage() {
     return () => clearTimeout(id);
   }, [destQ, dest, pickup]);
 
+  /* ── how much supply is around, per kind ───────────────────────────────── */
+  useEffect(() => {
+    const at = pickup ?? device;
+    if (!at) { setSupply(null); return; }
+    let alive = true;
+    const load = () => getMotariSupply({ lat: at.latitude, lng: at.longitude }, kind)
+      .then(s => { if (alive) setSupply(s); })
+      .catch(() => {});
+    load();
+    const id = setInterval(load, 20000);
+    return () => { alive = false; clearInterval(id); };
+  }, [kind, pickup, device]);
+
   /* ── quote + road route once points exist ──────────────────────────────── */
   useEffect(() => {
     if (!pickup) { setQuote(null); setRoute(null); return; }
     getRideQuote(
       { lat: pickup.latitude, lng: pickup.longitude },
       dest ? { lat: dest.latitude, lng: dest.longitude } : null,
+      kind,
     ).then(setQuote).catch(() => setQuote(null));
     if (dest) {
       getRoute(pickup, dest).then(setRoute);
     } else {
       setRoute(null);
     }
-  }, [pickup, dest]);
+  }, [pickup, dest, kind]);
 
   const useMyLocation = async () => {
     // The continuous watch usually already holds a fresh, accurate fix: use it
@@ -258,7 +278,11 @@ export default function AskMotariPage() {
     else if (!dest) { setDest({ ...p, label }); setDestQ(label); }
   }, [pickup, dest]);
 
-  const canSubmit = !!pickup && name.trim().length >= 2 && isValidRwPhone(phone) && !busy;
+  // A parcel has a floor: the passenger must name at least the minimum.
+  const courierMin = supply?.minFareRwf ?? quote?.minFareRwf ?? 1000;
+  const priced = parseInt(offerFare || "0", 10);
+  const courierOk = kind !== "COURIER" || priced >= courierMin;
+  const canSubmit = !!pickup && name.trim().length >= 2 && isValidRwPhone(phone) && courierOk && !busy;
 
   const submit = async () => {
     if (!canSubmit || !pickup) return;
@@ -271,6 +295,7 @@ export default function AskMotariPage() {
         pickupLat: pickup.latitude, pickupLng: pickup.longitude, pickupName: pickup.label,
         ...(dest ? { destLat: dest.latitude, destLng: dest.longitude, destName: dest.label } : {}),
         ...(parseInt(offerFare || "0", 10) > 0 ? { offeredFareRwf: parseInt(offerFare, 10) } : {}),
+        ...(kind === "COURIER" ? { kind, parcelNote: parcelNote.trim() || undefined } : {}),
       });
       if (r.token) { localStorage.setItem(ACTIVE_TOKEN_KEY, r.token); tokenRef.current = r.token; }
       setRide(r);
@@ -561,6 +586,35 @@ export default function AskMotariPage() {
           ) : !ride ? (
             /* ── REQUEST FORM ─────────────────────────────────────────────── */
             <>
+              {/* Ride or parcel, with how much supply is actually around. */}
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
+                {([
+                  ["RIDE", Bike, t("common.buttons.ask_motari") || "Ask Motari"],
+                  ["COURIER", Package, t("motari.request.courier") || "Courier"],
+                ] as const).map(([k, Icon, label]) => (
+                  <button
+                    key={k}
+                    onClick={() => { setKind(k); if (k === "RIDE") setParcelNote(""); }}
+                    style={{
+                      display: "flex", alignItems: "center", gap: 5,
+                      borderRadius: 999, padding: "6px 12px", cursor: "pointer", fontFamily: "inherit",
+                      fontSize: 9.5, fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase",
+                      background: kind === k ? "#f97316" : "transparent",
+                      color: kind === k ? "#000" : "#777",
+                      border: kind === k ? "none" : "1px solid #1f1f1f",
+                    }}
+                  >
+                    <Icon size={11} /> {label}
+                  </button>
+                ))}
+                {supply && (
+                  <span style={{ ...micro, marginLeft: "auto", color: supply.active > 0 ? "#4ade80" : "#666" }}>
+                    {supply.active} {t("motari.request.available") || "available"}
+                    {supply.nearestM != null && ` · ${km(supply.nearestM)}`}
+                  </span>
+                )}
+              </div>
+
               {/* pickup */}
               <div style={{ position: "relative", marginBottom: 8 }}>
                 <MapPin size={12} color="#f97316" style={iconLeft} />
@@ -655,15 +709,25 @@ export default function AskMotariPage() {
                     </>
                   )}
                   {/* No destination means no distance to price: the passenger
-                      simply says what they will pay. */}
-                  {!dest && parseInt(offerFare || "0", 10) <= 0 ? (
-                    <input
-                      style={{ ...input, width: 190, padding: "7px 12px" }}
-                      value={offerFare}
-                      onChange={e => setOfferFare(e.target.value.replace(/\D/g, ""))}
-                      inputMode="numeric" maxLength={7}
-                      placeholder={t("motari.request.name_price") || "What will you pay? RWF"}
-                    />
+                      simply says what they will pay. A parcel always names a
+                      price, and it cannot go below the courier minimum. */}
+                  {(kind === "COURIER" || !dest) && parseInt(offerFare || "0", 10) <= 0 ? (
+                    <>
+                      <input
+                        style={{ ...input, width: 190, padding: "7px 12px" }}
+                        value={offerFare}
+                        onChange={e => setOfferFare(e.target.value.replace(/\D/g, ""))}
+                        inputMode="numeric" maxLength={7}
+                        placeholder={kind === "COURIER"
+                          ? `${t("motari.request.name_price") || "What will you pay? RWF"} (min ${courierMin.toLocaleString()})`
+                          : (t("motari.request.name_price") || "What will you pay? RWF")}
+                      />
+                      {kind === "COURIER" && (
+                        <span style={{ ...micro, color: "#666" }}>
+                          {t("motari.request.courier_min") || "Parcels start at"} {fmt(courierMin)}
+                        </span>
+                      )}
+                    </>
                   ) : !editingFare ? (
                     <>
                       <span style={{ background: "#f97316", borderRadius: 999, padding: "5px 12px", fontSize: 11.5, color: "#000", fontWeight: 900, letterSpacing: "0.03em" }}>
@@ -722,6 +786,20 @@ export default function AskMotariPage() {
                 </div>
               )}
 
+              {/* what is being sent (courier only) */}
+              {kind === "COURIER" && (
+                <div style={{ position: "relative", marginBottom: 8 }}>
+                  <Package size={12} color="#f97316" style={iconLeft} />
+                  <input
+                    style={input}
+                    placeholder={t("motari.request.parcel_note") || "What are you sending? (optional)"}
+                    value={parcelNote}
+                    onChange={e => setParcelNote(e.target.value)}
+                    maxLength={255}
+                  />
+                </div>
+              )}
+
               {/* contact */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
                 <div style={{ position: "relative" }}>
@@ -743,7 +821,11 @@ export default function AskMotariPage() {
                   ? (t("motari.request.requesting") || "Requesting…")
                   : !pickup
                     ? (t("motari.request.set_pickup_first") || "Set your pickup")
-                    : (t("common.buttons.ask_motari") || "Ask Motari")}
+                    : !courierOk
+                      ? `${t("motari.request.courier_min") || "Parcels start at"} ${fmt(courierMin)}`
+                      : kind === "COURIER"
+                        ? (t("motari.request.send_parcel") || "Send parcel")
+                        : (t("common.buttons.ask_motari") || "Ask Motari")}
               </button>
 
               <div style={{ ...micro, textAlign: "center", marginTop: 10, color: "#555" }}>

@@ -2509,7 +2509,12 @@
       "your_price": "Votre prix.",
       "searching": "Recherche…",
       "no_match": "Aucun résultat. Touchez la carte pour placer un point.",
-      "name_price": "Combien allez-vous payer ? RWF"
+      "name_price": "Combien allez-vous payer ? RWF",
+      "courier": "Colis",
+      "available": "disponibles",
+      "parcel_note": "Qu'envoyez-vous ? (facultatif)",
+      "courier_min": "Les colis commencent à",
+      "send_parcel": "Envoyer le colis"
     },
     "ride": {
       "ongoing": "Course en cours",
@@ -2635,7 +2640,12 @@
       "platform_pending": "Le passager paie via la plateforme. Le cash reste possible.",
       "waiting_here": "En attente ici",
       "to_pickup": "Vers le départ",
-      "to_dest": "Vers la destination"
+      "to_dest": "Vers la destination",
+      "offer_parcel": "Colis pour vous",
+      "carry_parcels": "Transporter des colis",
+      "carry_parcels_hint": "Les demandes de colis vous parviennent aussi",
+      "on": "Oui",
+      "off": "Non"
     },
     "login": {
       "title": "Se connecter",

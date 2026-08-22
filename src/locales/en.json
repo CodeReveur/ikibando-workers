@@ -2510,7 +2510,12 @@
       "your_price": "Your price.",
       "searching": "Searching…",
       "no_match": "No match. Tap the map to drop a pin.",
-      "name_price": "What will you pay? RWF"
+      "name_price": "What will you pay? RWF",
+      "courier": "Courier",
+      "available": "available",
+      "parcel_note": "What are you sending? (optional)",
+      "courier_min": "Parcels start at",
+      "send_parcel": "Send parcel"
     },
     "ride": {
       "ongoing": "Ongoing trip",
@@ -2636,7 +2641,12 @@
       "platform_pending": "Passenger is paying via platform. You can still take cash if they change their mind.",
       "waiting_here": "Waiting here",
       "to_pickup": "To pickup",
-      "to_dest": "To destination"
+      "to_dest": "To destination",
+      "offer_parcel": "Parcel for you",
+      "carry_parcels": "Carry parcels",
+      "carry_parcels_hint": "Courier requests reach you too",
+      "on": "On",
+      "off": "Off"
     },
     "login": {
       "title": "Sign in",

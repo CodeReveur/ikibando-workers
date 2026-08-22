@@ -66,6 +66,18 @@ const DOCS: KnowledgeDoc[] = [
       "mobile money at the end. You can rate the driver after the ride.",
   },
   {
+    id: "guide-courier",
+    title: "Courier: send a parcel by motari (gutwara imizigo)",
+    category: "guide",
+    text: "The Ask Motari page carries parcels as well as people. Switch from Motari to Courier at the top of the " +
+      "request panel: a counter next to it shows how many motari are available for parcels right now and how far the " +
+      "closest one is. Set the pickup and where it is going, optionally say what you are sending, and name your price. " +
+      "A courier request starts at 1,000 RWF, higher than a passenger ride, because the motari makes the whole trip " +
+      "for the parcel. Everything else works the same: a nearby motari accepts, you track them live, and you pay cash " +
+      "or through the platform. Motari carry parcels by default and can switch it off under More on their dashboard, " +
+      "so courier requests only reach drivers who want them.",
+  },
+  {
     id: "guide-become-motari",
     title: "Become a motari (moto taxi driver)",
     category: "guide",
