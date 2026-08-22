@@ -2648,7 +2648,19 @@
       "carry_parcels": "Beba vifurushi",
       "carry_parcels_hint": "Maombi ya vifurushi yatakufikia pia",
       "on": "Ndiyo",
-      "off": "Hapana"
+      "off": "Hapana",
+      "tab_settings": "Mipangilio",
+      "instant_payout": "Malipo ya papo hapo",
+      "instant_hint": "Nauli za mtandao huenda kwa simu yako mara moja",
+      "instant_on": "Malipo ya papo hapo yapo",
+      "instant_off": "Fedha hubaki pochini",
+      "change_in_settings": "Badilisha kwenye Mipangilio",
+      "paid_out": "Imelipwa",
+      "payout_history": "Malipo",
+      "phone_change": "Badilisha namba ya akaunti",
+      "phone_change_sent": "Imetumwa. Msaada utathibitisha.",
+      "request": "Omba",
+      "save": "Hifadhi"
     },
     "login": {
       "title": "Ingia",

@@ -2649,7 +2649,19 @@
       "carry_parcels": "Carry parcels",
       "carry_parcels_hint": "Courier requests reach you too",
       "on": "On",
-      "off": "Off"
+      "off": "Off",
+      "tab_settings": "Settings",
+      "instant_payout": "Instant payout",
+      "instant_hint": "Platform fares leave for your phone at once",
+      "instant_on": "Instant payout on",
+      "instant_off": "Fares rest in the wallet",
+      "change_in_settings": "Change in Settings",
+      "paid_out": "Paid out",
+      "payout_history": "Payouts",
+      "phone_change": "Change account number",
+      "phone_change_sent": "Sent. Support will confirm the change.",
+      "request": "Request",
+      "save": "Save"
     },
     "login": {
       "title": "Sign in",

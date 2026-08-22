@@ -2648,7 +2648,19 @@
       "carry_parcels": "Gutwara imizigo",
       "carry_parcels_hint": "Ubusabe bw'imizigo na bwo buraza",
       "on": "Yego",
-      "off": "Oya"
+      "off": "Oya",
+      "tab_settings": "Igenamiterere",
+      "instant_payout": "Kwishyurwa ako kanya",
+      "instant_hint": "Amafaranga yishyuwe ajya kuri telefoni ako kanya",
+      "instant_on": "Kwishyurwa ako kanya birakora",
+      "instant_off": "Amafaranga asigara muri konti",
+      "change_in_settings": "Hindurira mu Igenamiterere",
+      "paid_out": "Yoherejwe",
+      "payout_history": "Ayoherejwe",
+      "phone_change": "Hindura numero ya konti",
+      "phone_change_sent": "Byoherejwe. Ubufasha buzabyemeza.",
+      "request": "Saba",
+      "save": "Bika"
     },
     "login": {
       "title": "Injira",

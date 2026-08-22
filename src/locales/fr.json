@@ -2648,7 +2648,19 @@
       "carry_parcels": "Transporter des colis",
       "carry_parcels_hint": "Les demandes de colis vous parviennent aussi",
       "on": "Oui",
-      "off": "Non"
+      "off": "Non",
+      "tab_settings": "Réglages",
+      "instant_payout": "Paiement instantané",
+      "instant_hint": "Les courses payées partent aussitôt vers votre téléphone",
+      "instant_on": "Paiement instantané activé",
+      "instant_off": "Les gains restent dans le portefeuille",
+      "change_in_settings": "Modifier dans Réglages",
+      "paid_out": "Versé",
+      "payout_history": "Versements",
+      "phone_change": "Changer le numéro du compte",
+      "phone_change_sent": "Envoyé. Le support confirmera.",
+      "request": "Demander",
+      "save": "Enregistrer"
     },
     "login": {
       "title": "Se connecter",

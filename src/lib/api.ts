@@ -1802,6 +1802,9 @@ export interface MotariState {
     verified: boolean;
     online: boolean;
     courier: boolean;
+    instantPayout: boolean;
+    payoutMethod: "MTN_MOMO" | "AIRTEL_MONEY";
+    payoutPhone?: string;
     totalRides: number;
   };
   activeRide?: RideDto;
@@ -1867,11 +1870,23 @@ export async function rateRide(token: string, stars: number): Promise<RideDto> {
   return data.data;
 }
 
+export interface MotariPayout {
+  id: string;
+  amountRwf: number;
+  method: "MTN_MOMO" | "AIRTEL_MONEY";
+  phone: string;
+  status: string;
+  note?: string;
+  createdAt: string;
+}
+
 export interface MotariHistory {
   totalCollectedRwf: number;
   totalRides: number;
   walletBalanceRwf: number;
+  totalPaidOutRwf: number;
   rides: RideDto[];
+  payouts: MotariPayout[];
 }
 
 export async function getMotariHistory(token: string): Promise<MotariHistory> {
@@ -1889,6 +1904,14 @@ export async function saveMotariProfile(
   token: string,
 ): Promise<MotariState> {
   const { data } = await http.post("/api/rides/driver/profile", payload, { headers: authHeader(token) });
+  return data.data;
+}
+
+export async function setMotariPayout(
+  payload: { instantPayout?: boolean; payoutMethod?: "MTN_MOMO" | "AIRTEL_MONEY"; payoutPhone?: string },
+  token: string,
+): Promise<MotariState> {
+  const { data } = await http.post("/api/rides/driver/payout", payload, { headers: authHeader(token) });
   return data.data;
 }
 

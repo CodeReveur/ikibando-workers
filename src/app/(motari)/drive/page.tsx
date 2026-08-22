@@ -6,8 +6,7 @@ import { getRoute, fmtDistance, fmtDuration, type RouteResult } from "@/lib/rout
 import {
   getMotariState, getMotariHistory, saveMotariProfile, setMotariOnline, motariHeartbeat,
   acceptRide, declineRide, motariArrived, motariStart, motariComplete, motariPaid, motariCancelRide,
-  setMotariCourier,
-  requestWithdrawalOtp, confirmWithdrawal, submitContact, apiError,
+  setMotariCourier, setMotariPayout, submitContact, apiError,
   type MotariState, type MotariHistory, type RideDto,
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
@@ -68,13 +67,10 @@ export default function MotariDrivePage() {
   const [plate, setPlate] = useState("");
   const [brand, setBrand] = useState("");
 
-  // withdrawal
-  const [wAmount, setWAmount] = useState("");
-  const [wPhone, setWPhone] = useState("");
-  const [wProvider, setWProvider] = useState<"MTN_MOMO" | "AIRTEL_MONEY">("MTN_MOMO");
-  const [wStep, setWStep] = useState<"FORM" | "CODE" | "DONE">("FORM");
-  const [wCode, setWCode] = useState("");
-  const [wMsg, setWMsg] = useState("");
+  // settings: payout preferences and the phone-change request
+  const [payPhone, setPayPhone] = useState("");
+  const [phoneReq, setPhoneReq] = useState("");
+  const [phoneReqSent, setPhoneReqSent] = useState(false);
 
   // complaint
   const [complaint, setComplaint] = useState("");
@@ -208,29 +204,23 @@ export default function MotariDrivePage() {
     window.location.href = "/motari";
   };
 
-  const withdraw = async () => {
-    const amount = parseInt(wAmount, 10);
-    if (!amount || amount < 500 || !isValidRwPhone(wPhone)) return;
+  // Ask support to change the number on the account; the driver cannot self-serve
+  // this, because the number is an identity fact tied to payouts.
+  const requestPhoneChange = async () => {
+    if (!isValidRwPhone(phoneReq) || busy) return;
     setBusy(true);
-    setWMsg("");
     try {
-      await requestWithdrawalOtp({ amount, phoneNumber: wPhone.trim(), paymentMethod: wProvider }, token());
-      setWStep("CODE");
-      setWMsg(t("motari.dash.w_code_sent") || "Check your email for the 6 digit code.");
-    } catch (e) { setWMsg(apiError(e)); }
-    setBusy(false);
-  };
-
-  const confirmW = async () => {
-    if (wCode.trim().length < 4) return;
-    setBusy(true);
-    setWMsg("");
-    try {
-      await confirmWithdrawal(wCode.trim(), token());
-      setWStep("DONE");
-      setWMsg(t("motari.dash.w_done") || "Withdrawal sent to your phone.");
-      getMotariHistory(token()).then(setHistory).catch(() => {});
-    } catch (e) { setWMsg(apiError(e)); }
+      const u = JSON.parse(localStorage.getItem("user") || "{}");
+      await submitContact({
+        name: u.name || "Motari",
+        email: u.email || "",
+        subject: "Motari phone number change",
+        message: "Please change my account phone number to " + phoneReq
+               + " (plate " + (state?.profile?.plateNumber ?? "unknown") + ").",
+      });
+      setPhoneReqSent(true);
+      setPhoneReq("");
+    } catch (e) { setError(apiError(e)); }
     setBusy(false);
   };
 
@@ -544,7 +534,7 @@ export default function MotariDrivePage() {
                     ["rides", t("motari.dash.tab_rides") || "Rides"],
                     ["money", t("motari.dash.tab_money") || "Money"],
                     ["trips", t("motari.dash.tab_trips") || "Trips"],
-                    ["more", t("motari.dash.tab_more") || "More"],
+                    ["more", t("motari.dash.tab_settings") || "Settings"],
                   ] as const).map(([key, label]) => (
                     <button key={key} onClick={() => setTab(key)} style={{
                       flex: 1, borderRadius: 999, padding: "7px 4px", fontSize: 9.5, fontWeight: 900,
@@ -761,51 +751,49 @@ export default function MotariDrivePage() {
                       </div>
                     </div>
 
-                    <div style={{ ...micro, marginTop: 4 }}>{t("motari.dash.withdraw") || "Withdraw instantly"}</div>
-                    {wStep === "FORM" && (
+                    {/* Where the money goes, and every movement out. */}
+                    <div style={{ ...card, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={micro}>{t("motari.dash.paid_out") || "Paid out"}</div>
+                        <div style={{ color: "#fff", fontWeight: 900, fontSize: 13, marginTop: 2 }}>
+                          {fmt(history.totalPaidOutRwf)}
+                        </div>
+                      </div>
+                      <div style={{ ...micro, textAlign: "right", color: state?.profile?.instantPayout ? "#4ade80" : "#666" }}>
+                        {state?.profile?.instantPayout
+                          ? (t("motari.dash.instant_on") || "Instant payout on")
+                          : (t("motari.dash.instant_off") || "Fares rest in the wallet")}
+                        <div style={{ color: "#555" }}>
+                          {t("motari.dash.change_in_settings") || "Change in Settings"}
+                        </div>
+                      </div>
+                    </div>
+
+                    {(history.payouts?.length ?? 0) > 0 && (
                       <>
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                          <input style={input} placeholder={t("motari.dash.w_amount") || "Amount (min 500)"} value={wAmount}
-                                 onChange={e => setWAmount(e.target.value.replace(/\D/g, ""))} inputMode="numeric" />
-                          <input style={input} placeholder="07xx xxx xxx" value={wPhone}
-                                 onChange={e => setWPhone(formatRwPhone(e.target.value))} inputMode="numeric" maxLength={10} />
-                        </div>
-                        <div style={{ display: "flex", gap: 8 }}>
-                          {(["MTN_MOMO", "AIRTEL_MONEY"] as const).map(p => (
-                            <button key={p} onClick={() => setWProvider(p)} style={{
-                              flex: 1, borderRadius: 9, padding: "8px 4px", fontSize: 10, fontWeight: 800,
-                              cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.04em",
-                              background: wProvider === p ? "#f97316" : "#0a0a0a",
-                              color: wProvider === p ? "#000" : "#888",
-                              border: wProvider === p ? "none" : "1px solid #1f1f1f",
-                            }}>
-                              {p === "MTN_MOMO" ? "MTN MoMo" : "Airtel Money"}
-                            </button>
-                          ))}
-                        </div>
-                        <button disabled={busy || !parseInt(wAmount || "0", 10) || parseInt(wAmount, 10) < 500 || !isValidRwPhone(wPhone)}
-                          onClick={withdraw}
-                          style={cta(!busy && parseInt(wAmount || "0", 10) >= 500 && isValidRwPhone(wPhone))}>
-                          {t("motari.dash.w_cta") || "Withdraw"}
-                        </button>
+                        <div style={micro}>{t("motari.dash.payout_history") || "Payouts"}</div>
+                        {history.payouts.map(p => (
+                          <div key={p.id} style={{ ...card, display: "flex", justifyContent: "space-between", gap: 10, padding: "9px 12px" }}>
+                            <div style={{ minWidth: 0 }}>
+                              <div style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>{fmt(p.amountRwf)}</div>
+                              <div style={{ ...micro, marginTop: 2 }}>
+                                {p.method === "MTN_MOMO" ? "MTN MoMo" : "Airtel Money"} · {p.phone}
+                              </div>
+                            </div>
+                            <div style={{ textAlign: "right", flexShrink: 0 }}>
+                              <div style={{
+                                ...micro,
+                                color: p.status === "SUCCESS" ? "#4ade80" : p.status === "FAILED" ? "#f87171" : "#fbbf24",
+                              }}>
+                                {p.status}
+                              </div>
+                              <div style={{ ...micro, color: "#555" }}>{when(p.createdAt)}</div>
+                            </div>
+                          </div>
+                        ))}
                       </>
                     )}
-                    {wStep === "CODE" && (
-                      <>
-                        <input style={{ ...input, textAlign: "center", letterSpacing: "0.4em", fontWeight: 800, fontSize: 16 }}
-                               placeholder="000000" value={wCode}
-                               onChange={e => setWCode(e.target.value.replace(/\D/g, "").slice(0, 6))} inputMode="numeric" />
-                        <button disabled={busy || wCode.trim().length < 4} onClick={confirmW} style={cta(!busy && wCode.trim().length >= 4)}>
-                          {t("motari.dash.w_confirm") || "Confirm withdrawal"}
-                        </button>
-                      </>
-                    )}
-                    {wStep === "DONE" && (
-                      <button onClick={() => { setWStep("FORM"); setWAmount(""); setWCode(""); setWMsg(""); }} style={cta(true)}>
-                        {t("motari.dash.w_again") || "New withdrawal"}
-                      </button>
-                    )}
-                    {wMsg && <div style={{ fontSize: 11.5, color: wStep === "DONE" ? "#4ade80" : "#bbb" }}>{wMsg}</div>}
+
                     <div style={{ ...micro, color: "#555" }}>
                       {t("motari.dash.w_note") || "Cash fares are yours on the spot. MoMo fares land in the wallet minus commission."}
                     </div>
@@ -845,57 +833,173 @@ export default function MotariDrivePage() {
                   </div>
                 )}
 
-                {/* ══ MORE ══ */}
+                {/* ══ SETTINGS ══ */}
                 {tab === "more" && (
                   <div style={{ display: "grid", gap: 10 }}>
-                    <div style={micro}>{t("motari.dash.complaint") || "Raise a complaint"}</div>
-                    {complaintSent ? (
-                      <div style={{ fontSize: 12, color: "#4ade80" }}>
-                        {t("motari.dash.complaint_sent") || "Sent. Support will reach out."}
-                      </div>
-                    ) : (
+                    {state?.profile && (
                       <>
-                        <textarea
-                          style={{ ...input, minHeight: 80, resize: "vertical" }}
-                          placeholder={t("motari.dash.complaint_ph") || "Tell us what happened"}
-                          value={complaint}
-                          onChange={e => setComplaint(e.target.value)}
-                          maxLength={2000}
-                        />
-                        <button disabled={busy || complaint.trim().length < 10} onClick={sendComplaint} style={cta(!busy && complaint.trim().length >= 10)}>
-                          {t("motari.dash.complaint_cta") || "Send complaint"}
-                        </button>
+                        {/* Instant payout: on, and to which number */}
+                        <div style={{ ...card, padding: "10px 12px" }}>
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+                            <div style={{ minWidth: 0 }}>
+                              <div style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>
+                                {t("motari.dash.instant_payout") || "Instant payout"}
+                              </div>
+                              <div style={micro}>
+                                {t("motari.dash.instant_hint") || "Platform fares leave for your phone at once"}
+                              </div>
+                            </div>
+                            <button
+                              disabled={busy}
+                              onClick={() => act(() => setMotariPayout({ instantPayout: !state.profile!.instantPayout }, token()))}
+                              style={{
+                                borderRadius: 999, padding: "6px 14px", fontSize: 9, fontWeight: 900,
+                                letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer",
+                                fontFamily: "inherit", flexShrink: 0,
+                                background: state.profile.instantPayout ? "#f97316" : "transparent",
+                                color: state.profile.instantPayout ? "#000" : "#888",
+                                border: state.profile.instantPayout ? "none" : "1px solid #1f1f1f",
+                              }}
+                            >
+                              {state.profile.instantPayout ? (t("motari.dash.on") || "On") : (t("motari.dash.off") || "Off")}
+                            </button>
+                          </div>
+
+                          {state.profile.instantPayout && (
+                            <div style={{ display: "grid", gap: 7, marginTop: 9 }}>
+                              <div style={{ display: "flex", gap: 6 }}>
+                                {(["MTN_MOMO", "AIRTEL_MONEY"] as const).map(m => (
+                                  <button key={m} disabled={busy}
+                                    onClick={() => act(() => setMotariPayout({ payoutMethod: m }, token()))}
+                                    style={{
+                                      flex: 1, borderRadius: 8, padding: "7px 4px", fontSize: 9.5, fontWeight: 800,
+                                      cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.04em",
+                                      background: state.profile!.payoutMethod === m ? "#f97316" : "#0a0a0a",
+                                      color: state.profile!.payoutMethod === m ? "#000" : "#888",
+                                      border: state.profile!.payoutMethod === m ? "none" : "1px solid #1f1f1f",
+                                    }}>
+                                    {m === "MTN_MOMO" ? "MTN MoMo" : "Airtel Money"}
+                                  </button>
+                                ))}
+                              </div>
+                              <div style={{ display: "flex", gap: 6 }}>
+                                <input
+                                  style={{ ...input, flex: 1, padding: "8px 10px" }}
+                                  placeholder={state.profile.payoutPhone || "07xxxxxxxx"}
+                                  value={payPhone}
+                                  onChange={e => setPayPhone(formatRwPhone(e.target.value))}
+                                  inputMode="numeric" maxLength={10}
+                                />
+                                <button
+                                  disabled={busy || !isValidRwPhone(payPhone)}
+                                  onClick={() => act(async () => {
+                                    const r = await setMotariPayout({ payoutPhone: payPhone }, token());
+                                    setPayPhone("");
+                                    return r;
+                                  })}
+                                  style={{
+                                    borderRadius: 8, padding: "8px 14px", fontSize: 9, fontWeight: 900,
+                                    letterSpacing: "0.06em", textTransform: "uppercase", fontFamily: "inherit",
+                                    cursor: isValidRwPhone(payPhone) ? "pointer" : "not-allowed",
+                                    background: isValidRwPhone(payPhone) ? "#f97316" : "#1a1a1a",
+                                    color: isValidRwPhone(payPhone) ? "#000" : "#555", border: "none", flexShrink: 0,
+                                  }}
+                                >
+                                  {t("motari.dash.save") || "Save"}
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Carry parcels */}
+                        <div style={{ ...card, padding: "10px 12px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+                          <div style={{ minWidth: 0 }}>
+                            <div style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>
+                              {t("motari.dash.carry_parcels") || "Carry parcels"}
+                            </div>
+                            <div style={micro}>{t("motari.dash.carry_parcels_hint") || "Courier requests reach you too"}</div>
+                          </div>
+                          <button
+                            disabled={busy}
+                            onClick={() => act(() => setMotariCourier(!state.profile!.courier, token()))}
+                            style={{
+                              borderRadius: 999, padding: "6px 14px", fontSize: 9, fontWeight: 900,
+                              letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer",
+                              fontFamily: "inherit", flexShrink: 0,
+                              background: state.profile.courier ? "#f97316" : "transparent",
+                              color: state.profile.courier ? "#000" : "#888",
+                              border: state.profile.courier ? "none" : "1px solid #1f1f1f",
+                            }}
+                          >
+                            {state.profile.courier ? (t("motari.dash.on") || "On") : (t("motari.dash.off") || "Off")}
+                          </button>
+                        </div>
+
+                        {/* Account phone: changed by support, not self-served */}
+                        <div style={{ ...card, padding: "10px 12px" }}>
+                          <div style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>
+                            {t("motari.dash.phone_change") || "Change account number"}
+                          </div>
+                          {phoneReqSent ? (
+                            <div style={{ color: "#4ade80", fontSize: 11.5, marginTop: 5 }}>
+                              {t("motari.dash.phone_change_sent") || "Sent. Support will confirm the change."}
+                            </div>
+                          ) : (
+                            <div style={{ display: "flex", gap: 6, marginTop: 7 }}>
+                              <input
+                                style={{ ...input, flex: 1, padding: "8px 10px" }}
+                                placeholder="07xxxxxxxx"
+                                value={phoneReq}
+                                onChange={e => setPhoneReq(formatRwPhone(e.target.value))}
+                                inputMode="numeric" maxLength={10}
+                              />
+                              <button
+                                disabled={busy || !isValidRwPhone(phoneReq)}
+                                onClick={requestPhoneChange}
+                                style={{
+                                  borderRadius: 8, padding: "8px 14px", fontSize: 9, fontWeight: 900,
+                                  letterSpacing: "0.06em", textTransform: "uppercase", fontFamily: "inherit",
+                                  cursor: isValidRwPhone(phoneReq) ? "pointer" : "not-allowed",
+                                  background: isValidRwPhone(phoneReq) ? "#f97316" : "#1a1a1a",
+                                  color: isValidRwPhone(phoneReq) ? "#000" : "#555", border: "none", flexShrink: 0,
+                                }}
+                              >
+                                {t("motari.dash.request") || "Request"}
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </>
                     )}
 
-                    {state?.profile && (
-                      <div style={{ borderTop: "1px solid #1a1a1a", paddingTop: 10, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
-                        <div>
-                          <div style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>
-                            {t("motari.dash.carry_parcels") || "Carry parcels"}
-                          </div>
-                          <div style={{ ...micro }}>
-                            {t("motari.dash.carry_parcels_hint") || "Courier requests reach you too"}
-                          </div>
-                        </div>
-                        <button
-                          disabled={busy}
-                          onClick={() => act(() => setMotariCourier(!state.profile!.courier, token()))}
-                          style={{
-                            borderRadius: 999, padding: "7px 16px", fontSize: 9.5, fontWeight: 900,
-                            letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer",
-                            fontFamily: "inherit", flexShrink: 0,
-                            background: state.profile.courier ? "#f97316" : "transparent",
-                            color: state.profile.courier ? "#000" : "#888",
-                            border: state.profile.courier ? "none" : "1px solid #1f1f1f",
-                          }}
-                        >
-                          {state.profile.courier ? (t("motari.dash.on") || "On") : (t("motari.dash.off") || "Off")}
-                        </button>
+                    {/* Complaint */}
+                    <div style={{ ...card, padding: "10px 12px" }}>
+                      <div style={{ color: "#fff", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>
+                        {t("motari.dash.complaint") || "Raise a complaint"}
                       </div>
-                    )}
+                      {complaintSent ? (
+                        <div style={{ fontSize: 11.5, color: "#4ade80" }}>
+                          {t("motari.dash.complaint_sent") || "Sent. Support will reach out."}
+                        </div>
+                      ) : (
+                        <div style={{ display: "grid", gap: 7 }}>
+                          <textarea
+                            style={{ ...input, minHeight: 58, resize: "vertical", padding: "8px 10px" }}
+                            placeholder={t("motari.dash.complaint_ph") || "Tell us what happened"}
+                            value={complaint}
+                            onChange={e => setComplaint(e.target.value)}
+                            maxLength={2000}
+                          />
+                          <button disabled={busy || complaint.trim().length < 10} onClick={sendComplaint}
+                                  style={cta(!busy && complaint.trim().length >= 10)}>
+                            {t("motari.dash.complaint_cta") || "Send complaint"}
+                          </button>
+                        </div>
+                      )}
+                    </div>
 
-                    <div style={{ borderTop: "1px solid #1a1a1a", paddingTop: 10, display: "grid", gap: 8 }}>
+                    <div style={{ borderTop: "1px solid #1a1a1a", paddingTop: 10, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
                       <a href="/motari" style={{ color: "#888", fontSize: 11.5, fontWeight: 700, textDecoration: "none" }}>
                         <Bike size={11} color="#f97316" style={{ display: "inline", verticalAlign: "-1px", marginRight: 6 }} />
                         {t("motari.dash.passenger_page") || "Open the passenger page"}
