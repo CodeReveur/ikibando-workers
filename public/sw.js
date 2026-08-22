@@ -40,3 +40,11 @@ self.addEventListener("notificationclick", (event) => {
     })
   );
 });
+
+/**
+ * A pass-through fetch handler. It caches nothing on purpose — rides, fares and
+ * positions must always come from the network — but Chrome only offers to
+ * install a site whose service worker handles fetch, so the Motari apps need it
+ * to be installable from the browser.
+ */
+self.addEventListener("fetch", () => {});

@@ -12,6 +12,7 @@ import {
 import { useLanguage } from "@/lib/language-context";
 import { playSound, startSoundLoop, stopSoundLoop, unlockSounds } from "@/lib/sounds";
 import { formatRwPhone, isValidRwPhone } from "@/lib/phone";
+import { InstallPrompt } from "@/components/motari/InstallPrompt";
 import {
   Bike, Phone, Power, Banknote, Smartphone, CheckCircle2, X, Star, LogOut, ChevronDown, ChevronUp, Globe, Package,
   AlertTriangle,
@@ -1154,6 +1155,8 @@ export default function MotariDrivePage() {
             )}
           </div>
         </div>
+
+        <InstallPrompt appName="Motari" />
       </div>
 
       <style>{`

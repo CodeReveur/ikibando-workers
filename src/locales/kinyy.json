@@ -2683,6 +2683,12 @@
       "try_again": "Ongera ugerageze",
       "clear": "Nta wishyura",
       "rule": "Umunsi ufite ingendo nkeya ntacyo wishyura."
+    },
+    "install": {
+      "title": "Shyiraho",
+      "hint": "Igume ku rupapuro rwawe rw’ibanze",
+      "ios_hint": "Kanda Share, hanyuma Add to Home Screen",
+      "cta": "Shyiraho"
     }
   }
 }

@@ -2683,6 +2683,12 @@
       "try_again": "Réessayer",
       "clear": "Rien à payer",
       "rule": "Les journées sous le minimum de courses sont gratuites."
+    },
+    "install": {
+      "title": "Installer",
+      "hint": "Gardez-le sur votre écran d’accueil",
+      "ios_hint": "Partager, puis Sur l’écran d’accueil",
+      "cta": "Installer"
     }
   }
 }

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { MotariMap, type MapPoint } from "@/components/motari/MotariMap";
 import { MotariRegisterModal } from "@/components/motari/MotariRegisterModal";
 import { MotariLoginModal } from "@/components/motari/MotariLoginModal";
+import { InstallPrompt } from "@/components/motari/InstallPrompt";
 import { searchPlaces, reverseGeocode, type PlaceSuggestion } from "@/lib/geocoding";
 import { getRoute, fmtDistance, fmtDuration, type RouteResult } from "@/lib/routing";
 import {
@@ -1071,6 +1072,7 @@ export default function AskMotariPage() {
         </div>
       </div>
 
+      <InstallPrompt />
       <MotariRegisterModal open={registerOpen} onClose={() => setRegisterOpen(false)}
         onSignIn={() => { setRegisterOpen(false); setLoginOpen(true); }} />
       <MotariLoginModal open={loginOpen} onClose={() => setLoginOpen(false)}

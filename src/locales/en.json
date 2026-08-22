@@ -2684,6 +2684,12 @@
       "try_again": "Try again",
       "clear": "Nothing owed",
       "rule": "Days with fewer rides than the minimum are free."
+    },
+    "install": {
+      "title": "Install",
+      "hint": "Keep it on your home screen",
+      "ios_hint": "Share, then Add to Home Screen",
+      "cta": "Install"
     }
   }
 }

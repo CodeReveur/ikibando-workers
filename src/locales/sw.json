@@ -2683,6 +2683,12 @@
       "try_again": "Jaribu tena",
       "clear": "Hakuna deni",
       "rule": "Siku zenye safari chache kuliko kiwango ni bure."
+    },
+    "install": {
+      "title": "Sakinisha",
+      "hint": "Ibaki kwenye skrini yako ya mwanzo",
+      "ios_hint": "Gusa Share, kisha Add to Home Screen",
+      "cta": "Sakinisha"
     }
   }
 }
