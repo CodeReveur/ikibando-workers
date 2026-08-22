@@ -86,9 +86,11 @@ const DOCS: KnowledgeDoc[] = [
       "legal name, plate number, moto brand or model, phone number, email and password. Verify the code emailed to you " +
       "and you land on the driver dashboard at /drive. It works like the passenger app: a live map with passengers " +
       "seeking rides shown as pins, an online/offline toggle, and a bottom panel with four tabs. Rides: accept nearby " +
-      "requests and run the trip. Money: your wallet balance, total collected, and instant withdrawal to MTN MoMo or " +
-      "Airtel Money (cash fares are yours on the spot; MoMo fares land in the wallet minus commission). Trips: recent " +
-      "travels and travellers with fares and ratings. More: raise a complaint to support and log out. The session " +
+      "requests and run the trip. Money: wallet balance, total collected, total paid out and every payout with its " +
+      "status (cash fares are yours on the spot; platform fares land minus commission). Trips: recent travels and " +
+      "travellers with fares and ratings. Settings: turn instant payout on so each platform fare is sent straight to " +
+      "your MTN MoMo or Airtel Money number instead of resting in the wallet, choose that number, carry parcels or " +
+      "not, ask support to change your account number, raise a complaint, and log out. The session " +
       "stays signed in until you log out, and signing in with a motari account always goes straight to /drive.",
   },
   {
