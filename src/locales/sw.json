@@ -2514,7 +2514,9 @@
       "available": "wapo",
       "parcel_note": "Unatuma nini? (si lazima)",
       "courier_min": "Vifurushi vinaanzia",
-      "send_parcel": "Tuma kifurushi"
+      "send_parcel": "Tuma kifurushi",
+      "destination_required": "Kwenda (lazima kwa vifurushi)",
+      "set_destination": "Weka unakoenda"
     },
     "ride": {
       "ongoing": "Safari inayoendelea",

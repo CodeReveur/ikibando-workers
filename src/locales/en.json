@@ -2515,7 +2515,9 @@
       "available": "available",
       "parcel_note": "What are you sending? (optional)",
       "courier_min": "Parcels start at",
-      "send_parcel": "Send parcel"
+      "send_parcel": "Send parcel",
+      "destination_required": "To (required for parcels)",
+      "set_destination": "Set the destination"
     },
     "ride": {
       "ongoing": "Ongoing trip",

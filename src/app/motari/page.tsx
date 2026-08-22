@@ -281,7 +281,8 @@ export default function AskMotariPage() {
   // A parcel has a floor: the passenger must name at least the minimum.
   const courierMin = supply?.minFareRwf ?? quote?.minFareRwf ?? 1000;
   const priced = parseInt(offerFare || "0", 10);
-  const courierOk = kind !== "COURIER" || priced >= courierMin;
+  // A parcel must say where it is going, and clear the courier floor.
+  const courierOk = kind !== "COURIER" || (!!dest && priced >= courierMin);
   const canSubmit = !!pickup && name.trim().length >= 2 && isValidRwPhone(phone) && courierOk && !busy;
 
   const submit = async () => {
@@ -660,7 +661,9 @@ export default function AskMotariPage() {
                 <Flag size={12} color="#16a34a" style={iconLeft} />
                 <input
                   style={input}
-                  placeholder={t("motari.request.destination_placeholder") || "To (optional)"}
+                  placeholder={kind === "COURIER"
+                    ? (t("motari.request.destination_required") || "To (required for parcels)")
+                    : (t("motari.request.destination_placeholder") || "To (optional)")}
                   value={destQ}
                   onChange={e => { setDestQ(e.target.value); if (dest) setDest(null); }}
                 />
@@ -821,6 +824,8 @@ export default function AskMotariPage() {
                   ? (t("motari.request.requesting") || "Requesting…")
                   : !pickup
                     ? (t("motari.request.set_pickup_first") || "Set your pickup")
+                    : kind === "COURIER" && !dest
+                      ? (t("motari.request.set_destination") || "Set the destination")
                     : !courierOk
                       ? `${t("motari.request.courier_min") || "Parcels start at"} ${fmt(courierMin)}`
                       : kind === "COURIER"

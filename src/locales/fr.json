@@ -2514,7 +2514,9 @@
       "available": "disponibles",
       "parcel_note": "Qu'envoyez-vous ? (facultatif)",
       "courier_min": "Les colis commencent à",
-      "send_parcel": "Envoyer le colis"
+      "send_parcel": "Envoyer le colis",
+      "destination_required": "À (obligatoire pour les colis)",
+      "set_destination": "Indiquez la destination"
     },
     "ride": {
       "ongoing": "Course en cours",
