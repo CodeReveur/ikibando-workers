@@ -35,6 +35,7 @@ type Tab = "rides" | "money" | "trips" | "more";
 export default function MotariDrivePage() {
   const { t, language, setLanguage } = useLanguage();
   const [langOpen, setLangOpen] = useState(false);
+  const [courierOpen, setCourierOpen] = useState(false);
 
   const [state, setState] = useState<MotariState | null>(null);
   const [history, setHistory] = useState<MotariHistory | null>(null);
@@ -112,12 +113,23 @@ export default function MotariDrivePage() {
 
   // Ring while an offer is live and its countdown still has time; silence it as
   // soon as the card goes away for any reason, including leaving the page.
+  // A parcel announces itself with the delivery tone, not the ride tone.
   const ringing = !!state?.offer && !state?.activeRide && offerLeft > 0;
+  const ringKey = state?.offer?.kind === "COURIER" ? "incoming-delivery" : "incoming-ride";
   useEffect(() => {
-    if (ringing) startSoundLoop("incoming-ride");
-    else stopSoundLoop("incoming-ride");
-  }, [ringing]);
-  useEffect(() => () => stopSoundLoop("incoming-ride"), []);
+    if (ringing) {
+      // Switching kind mid-ring would otherwise leave the old tone playing.
+      stopSoundLoop(ringKey === "incoming-ride" ? "incoming-delivery" : "incoming-ride");
+      startSoundLoop(ringKey);
+    } else {
+      stopSoundLoop("incoming-ride");
+      stopSoundLoop("incoming-delivery");
+    }
+  }, [ringing, ringKey]);
+  useEffect(() => () => {
+    stopSoundLoop("incoming-ride");
+    stopSoundLoop("incoming-delivery");
+  }, []);
 
   /* ── session: present until logout; a dead session goes to sign in ──────── */
   useEffect(() => {
@@ -326,19 +338,57 @@ export default function MotariDrivePage() {
           {state?.profile?.plateNumber || "Motari"}
         </div>
 
-        {/* Parcel demand around this motari, next to the plate. */}
+        {/* Parcel demand, in the top row: tap it to see the waiting parcels. */}
         {online && !ride && (() => {
           const parcels = (state?.nearby ?? []).filter(n => n.kind === "COURIER");
           if (parcels.length === 0) return null;
           const nearest = Math.min(...parcels.map(p => p.distanceToPickupM));
           return (
-            <div style={{
-              position: "absolute", top: 52, left: 14, zIndex: 998, ...glass,
-              borderRadius: 999, padding: "5px 11px", display: "flex", alignItems: "center", gap: 5,
-              color: "#f97316", fontSize: 9, fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase",
-            }}>
-              <Package size={10} />
-              {parcels.length} {t("motari.request.courier") || "Courier"} · {km(nearest)}
+            <div style={{ position: "absolute", top: 14, left: 100, zIndex: 1003 }}>
+              <button onClick={() => setCourierOpen(o => !o)} style={{
+                ...glass, borderRadius: 999, padding: "7px 12px", display: "flex", alignItems: "center", gap: 5,
+                color: "#f97316", fontSize: 9, fontWeight: 900, letterSpacing: "0.08em",
+                textTransform: "uppercase", cursor: "pointer", fontFamily: "inherit", borderColor: "#7c3a10",
+              }}>
+                <Package size={11} />
+                {parcels.length} · {km(nearest)}
+                <ChevronDown size={10} />
+              </button>
+              {courierOpen && (
+                <div style={{
+                  ...glass, position: "absolute", top: 38, left: 0, borderRadius: 12,
+                  overflow: "hidden", width: 230, maxHeight: "42dvh", overflowY: "auto",
+                }}>
+                  {parcels.map(p => (
+                    <div key={p.id} style={{ padding: "10px 12px", borderBottom: "1px solid #1a1a1a" }}>
+                      <div style={{ color: "#fff", fontSize: 11.5, fontWeight: 700, lineHeight: 1.4, overflowWrap: "anywhere" }}>
+                        {p.pickupName || (t("motari.dash.waiting_here") || "Waiting here")}
+                      </div>
+                      {p.parcelNote && (
+                        <div style={{ color: "#aaa", fontSize: 10.5, marginTop: 2, overflowWrap: "anywhere" }}>{p.parcelNote}</div>
+                      )}
+                      <div style={{ ...micro, marginTop: 3 }}>
+                        {km(p.distanceToPickupM)} {t("motari.dash.away") || "away"}
+                        {(p.offeredFareRwf ?? p.quotedFareRwf) != null && (
+                          <b style={{ color: "#f97316" }}> · {fmt((p.offeredFareRwf ?? p.quotedFareRwf)!)}</b>
+                        )}
+                      </div>
+                      <button
+                        disabled={busy}
+                        onClick={() => { setCourierOpen(false); act(() => acceptRide(p.id, token())); }}
+                        style={{
+                          marginTop: 7, width: "100%", background: "#f97316", color: "#000",
+                          borderRadius: 8, padding: "7px 8px", fontWeight: 900, fontSize: 9.5,
+                          border: "none", cursor: "pointer", fontFamily: "inherit",
+                          letterSpacing: "0.08em", textTransform: "uppercase",
+                        }}
+                      >
+                        {t("motari.dash.accept") || "Accept"}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           );
         })()}

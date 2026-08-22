@@ -2512,8 +2512,8 @@
       "name_price": "Uzatanga angahe? RWF",
       "courier": "Imizigo",
       "available": "bahari",
-      "parcel_note": "Woherereza iki? (si itegeko)",
-      "courier_min": "Imizigo itangirira kuri",
+      "parcel_note": "Ni iki ugiye kohereza? (si itegeko)",
+      "courier_min": "Igiciro cy'imizigo gitangirira kuri",
       "send_parcel": "Ohereza umuzigo"
     },
     "ride": {
