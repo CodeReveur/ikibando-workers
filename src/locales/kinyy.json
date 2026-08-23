@@ -2517,7 +2517,9 @@
       "send_parcel": "Ohereza umuzigo",
       "destination_required": "Aho ijya ni ngombwa",
       "set_destination": "Shyiramo aho umuzigo ujya",
-      "pick_destination": "Hitamo aho ujya ku rutonde"
+      "use_typed": "Tuzohereza motari aha",
+      "typed_hint": "Ntibiri ku ikarita: vuga uzatanga angahe",
+      "name_your_price": "Vuga uzatanga angahe"
     },
     "ride": {
       "ongoing": "Urugendo rurimo",
@@ -2660,7 +2662,9 @@
       "phone_change": "Hindura numero ya konti",
       "phone_change_sent": "Byoherejwe. Ubufasha buzabyemeza.",
       "request": "Saba",
-      "save": "Bika"
+      "save": "Bika",
+      "not_on_map": "Ntibiri ku ikarita",
+      "ask_passenger": "Ntibiri ku ikarita. Baza umugenzi."
     },
     "login": {
       "title": "Injira",

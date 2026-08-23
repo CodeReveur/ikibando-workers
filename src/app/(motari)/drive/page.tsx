@@ -538,6 +538,11 @@ export default function MotariDrivePage() {
               <span style={{ color: "#f97316" }}>●</span> {state.offer.pickupName || "Pinned pickup"}
               <br />
               <span style={{ color: "#16a34a" }}>●</span> {state.offer.destName || (t("motari.dash.open_ride") || "open ride")}
+              {state.offer.destName && state.offer.destLat == null && (
+                <span style={{ ...micro, marginLeft: 6 }}>
+                  {t("motari.dash.not_on_map") || "Not on the map"}
+                </span>
+              )}
               <br />
               <b style={{ color: "#f97316" }}>
                 {state.offer.offeredFareRwf != null ? `${fmt(state.offer.offeredFareRwf)} · ${t("motari.dash.their_price") || "their price"}`
@@ -691,6 +696,11 @@ export default function MotariDrivePage() {
                         <div style={{ color: "#999" }}>
                           <span style={{ color: "#f97316" }}>●</span> {ride.pickupName || "Pinned pickup"}<br />
                           <span style={{ color: "#16a34a" }}>●</span> {ride.destName || (t("motari.dash.open_dest") || "Passenger directs you. Meter runs.")}
+                          {ride.destName && ride.destLat == null && (
+                            <span style={{ ...micro, marginLeft: 6 }}>
+                              {t("motari.dash.ask_passenger") || "Not on the map. Ask the passenger."}
+                            </span>
+                          )}
                         </div>
                         {navRoute && ["ASSIGNED", "ARRIVED", "IN_RIDE"].includes(ride.status) && (
                           <div style={{ ...micro, color: "#f97316" }}>

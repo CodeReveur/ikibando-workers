@@ -282,9 +282,25 @@ export default function AskMotariPage() {
   // A parcel has a floor: the passenger must name at least the minimum.
   const courierMin = supply?.minFareRwf ?? quote?.minFareRwf ?? 1000;
   const priced = parseInt(offerFare || "0", 10);
+  /** Words the passenger typed and kept, when no place on the map matched. */
+  const typedDest = !dest && destQ.trim().length >= 2 ? destQ.trim() : null;
+  /** Anywhere to go: a pin, or just a name. */
+  const hasDestination = !!dest || !!typedDest;
+  /** Only a pinned destination can be measured and priced from the road. */
+  const measurable = !!dest;
+  /** An unmeasurable trip is priced by the passenger, not by the meter. */
+  const needsNamedPrice = !!typedDest;
+
   // A parcel must say where it is going, and clear the courier floor.
-  const courierOk = kind !== "COURIER" || (!!dest && priced >= courierMin);
-  const canSubmit = !!pickup && name.trim().length >= 2 && isValidRwPhone(phone) && courierOk && !busy;
+  const courierOk = kind !== "COURIER" || (hasDestination && priced >= courierMin);
+  /** A trip nobody can measure needs a price before anyone can be sent for it. */
+  const priceOk = !needsNamedPrice || priced >= (quote?.minFareRwf ?? 500);
+  const canSubmit = !!pickup &&
+      name.trim().length >= 2 &&
+      isValidRwPhone(phone) &&
+      priceOk &&
+      courierOk &&
+      !busy;
 
   const submit = async () => {
     if (!canSubmit || !pickup) return;
@@ -295,7 +311,11 @@ export default function AskMotariPage() {
         name: name.trim(),
         phone: phone.trim(),
         pickupLat: pickup.latitude, pickupLng: pickup.longitude, pickupName: pickup.label,
-        ...(dest ? { destLat: dest.latitude, destLng: dest.longitude, destName: dest.label } : {}),
+        ...(dest
+          ? { destLat: dest.latitude, destLng: dest.longitude, destName: dest.label }
+          : typedDest
+            ? { destName: typedDest }
+            : {}),
         ...(parseInt(offerFare || "0", 10) > 0 ? { offeredFareRwf: parseInt(offerFare, 10) } : {}),
         ...(kind === "COURIER" ? { kind, parcelNote: parcelNote.trim() || undefined } : {}),
       });
@@ -662,14 +682,16 @@ export default function AskMotariPage() {
                 <Flag size={12} color={kind === "COURIER" && !dest ? "#f97316" : "#16a34a"} style={iconLeft} />
                 <input
                   // A parcel's destination is required: the field says so until it is picked.
-                  style={kind === "COURIER" && !dest ? { ...input, borderColor: "#7c3a10" } : input}
+                  style={kind === "COURIER" && !hasDestination
+                    ? { ...input, borderColor: "#7c3a10" }
+                    : input}
                   placeholder={kind === "COURIER"
                     ? (t("motari.request.destination_required") || "To (required for parcels)")
                     : (t("motari.request.destination_placeholder") || "To (optional)")}
                   value={destQ}
                   onChange={e => { setDestQ(e.target.value); if (dest) setDest(null); }}
                 />
-                {dest && (
+                {hasDestination && (
                   <button onClick={() => { setDest(null); setDestQ(""); }} aria-label="Clear destination" style={{
                     position: "absolute", right: 6, top: 17, transform: "translateY(-50%)",
                     background: "none", border: "none", cursor: "pointer", color: "#666",
@@ -677,11 +699,20 @@ export default function AskMotariPage() {
                     <X size={13} />
                   </button>
                 )}
-                {(searchingDest || (destSug.length === 0 && destQ.trim().length >= 2 && !dest)) && (
+                {searchingDest && (
                   <div style={{ ...suggestBox, padding: "10px 13px", fontSize: 11.5, color: "#666" }}>
-                    {searchingDest
-                      ? (t("motari.request.searching") || "Searching…")
-                      : (t("motari.request.no_match") || "No match. Tap the map to drop a pin.")}
+                    {t("motari.request.searching") || "Searching…"}
+                  </div>
+                )}
+                {!searchingDest && destSug.length === 0 && typedDest && (
+                  <div style={{ ...suggestBox, padding: "10px 13px" }}>
+                    <div style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>
+                      {t("motari.request.use_typed") || "We will send your motari here"}
+                    </div>
+                    <div style={{ ...micro, marginTop: 3, color: "#888" }}>
+                      {t("motari.request.typed_hint")
+                        || "Not on the map, so name what you will pay"}
+                    </div>
                   </div>
                 )}
                 {destSug.length > 0 && (
@@ -703,7 +734,7 @@ export default function AskMotariPage() {
               {/* trip chips: km · min · fare */}
               {quote && pickup && (
                 <div style={{ display: "flex", gap: 6, marginBottom: 12, flexWrap: "wrap", alignItems: "center" }}>
-                  {route && (
+                  {measurable && route && (
                     <>
                       <span style={{ background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 999, padding: "5px 11px", fontSize: 11, color: "#aaa", fontWeight: 800, letterSpacing: "0.04em" }}>
                         {fmtDistance(route.distanceM)}
@@ -713,10 +744,10 @@ export default function AskMotariPage() {
                       </span>
                     </>
                   )}
-                  {/* No destination means no distance to price: the passenger
-                      simply says what they will pay. A parcel always names a
-                      price, and it cannot go below the courier minimum. */}
-                  {(kind === "COURIER" || !dest) && parseInt(offerFare || "0", 10) <= 0 ? (
+                  {/* Nothing to measure means nothing to quote: no destination,
+                      or one the map never heard of. The passenger says what they
+                      will pay, and a parcel cannot go below the courier minimum. */}
+                  {(kind === "COURIER" || !measurable) && parseInt(offerFare || "0", 10) <= 0 ? (
                     <>
                       <input
                         style={{ ...input, width: 190, padding: "7px 12px" }}
@@ -826,11 +857,10 @@ export default function AskMotariPage() {
                   ? (t("motari.request.requesting") || "Requesting…")
                   : !pickup
                     ? (t("motari.request.set_pickup_first") || "Set your pickup")
-                    : kind === "COURIER" && !dest
-                      // Typed but unpicked is the common trap: say so explicitly.
-                      ? destQ.trim().length >= 2
-                        ? (t("motari.request.pick_destination") || "Pick the destination from the list")
-                        : (t("motari.request.set_destination") || "Set the destination")
+                    : kind === "COURIER" && !hasDestination
+                      ? (t("motari.request.set_destination") || "Set the destination")
+                    : !priceOk
+                      ? (t("motari.request.name_your_price") || "Name what you will pay")
                     : !courierOk
                       ? `${t("motari.request.courier_min") || "Parcels start at"} ${fmt(courierMin)}`
                       : kind === "COURIER"

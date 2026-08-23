@@ -1766,6 +1766,9 @@ export interface MotariNearbyRide {
   fareMode: FareMode;
   kind: RideKind;
   parcelNote?: string;
+  /** Absent when the destination is only a name, with no place on the map. */
+  destLat?: number;
+  destLng?: number;
   pickupLat: number;
   pickupLng: number;
   pickupName?: string;
@@ -1781,6 +1784,9 @@ export interface MotariOffer {
   fareMode: FareMode;
   kind: RideKind;
   parcelNote?: string;
+  /** Absent when the destination is only a name, with no place on the map. */
+  destLat?: number;
+  destLng?: number;
   pickupLat: number;
   pickupLng: number;
   pickupName?: string;

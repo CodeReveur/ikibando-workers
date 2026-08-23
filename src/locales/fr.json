@@ -2517,7 +2517,9 @@
       "send_parcel": "Envoyer le colis",
       "destination_required": "À (obligatoire pour les colis)",
       "set_destination": "Indiquez la destination",
-      "pick_destination": "Choisissez la destination dans la liste"
+      "use_typed": "Nous y enverrons votre motari",
+      "typed_hint": "Absent de la carte : indiquez ce que vous paierez",
+      "name_your_price": "Indiquez ce que vous paierez"
     },
     "ride": {
       "ongoing": "Course en cours",
@@ -2660,7 +2662,9 @@
       "phone_change": "Changer le numéro du compte",
       "phone_change_sent": "Envoyé. Le support confirmera.",
       "request": "Demander",
-      "save": "Enregistrer"
+      "save": "Enregistrer",
+      "not_on_map": "Absent de la carte",
+      "ask_passenger": "Absent de la carte. Demandez au passager."
     },
     "login": {
       "title": "Se connecter",

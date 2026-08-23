@@ -2517,7 +2517,9 @@
       "send_parcel": "Tuma kifurushi",
       "destination_required": "Kwenda (lazima kwa vifurushi)",
       "set_destination": "Weka unakoenda",
-      "pick_destination": "Chagua unakoenda kwenye orodha"
+      "use_typed": "Tutamtuma motari hapa",
+      "typed_hint": "Hapapo kwenye ramani: taja utakacholipa",
+      "name_your_price": "Taja utakacholipa"
     },
     "ride": {
       "ongoing": "Safari inayoendelea",
@@ -2660,7 +2662,9 @@
       "phone_change": "Badilisha namba ya akaunti",
       "phone_change_sent": "Imetumwa. Msaada utathibitisha.",
       "request": "Omba",
-      "save": "Hifadhi"
+      "save": "Hifadhi",
+      "not_on_map": "Hapapo kwenye ramani",
+      "ask_passenger": "Hapapo kwenye ramani. Muulize abiria."
     },
     "login": {
       "title": "Ingia",

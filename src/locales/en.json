@@ -2518,7 +2518,9 @@
       "send_parcel": "Send parcel",
       "destination_required": "To (required for parcels)",
       "set_destination": "Set the destination",
-      "pick_destination": "Pick the destination from the list"
+      "use_typed": "We will send your motari here",
+      "typed_hint": "Not on the map, so name what you will pay",
+      "name_your_price": "Name what you will pay"
     },
     "ride": {
       "ongoing": "Ongoing trip",
@@ -2661,7 +2663,9 @@
       "phone_change": "Change account number",
       "phone_change_sent": "Sent. Support will confirm the change.",
       "request": "Request",
-      "save": "Save"
+      "save": "Save",
+      "not_on_map": "Not on the map",
+      "ask_passenger": "Not on the map. Ask the passenger."
     },
     "login": {
       "title": "Sign in",
