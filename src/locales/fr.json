@@ -2707,6 +2707,21 @@
       "hint": "Gardez-le sur votre écran d’accueil",
       "ios_hint": "Partager, puis Sur l’écran d’accueil",
       "cta": "Installer"
+    },
+    "parcel": {
+      "received": "J ai le colis",
+      "delivered": "J ai livré le colis",
+      "waiting_owner": "Le propriétaire a un court délai pour confirmer. Ensuite cela vaut confirmation.",
+      "owner_disputed": "Le propriétaire dit ne rien avoir reçu. Le support vous contactera.",
+      "owner_confirmed": "Le propriétaire a confirmé la livraison.",
+      "motari_says_delivered": "Votre motari dit que le colis est livré.",
+      "stands_soon": "SANS RÉPONSE, CECI SERA VALIDÉ BIENTÔT",
+      "pay_now": "Payer",
+      "confirm": "Confirmer la livraison",
+      "not_delivered": "Rien n est arrivé",
+      "you_disputed": "Vous avez dit que ce colis n est jamais arrivé.",
+      "support_will_call": "LE SUPPORT VOUS CONTACTERA",
+      "cannot_cancel": "Votre motari a le colis, cela ne peut plus être annulé ici. Appelez le pour vous arranger."
     }
   }
 }

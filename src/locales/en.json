@@ -2708,6 +2708,21 @@
       "hint": "Keep it on your home screen",
       "ios_hint": "Share, then Add to Home Screen",
       "cta": "Install"
+    },
+    "parcel": {
+      "received": "I have the parcel",
+      "delivered": "I delivered the parcel",
+      "waiting_owner": "The owner has a short while to agree. It stands on its own after that.",
+      "owner_disputed": "The owner says it never arrived. Support will be in touch.",
+      "owner_confirmed": "The owner confirmed the delivery.",
+      "motari_says_delivered": "Your motari says the parcel is delivered.",
+      "stands_soon": "IF YOU SAY NOTHING THIS STANDS SHORTLY",
+      "pay_now": "Pay now",
+      "confirm": "Confirm delivery",
+      "not_delivered": "It never arrived",
+      "you_disputed": "You said this parcel never arrived.",
+      "support_will_call": "SUPPORT WILL BE IN TOUCH",
+      "cannot_cancel": "Your motari has the parcel, so this cannot be cancelled here. Call them to arrange it."
     }
   }
 }

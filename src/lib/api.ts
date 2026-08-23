@@ -1756,6 +1756,11 @@ export interface RideDto {
   payDue?: boolean;
   /** When the passenger declared cash; the grace period runs from here. */
   cashDeclaredAt?: string;
+  /** A parcel: taken, said to be delivered, agreed, or argued about. */
+  pickedUpAt?: string;
+  deliveredAt?: string;
+  deliveryConfirmedAt?: string;
+  deliveryDisputedAt?: string;
   cancelledBy?: string;
   cancelReason?: string;
   requestedAt: string;
@@ -1904,6 +1909,18 @@ export async function declareCash(token: string): Promise<RideDto> {
   return data.data;
 }
 
+/** The owner agreeing the parcel arrived. */
+export async function confirmDelivery(token: string): Promise<RideDto> {
+  const { data } = await http.post("/api/rides/public/" + token + "/confirm-delivery", {});
+  return data.data;
+}
+
+/** The owner saying it never arrived. Support takes it from there. */
+export async function disputeDelivery(token: string, note?: string): Promise<RideDto> {
+  const { data } = await http.post("/api/rides/public/" + token + "/dispute-delivery", { note });
+  return data.data;
+}
+
 export async function rateRide(token: string, stars: number): Promise<RideDto> {
   const { data } = await http.post(`/api/rides/public/${token}/rate`, { stars });
   return data.data;
@@ -1985,6 +2002,14 @@ export const declineRide  = (rideId: string, token: string) => motariAction(ride
 export const motariArrived = (rideId: string, token: string) => motariAction(rideId, "arrived", token);
 export const motariStart   = (rideId: string, token: string) => motariAction(rideId, "start", token);
 export const motariComplete = (rideId: string, token: string) => motariAction(rideId, "complete", token);
+/** A parcel in the motari's hands: for a courier job this is arriving and starting at once. */
+export const motariParcelReceived = (rideId: string, token: string) =>
+  motariAction(rideId, "parcel-received", token);
+
+/** The motari saying the parcel was delivered. The owner has a say after this. */
+export const motariParcelDelivered = (rideId: string, token: string) =>
+  motariAction(rideId, "parcel-delivered", token);
+
 /** The motari rating the passenger, once the ride is done. */
 export const ratePassenger = (rideId: string, stars: number, token: string) =>
   motariAction(rideId, "rate", token, { stars });

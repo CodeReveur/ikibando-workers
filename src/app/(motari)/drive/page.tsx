@@ -6,6 +6,7 @@ import { getRoute, fmtDistance, fmtDuration, type RouteResult } from "@/lib/rout
 import {
   getMotariState, getMotariHistory, saveMotariProfile, setMotariOnline, motariHeartbeat,
   acceptRide, declineRide, motariArrived, motariComplete, motariCancelRide,
+  motariParcelReceived, motariParcelDelivered,
   setMotariCourier, setMotariPayout, payMotariFees, submitContact,
   ratePassenger, denyCashPayment, apiError,
   type MotariState, type MotariHistory, type RideDto,
@@ -720,20 +721,60 @@ export default function MotariDrivePage() {
                       </div>
 
 
-                      {ride.status === "ASSIGNED" && (
+                      {/* A parcel has no second phone in transit — only a motari
+                          and an object — so nothing about it can be sensed. It is
+                          collected, carried, delivered, and then the owner has
+                          their say. */}
+                      {ride.kind === "COURIER" ? (
+                        <>
+                          {["ASSIGNED", "ARRIVED"].includes(ride.status) && (
+                            <button disabled={busy} onClick={() => act(() => motariParcelReceived(ride.id, token()))} style={cta(!busy)}>
+                              <Package size={13} style={{ display: "inline", verticalAlign: "-2px", marginRight: 6 }} />
+                              {t("motari.parcel.received") || "I have the parcel"}
+                            </button>
+                          )}
+                          {ride.status === "IN_RIDE" && (
+                            <button disabled={busy} onClick={() => act(() => motariParcelDelivered(ride.id, token()))} style={cta(!busy)}>
+                              <CheckCircle2 size={13} style={{ display: "inline", verticalAlign: "-2px", marginRight: 6 }} />
+                              {t("motari.parcel.delivered") || "I delivered the parcel"}
+                            </button>
+                          )}
+                          {ride.status === "COMPLETED" && !ride.deliveredAt && (
+                            <button disabled={busy} onClick={() => act(() => motariParcelDelivered(ride.id, token()))} style={cta(!busy)}>
+                              <CheckCircle2 size={13} style={{ display: "inline", verticalAlign: "-2px", marginRight: 6 }} />
+                              {t("motari.parcel.delivered") || "I delivered the parcel"}
+                            </button>
+                          )}
+                          {ride.deliveredAt && !ride.deliveryConfirmedAt && (
+                            <div style={{
+                              color: ride.deliveryDisputedAt ? "#f87171" : "#fbbf24",
+                              fontSize: 11.5, fontWeight: 700, lineHeight: 1.45,
+                            }}>
+                              {ride.deliveryDisputedAt
+                                ? (t("motari.parcel.owner_disputed") || "The owner says it never arrived. Support will be in touch.")
+                                : (t("motari.parcel.waiting_owner") || "The owner has a short while to agree. It stands on its own after that.")}
+                            </div>
+                          )}
+                          {ride.deliveryConfirmedAt && (
+                            <div style={{ color: "#4ade80", fontSize: 12, fontWeight: 800 }}>
+                              ✓ {t("motari.parcel.owner_confirmed") || "The owner confirmed the delivery."}
+                            </div>
+                          )}
+                        </>
+                      ) : ride.status === "ASSIGNED" && (
                         <button disabled={busy} onClick={() => act(() => motariArrived(ride.id, token()))} style={cta(!busy)}>
                           {t("motari.dash.btn_arrived") || "I have arrived"}
                         </button>
                       )}
                       {/* Riding starts when the two of them pull away together,
                           so there is nothing to press — just what is happening. */}
-                      {ride.status === "ARRIVED" && (
+                      {ride.kind !== "COURIER" && ride.status === "ARRIVED" && (
                         <div style={{ ...micro, color: "#fbbf24" }}>
                           {t("motari.dash.waiting_to_move") || "Ride starts when you move off together"}
                         </div>
                       )}
 
-                      {ride.status === "IN_RIDE" && (
+                      {ride.kind !== "COURIER" && ride.status === "IN_RIDE" && (
                         ride.destLat != null ? (
                           <div style={{ ...micro }}>
                             {t("motari.dash.auto_complete") || "Finishes on its own at the destination"}

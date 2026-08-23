@@ -2707,6 +2707,21 @@
       "hint": "Igume ku rupapuro rwawe rw’ibanze",
       "ios_hint": "Kanda Share, hanyuma Add to Home Screen",
       "cta": "Shyiraho"
+    },
+    "parcel": {
+      "received": "Mfite umuzigo",
+      "delivered": "Nagejeje umuzigo",
+      "waiting_owner": "Nyirawo afite akanya gato ko kwemeza. Nyuma yaho bizemezwa byonyine.",
+      "owner_disputed": "Nyirawo avuga ko utigeze ugera. Ubufasha buzabagana.",
+      "owner_confirmed": "Nyirawo yemeje ko yakiriye.",
+      "motari_says_delivered": "Motari wawe avuga ko umuzigo wagejejwe.",
+      "stands_soon": "NUTAVUGA IKINTU BIZEMEZWA VUBA",
+      "pay_now": "Ishyura",
+      "confirm": "Emeza ko wakiriye",
+      "not_delivered": "Ntiwigeze ugera",
+      "you_disputed": "Wavuze ko uyu muzigo utigeze ugera.",
+      "support_will_call": "UBUFASHA BUZAKUGANA",
+      "cannot_cancel": "Motari afite umuzigo, ntibishobora guhagarikwa hano. Muhamagare mubyumvikaneho."
     }
   }
 }

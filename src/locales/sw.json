@@ -2707,6 +2707,21 @@
       "hint": "Ibaki kwenye skrini yako ya mwanzo",
       "ios_hint": "Gusa Share, kisha Add to Home Screen",
       "cta": "Sakinisha"
+    },
+    "parcel": {
+      "received": "Nina mzigo",
+      "delivered": "Nimefikisha mzigo",
+      "waiting_owner": "Mwenye mzigo ana muda mfupi wa kuthibitisha. Baada ya hapo inathibitika yenyewe.",
+      "owner_disputed": "Mwenye mzigo anasema haujafika. Msaada watawasiliana.",
+      "owner_confirmed": "Mwenye mzigo amethibitisha kupokea.",
+      "motari_says_delivered": "Motari wako anasema mzigo umefikishwa.",
+      "stands_soon": "USIPOSEMA KITU HII ITATHIBITIKA HIVI KARIBUNI",
+      "pay_now": "Lipa sasa",
+      "confirm": "Thibitisha kupokea",
+      "not_delivered": "Haujafika",
+      "you_disputed": "Ulisema mzigo huu haujafika.",
+      "support_will_call": "MSAADA WATAWASILIANA",
+      "cannot_cancel": "Motari ana mzigo, hii haiwezi kufutwa hapa. Mpigie simu mpange naye."
     }
   }
 }

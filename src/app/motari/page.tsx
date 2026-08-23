@@ -9,6 +9,7 @@ import { searchPlaces, reverseGeocode, type PlaceSuggestion } from "@/lib/geocod
 import { getRoute, fmtDistance, fmtDuration, type RouteResult } from "@/lib/routing";
 import {
   getRideQuote, requestRide, trackRide, cancelRide, rateRide, payRideNow,
+  confirmDelivery, disputeDelivery,
   getMotariSupply, sendPassengerPosition, declareCash, apiError,
   type RideQuote, type RideDto, type RideKind, type MotariSupply,
 } from "@/lib/api";
@@ -398,6 +399,29 @@ export default function AskMotariPage() {
       const r = await cancelRide(tokenRef.current);
       setRide(r);
       localStorage.removeItem(ACTIVE_TOKEN_KEY);
+    } catch (e) { setError(apiError(e)); }
+    setBusy(false);
+  };
+
+  /// Agreeing the parcel arrived, or saying it never did. The second closes
+  /// nothing: it stops the clock and hands the ride to support, because two
+  /// people disagreeing about an object is not something a button settles.
+  const doConfirmDelivery = async () => {
+    if (!tokenRef.current || busy) return;
+    setBusy(true);
+    setError("");
+    try {
+      setRide(await confirmDelivery(tokenRef.current));
+    } catch (e) { setError(apiError(e)); }
+    setBusy(false);
+  };
+
+  const doDisputeDelivery = async () => {
+    if (!tokenRef.current || busy) return;
+    setBusy(true);
+    setError("");
+    try {
+      setRide(await disputeDelivery(tokenRef.current));
     } catch (e) { setError(apiError(e)); }
     setBusy(false);
   };
@@ -1204,10 +1228,58 @@ export default function AskMotariPage() {
                 );
               })()}
 
+              {/* A parcel the motari is carrying: what is left to do with it. */}
+              {ride.kind === "COURIER" && ride.deliveredAt && !ride.deliveryConfirmedAt && !ride.deliveryDisputedAt && (
+                <div style={{ marginBottom: 12 }}>
+                  <div style={{ color: "#fff", fontSize: 12.5, fontWeight: 700, lineHeight: 1.45 }}>
+                    {t("motari.parcel.motari_says_delivered") || "Your motari says the parcel is delivered."}
+                  </div>
+                  <div style={{ ...micro, marginTop: 3 }}>
+                    {t("motari.parcel.stands_soon") || "IF YOU SAY NOTHING THIS STANDS SHORTLY"}
+                  </div>
+                  <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+                    {ride.paymentStatus !== "PAID" && !ride.cashDeclaredAt && (
+                      <button onClick={doPayNow} disabled={paying} style={{ ...cta(!paying), flex: 1 }}>
+                        {t("motari.parcel.pay_now") || "Pay now"}
+                      </button>
+                    )}
+                    <button onClick={doConfirmDelivery} disabled={busy} style={{ ...cta(!busy, "#16a34a"), color: busy ? "#555" : "#fff", flex: 1 }}>
+                      {t("motari.parcel.confirm") || "Confirm delivery"}
+                    </button>
+                  </div>
+                  <button onClick={doDisputeDelivery} disabled={busy} style={{
+                    width: "100%", marginTop: 8, background: "transparent", color: "#f87171",
+                    borderRadius: 10, padding: "9px 18px", fontWeight: 800, fontSize: 10.5,
+                    border: "1px solid #451a1a", cursor: "pointer", fontFamily: "inherit",
+                    letterSpacing: "0.06em", textTransform: "uppercase",
+                  }}>
+                    {t("motari.parcel.not_delivered") || "It never arrived"}
+                  </button>
+                </div>
+              )}
+
+              {ride.kind === "COURIER" && ride.deliveryDisputedAt && (
+                <div style={{ marginBottom: 12, color: "#f87171", fontSize: 12, lineHeight: 1.45 }}>
+                  {t("motari.parcel.you_disputed") || "You said this parcel never arrived."}
+                  <div style={{ ...micro, marginTop: 3 }}>
+                    {t("motari.parcel.support_will_call") || "SUPPORT WILL BE IN TOUCH"}
+                  </div>
+                </div>
+              )}
+
+              {ride.kind === "COURIER" && ride.pickedUpAt && !ride.deliveredAt && (
+                <div style={{ ...micro, marginBottom: 12, color: "#888", lineHeight: 1.5 }}>
+                  {t("motari.parcel.cannot_cancel")
+                    || "Your motari has the parcel, so this cannot be cancelled here. Call them to arrange it."}
+                </div>
+              )}
+
               {/* actions per state */}
               {["SEARCHING", "ASSIGNED", "ARRIVED", "IN_RIDE"].includes(ride.status) && (
                 <div style={{ display: "flex", gap: 8 }}>
-                  {ride.status !== "IN_RIDE" && (
+                  {/* Once a motari has the parcel it is in someone else's hands,
+                      so there is nothing here to cancel. */}
+                  {ride.status !== "IN_RIDE" && !(ride.kind === "COURIER" && ride.pickedUpAt) && (
                     <button onClick={doCancel} disabled={busy} style={{
                       flex: 1, background: "transparent", color: "#f87171", borderRadius: 12,
                       padding: "11px 18px", fontWeight: 800, fontSize: 11.5, border: "1px solid #451a1a",
