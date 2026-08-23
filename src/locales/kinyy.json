@@ -208,7 +208,8 @@
       "cancel": "Gukuraho",
       "submit": "Kohereza",
       "sending": "Kohereza…",
-      "ask_motari": "Saba Motari"
+      "ask_motari": "Saba Motari",
+      "close": "Funga"
     },
     "general": {
       "new": "Mushya",
@@ -2519,11 +2520,14 @@
       "set_destination": "Shyiramo aho umuzigo ujya",
       "use_typed": "Tuzohereza motari aha",
       "typed_hint": "Ntibiri ku ikarita: vuga uzatanga angahe",
-      "name_your_price": "Vuga uzatanga angahe"
+      "name_your_price": "Vuga uzatanga angahe",
+      "matches": "Ahantu",
+      "recent": "Wakoresheje vuba",
+      "no_match_head": "Nta cyabonetse"
     },
     "ride": {
       "ongoing": "Urugendo rurimo",
-      "searching": "Turimo gushaka moto yawe…",
+      "searching": "Turimo gushaka motari ugutwara…",
       "searching_hint": "Motari ziri hafi zibona ubusabe bwawe.",
       "seconds_left": "Bizahagarara mu",
       "assigned": "Motari wawe araje",

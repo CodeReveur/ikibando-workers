@@ -208,7 +208,8 @@
       "cancel": "Annuler",
       "submit": "Envoyer",
       "sending": "Envoi…",
-      "ask_motari": "Demander un Motari"
+      "ask_motari": "Demander un Motari",
+      "close": "Fermer"
     },
     "general": {
       "new": "Nouveau",
@@ -2519,7 +2520,10 @@
       "set_destination": "Indiquez la destination",
       "use_typed": "Nous y enverrons votre motari",
       "typed_hint": "Absent de la carte : indiquez ce que vous paierez",
-      "name_your_price": "Indiquez ce que vous paierez"
+      "name_your_price": "Indiquez ce que vous paierez",
+      "matches": "Lieux",
+      "recent": "Utilisés récemment",
+      "no_match_head": "Aucun résultat"
     },
     "ride": {
       "ongoing": "Course en cours",

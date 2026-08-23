@@ -208,7 +208,8 @@
       "cancel": "Ghairi",
       "submit": "Wasilisha",
       "sending": "Inatuma…",
-      "ask_motari": "Omba Motari"
+      "ask_motari": "Omba Motari",
+      "close": "Funga"
     },
     "general": {
       "new": "Mpya",
@@ -2519,7 +2520,10 @@
       "set_destination": "Weka unakoenda",
       "use_typed": "Tutamtuma motari hapa",
       "typed_hint": "Hapapo kwenye ramani: taja utakacholipa",
-      "name_your_price": "Taja utakacholipa"
+      "name_your_price": "Taja utakacholipa",
+      "matches": "Maeneo",
+      "recent": "Yaliyotumika hivi karibuni",
+      "no_match_head": "Hakuna kilichopatikana"
     },
     "ride": {
       "ongoing": "Safari inayoendelea",

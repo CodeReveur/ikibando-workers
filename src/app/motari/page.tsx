@@ -81,11 +81,63 @@ export default function AskMotariPage() {
   const [destSug, setDestSug] = useState<PlaceSuggestion[]>([]);
   const [searchingPickup, setSearchingPickup] = useState(false);
   const [searchingDest, setSearchingDest] = useState(false);
+
+  /// Which field's list is showing. A list that cannot be closed is a trap, so
+  /// exactly one is open at a time and anything outside it closes it.
+  const [openList, setOpenList] = useState<null | "pickup" | "dest">(null);
+
+  /// Places this passenger has used before. Somewhere they have been is a
+  /// better first guess than an empty box, and it costs no search to show.
+  const [recent, setRecent] = useState<PlaceSuggestion[]>([]);
+  const formRef = useRef<HTMLDivElement | null>(null);
   const [locating, setLocating] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [offerFare, setOfferFare] = useState("");
   const [editingFare, setEditingFare] = useState(false);
+
+  // Places come back from the device, so a returning passenger is offered
+  // where they have been rather than a blank list.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("motari.recent.places");
+      if (raw) setRecent((JSON.parse(raw) as PlaceSuggestion[]).slice(0, 6));
+    } catch {
+      // A device that will not remember is not a reason to fail.
+    }
+  }, []);
+
+  const remember = useCallback((place: PlaceSuggestion) => {
+    setRecent(prev => {
+      const next = [place, ...prev.filter(p => p.label !== place.label)].slice(0, 6);
+      try {
+        localStorage.setItem("motari.recent.places", JSON.stringify(next));
+      } catch {
+        // Same: remembering is a courtesy, not a requirement.
+      }
+      return next;
+    });
+  }, []);
+
+  // Anywhere outside the form closes whatever list is open, which is what
+  // everyone already expects a dropdown to do. Escape closes it too.
+  useEffect(() => {
+    if (!openList) return;
+    const outside = (e: PointerEvent) => {
+      if (formRef.current && !formRef.current.contains(e.target as Node)) {
+        setOpenList(null);
+      }
+    };
+    const escape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpenList(null);
+    };
+    document.addEventListener("pointerdown", outside);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("pointerdown", outside);
+      document.removeEventListener("keydown", escape);
+    };
+  }, [openList]);
 
   // Passenger or parcel. Courier keeps its own minimum fare.
   const [kind, setKind] = useState<RideKind>("RIDE");
@@ -437,6 +489,27 @@ export default function AskMotariPage() {
     background: "#0a0a0a", border: "1px solid #262626", borderRadius: 10, overflow: "hidden",
     boxShadow: "0 12px 32px rgba(0,0,0,0.85)",
   };
+  /// The bar across the top of any open list: what it is, and the way to shut
+  /// it. Nothing the passenger opens should be something they cannot close.
+  const listHead = (label: string) => (
+    <div style={{
+      display: "flex", alignItems: "center", justifyContent: "space-between",
+      padding: "7px 9px 7px 13px", borderBottom: "1px solid #1a1a1a",
+    }}>
+      <span style={{ ...micro, color: "#777" }}>{label}</span>
+      <button
+        onClick={() => setOpenList(null)}
+        aria-label={t("common.buttons.close") || "Close"}
+        style={{
+          background: "none", border: "none", cursor: "pointer", color: "#888",
+          display: "flex", alignItems: "center", padding: 4, borderRadius: 6,
+        }}
+      >
+        <X size={13} />
+      </button>
+    </div>
+  );
+
   const suggestItem: React.CSSProperties = {
     display: "block", width: "100%", textAlign: "left", padding: "9px 13px",
     background: "none", border: "none", borderBottom: "1px solid #1a1a1a",
@@ -631,7 +704,9 @@ export default function AskMotariPage() {
             </div>
           ) : !ride ? (
             /* ── REQUEST FORM ─────────────────────────────────────────────── */
-            <>
+            // Everything inside this counts as "in the form": a pointer landing
+            // anywhere else closes whichever list is open.
+            <div ref={formRef}>
               {/* Ride or parcel, with how much supply is actually around. */}
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
                 {([
@@ -667,6 +742,7 @@ export default function AskMotariPage() {
                 <input
                   style={input}
                   placeholder={t("motari.request.pickup_placeholder") || "From"}
+                  onFocus={() => setOpenList("pickup")}
                   value={pickupQ}
                   onChange={e => { setPickupQ(e.target.value); if (pickup) setPickup(null); }}
                 />
@@ -678,25 +754,45 @@ export default function AskMotariPage() {
                 }}>
                   <LocateFixed size={12} />
                 </button>
-                {(searchingPickup || (pickupSug.length === 0 && pickupQ.trim().length >= 2 && !pickup)) && (
-                  <div style={{ ...suggestBox, padding: "10px 13px", fontSize: 11.5, color: "#666" }}>
-                    {searchingPickup
-                      ? (t("motari.request.searching") || "Searching…")
-                      : (t("motari.request.no_match") || "No match. Tap the map to drop a pin.")}
-                  </div>
-                )}
-                {pickupSug.length > 0 && (
+                {openList === "pickup" && (searchingPickup || pickupSug.length > 0
+                  || (pickupQ.trim().length >= 2 && !pickup)
+                  || (pickupQ.trim().length < 2 && recent.length > 0)) && (
                   <div style={suggestBox}>
-                    {pickupSug.map((s, i) => (
+                    {listHead(
+                      searchingPickup
+                        ? (t("motari.request.searching") || "Searching…")
+                        : pickupSug.length > 0
+                          ? (t("motari.request.matches") || "Places")
+                          : pickupQ.trim().length < 2
+                            ? (t("motari.request.recent") || "Recently used")
+                            : (t("motari.request.no_match_head") || "Nothing matched")
+                    )}
+                    {pickupSug.length > 0 && pickupSug.map((sg, i) => (
                       <button key={i} style={suggestItem} onClick={() => {
-                        setPickup({ latitude: s.latitude, longitude: s.longitude, label: s.label });
-                        setPickupQ(s.label);
+                        setPickup({ latitude: sg.latitude, longitude: sg.longitude, label: sg.label });
+                        setPickupQ(sg.label);
                         setPickupSug([]);
+                        setOpenList(null);
+                        remember(sg);
                       }}>
-                        <b>{s.label}</b>
-                        <span style={{ display: "block", color: "#777", fontSize: 11.5, marginTop: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.fullName}</span>
+                        <b>{sg.label}</b>
+                        <span style={{ display: "block", color: "#777", fontSize: 11.5, marginTop: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sg.fullName}</span>
                       </button>
                     ))}
+                    {pickupSug.length === 0 && pickupQ.trim().length < 2 && recent.map((sg, i) => (
+                      <button key={i} style={suggestItem} onClick={() => {
+                        setPickup({ latitude: sg.latitude, longitude: sg.longitude, label: sg.label });
+                        setPickupQ(sg.label);
+                        setOpenList(null);
+                      }}>
+                        <b>{sg.label}</b>
+                      </button>
+                    ))}
+                    {!searchingPickup && pickupSug.length === 0 && pickupQ.trim().length >= 2 && (
+                      <div style={{ padding: "10px 13px", fontSize: 11.5, color: "#888" }}>
+                        {t("motari.request.no_match") || "No match. Tap the map to drop a pin."}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -712,8 +808,13 @@ export default function AskMotariPage() {
                   placeholder={kind === "COURIER"
                     ? (t("motari.request.destination_required") || "To (required for parcels)")
                     : (t("motari.request.destination_placeholder") || "To (optional)")}
+                  onFocus={() => setOpenList("dest")}
                   value={destQ}
-                  onChange={e => { setDestQ(e.target.value); if (dest) setDest(null); }}
+                  onChange={e => {
+                    setDestQ(e.target.value);
+                    if (dest) setDest(null);
+                    setOpenList("dest");
+                  }}
                 />
                 {hasDestination && (
                   <button onClick={() => { setDest(null); setDestQ(""); }} aria-label="Clear destination" style={{
@@ -723,34 +824,56 @@ export default function AskMotariPage() {
                     <X size={13} />
                   </button>
                 )}
-                {searchingDest && (
-                  <div style={{ ...suggestBox, padding: "10px 13px", fontSize: 11.5, color: "#666" }}>
-                    {t("motari.request.searching") || "Searching…"}
-                  </div>
-                )}
-                {!searchingDest && destSug.length === 0 && typedDest && (
-                  <div style={{ ...suggestBox, padding: "10px 13px" }}>
-                    <div style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>
-                      {t("motari.request.use_typed") || "We will send your motari here"}
-                    </div>
-                    <div style={{ ...micro, marginTop: 3, color: "#888" }}>
-                      {t("motari.request.typed_hint")
-                        || "Not on the map, so name what you will pay"}
-                    </div>
-                  </div>
-                )}
-                {destSug.length > 0 && (
+                {openList === "dest" && (searchingDest || destSug.length > 0 || typedDest
+                  || (destQ.trim().length < 2 && recent.length > 0)) && (
                   <div style={suggestBox}>
-                    {destSug.map((s, i) => (
+                    {listHead(
+                      searchingDest
+                        ? (t("motari.request.searching") || "Searching…")
+                        : destSug.length > 0
+                          ? (t("motari.request.matches") || "Places")
+                          : typedDest
+                            ? (t("motari.request.no_match_head") || "Nothing matched")
+                            : (t("motari.request.recent") || "Recently used")
+                    )}
+                    {destSug.length > 0 && destSug.map((sg, i) => (
                       <button key={i} style={suggestItem} onClick={() => {
-                        setDest({ latitude: s.latitude, longitude: s.longitude, label: s.label });
-                        setDestQ(s.label);
+                        setDest({ latitude: sg.latitude, longitude: sg.longitude, label: sg.label });
+                        setDestQ(sg.label);
                         setDestSug([]);
+                        setOpenList(null);
+                        remember(sg);
                       }}>
-                        <b>{s.label}</b>
-                        <span style={{ display: "block", color: "#777", fontSize: 11.5, marginTop: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.fullName}</span>
+                        <b>{sg.label}</b>
+                        <span style={{ display: "block", color: "#777", fontSize: 11.5, marginTop: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sg.fullName}</span>
                       </button>
                     ))}
+                    {destSug.length === 0 && !typedDest && destQ.trim().length < 2 && recent.map((sg, i) => (
+                      <button key={i} style={suggestItem} onClick={() => {
+                        setDest({ latitude: sg.latitude, longitude: sg.longitude, label: sg.label });
+                        setDestQ(sg.label);
+                        setOpenList(null);
+                      }}>
+                        <b>{sg.label}</b>
+                      </button>
+                    ))}
+                    {/* A place the map has never heard of is still a place. Saying
+                        so is a choice the passenger makes and closes, not a notice
+                        that sits over the form until they give up. */}
+                    {!searchingDest && destSug.length === 0 && typedDest && (
+                      <button
+                        style={{ ...suggestItem, borderBottom: "none" }}
+                        onClick={() => setOpenList(null)}
+                      >
+                        <b style={{ color: "#fff" }}>
+                          {t("motari.request.use_typed") || "We will send your motari here"}
+                        </b>
+                        <span style={{ display: "block", color: "#888", fontSize: 11.5, marginTop: 2 }}>
+                          {t("motari.request.typed_hint")
+                            || "Not on the map, so name what you will pay"}
+                        </span>
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
@@ -771,7 +894,11 @@ export default function AskMotariPage() {
                   {/* Nothing to measure means nothing to quote: no destination,
                       or one the map never heard of. The passenger says what they
                       will pay, and a parcel cannot go below the courier minimum. */}
-                  {(kind === "COURIER" || !measurable) && parseInt(offerFare || "0", 10) <= 0 ? (
+                  {/* The branch must not turn on the value being typed. It used to,
+                      so the first digit made the test false, React swapped this input
+                      for the price pill, and the field the passenger was typing into
+                      stopped existing: 2000 became 2. */}
+                  {(kind === "COURIER" || !measurable) ? (
                     <>
                       <input
                         style={{ ...input, width: 190, padding: "7px 12px" }}
@@ -895,7 +1022,7 @@ export default function AskMotariPage() {
               <div style={{ ...micro, textAlign: "center", marginTop: 10, color: "#555" }}>
                 {t("motari.request.trust") || "Verified drivers · Plates you can check · Cash or MoMo"}
               </div>
-            </>
+            </div>
           ) : (
             /* ── LIVE RIDE ────────────────────────────────────────────────── */
             <>

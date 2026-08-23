@@ -209,7 +209,8 @@
       "cancel": "Cancel",
       "submit": "Submit",
       "sending": "Sending…",
-      "ask_motari": "Ask Motari"
+      "ask_motari": "Ask Motari",
+      "close": "Close"
     },
     "general": {
       "new": "New",
@@ -2520,7 +2521,10 @@
       "set_destination": "Set the destination",
       "use_typed": "We will send your motari here",
       "typed_hint": "Not on the map, so name what you will pay",
-      "name_your_price": "Name what you will pay"
+      "name_your_price": "Name what you will pay",
+      "matches": "Places",
+      "recent": "Recently used",
+      "no_match_head": "Nothing matched"
     },
     "ride": {
       "ongoing": "Ongoing trip",
