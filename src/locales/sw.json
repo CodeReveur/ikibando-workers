@@ -2561,7 +2561,10 @@
       "pay_cash": "Nitalipa cash",
       "send_prompt": "Tuma ombi la malipo",
       "sending_prompt": "Inatuma…",
-      "pay_after_meter": "Mita wazi: lipa safari ikiisha."
+      "pay_after_meter": "Mita wazi: lipa safari ikiisha.",
+      "cash_recorded": "Malipo ya cash yamerekodiwa. Hakuna kingine.",
+      "pay_due": "Mnakaribia. Lipa nauli sasa.",
+      "new_motari": "Motari mpya"
     },
     "register": {
       "title": "Jisajili kama motari",
@@ -2664,7 +2667,14 @@
       "request": "Omba",
       "save": "Hifadhi",
       "not_on_map": "Hapapo kwenye ramani",
-      "ask_passenger": "Hapapo kwenye ramani. Muulize abiria."
+      "ask_passenger": "Hapapo kwenye ramani. Muulize abiria.",
+      "waiting_to_move": "Safari huanza mkiondoka pamoja",
+      "auto_complete": "Inaisha yenyewe mkifika",
+      "paid_cash": "Amelipa cash.",
+      "cash_declared": "Abiria anasema amelipa cash. Itathibitishwa usiposema vinginevyo.",
+      "not_paid": "Sikulipwa",
+      "awaiting_payment": "Unasubiri abiria alipe",
+      "rate_passenger": "Mpe alama abiria huyu"
     },
     "login": {
       "title": "Ingia",

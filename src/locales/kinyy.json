@@ -2561,7 +2561,10 @@
       "pay_cash": "Nzishyura cash",
       "send_prompt": "Ohereza ubutumwa bwo kwishyura",
       "sending_prompt": "Byoherejwe…",
-      "pay_after_meter": "Igipimo gifunguye: ishyura urugendo rurangiye."
+      "pay_after_meter": "Igipimo gifunguye: ishyura urugendo rurangiye.",
+      "cash_recorded": "Kwishyura cash byanditswe. Nta kindi gisigaye.",
+      "pay_due": "Mugiye kugera. Ishyura ubu.",
+      "new_motari": "Motari mushya"
     },
     "register": {
       "title": "Iyandikishe nka motari",
@@ -2664,7 +2667,14 @@
       "request": "Saba",
       "save": "Bika",
       "not_on_map": "Ntibiri ku ikarita",
-      "ask_passenger": "Ntibiri ku ikarita. Baza umugenzi."
+      "ask_passenger": "Ntibiri ku ikarita. Baza umugenzi.",
+      "waiting_to_move": "Urugendo rutangira nimugenda mwembi",
+      "auto_complete": "Ruzirangira ubwarwo mugeze",
+      "paid_cash": "Yishyuye cash.",
+      "cash_declared": "Umugenzi avuga ko yishyuye cash. Bizemezwa keretse ubivuguruje.",
+      "not_paid": "Sinishyuwe",
+      "awaiting_payment": "Utegereje umugenzi yishyure",
+      "rate_passenger": "Tanga amanota kuri uyu mugenzi"
     },
     "login": {
       "title": "Injira",

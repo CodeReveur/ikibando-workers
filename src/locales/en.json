@@ -2562,7 +2562,10 @@
       "pay_cash": "I will pay cash",
       "send_prompt": "Send payment prompt",
       "sending_prompt": "Sending…",
-      "pay_after_meter": "Open meter: pay when the ride completes."
+      "pay_after_meter": "Open meter: pay when the ride completes.",
+      "cash_recorded": "Cash payment recorded. Nothing else to do.",
+      "pay_due": "Almost there. Settle the fare now.",
+      "new_motari": "New motari"
     },
     "register": {
       "title": "Register as motari",
@@ -2665,7 +2668,14 @@
       "request": "Request",
       "save": "Save",
       "not_on_map": "Not on the map",
-      "ask_passenger": "Not on the map. Ask the passenger."
+      "ask_passenger": "Not on the map. Ask the passenger.",
+      "waiting_to_move": "Ride starts when you move off together",
+      "auto_complete": "Finishes on its own at the destination",
+      "paid_cash": "Paid in cash.",
+      "cash_declared": "Passenger says they paid cash. It stands shortly unless you say otherwise.",
+      "not_paid": "I was not paid",
+      "awaiting_payment": "Waiting for the passenger to pay",
+      "rate_passenger": "Rate this passenger"
     },
     "login": {
       "title": "Sign in",

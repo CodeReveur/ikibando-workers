@@ -1750,6 +1750,12 @@ export interface RideDto {
   payViaPlatform?: boolean;
   searchRadiusKm?: number;
   rating?: number;
+  /** The motari's rating of the passenger, once given. */
+  passengerRating?: number;
+  /** True once the ride is close enough that the fare has been asked for. */
+  payDue?: boolean;
+  /** When the passenger declared cash; the grace period runs from here. */
+  cashDeclaredAt?: string;
   cancelledBy?: string;
   cancelReason?: string;
   requestedAt: string;
@@ -1884,6 +1890,20 @@ export async function payRideNow(token: string, phone: string): Promise<RideDto>
   return data.data;
 }
 
+/** The passenger's device reporting in, so the ride can start itself. */
+export async function sendPassengerPosition(
+  token: string, lat: number, lng: number,
+): Promise<RideDto> {
+  const { data } = await http.post("/api/rides/public/" + token + "/position", { lat, lng });
+  return data.data;
+}
+
+/** Paying in cash: it stands on its own once the grace period passes. */
+export async function declareCash(token: string): Promise<RideDto> {
+  const { data } = await http.post("/api/rides/public/" + token + "/cash", {});
+  return data.data;
+}
+
 export async function rateRide(token: string, stars: number): Promise<RideDto> {
   const { data } = await http.post(`/api/rides/public/${token}/rate`, { stars });
   return data.data;
@@ -1965,6 +1985,14 @@ export const declineRide  = (rideId: string, token: string) => motariAction(ride
 export const motariArrived = (rideId: string, token: string) => motariAction(rideId, "arrived", token);
 export const motariStart   = (rideId: string, token: string) => motariAction(rideId, "start", token);
 export const motariComplete = (rideId: string, token: string) => motariAction(rideId, "complete", token);
+/** The motari rating the passenger, once the ride is done. */
+export const ratePassenger = (rideId: string, stars: number, token: string) =>
+  motariAction(rideId, "rate", token, { stars });
+
+/** The motari saying a declared cash payment never arrived. */
+export const denyCashPayment = (rideId: string, token: string) =>
+  motariAction(rideId, "not-paid", token);
+
 export const motariPaid = (rideId: string, method: "CASH" | "MOMO" | "PLATFORM", token: string) =>
   motariAction(rideId, "paid", token, { method });
 export const motariCancelRide = (rideId: string, reason: string | undefined, token: string) =>

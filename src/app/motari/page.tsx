@@ -9,7 +9,7 @@ import { searchPlaces, reverseGeocode, type PlaceSuggestion } from "@/lib/geocod
 import { getRoute, fmtDistance, fmtDuration, type RouteResult } from "@/lib/routing";
 import {
   getRideQuote, requestRide, trackRide, cancelRide, rateRide, payRideNow,
-  getMotariSupply, apiError,
+  getMotariSupply, sendPassengerPosition, declareCash, apiError,
   type RideQuote, type RideDto, type RideKind, type MotariSupply,
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
@@ -186,6 +186,19 @@ export default function AskMotariPage() {
     return () => clearInterval(id);
   }, [ride?.status, ride]);
 
+  /* ── the passenger's phone reports in while riding ─────────────────────── */
+  useEffect(() => {
+    const live = ride && ["ASSIGNED", "ARRIVED", "IN_RIDE"].includes(ride.status);
+    if (!live || !tokenRef.current) return;
+    const send = () => {
+      const at = deviceRef.current;
+      if (at) sendPassengerPosition(tokenRef.current!, at.lat, at.lng).catch(() => {});
+    };
+    send();
+    const id = setInterval(send, 8000);
+    return () => clearInterval(id);
+  }, [ride?.status, ride]);
+
   /* ── type-ahead: search as the user types, biased to where they are ────── */
   useEffect(() => {
     if (pickup && pickupQ === pickup.label) { setPickupSug([]); setSearchingPickup(false); return; }
@@ -344,6 +357,17 @@ export default function AskMotariPage() {
     try {
       setRide(await payRideNow(tokenRef.current, payPhone.trim()));
       setPayOpen(false);
+    } catch (e) { setError(apiError(e)); }
+    setPaying(false);
+  };
+
+  const sayPayingCash = async () => {
+    if (!tokenRef.current || paying) return;
+    setPaying(true);
+    setError("");
+    try {
+      setRide(await declareCash(tokenRef.current));
+      setPayChoice("cash");
     } catch (e) { setError(apiError(e)); }
     setPaying(false);
   };
@@ -934,10 +958,17 @@ export default function AskMotariPage() {
                       <span style={{ background: "#fff", borderRadius: 5, padding: "2px 9px", fontWeight: 900, color: "#000", letterSpacing: "0.08em", fontSize: 12 }}>
                         {ride.driver.plateNumber || "—"}
                       </span>
-                      {typeof ride.driver.rating === "number" && (
-                        <span style={{ display: "inline-flex", alignItems: "center", gap: 3, fontWeight: 700 }}>
-                          <Star size={10} color="#fbbf24" fill="#fbbf24" /> {ride.driver.rating.toFixed(1)}
+                      {/* How other passengers have found this motari, in full. */}
+                      {typeof ride.driver.rating === "number" && ride.driver.rating > 0 ? (
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 2, fontWeight: 800, color: "#fff", fontSize: 11.5 }}>
+                          {[1, 2, 3, 4, 5].map(n => (
+                            <Star key={n} size={11} color="#fbbf24"
+                              fill={n <= Math.round(ride.driver!.rating!) ? "#fbbf24" : "none"} />
+                          ))}
+                          <span style={{ marginLeft: 3 }}>{ride.driver.rating.toFixed(1)}</span>
                         </span>
+                      ) : (
+                        <span style={micro}>{t("motari.ride.new_motari") || "New motari"}</span>
                       )}
                       <span style={micro}>{t("motari.ride.verified") || "Verified"}</span>
                     </div>
@@ -990,13 +1021,10 @@ export default function AskMotariPage() {
                     </div>
                   );
                 }
-                if (payChoice === "cash") {
+                if (ride.cashDeclaredAt || payChoice === "cash") {
                   return (
-                    <div style={{ ...micro, marginBottom: 12 }}>
-                      {t("motari.ride.paying_cash") || "Paying cash."}{" "}
-                      <button onClick={() => setPayChoice("")} style={{ background: "none", border: "none", color: "#f97316", cursor: "pointer", fontFamily: "inherit", fontSize: 8.5, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", padding: 0 }}>
-                        {t("motari.ride.change") || "Change"}
-                      </button>
+                    <div style={{ ...micro, marginBottom: 12, color: "#4ade80" }}>
+                      {t("motari.ride.cash_recorded") || "Cash payment recorded. Nothing else to do."}
                     </div>
                   );
                 }
@@ -1023,6 +1051,11 @@ export default function AskMotariPage() {
                 }
                 return (
                   <div style={{ marginBottom: 12 }}>
+                    {ride.payDue && (
+                      <div style={{ ...micro, color: "#fbbf24", marginBottom: 6 }}>
+                        {t("motari.ride.pay_due") || "Almost there. Settle the fare now."}
+                      </div>
+                    )}
                     <div style={{ display: "flex", gap: 8 }}>
                       <button
                         disabled={!amountKnown}
@@ -1031,8 +1064,8 @@ export default function AskMotariPage() {
                       >
                         {t("motari.ride.pay_now") || "Pay now"}
                       </button>
-                      <button onClick={() => setPayChoice("cash")} style={{ flex: 1, background: "none", border: "1px solid #1f1f1f", borderRadius: 10, color: "#ccc", fontWeight: 800, fontSize: 10.5, cursor: "pointer", fontFamily: "inherit", textTransform: "uppercase", padding: "10px 8px" }}>
-                        {t("motari.ride.pay_cash") || "I'll pay cash"}
+                      <button disabled={paying} onClick={sayPayingCash} style={{ flex: 1, background: "none", border: "1px solid #1f1f1f", borderRadius: 10, color: "#ccc", fontWeight: 800, fontSize: 10.5, cursor: "pointer", fontFamily: "inherit", textTransform: "uppercase", padding: "10px 8px" }}>
+                        {t("motari.ride.pay_cash") || "I paid cash"}
                       </button>
                     </div>
                     {!amountKnown && (

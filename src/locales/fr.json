@@ -2561,7 +2561,10 @@
       "pay_cash": "Je paierai en cash",
       "send_prompt": "Envoyer la demande de paiement",
       "sending_prompt": "Envoi…",
-      "pay_after_meter": "Compteur ouvert : payez à la fin de la course."
+      "pay_after_meter": "Compteur ouvert : payez à la fin de la course.",
+      "cash_recorded": "Paiement en espèces enregistré. Rien d’autre à faire.",
+      "pay_due": "Presque arrivé. Réglez la course maintenant.",
+      "new_motari": "Nouveau motari"
     },
     "register": {
       "title": "Devenir motari",
@@ -2664,7 +2667,14 @@
       "request": "Demander",
       "save": "Enregistrer",
       "not_on_map": "Absent de la carte",
-      "ask_passenger": "Absent de la carte. Demandez au passager."
+      "ask_passenger": "Absent de la carte. Demandez au passager.",
+      "waiting_to_move": "La course démarre quand vous partez ensemble",
+      "auto_complete": "Se termine seule à destination",
+      "paid_cash": "Payé en espèces.",
+      "cash_declared": "Le passager dit avoir payé en espèces. Cela sera validé sauf avis contraire.",
+      "not_paid": "Je n’ai pas été payé",
+      "awaiting_payment": "En attente du paiement du passager",
+      "rate_passenger": "Notez ce passager"
     },
     "login": {
       "title": "Se connecter",

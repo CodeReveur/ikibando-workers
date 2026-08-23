@@ -62,8 +62,32 @@ const DOCS: KnowledgeDoc[] = [
       "Set your pickup by typing a place, tapping the map, or using your current location. The destination is optional: " +
       "with a destination you get a fixed fare shown before you request; without one the ride runs on a fair meter " +
       "(base fare plus a per kilometre rate). Enter your name and phone number and request. No account or login is needed. " +
-      "You will see the matched motari's name, photo, plate number and rating, track them live on the map, and pay cash or " +
-      "mobile money at the end. You can rate the driver after the ride.",
+      "You will see the matched motari's name, photo, plate number and star rating, track them live on the map, and pay cash or " +
+      "mobile money at the end. You can rate the driver after the ride, and the motari rates you too.",
+  },
+  {
+    id: "guide-ride-runs-itself",
+    title: "How a ride runs itself: no buttons to press",
+    category: "guide",
+    text: "Once a motari has accepted, the ride mostly looks after itself and neither side has to keep tapping. " +
+      "The motari taps 'I have arrived' at the pickup, and that is normally the last thing they press. " +
+      "The ride starts on its own when both phones pull away from the pickup together, so nobody presses start. " +
+      "About a kilometre from the destination the passenger is asked to settle the fare, with the amount already set. " +
+      "The ride completes on its own when the phones come within about 400 metres of the destination, and if the fare " +
+      "was already paid the whole ride closes there. A destination typed as free text has no coordinates to sense, so " +
+      "for those rides the motari still taps Complete ride.",
+  },
+  {
+    id: "policy-paying-for-a-ride",
+    title: "Paying for a ride: mobile money and cash",
+    category: "policy",
+    text: "The platform works out how the fare was paid, so the motari is never asked to pick a payment method. " +
+      "Paying through the platform sends a mobile money prompt to the passenger's phone; when the money lands the ride " +
+      "is marked paid and the motari's share reaches their wallet at once, with instant payout if they have it switched on. " +
+      "Paying in cash is one tap by the passenger: 'I paid cash'. That declaration stands on its own after 20 minutes " +
+      "and the ride closes as paid. Within that window, and afterwards too, the motari can say 'I was not paid', which " +
+      "reopens the ride as unpaid. A ride only ever counts once towards a motari's totals and daily fee, however many " +
+      "times its payment is disputed and settled again.",
   },
   {
     id: "policy-motari-daily-fee",

@@ -5,8 +5,9 @@ import { MotariMap, type MapPoint, type ExtraPoint } from "@/components/motari/M
 import { getRoute, fmtDistance, fmtDuration, type RouteResult } from "@/lib/routing";
 import {
   getMotariState, getMotariHistory, saveMotariProfile, setMotariOnline, motariHeartbeat,
-  acceptRide, declineRide, motariArrived, motariStart, motariComplete, motariPaid, motariCancelRide,
-  setMotariCourier, setMotariPayout, payMotariFees, submitContact, apiError,
+  acceptRide, declineRide, motariArrived, motariComplete, motariCancelRide,
+  setMotariCourier, setMotariPayout, payMotariFees, submitContact,
+  ratePassenger, denyCashPayment, apiError,
   type MotariState, type MotariHistory, type RideDto,
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
@@ -14,7 +15,7 @@ import { playSound, startSoundLoop, stopSoundLoop, unlockSounds } from "@/lib/so
 import { formatRwPhone, isValidRwPhone } from "@/lib/phone";
 import { InstallPrompt } from "@/components/motari/InstallPrompt";
 import {
-  Bike, Phone, Power, Banknote, Smartphone, CheckCircle2, X, Star, LogOut, ChevronDown, ChevronUp, Globe, Package,
+  Bike, Phone, Power, CheckCircle2, X, Star, LogOut, ChevronDown, ChevronUp, Globe, Package,
   AlertTriangle,
 } from "lucide-react";
 
@@ -724,39 +725,74 @@ export default function MotariDrivePage() {
                           {t("motari.dash.btn_arrived") || "I have arrived"}
                         </button>
                       )}
+                      {/* Riding starts when the two of them pull away together,
+                          so there is nothing to press — just what is happening. */}
                       {ride.status === "ARRIVED" && (
-                        <button disabled={busy} onClick={() => act(() => motariStart(ride.id, token()))} style={cta(!busy)}>
-                          {t("motari.dash.btn_start") || "Passenger on board. Start"}
-                        </button>
+                        <div style={{ ...micro, color: "#fbbf24" }}>
+                          {t("motari.dash.waiting_to_move") || "Ride starts when you move off together"}
+                        </div>
                       )}
+
                       {ride.status === "IN_RIDE" && (
-                        <button disabled={busy} onClick={() => act(() => motariComplete(ride.id, token()))} style={cta(!busy)}>
-                          <CheckCircle2 size={13} style={{ display: "inline", verticalAlign: "-2px", marginRight: 6 }} />
-                          {t("motari.dash.btn_complete") || "Complete ride"}
-                        </button>
+                        ride.destLat != null ? (
+                          <div style={{ ...micro }}>
+                            {t("motari.dash.auto_complete") || "Finishes on its own at the destination"}
+                          </div>
+                        ) : (
+                          // A destination the map never had cannot be sensed:
+                          // this is the one ride that still needs a tap.
+                          <button disabled={busy} onClick={() => act(() => motariComplete(ride.id, token()))} style={cta(!busy)}>
+                            <CheckCircle2 size={13} style={{ display: "inline", verticalAlign: "-2px", marginRight: 6 }} />
+                            {t("motari.dash.btn_complete") || "Complete ride"}
+                          </button>
+                        )
                       )}
+
+                      {/* However the passenger paid, the platform already knows.
+                          The motari only speaks up when the cash never came. */}
                       {ride.status === "COMPLETED" && (
                         ride.paymentStatus === "PAID" ? (
                           <div style={{ color: "#4ade80", fontSize: 12, fontWeight: 800 }}>
-                            ✓ {t("motari.dash.paid_platform") || "Paid via platform. Wallet credited."}
+                            ✓ {ride.paymentMethod === "CASH"
+                              ? (t("motari.dash.paid_cash") || "Paid in cash.")
+                              : (t("motari.dash.paid_platform") || "Paid via platform. Wallet credited.")}
                           </div>
-                        ) : (
+                        ) : ride.cashDeclaredAt ? (
                           <>
-                            {ride.paymentMethod === "PLATFORM" && ride.paymentStatus === "PENDING" && (
-                              <div style={{ color: "#fbbf24", fontSize: 11.5, fontWeight: 700 }}>
-                                {t("motari.dash.platform_pending") || "Passenger is paying via platform. You can still take cash if they change their mind."}
-                              </div>
-                            )}
-                            <div style={{ display: "flex", gap: 8 }}>
-                              <button disabled={busy} onClick={() => act(() => motariPaid(ride.id, "CASH", token()))} style={{ ...cta(!busy), display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-                                <Banknote size={13} /> {t("motari.dash.btn_cash") || "Paid cash"}
-                              </button>
-                              <button disabled={busy} onClick={() => act(() => motariPaid(ride.id, "MOMO", token()))} style={{ ...cta(!busy, "#16a34a"), color: busy ? "#555" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-                                <Smartphone size={13} /> {t("motari.dash.btn_momo") || "Paid by MoMo"}
-                              </button>
+                            <div style={{ color: "#fbbf24", fontSize: 11.5, fontWeight: 700 }}>
+                              {t("motari.dash.cash_declared") || "Passenger says they paid cash. It stands shortly unless you say otherwise."}
                             </div>
+                            <button disabled={busy} onClick={() => act(() => denyCashPayment(ride.id, token()))} style={{
+                              background: "transparent", color: "#f87171", borderRadius: 10, padding: "9px 18px",
+                              fontWeight: 800, fontSize: 10.5, border: "1px solid #451a1a", cursor: "pointer",
+                              fontFamily: "inherit", letterSpacing: "0.06em", textTransform: "uppercase",
+                            }}>
+                              {t("motari.dash.not_paid") || "I was not paid"}
+                            </button>
                           </>
+                        ) : (
+                          <div style={{ ...micro, color: "#fbbf24" }}>
+                            {t("motari.dash.awaiting_payment") || "Waiting for the passenger to pay"}
+                          </div>
                         )
+                      )}
+
+                      {/* The passenger, as the motari found them. */}
+                      {["COMPLETED", "CLOSED"].includes(ride.status) && !ride.passengerRating && (
+                        <div>
+                          <div style={{ ...micro, marginBottom: 5 }}>
+                            {t("motari.dash.rate_passenger") || "Rate this passenger"}
+                          </div>
+                          <div style={{ display: "flex", gap: 5 }}>
+                            {[1, 2, 3, 4, 5].map(n => (
+                              <button key={n} disabled={busy}
+                                onClick={() => act(() => ratePassenger(ride.id, n, token()))}
+                                style={{ background: "none", border: "none", cursor: "pointer", padding: 2 }}>
+                                <Star size={22} color="#fbbf24" fill="none" />
+                              </button>
+                            ))}
+                          </div>
+                        </div>
                       )}
                       {["ASSIGNED", "ARRIVED"].includes(ride.status) && (
                         <button disabled={busy} onClick={() => act(() => motariCancelRide(ride.id, undefined, token()))} style={{
