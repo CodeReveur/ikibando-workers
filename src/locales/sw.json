@@ -2523,7 +2523,22 @@
       "name_your_price": "Taja utakacholipa",
       "matches": "Maeneo",
       "recent": "Yaliyotumika hivi karibuni",
-      "no_match_head": "Hakuna kilichopatikana"
+      "no_match_head": "Hakuna kilichopatikana",
+      "delivery": "Kutuma",
+      "from_label": "Kutoka",
+      "to_label": "Kwenda",
+      "fare_label": "Nauli",
+      "my_location": "Nilipo",
+      "meter_ride": "Safari ya mita",
+      "approx_amount": "Bei ya makadirio",
+      "approx_hint": "Imehesabiwa kwa njia. Unaweza kuibadilisha, lakini hii ndiyo motari wanatarajia.",
+      "meter_card": "Hakuna unakoenda, mita inaendelea.",
+      "at_least": "Angalau",
+      "too_little": "Chini ya pale safari hii inapoanzia.",
+      "done": "Imekamilika",
+      "find": "Nitafutie motari",
+      "find_delivery": "Nitafutie motari wa kutuma",
+      "no_destination_button": "Nitamwonyesha njia. Tumia mita"
     },
     "ride": {
       "ongoing": "Safari inayoendelea",

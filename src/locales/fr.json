@@ -2523,7 +2523,22 @@
       "name_your_price": "Indiquez ce que vous paierez",
       "matches": "Lieux",
       "recent": "Utilisés récemment",
-      "no_match_head": "Aucun résultat"
+      "no_match_head": "Aucun résultat",
+      "delivery": "Livraison",
+      "from_label": "De",
+      "to_label": "Vers",
+      "fare_label": "Prix",
+      "my_location": "Où je suis",
+      "meter_ride": "Au compteur",
+      "approx_amount": "Prix approximatif",
+      "approx_hint": "Calculé sur le trajet. Vous pouvez le changer, mais c est ce que les motari attendent.",
+      "meter_card": "Sans destination, le compteur tourne.",
+      "at_least": "Au moins",
+      "too_little": "Moins que le départ de ce trajet.",
+      "done": "Terminé",
+      "find": "Trouver un motari",
+      "find_delivery": "Trouver un motari pour la livraison",
+      "no_destination_button": "Je montrerai le chemin. Au compteur"
     },
     "ride": {
       "ongoing": "Course en cours",

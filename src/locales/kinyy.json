@@ -2523,7 +2523,22 @@
       "name_your_price": "Vuga uzatanga angahe",
       "matches": "Ahantu",
       "recent": "Wakoresheje vuba",
-      "no_match_head": "Nta cyabonetse"
+      "no_match_head": "Nta cyabonetse",
+      "delivery": "Kohereza",
+      "from_label": "Uva",
+      "to_label": "Ujya",
+      "fare_label": "Igiciro",
+      "my_location": "Aho ndi",
+      "meter_ride": "Urugendo rwa kontere",
+      "approx_amount": "Igiciro giteganyijwe",
+      "approx_hint": "Cyabazwe ku nzira. Ushobora kugihindura, ariko ni cyo motari biteze.",
+      "meter_card": "Nta aho ujya, kontere irakora.",
+      "at_least": "Byibura",
+      "too_little": "Biri munsi y aho uru rugendo rutangirira.",
+      "done": "Byarangiye",
+      "find": "Nshakira motari",
+      "find_delivery": "Nshakira motari wo kohereza",
+      "no_destination_button": "Nzamwereka inzira. Koresha kontere"
     },
     "ride": {
       "ongoing": "Urugendo rurimo",

@@ -2524,7 +2524,22 @@
       "name_your_price": "Name what you will pay",
       "matches": "Places",
       "recent": "Recently used",
-      "no_match_head": "Nothing matched"
+      "no_match_head": "Nothing matched",
+      "delivery": "Delivery",
+      "from_label": "From",
+      "to_label": "To",
+      "fare_label": "Fare",
+      "my_location": "Where I am",
+      "meter_ride": "Meter ride",
+      "approx_amount": "Approximate fare",
+      "approx_hint": "Worked out from the route. You can change it, but this is what motari expect.",
+      "meter_card": "No destination, so the meter runs.",
+      "at_least": "At least",
+      "too_little": "Less than this trip starts at.",
+      "done": "Done",
+      "find": "Find me a motari",
+      "find_delivery": "Find me a delivery motari",
+      "no_destination_button": "I will show the way. Use the meter"
     },
     "ride": {
       "ongoing": "Ongoing trip",
