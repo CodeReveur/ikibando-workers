@@ -325,6 +325,45 @@
       "btn_contact": "Contactez-nous"
     }
   },
+  "app": {
+    "title": "Motari",
+    "subtitle": "L’application moto-taxi de MpahMapu",
+    "blurb": "Demandez une moto ou envoyez un colis en quelques touches, et suivez le trajet sur la carte. Les motari se connectent pour prendre le travail, être payés et régler la redevance du jour.",
+    "get_it": "Obtenir l’application",
+    "download_android": "Télécharger pour Android",
+    "not_ready": "La version Android n’est pas encore en ligne. Elle apparaîtra ici dès qu’elle le sera.",
+    "checking": "Vérification…",
+    "android_note": "Android vous demandera d’autoriser l’installation de ce fichier. C’est normal pour une application qui ne vient pas du Play Store.",
+    "ios_soon": "iPhone : pas encore. Utilisez le site en attendant, il fait tout ce que fait l’application.",
+    "no_install_title": "Vous préférez ne rien installer ?",
+    "no_install_body": "Ask Motari fonctionne dans le navigateur, et votre téléphone peut le garder sur l’écran d’accueil comme une application.",
+    "tip_title": "Motari, sur votre téléphone",
+    "feature": {
+      "nearby": {
+        "title": "Un motari, là où vous êtes",
+        "body": "Demandez depuis la carte, ou tapez le lieu. Aucun compte requis."
+      },
+      "offers": {
+        "title": "Du travail qui sonne",
+        "body": "Un motari entend chaque offre, même le téléphone dans la poche."
+      },
+      "money": {
+        "title": "De l’argent que vous voyez",
+        "body": "Courses, redevance du jour, versements et chaque trajet, au même endroit."
+      },
+      "trust": {
+        "title": "Des plaques vérifiables",
+        "body": "Des motari vérifiés, et un prix convenu avant le départ."
+      }
+    },
+    "where": {
+      "donate": "La même plateforme, sur votre téléphone. Demandez une moto, envoyez un colis, ou prenez le travail.",
+      "help": "Demandez une moto et suivez-la sur la carte, sans ouvrir de navigateur.",
+      "about": "Ask Motari, dans votre poche. Une moto en quelques touches, et un motari qui est payé.",
+      "jobs": "Vous roulez pour vivre ? Motari apporte le travail sur votre téléphone, et sonne quand il arrive.",
+      "browse": "Besoin d’une moto plutôt que d’un travailleur ? Motari en trouve une là où vous êtes."
+    }
+  },
   "contact": {
     "hero": {
       "tag": "Entrer en contact",

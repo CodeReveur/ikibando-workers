@@ -59,8 +59,10 @@ export default function Navbar() {
     { href: "/jobs",    label: t("common.nav.jobs")    },
     // Ask Motari sits ahead of Contact; About lives in the footer.
     { href: "/motari",  label: t("common.buttons.ask_motari") || "Ask Motari" },
-    // The app is worth reaching from anywhere, not only from the motari page.
-    { href: "/app",     label: t("common.nav.get_app") || "Get the app" },
+    // The app is not a tab. Five of them ran into the logo on a laptop and off
+    // the edge on a phone, and a download is not what someone arriving at the
+    // site is here for. It is offered further in instead: in the hero, on the
+    // pages people read, over both maps, and in the footer.
     { href: "/contact", label: t("common.nav.contact") },
   ];
 
@@ -255,6 +257,10 @@ export default function Navbar() {
           padding: "0 10px 0 20px",
           height: 64,
           display: "flex", alignItems: "center", justifyContent: "space-between",
+          // space-between alone leaves nothing between the blocks once the row
+          // is full, which is how the links came to sit on top of the logo. A
+          // gap is a floor those three can never close.
+          gap: 16,
           boxSizing: "border-box",
         }}>
 
@@ -272,7 +278,7 @@ export default function Navbar() {
           </a>
 
           {/* Desktop: center links */}
-          <div className="desktop-links" style={{ display: "flex", gap: 22, alignItems: "center" }}>
+          <div className="desktop-links" style={{ display: "flex", gap: 22, alignItems: "center", whiteSpace: "nowrap" }}>
             {links.map(({ href, label }) => {
               const active = pathname === href || pathname.startsWith(href + "/");
               return (

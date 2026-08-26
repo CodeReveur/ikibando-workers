@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { HandCoins } from "lucide-react";
 import { useLanguage } from "@/lib/language-context";
+import { AppFooterLink } from "@/components/app/get-the-app";
 import { subscribeNewsletter } from "@/lib/api";
 
 const WHATSAPP_URL = "https://chat.whatsapp.com/LJN7cg1PSGa2PXz4qk1tPy";
@@ -41,7 +42,6 @@ export default function Footer() {
     { href: "/browse",  label: t("common.nav.browse")  },
     { href: "/jobs",    label: t("common.nav.jobs")    },
     { href: "/motari?register=1", label: t("motari.menu.register") || "Become a motari" },
-    { href: "/app",     label: t("common.nav.get_app") || "Get the app" },
     // "What's new" now lives inside the blog, so linking both would send people to one page twice.
     { href: "/blog",    label: t("common.nav.blog")    },
     { href: "/about",   label: t("common.nav.about")   },
@@ -178,9 +178,12 @@ export default function Footer() {
         justifyContent: "space-between", alignItems: "center", gap: 14,
         borderTop: "1px solid #141414", paddingTop: 20,
       }}>
-        <div>
-          <p style={{ margin: 0, fontWeight: 900, fontSize: 15, color: "#f97316" }}>MpahMapu</p>
-          <p style={{ margin: "3px 0 0", fontSize: 11, color: "#444" }}>{t("common.footer.copyright")}</p>
+        <div style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap" }}>
+          <div>
+            <p style={{ margin: 0, fontWeight: 900, fontSize: 15, color: "#f97316" }}>MpahMapu</p>
+            <p style={{ margin: "3px 0 0", fontSize: 11, color: "#444" }}>{t("common.footer.copyright")}</p>
+          </div>
+          <AppFooterLink />
         </div>
         {/* Two deliberate rows instead of one long wrapping line: site links on
             top, company/legal plus Donate below. Each row still wraps on tiny screens. */}

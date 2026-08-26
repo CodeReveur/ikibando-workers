@@ -16,6 +16,7 @@ import {
 } from "@/components/browse/filter-controls";
 import { ratingInfo } from "@/lib/rating";
 import { useLanguage } from "@/lib/language-context";
+import { AppCard } from "@/components/app/get-the-app";
 import {
   Search, SlidersHorizontal, MapPin, Briefcase, Users, Star, ChevronDown, Bike,
 } from "lucide-react";
@@ -679,6 +680,12 @@ function BrowsePageInner() {
               : (t("jobs_page.scroll_for_more") || "Scroll for more")}
           </div>
         )}
+
+        {/* Not everyone browsing for someone to hire needs a worker; some of
+            them need a moto, and it is the same platform either way. */}
+        <div style={{ marginTop: 30 }}>
+          <AppCard blurb={t("app.where.browse")} compact />
+        </div>
 
       </div>
 

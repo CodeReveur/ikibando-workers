@@ -6,6 +6,7 @@ import { GraduationCap, BookOpen, HeartHandshake, LifeBuoy, Users, HandCoins, Ac
 import Footer from "@/components/layout/footer";
 import { DonationModal } from "@/components/donate/donation-modal";
 import { useLanguage } from "@/lib/language-context";
+import { AppCard } from "@/components/app/get-the-app";
 import { getBlogPosts, type BlogPost } from "@/lib/api";
 
 const ACCENT = "#f97316";
@@ -142,6 +143,11 @@ export default function DonatePage() {
               ))}
             </div>
           )}
+        </div>
+        {/* Someone who has just given something is someone who wants the
+            platform to work. This is the moment to mention the app. */}
+        <div style={{ marginTop: 40 }}>
+          <AppCard blurb={t("app.where.donate")} />
         </div>
       </div>
 

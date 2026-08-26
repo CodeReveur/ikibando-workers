@@ -325,6 +325,45 @@
       "btn_contact": "Wasiliana nasi"
     }
   },
+  "app": {
+    "title": "Motari",
+    "subtitle": "Programu ya bodaboda ya MpahMapu",
+    "blurb": "Omba pikipiki au tuma kifurushi kwa mibonyezo michache, kisha ufuatilie ramanini. Motari huingia kuchukua kazi, kulipwa, na kulipa ada ya siku.",
+    "get_it": "Pata programu",
+    "download_android": "Pakua kwa Android",
+    "not_ready": "Toleo la Android bado halijapakiwa. Litaonekana hapa mara tu litakapokuwa tayari.",
+    "checking": "Tunaangalia…",
+    "android_note": "Android itakuomba uruhusu kusakinisha faili hili. Ni kawaida kwa programu isiyotoka Play Store.",
+    "ios_soon": "iPhone: bado. Tumia tovuti kwa sasa, inafanya kila kitu programu inachofanya.",
+    "no_install_title": "Hutaki kusakinisha chochote?",
+    "no_install_body": "Ask Motari inafanya kazi kwenye kivinjari, na simu yako inaweza kuiweka kwenye skrini ya mwanzo kama programu.",
+    "tip_title": "Motari kwenye simu yako",
+    "feature": {
+      "nearby": {
+        "title": "Motari, pale ulipo",
+        "body": "Omba kutoka ramanini, au andika mahali. Hakuna akaunti inayohitajika."
+      },
+      "offers": {
+        "title": "Kazi inayoita",
+        "body": "Motari husikia kila ombi, hata simu ikiwa mfukoni."
+      },
+      "money": {
+        "title": "Pesa unazoziona",
+        "body": "Nauli, ada ya siku, malipo na kila safari, mahali pamoja."
+      },
+      "trust": {
+        "title": "Namba za usajili unazoweza kuthibitisha",
+        "body": "Motari waliothibitishwa, na bei iliyokubaliwa kabla ya safari."
+      }
+    },
+    "where": {
+      "donate": "Jukwaa lile lile, kwenye simu yako. Omba pikipiki, tuma kifurushi, au chukua kazi.",
+      "help": "Omba pikipiki na uifuatilie ramanini, bila kufungua kivinjari.",
+      "about": "Ask Motari mfukoni mwako. Pikipiki kwa mibonyezo michache, na motari analipwa.",
+      "jobs": "Unaendesha pikipiki kwa riziki? Motari inaleta kazi kwenye simu yako, na kuita inapofika.",
+      "browse": "Unahitaji pikipiki badala ya mfanyakazi? Motari inaipata pale ulipo."
+    }
+  },
   "contact": {
     "hero": {
       "tag": "Wasiliana nasi",

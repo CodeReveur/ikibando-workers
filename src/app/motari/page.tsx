@@ -14,6 +14,7 @@ import {
   type RideQuote, type RideDto, type RideKind, type MotariSupply,
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
+import { AppTip } from "@/components/app/get-the-app";
 import { playSound, unlockSounds } from "@/lib/sounds";
 import { formatRwPhone, isValidRwPhone } from "@/lib/phone";
 import {
@@ -733,6 +734,16 @@ export default function AskMotariPage() {
         <Bike size={11} color="#f97316" />
         {t("common.buttons.ask_motari") || "Ask Motari"}
       </div>
+
+      {/* The app, offered to the one person on the site who most wants it:
+          someone asking for a moto in a browser. Only while nothing is under
+          way, and only until they close it. */}
+      {!ride && (
+        <AppTip
+          storageKey="motari.app_tip"
+          style={{ position: "absolute", top: 56, left: 14, maxWidth: 250, zIndex: 998 }}
+        />
+      )}
 
       {/* BOTTOM SHEET */}
       <div style={{

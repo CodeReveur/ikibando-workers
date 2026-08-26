@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Mail, Phone, Search, ChevronDown, MessageCircle } from "lucide-react";
+import { AppCard } from "@/components/app/get-the-app";
 import { getPricingConfig, DEFAULT_PRICING, type PricingConfig } from "@/lib/api";
 import { buildHelpSections } from "@/lib/help-content";
 
@@ -111,6 +112,15 @@ export default function HelpCenter() {
             </div>
           </section>
         ))}
+      </div>
+
+      {/* Half the questions above are about asking for a moto, which the app
+          does better than a browser tab does. */}
+      <div className="mt-10">
+        <AppCard
+          blurb="Ask for a moto and follow it on the map, without opening a browser."
+          tone="light"
+        />
       </div>
 
       {/* Foot note */}

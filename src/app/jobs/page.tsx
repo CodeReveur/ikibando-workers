@@ -12,6 +12,7 @@ import {
   AreaFilter, EMPTY_AREA, areaIsSet, areaLabel, type AreaValue,
 } from "@/components/browse/filter-controls";
 import { useLanguage } from "@/lib/language-context";
+import { AppCard } from "@/components/app/get-the-app";
 import {
   MapPin, Briefcase, Search, SlidersHorizontal, Clock, Plus, ArrowRight,
 } from "lucide-react";
@@ -459,6 +460,12 @@ export default function JobsPage() {
           >
             {t("jobs_page.cta.button")} <ArrowRight size={14} />
           </button>
+        </div>
+
+        {/* Riding is work too, and the people reading a jobs page are the
+            people it is work for. */}
+        <div style={{ marginTop: 22 }}>
+          <AppCard blurb={t("app.where.jobs")} />
         </div>
 
       </div>

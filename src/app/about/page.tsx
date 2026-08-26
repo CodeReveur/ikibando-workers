@@ -4,6 +4,7 @@ import Footer from "@/components/layout/footer";
 import { Users, Shield, Zap, Heart, MapPin, ArrowRight } from "lucide-react";
 import { BreadcrumbSchema } from "@/components/seo/json-ld";
 import { useLanguage } from "@/lib/language-context";
+import { AppCard } from "@/components/app/get-the-app";
 
 export default function AboutPage() {
   const { t } = useLanguage();
@@ -219,6 +220,10 @@ export default function AboutPage() {
               {t("about.cta.btn_contact")}
             </a>
           </div>
+        </div>
+
+        <div style={{ marginTop: 22 }}>
+          <AppCard blurb={t("app.where.about")} />
         </div>
 
       </div>

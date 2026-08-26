@@ -326,6 +326,45 @@
       "btn_contact": "Contact us"
     }
   },
+  "app": {
+    "title": "Motari",
+    "subtitle": "The moto taxi app for MpahMapu",
+    "blurb": "Ask for a moto or send a delivery in a few taps, and follow it on the map. Motari sign in to take the work, get paid, and settle the daily fee.",
+    "get_it": "Get the app",
+    "download_android": "Download for Android",
+    "not_ready": "The Android build is not up yet. It will appear here as soon as it is.",
+    "checking": "Checking…",
+    "android_note": "Android will ask you to allow installing this file. That is normal for an app that does not come from the Play Store.",
+    "ios_soon": "iPhone: not yet. Use the website in the meantime, it does everything the app does.",
+    "no_install_title": "Would rather not install anything?",
+    "no_install_body": "Ask Motari works in the browser, and your phone can keep it on the home screen like an app.",
+    "tip_title": "Motari, on your phone",
+    "feature": {
+      "nearby": {
+        "title": "A motari, where you are",
+        "body": "Ask from the map, or type the place. No account needed."
+      },
+      "offers": {
+        "title": "Work that rings",
+        "body": "A motari hears every offer, even with the phone in a pocket."
+      },
+      "money": {
+        "title": "Money you can see",
+        "body": "Fares, the daily fee, payouts and every trip, in one place."
+      },
+      "trust": {
+        "title": "Plates you can check",
+        "body": "Verified motari, and a price agreed before the ride starts."
+      }
+    },
+    "where": {
+      "donate": "The same platform, on your phone. Ask for a moto, send a parcel, or take the work.",
+      "help": "Ask for a moto and follow it on the map, without opening a browser.",
+      "about": "Ask Motari, in your pocket. A moto in a few taps, and a motari who gets paid.",
+      "jobs": "Riding for a living? Motari brings the work to your phone, and rings when it does.",
+      "browse": "Need a moto rather than a worker? Motari finds one where you are."
+    }
+  },
   "contact": {
     "hero": {
       "tag": "Get in touch",

@@ -9,6 +9,7 @@ import { rateUnit } from "@/lib/rate-unit";
 import { ratingInfo } from "@/lib/rating";
 import { countsForCategory, mergeWithDbCategories, type CategoryStats } from "@/lib/browse-taxonomy";
 import { useLanguage } from "@/lib/language-context";
+import { AppPill } from "@/components/app/get-the-app";
 import {
   UtensilsCrossed, Sparkles, Shield, Car, Zap, Wrench, Leaf,
   MapPin, ChevronRight, Briefcase, Star,
@@ -246,6 +247,13 @@ export default function Home() {
           }}>
             {t("common.buttons.become_worker")}
           </a>
+        </div>
+
+        {/* Under the buttons rather than among them: the page is asking people
+            to post work or find a moto, and the app should not compete with
+            either of those for the same glance. */}
+        <div style={{ marginTop: 18, display: "flex", justifyContent: "center" }}>
+          <AppPill />
         </div>
       </div>
 

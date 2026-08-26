@@ -13,6 +13,7 @@ import {
   type MotariState, type MotariHistory, type RideDto,
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
+import { AppTip } from "@/components/app/get-the-app";
 import { playSound, startSoundLoop, stopSoundLoop, unlockSounds } from "@/lib/sounds";
 import { formatRwPhone, isValidRwPhone } from "@/lib/phone";
 import { InstallPrompt } from "@/components/motari/InstallPrompt";
@@ -473,6 +474,16 @@ export default function MotariDrivePage() {
             </div>
           );
         })()}
+
+        {/* A motari working from a browser is a motari whose phone sleeps and
+            whose offers go unheard. Offered while they are waiting for work,
+            never during a ride, and only until they close it. */}
+        {!ride && (
+          <AppTip
+            storageKey="drive.app_tip"
+            style={{ position: "absolute", top: feeShowing ? 128 : 52, left: 14, maxWidth: 250, zIndex: 1002 }}
+          />
+        )}
 
         {/* Parcel demand, in the top row: tap it to see the waiting parcels. */}
         {online && !ride && (() => {
