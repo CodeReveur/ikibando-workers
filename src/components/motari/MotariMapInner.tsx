@@ -9,6 +9,17 @@ import type { MotariMapProps, MapPoint } from "./MotariMap";
 
 const KIGALI: [number, number] = [-1.9441, 30.0619];
 
+/** Metres between two points, good enough to tell "the same spot" from "not". */
+function metresApart(a: MapPoint, b: MapPoint): number {
+  const R = 6371000;
+  const dLat = ((b.latitude - a.latitude) * Math.PI) / 180;
+  const dLng = ((b.longitude - a.longitude) * Math.PI) / 180;
+  const lat1 = (a.latitude * Math.PI) / 180;
+  const lat2 = (b.latitude * Math.PI) / 180;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
 /**
  * The two grounds a map can be drawn on, and the credit each one asks for.
  * Naming the source is the condition of using either for free, so the credit
@@ -167,6 +178,17 @@ export default function MotariMapInner({ pickup, destination, driver, route, ext
   const ground = BASEMAPS[basemap];
   const satellite = basemap === "satellite";
 
+  /*
+   * Whether the pickup and the passenger are the same point.
+   *
+   * They almost always are, because the pickup now fills itself in from the
+   * device, and two markers on one spot read as two people rather than one.
+   * Twenty five metres is comfortably inside a good fix's own error, so this
+   * catches the case without ever hiding a pickup somebody actually moved.
+   */
+  const selfIsPickup =
+    !!self && !!pickup && metresApart(self, pickup) < 25;
+
   return (
     <>
     <MapContainer
@@ -192,7 +214,12 @@ export default function MotariMapInner({ pickup, destination, driver, route, ext
           <Polyline positions={route} pathOptions={{ color: "#f97316", weight: 4, opacity: 0.95 }} />
         </>
       )}
-      {pickup && <Marker position={[pickup.latitude, pickup.longitude]} icon={pickupIcon} />}
+      {/* The pickup, unless it is simply where the passenger is standing, in
+          which case the blue person below already marks the spot and two pins
+          stacked on one point say nothing the one did not. */}
+      {pickup && !selfIsPickup && (
+        <Marker position={[pickup.latitude, pickup.longitude]} icon={pickupIcon} />
+      )}
       {destination && <Marker position={[destination.latitude, destination.longitude]} icon={destIcon} />}
       {driver && <Marker position={[driver.latitude, driver.longitude]} icon={driverIcon} />}
       {extras?.map((p, i) => (

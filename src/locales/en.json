@@ -363,7 +363,14 @@
       "about": "Ask Motari, in your pocket. A moto in a few taps, and a motari who gets paid.",
       "jobs": "Riding for a living? Motari brings the work to your phone, and rings when it does.",
       "browse": "Need a moto rather than a worker? Motari finds one where you are."
-    }
+    },
+    "install_title": "Installing it",
+    "install_1": "Tap Download for Android. The file lands in your Downloads.",
+    "install_2": "Open it. Android will ask whether to allow installing apps from this source. Allow it. This is the warning it gives for anything that did not come from the Play Store, not a sign that something is wrong.",
+    "install_3": "Tap Install, then Open.",
+    "install_4": "Say yes to location, notifications and sound. Motari cannot find you, or ring when work arrives, without them.",
+    "install_note": "Nothing is charged and no account is needed to ask for a moto. Motari sign in with the account they registered on this site.",
+    "size_note": "About 55 MB. On mobile data that is roughly the size of a short video."
   },
   "contact": {
     "hero": {

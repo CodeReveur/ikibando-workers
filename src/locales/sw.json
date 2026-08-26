@@ -362,7 +362,14 @@
       "about": "Ask Motari mfukoni mwako. Pikipiki kwa mibonyezo michache, na motari analipwa.",
       "jobs": "Unaendesha pikipiki kwa riziki? Motari inaleta kazi kwenye simu yako, na kuita inapofika.",
       "browse": "Unahitaji pikipiki badala ya mfanyakazi? Motari inaipata pale ulipo."
-    }
+    },
+    "install_title": "Kuisakinisha",
+    "install_1": "Gusa Pakua kwa Android. Faili litafika kwenye Vipakuliwa vyako.",
+    "install_2": "Lifungue. Android itauliza kama kuruhusu kusakinisha programu kutoka chanzo hiki. Ruhusu. Ni onyo linalotolewa kwa chochote kisichotoka Play Store, si ishara ya tatizo.",
+    "install_3": "Gusa Sakinisha, kisha Fungua.",
+    "install_4": "Kubali mahali, arifa na sauti. Motari haiwezi kukupata, wala kuita kazi inapofika, bila hivyo.",
+    "install_note": "Hakuna malipo na hakuna akaunti inayohitajika kuomba pikipiki. Motari huingia kwa akaunti waliyosajili kwenye tovuti hii.",
+    "size_note": "Takriban MB 55. Kwa data ya simu, ni sawa na video fupi."
   },
   "contact": {
     "hero": {

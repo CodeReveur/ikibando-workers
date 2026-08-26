@@ -362,7 +362,14 @@
       "about": "Ask Motari mu mufuka wawe. Moto mu makanda make, na motari uhembwa.",
       "jobs": "Utwara moto? Motari izana akazi kuri telefone yawe, kandi ikavuza iyo kaje.",
       "browse": "Ukeneye moto aho gukenera umukozi? Motari iyibonera aho uri."
-    }
+    },
+    "install_title": "Uko uyishyiraho",
+    "install_1": "Kanda Kuramo kuri Android. Dosiye igera muri Downloads zawe.",
+    "install_2": "Uyifungure. Android izabaza niba yemerewe gushyiraho porogaramu ziturutse hano. Yemera. Ni ubutumwa buza kuri byose bitava kuri Play Store, si ikimenyetso cy’ikibazo.",
+    "install_3": "Kanda Install, hanyuma Open.",
+    "install_4": "Emera aho uri, ubutumwa n’ijwi. Motari ntishobora kukubona cyangwa kuvuza akazi kaje idafite ibyo.",
+    "install_note": "Nta kiguzi kiriho kandi nta konti ikenewe kugira ngo usabe moto. Abamotari binjira bakoresheje konti biyandikishije kuri uru rubuga.",
+    "size_note": "Nka MB 55. Kuri interineti ya telefone, ni nka videwo ngufi."
   },
   "contact": {
     "hero": {

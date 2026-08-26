@@ -204,15 +204,29 @@ export default function AskMotariPage() {
   /**
    * How tight a fix has to be before we will put a pickup pin on it.
    *
-   * A coarse reading still gets drawn, ringed by its accuracy circle so it is
-   * visibly a guess. What it does not get is a pickup filled in from it: a
-   * motari sent to the middle of a five kilometre circle is a wasted trip for
-   * both of them.
+   * Twenty five metres, not two hundred. Two hundred was enough to name the
+   * wrong street: Kigali's KK and KG districts meet along roads narrower than
+   * that, so a fix inside its own stated accuracy could still reverse geocode
+   * to the wrong side of a junction and tell a passenger standing on KK that
+   * they were on KG. A phone outdoors reaches this in a few seconds.
+   *
+   * A coarser reading is still drawn, ringed by its accuracy circle so it is
+   * visibly a guess. What it does not get is a name and a pin.
    */
-  const TRUSTWORTHY_M = 200;
+  const TRUSTWORTHY_M = 25;
 
   /** Auto-locating is a courtesy, and a courtesy is offered once. */
   const autoLocated = useRef(false);
+
+  /**
+   * The tightest fix seen so far.
+   *
+   * Readings arrive worst first: the browser answers from the network while
+   * the GPS is still warming up, and it can wander back and forth afterwards.
+   * Taking the latest would mean a good position being replaced by a worse
+   * one; taking the best means the dot settles rather than jitters.
+   */
+  const bestAccuracy = useRef(Infinity);
 
   useEffect(() => {
     if (!navigator.geolocation) return;
@@ -228,9 +242,18 @@ export default function AskMotariPage() {
          * broken rather than approximate. The accuracy circle was already there
          * to say how much to trust it. Now it gets something to draw.
          */
-        deviceRef.current = { lat: p.coords.latitude, lng: p.coords.longitude };
-        setDevice({ latitude: p.coords.latitude, longitude: p.coords.longitude });
-        setDeviceAcc(p.coords.accuracy ?? null);
+        const accuracy = p.coords.accuracy ?? Infinity;
+
+        // Keep the better of what we have and what just arrived, so a stray
+        // coarse reading cannot throw away a good one. A fix that is no worse
+        // than half as good still wins, because the phone does move.
+        const better = accuracy <= bestAccuracy.current * 2 || !deviceRef.current;
+        if (better) {
+          bestAccuracy.current = Math.min(bestAccuracy.current, accuracy);
+          deviceRef.current = { lat: p.coords.latitude, lng: p.coords.longitude };
+          setDevice({ latitude: p.coords.latitude, longitude: p.coords.longitude });
+          setDeviceAcc(p.coords.accuracy ?? null);
+        }
         // The watch can succeed a second after the one-shot gave up. Once the
         // phone knows where it is, the advice is simply wrong.
         setGpsAdvice("");
@@ -246,7 +269,7 @@ export default function AskMotariPage() {
          */
         if (
           !autoLocated.current &&
-          (p.coords.accuracy ?? Infinity) <= TRUSTWORTHY_M &&
+          accuracy <= TRUSTWORTHY_M &&
           !pickupRef.current &&
           !tokenRef.current
         ) {

@@ -362,7 +362,14 @@
       "about": "Ask Motari, dans votre poche. Une moto en quelques touches, et un motari qui est payé.",
       "jobs": "Vous roulez pour vivre ? Motari apporte le travail sur votre téléphone, et sonne quand il arrive.",
       "browse": "Besoin d’une moto plutôt que d’un travailleur ? Motari en trouve une là où vous êtes."
-    }
+    },
+    "install_title": "L’installer",
+    "install_1": "Appuyez sur Télécharger pour Android. Le fichier arrive dans vos Téléchargements.",
+    "install_2": "Ouvrez-le. Android demandera l’autorisation d’installer des applications depuis cette source. Acceptez. C’est l’avertissement donné pour tout ce qui ne vient pas du Play Store, pas le signe d’un problème.",
+    "install_3": "Appuyez sur Installer, puis sur Ouvrir.",
+    "install_4": "Acceptez la localisation, les notifications et le son. Motari ne peut ni vous trouver ni sonner à l’arrivée du travail sans eux.",
+    "install_note": "Rien n’est facturé et aucun compte n’est nécessaire pour demander une moto. Les motari se connectent avec le compte créé sur ce site.",
+    "size_note": "Environ 55 Mo. En données mobiles, à peu près le poids d’une courte vidéo."
   },
   "contact": {
     "hero": {

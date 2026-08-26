@@ -90,8 +90,8 @@ export function AppCard({ blurb, compact = false, tone = "dark", style }: {
 
   return (
     <div style={{
-      background: light ? "#fff" : "#0a0a0a",
-      border: `1px solid ${light ? "#e5e7eb" : "#1f1f1f"}`,
+      background: light ? "#fff" : "#161616",
+      border: `1px solid ${light ? "#e5e7eb" : "#232323"}`,
       borderRadius: 16,
       padding: compact ? 16 : 20,
       display: "flex",
