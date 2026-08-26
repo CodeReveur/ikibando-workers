@@ -59,6 +59,8 @@ export default function Navbar() {
     { href: "/jobs",    label: t("common.nav.jobs")    },
     // Ask Motari sits ahead of Contact; About lives in the footer.
     { href: "/motari",  label: t("common.buttons.ask_motari") || "Ask Motari" },
+    // The app is worth reaching from anywhere, not only from the motari page.
+    { href: "/app",     label: t("common.nav.get_app") || "Get the app" },
     { href: "/contact", label: t("common.nav.contact") },
   ];
 
