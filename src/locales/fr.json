@@ -2697,6 +2697,7 @@
       "no_profile": "Enregistrez votre moto pour commencer.",
       "save_moto": "Enregistrer la moto",
       "gps_coarse": "Position approximative. Activez le GPS précis.",
+      "gps_coarse_why": "Aucun passager ne peut vous être attribué tant qu'elle ne s'affine pas.",
       "offer_title": "Nouvelle course pour vous",
       "their_price": "son prix",
       "meter_ride": "Course au compteur",

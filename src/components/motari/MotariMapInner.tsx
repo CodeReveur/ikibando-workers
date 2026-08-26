@@ -126,15 +126,24 @@ function TapToPick({ onPick }: { onPick?: (p: MapPoint) => void }) {
   return null;
 }
 
-// "You are here": blue dot with a soft pulsing halo (keyframes live in the page CSS).
+// "You are here": a person on a blue disc, with a soft pulsing halo (keyframes
+// live in the page CSS). It used to be a bare dot, which on a map already
+// carrying pins and a moto said nothing about whose dot it was. The glyph is
+// drawn rather than an emoji so it reads the same on every device.
 const selfIcon = L.divIcon({
   className: "motari-self",
-  html: `<div style="position:relative;width:18px;height:18px">
-           <div style="position:absolute;inset:-9px;border-radius:50%;background:rgba(59,130,246,0.25);animation:gpspulse 2s ease-out infinite"></div>
-           <div style="position:absolute;inset:2px;border-radius:50%;background:#3b82f6;border:2.5px solid #fff;box-shadow:0 1px 8px rgba(0,0,0,0.5)"></div>
+  html: `<div style="position:relative;width:26px;height:26px">
+           <div style="position:absolute;inset:-7px;border-radius:50%;background:rgba(59,130,246,0.22);animation:gpspulse 2s ease-out infinite"></div>
+           <div style="position:absolute;inset:0;border-radius:50%;background:#3b82f6;border:2.5px solid #fff;
+                       box-shadow:0 1px 8px rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center">
+             <svg viewBox="0 0 24 24" width="13" height="13" fill="#fff" aria-hidden="true">
+               <circle cx="12" cy="7.5" r="3.6"/>
+               <path d="M12 12.6c-3.6 0-6.4 2.1-6.4 4.7v1.3h12.8v-1.3c0-2.6-2.8-4.7-6.4-4.7z"/>
+             </svg>
+           </div>
          </div>`,
-  iconSize: [18, 18],
-  iconAnchor: [9, 9],
+  iconSize: [26, 26],
+  iconAnchor: [13, 13],
 });
 
 // A passenger waiting for a moto: a teardrop pin holding a simple person glyph,

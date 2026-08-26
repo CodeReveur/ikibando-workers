@@ -194,6 +194,16 @@ export default function MotariDrivePage() {
     }
   }, [tab, state?.activeRide?.status]);
 
+  /**
+   * How tight a fix has to be before it is worth telling passengers about.
+   *
+   * Generous, because a motari on a phone in a street usually beats this by an
+   * order of magnitude, and the ones who do not are the ones indoors or on a
+   * laptop, whose position is a guess at the neighbourhood rather than the
+   * corner they are standing on.
+   */
+  const USABLE_FIX_M = 500;
+
   /* ── GPS: always watched, so the map shows the exact device position and
         auto-refreshes as it moves — online or not. ──────────────────────────── */
   useEffect(() => {
@@ -203,12 +213,31 @@ export default function MotariDrivePage() {
     }
     const watchId = navigator.geolocation.watchPosition(
       p => {
-        // Kilometre-scale accuracy is an IP guess, not a GPS fix: don't draw it.
-        if (p.coords.accuracy != null && p.coords.accuracy > 5000) return;
-        posRef.current = { lat: p.coords.latitude, lng: p.coords.longitude };
+        /*
+         * Every reading is drawn; not every reading is acted on.
+         *
+         * This used to discard anything worse than five kilometres, which on a
+         * laptop is every reading there is: the moto never appeared, no route
+         * was worked out, and no heartbeat went anywhere, so a motari working
+         * from a browser was invisible and simply never got offered a ride.
+         *
+         * The distinction that actually matters is not whether to show it but
+         * whether to broadcast it. A coarse fix on the map is honest, ringed
+         * by its accuracy circle. A coarse fix in a heartbeat tells a waiting
+         * passenger there is a moto somewhere inside thirty kilometres of them,
+         * which is worse than saying nothing.
+         */
+        const accuracy = p.coords.accuracy ?? null;
+        const trustworthy = accuracy == null || accuracy <= USABLE_FIX_M;
+
         setMyPos({ latitude: p.coords.latitude, longitude: p.coords.longitude });
-        setGpsAcc(p.coords.accuracy ?? null);
+        setGpsAcc(accuracy);
         setGpsError("");
+
+        // Only a fix worth standing on reaches the heartbeat and the routing.
+        posRef.current = trustworthy
+          ? { lat: p.coords.latitude, lng: p.coords.longitude }
+          : null;
       },
       () => setGpsError(t("motari.dash.gps_off") || "Enable location to receive rides."),
       { enableHighAccuracy: true, maximumAge: 2000 },
@@ -493,6 +522,23 @@ export default function MotariDrivePage() {
             storageKey="drive.app_tip"
             style={{ position: "absolute", top: tipTop, left: 14, maxWidth: 250, zIndex: 1002 }}
           />
+        )}
+
+        {/* A fix too coarse to dispatch on is the one thing that will keep a
+            motari online all day without a single offer. Say it plainly. */}
+        {myPos && gpsAcc != null && gpsAcc > USABLE_FIX_M && (
+          <div style={{
+            position: "absolute", top: tipTop, left: 14, right: 14, zIndex: 1002,
+            ...glass, borderRadius: 12, padding: "9px 12px",
+            borderColor: "#7c3a10", color: "#fbbf24", fontSize: 11.5, lineHeight: 1.5,
+          }}>
+            ±{gpsAcc >= 1000 ? `${(gpsAcc / 1000).toFixed(0)} km` : `${Math.round(gpsAcc)} m`}
+            {" · "}
+            {t("motari.dash.gps_coarse") || "Approximate location. Turn on precise GPS."}
+            {" "}
+            {t("motari.dash.gps_coarse_why")
+              || "No passenger can be matched to you until it sharpens."}
+          </div>
         )}
 
         {/* Parcel demand, in the top row: tap it to see the waiting parcels. */}

@@ -76,6 +76,16 @@ export default function AskMotariPage() {
 
   // request form
   const [pickup, setPickup] = useState<Picked | null>(null);
+
+  /**
+   * The pickup as the location watch sees it.
+   *
+   * The watch is registered once and closes over whatever `pickup` was at the
+   * time, which is always null. Auto-locating has to know whether a pickup has
+   * appeared since, or it would write over one the passenger chose themselves.
+   */
+  const pickupRef = useRef<Picked | null>(null);
+  useEffect(() => { pickupRef.current = pickup; }, [pickup]);
   const [dest, setDest] = useState<Picked | null>(null);
   const [pickupQ, setPickupQ] = useState("");
   const [destQ, setDestQ] = useState("");
@@ -190,18 +200,68 @@ export default function AskMotariPage() {
   const [device, setDevice] = useState<MapPoint | null>(null);
   const [deviceAcc, setDeviceAcc] = useState<number | null>(null);
   const deviceRef = useRef<{ lat: number; lng: number } | null>(null);
+
+  /**
+   * How tight a fix has to be before we will put a pickup pin on it.
+   *
+   * A coarse reading still gets drawn, ringed by its accuracy circle so it is
+   * visibly a guess. What it does not get is a pickup filled in from it: a
+   * motari sent to the middle of a five kilometre circle is a wasted trip for
+   * both of them.
+   */
+  const TRUSTWORTHY_M = 200;
+
+  /** Auto-locating is a courtesy, and a courtesy is offered once. */
+  const autoLocated = useRef(false);
+
   useEffect(() => {
     if (!navigator.geolocation) return;
     const id = navigator.geolocation.watchPosition(
       p => {
-        // An accuracy in the kilometres is an IP-level guess, not a GPS fix.
-        if (p.coords.accuracy != null && p.coords.accuracy > 5000) return;
+        /*
+         * Every reading is kept, however coarse.
+         *
+         * This used to drop anything worse than five kilometres as "an IP-level
+         * guess, not a GPS fix", which is true and was the wrong thing to do
+         * with it: a laptop on Wi-Fi reports tens of kilometres, so the dot
+         * never appeared, the map never centred, and the whole thing looked
+         * broken rather than approximate. The accuracy circle was already there
+         * to say how much to trust it. Now it gets something to draw.
+         */
         deviceRef.current = { lat: p.coords.latitude, lng: p.coords.longitude };
         setDevice({ latitude: p.coords.latitude, longitude: p.coords.longitude });
         setDeviceAcc(p.coords.accuracy ?? null);
         // The watch can succeed a second after the one-shot gave up. Once the
         // phone knows where it is, the advice is simply wrong.
         setGpsAdvice("");
+
+        /*
+         * Fill the pickup in, once, from the first fix worth standing on.
+         *
+         * Somebody opening this page wants a moto where they are; making them
+         * tap "use my location" to say so is a step that only ever has one
+         * answer. It is written into the field rather than held silently, so
+         * they can read it and change it, and it never overwrites a pickup
+         * they have already chosen.
+         */
+        if (
+          !autoLocated.current &&
+          (p.coords.accuracy ?? Infinity) <= TRUSTWORTHY_M &&
+          !pickupRef.current &&
+          !tokenRef.current
+        ) {
+          autoLocated.current = true;
+          const { latitude, longitude } = p.coords;
+          reverseGeocode(latitude, longitude)
+            .then(loc => {
+              // They may have typed something while the name was coming back.
+              if (pickupRef.current) return;
+              const label = loc.address.split(",").slice(0, 2).join(",").trim();
+              setPickup({ latitude, longitude, label });
+              setPickupQ(label);
+            })
+            .catch(() => { autoLocated.current = false; });
+        }
       },
       () => { /* permission denied or unavailable: the dot simply stays hidden */ },
       { enableHighAccuracy: true, maximumAge: 2000, timeout: 15000 },

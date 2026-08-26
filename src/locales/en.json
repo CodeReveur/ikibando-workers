@@ -2698,6 +2698,7 @@
       "no_profile": "Register your moto to start driving.",
       "save_moto": "Save moto",
       "gps_coarse": "Approximate location. Turn on precise GPS.",
+      "gps_coarse_why": "No passenger can be matched to you until it sharpens.",
       "offer_title": "New ride for you",
       "their_price": "their price",
       "meter_ride": "Meter ride",
