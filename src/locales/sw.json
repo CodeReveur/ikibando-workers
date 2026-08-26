@@ -2669,6 +2669,7 @@
       "waiting_here": "Anasubiri hapa",
       "to_pickup": "Kwa abiria",
       "to_dest": "Hadi mwisho",
+      "no_route": "Tunatafuta njia. Alama bado inaonyesha unakoenda.",
       "offer_parcel": "Kifurushi kwako",
       "carry_parcels": "Beba vifurushi",
       "carry_parcels_hint": "Maombi ya vifurushi yatakufikia pia",

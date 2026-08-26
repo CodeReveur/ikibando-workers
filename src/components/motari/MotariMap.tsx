@@ -30,6 +30,13 @@ export interface MotariMapProps {
   selfAccuracyM?: number | null;
   /** Fired when the user taps the map with no pickup set yet (pin-drop fallback). */
   onPick?: (p: MapPoint) => void;
+  /**
+   * What the map is drawn on to begin with. A passenger describing where they
+   * are standing is better served by satellite - a roof, a yard, the shape of
+   * a junction - while a motari following a road is better served by streets.
+   * Either way the switch is on the map and the choice is the user's.
+   */
+  defaultBasemap?: "streets" | "satellite";
 }
 
 /**

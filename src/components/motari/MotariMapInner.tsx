@@ -1,12 +1,36 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, Polyline, Tooltip, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
+import { Map as MapIcon, Satellite as SatelliteIcon } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import type { MotariMapProps, MapPoint } from "./MotariMap";
 
 const KIGALI: [number, number] = [-1.9441, 30.0619];
+
+/**
+ * The two grounds a map can be drawn on, and the credit each one asks for.
+ * Naming the source is the condition of using either for free, so the credit
+ * travels with the tiles rather than being remembered separately.
+ */
+const BASEMAPS = {
+  streets: {
+    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    // OSM has no useful imagery ceiling; this is just the Leaflet default.
+    maxNativeZoom: 19,
+  },
+  satellite: {
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    attribution: "Esri, Maxar, Earthstar Geographics",
+    // Esri's imagery stops short of the deepest street zooms. Without this the
+    // map goes blank rather than stretching the last tile it has.
+    maxNativeZoom: 19,
+  },
+} as const;
+
+type BasemapName = keyof typeof BASEMAPS;
 
 const pin = (bg: string, glyph: string, size = 32) =>
   L.divIcon({
@@ -129,17 +153,27 @@ const waitingIcon = L.divIcon({
   iconAnchor: [15, 30],
 });
 
-export default function MotariMapInner({ pickup, destination, driver, route, extras, self, selfAccuracyM, onPick, onExtraClick }: MotariMapProps) {
+export default function MotariMapInner({ pickup, destination, driver, route, extras, self, selfAccuracyM, onPick, onExtraClick, defaultBasemap = "streets" }: MotariMapProps) {
+  const [basemap, setBasemap] = useState<BasemapName>(defaultBasemap);
+  const ground = BASEMAPS[basemap];
+  const satellite = basemap === "satellite";
+
   return (
+    <>
     <MapContainer
       center={KIGALI}
       zoom={14}
       zoomControl={false}
       style={{ position: "absolute", inset: 0, background: "#141414" }}
     >
+      {/* Keyed, so swapping the ground swaps the tiles rather than layering
+          one set of them on top of the other. */}
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        key={basemap}
+        attribution={ground.attribution}
+        url={ground.url}
+        maxNativeZoom={ground.maxNativeZoom}
+        maxZoom={21}
       />
       <Reframe pickup={pickup} destination={destination} driver={driver} self={self} extras={extras} routeLen={route?.length ?? 0} />
       <TapToPick onPick={onPick} />
@@ -177,5 +211,45 @@ export default function MotariMapInner({ pickup, destination, driver, route, ext
       })()}
       {self && <Marker position={[self.latitude, self.longitude]} icon={selfIcon} zIndexOffset={500} />}
     </MapContainer>
+    <BasemapSwitch value={basemap} onChange={setBasemap} />
+    </>
+  );
+}
+
+/**
+ * Streets or satellite, one tap apart.
+ *
+ * It is drawn outside the Leaflet layer stack and positioned over it, because
+ * it is a control rather than something on the map, and it must stay reachable
+ * whatever the page stacks above the tiles.
+ */
+function BasemapSwitch({ value, onChange }: { value: BasemapName; onChange: (v: BasemapName) => void }) {
+  const satellite = value === "satellite";
+  return (
+    <div style={{ position: "absolute", right: 14, bottom: 14, zIndex: 1000, display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 5 }}>
+      <button
+        type="button"
+        onClick={() => onChange(satellite ? "streets" : "satellite")}
+        aria-label={satellite ? "Show streets" : "Show satellite"}
+        style={{
+          display: "flex", alignItems: "center", gap: 6,
+          background: "rgba(10,10,10,0.94)",
+          border: `1px solid ${satellite ? "#f97316" : "#2a2a2a"}`,
+          borderRadius: 999, padding: "7px 12px", cursor: "pointer",
+          color: satellite ? "#fff" : "#9a9a9a",
+          fontSize: 9.5, fontWeight: 900, letterSpacing: "0.09em",
+          textTransform: "uppercase", fontFamily: "inherit",
+        }}
+      >
+        {satellite ? <SatelliteIcon size={12} color="#f97316" /> : <MapIcon size={12} color="#9a9a9a" />}
+        {satellite ? "Satellite" : "Streets"}
+      </button>
+      <span style={{
+        background: "rgba(10,10,10,0.55)", borderRadius: 5, padding: "1px 5px",
+        color: "#6a6a6a", fontSize: 8.5, whiteSpace: "nowrap",
+      }}>
+        {BASEMAPS[value].attribution.replace(/<[^>]+>/g, "")}
+      </span>
+    </div>
   );
 }

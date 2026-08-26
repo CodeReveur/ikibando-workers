@@ -2670,6 +2670,7 @@
       "waiting_here": "Waiting here",
       "to_pickup": "To pickup",
       "to_dest": "To destination",
+      "no_route": "Working out the way. The pin still shows where to go.",
       "offer_parcel": "Parcel for you",
       "carry_parcels": "Carry parcels",
       "carry_parcels_hint": "Courier requests reach you too",

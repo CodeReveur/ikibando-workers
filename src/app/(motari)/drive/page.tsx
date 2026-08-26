@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { MotariMap, type MapPoint, type ExtraPoint } from "@/components/motari/MotariMap";
-import { getRoute, fmtDistance, fmtDuration, type RouteResult } from "@/lib/routing";
+import { getRoute, fmtDistance, fmtDuration, type RouteResult, type RouteStep } from "@/lib/routing";
+import { useTurnByTurn } from "@/lib/turn-by-turn";
 import {
   getMotariState, getMotariHistory, saveMotariProfile, setMotariOnline, motariHeartbeat,
   acceptRide, declineRide, motariArrived, motariComplete, motariCancelRide,
@@ -17,8 +18,22 @@ import { formatRwPhone, isValidRwPhone } from "@/lib/phone";
 import { InstallPrompt } from "@/components/motari/InstallPrompt";
 import {
   Bike, Phone, Power, CheckCircle2, X, Star, LogOut, ChevronDown, ChevronUp, Globe, Package,
-  AlertTriangle,
+  AlertTriangle, Volume2, VolumeX, Navigation,
+  CornerUpLeft, CornerUpRight, ArrowUp, RotateCcw, Flag,
 } from "lucide-react";
+
+/**
+ * An arrow that matches the words, so the shape of the turn is readable at a
+ * glance without reading anything.
+ */
+function turnIcon(step: RouteStep) {
+  if (step.type === "arrive") return Flag;
+  const mod = (step.modifier || "").toLowerCase();
+  if (mod.includes("uturn")) return RotateCcw;
+  if (mod.includes("left")) return CornerUpLeft;
+  if (mod.includes("right")) return CornerUpRight;
+  return ArrowUp;
+}
 
 const POLL_MS = 5000;
 const HEARTBEAT_MS = 4000;
@@ -287,6 +302,13 @@ export default function MotariDrivePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetKey, legKey]);
 
+  // The road ahead is already known; this is what says it out loud. Guidance
+  // only runs while a ride is actually under way, so an idle motari waiting for
+  // work is never spoken to.
+  const guiding = !!ride && ["ASSIGNED", "ARRIVED", "IN_RIDE"].includes(ride.status);
+  const { next: nextTurn, muted: voiceMuted, setMuted: setVoiceMuted } =
+    useTurnByTurn(navRoute, myPos, guiding);
+
   const seekers: ExtraPoint[] = !ride && online
     ? (state?.nearby ?? []).map(n => ({
         id: n.id,
@@ -298,6 +320,10 @@ export default function MotariDrivePage() {
     : [];
 
   /* ── styles (passenger-app vocabulary) ──────────────────────────────────── */
+  // Both of these sit over the map at the top, so each has to know whether the
+  // other is there.
+  const feeShowing = !!(fees?.paused || (feeOwing && feeHours));
+
   const glass: React.CSSProperties = {
     background: "rgba(0,0,0,0.94)", backdropFilter: "blur(12px)", border: "1px solid #1f1f1f",
   };
@@ -351,7 +377,7 @@ export default function MotariDrivePage() {
 
         {/* The daily fee, impossible to miss: paused accounts and evening
             reminders both sit right on the map. */}
-        {(fees?.paused || (feeOwing && feeHours)) && (
+        {feeShowing && (
           <div style={{
             position: "absolute", top: 52, left: 14, right: 14, zIndex: 1004, ...glass,
             borderRadius: 12, padding: "10px 12px",
@@ -398,6 +424,55 @@ export default function MotariDrivePage() {
             )}
           </div>
         )}
+
+        {/* The next manoeuvre, written out. It says the same words the voice
+            says, so a motari who missed the sound can read it at the next stop,
+            and one who heard it has the distance in front of them. The mute is
+            beside it, because the moment you want it is the moment it speaks. */}
+        {guiding && (() => {
+          const Icon = nextTurn ? turnIcon(nextTurn.step) : Navigation;
+          const aboard = ride!.status === "IN_RIDE";
+          const headline = nextTurn
+            ? nextTurn.step.instruction
+            : aboard
+              ? (t("motari.dash.to_dest") || "To destination")
+              : (t("motari.dash.to_pickup") || "To pickup");
+          const detail = nextTurn
+            ? fmtDistance(nextTurn.metresAway)
+            : navRoute
+              ? `${fmtDistance(navRoute.distanceM)} · ${fmtDuration(navRoute.durationS)}`
+              : (t("motari.dash.no_route") || "Working out the way. The pin still shows where to go.");
+
+          return (
+            <div style={{
+              position: "absolute", top: feeShowing ? 128 : 52, left: 14, right: 14, zIndex: 1003,
+              ...glass, borderRadius: 12, padding: "10px 12px",
+              display: "flex", alignItems: "center", gap: 10,
+            }}>
+              <Icon size={20} color="#f97316" style={{ flexShrink: 0 }} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ color: "#fff", fontSize: 12.5, fontWeight: 800, lineHeight: 1.35 }}>
+                  {headline}
+                </div>
+                <div style={{ ...micro, marginTop: 2 }}>{detail}</div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setVoiceMuted(!voiceMuted)}
+                aria-label={voiceMuted ? "Turn the voice on" : "Turn the voice off"}
+                style={{
+                  flexShrink: 0, background: "none", cursor: "pointer", fontFamily: "inherit",
+                  border: `1px solid ${voiceMuted ? "#2a2a2a" : "#f97316"}`,
+                  borderRadius: 999, padding: "6px 8px", lineHeight: 0,
+                }}
+              >
+                {voiceMuted
+                  ? <VolumeX size={13} color="#888" />
+                  : <Volume2 size={13} color="#f97316" />}
+              </button>
+            </div>
+          );
+        })()}
 
         {/* Parcel demand, in the top row: tap it to see the waiting parcels. */}
         {online && !ride && (() => {

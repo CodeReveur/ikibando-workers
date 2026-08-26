@@ -2669,6 +2669,7 @@
       "waiting_here": "Ategerereje hano",
       "to_pickup": "Ku mugenzi",
       "to_dest": "Aho mujya",
+      "no_route": "Turimo gushaka inzira. Akamenyetso karacyerekana aho ujya.",
       "offer_parcel": "Umuzigo kuri wewe",
       "carry_parcels": "Gutwara imizigo",
       "carry_parcels_hint": "Ubusabe bw'imizigo na bwo buraza",

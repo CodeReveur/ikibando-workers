@@ -604,6 +604,7 @@ export default function AskMotariPage() {
 
       {/* MAP — fills the app frame */}
       <MotariMap
+        defaultBasemap="satellite"
         pickup={mapPickup}
         destination={mapDest}
         driver={mapDriver}

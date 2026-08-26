@@ -2669,6 +2669,7 @@
       "waiting_here": "En attente ici",
       "to_pickup": "Vers le départ",
       "to_dest": "Vers la destination",
+      "no_route": "Recherche du chemin. Le repère montre toujours où aller.",
       "offer_parcel": "Colis pour vous",
       "carry_parcels": "Transporter des colis",
       "carry_parcels_hint": "Les demandes de colis vous parviennent aussi",
