@@ -153,7 +153,7 @@ const waitingIcon = L.divIcon({
   iconAnchor: [15, 30],
 });
 
-export default function MotariMapInner({ pickup, destination, driver, route, extras, self, selfAccuracyM, onPick, onExtraClick, defaultBasemap = "streets" }: MotariMapProps) {
+export default function MotariMapInner({ pickup, destination, driver, route, extras, self, selfAccuracyM, onPick, onExtraClick, defaultBasemap = "streets", switchStyle }: MotariMapProps) {
   const [basemap, setBasemap] = useState<BasemapName>(defaultBasemap);
   const ground = BASEMAPS[basemap];
   const satellite = basemap === "satellite";
@@ -211,7 +211,7 @@ export default function MotariMapInner({ pickup, destination, driver, route, ext
       })()}
       {self && <Marker position={[self.latitude, self.longitude]} icon={selfIcon} zIndexOffset={500} />}
     </MapContainer>
-    <BasemapSwitch value={basemap} onChange={setBasemap} />
+    <BasemapSwitch value={basemap} onChange={setBasemap} style={switchStyle} />
     </>
   );
 }
@@ -223,10 +223,18 @@ export default function MotariMapInner({ pickup, destination, driver, route, ext
  * it is a control rather than something on the map, and it must stay reachable
  * whatever the page stacks above the tiles.
  */
-function BasemapSwitch({ value, onChange }: { value: BasemapName; onChange: (v: BasemapName) => void }) {
+function BasemapSwitch({ value, onChange, style }: {
+  value: BasemapName;
+  onChange: (v: BasemapName) => void;
+  style?: React.CSSProperties;
+}) {
   const satellite = value === "satellite";
   return (
-    <div style={{ position: "absolute", right: 14, bottom: 14, zIndex: 1000, display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 5 }}>
+    <div style={{
+      position: "absolute", right: 14, bottom: 14, zIndex: 1002,
+      display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 5,
+      ...style,
+    }}>
       <button
         type="button"
         onClick={() => onChange(satellite ? "streets" : "satellite")}

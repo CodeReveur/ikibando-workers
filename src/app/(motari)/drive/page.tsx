@@ -321,9 +321,18 @@ export default function MotariDrivePage() {
     : [];
 
   /* ── styles (passenger-app vocabulary) ──────────────────────────────────── */
-  // Both of these sit over the map at the top, so each has to know whether the
-  // other is there.
+  /*
+   * The strip down the top of the map is a stack, and everything in it has to
+   * know what stands above it. Each row that appears pushes the next one down,
+   * rather than four overlays hard-coding the same offsets and drifting apart
+   * the first time one of them changes height.
+   */
   const feeShowing = !!(fees?.paused || (feeOwing && feeHours));
+  const BANNER_ROW = 76;
+  const feeTop = 52;
+  const turnTop = feeTop + (feeShowing ? BANNER_ROW : 0);
+  const switchTop = turnTop + (guiding ? BANNER_ROW : 0);
+  const tipTop = switchTop + 52;
 
   const glass: React.CSSProperties = {
     background: "rgba(0,0,0,0.94)", backdropFilter: "blur(12px)", border: "1px solid #1f1f1f",
@@ -364,6 +373,7 @@ export default function MotariDrivePage() {
           selfAccuracyM={gpsAcc} extras={seekers}
           route={navRoute ? navRoute.coordinates : null}
           onExtraClick={id => act(() => acceptRide(id, token()))}
+          switchStyle={{ top: switchTop, right: 14, bottom: "auto" }}
         />
 
         {/* Brand chip */}
@@ -380,7 +390,7 @@ export default function MotariDrivePage() {
             reminders both sit right on the map. */}
         {feeShowing && (
           <div style={{
-            position: "absolute", top: 52, left: 14, right: 14, zIndex: 1004, ...glass,
+            position: "absolute", top: feeTop, left: 14, right: 14, zIndex: 1004, ...glass,
             borderRadius: 12, padding: "10px 12px",
             borderColor: fees?.paused ? "#7f1d1d" : "#7c3a10",
           }}>
@@ -446,7 +456,7 @@ export default function MotariDrivePage() {
 
           return (
             <div style={{
-              position: "absolute", top: feeShowing ? 128 : 52, left: 14, right: 14, zIndex: 1003,
+              position: "absolute", top: turnTop, left: 14, right: 14, zIndex: 1003,
               ...glass, borderRadius: 12, padding: "10px 12px",
               display: "flex", alignItems: "center", gap: 10,
             }}>
@@ -481,7 +491,7 @@ export default function MotariDrivePage() {
         {!ride && (
           <AppTip
             storageKey="drive.app_tip"
-            style={{ position: "absolute", top: feeShowing ? 128 : 52, left: 14, maxWidth: 250, zIndex: 1002 }}
+            style={{ position: "absolute", top: tipTop, left: 14, maxWidth: 250, zIndex: 1002 }}
           />
         )}
 

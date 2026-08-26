@@ -37,6 +37,15 @@ export interface MotariMapProps {
    * Either way the switch is on the map and the choice is the user's.
    */
   defaultBasemap?: "streets" | "satellite";
+  /**
+   * Where to put the streets/satellite switch.
+   *
+   * It defaulted to the bottom right, which on both motari pages is under a
+   * sheet that spans the full width and rises most of the screen: the control
+   * existed and could never be pressed. Only the page knows what its own
+   * corners are holding, so the page says.
+   */
+  switchStyle?: React.CSSProperties;
 }
 
 /**

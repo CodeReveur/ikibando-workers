@@ -170,6 +170,16 @@ export default function AskMotariPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
+  /**
+   * "Could not read your location. Type your pickup instead."
+   *
+   * Kept apart from [error] because it is advice rather than a failure, and
+   * because it has to disappear on its own: it told the passenger to type
+   * their pickup, so it cannot still be on screen once they have. Clearing
+   * [error] wholesale would have swallowed a real API error alongside it.
+   */
+  const [gpsAdvice, setGpsAdvice] = useState("");
+
   // live ride
   const [ride, setRide] = useState<RideDto | null>(null);
   const [stars, setStars] = useState(0);
@@ -189,6 +199,9 @@ export default function AskMotariPage() {
         deviceRef.current = { lat: p.coords.latitude, lng: p.coords.longitude };
         setDevice({ latitude: p.coords.latitude, longitude: p.coords.longitude });
         setDeviceAcc(p.coords.accuracy ?? null);
+        // The watch can succeed a second after the one-shot gave up. Once the
+        // phone knows where it is, the advice is simply wrong.
+        setGpsAdvice("");
       },
       () => { /* permission denied or unavailable: the dot simply stays hidden */ },
       { enableHighAccuracy: true, maximumAge: 2000, timeout: 15000 },
@@ -330,6 +343,7 @@ export default function AskMotariPage() {
     const fix = deviceRef.current;
     if (fix) {
       setLocating(true);
+      setGpsAdvice("");
       const loc = await reverseGeocode(fix.lat, fix.lng);
       const label = loc.address.split(",").slice(0, 2).join(",").trim();
       setPickup({ latitude: fix.lat, longitude: fix.lng, label });
@@ -339,6 +353,7 @@ export default function AskMotariPage() {
     }
     if (!navigator.geolocation) return;
     setLocating(true);
+    setGpsAdvice("");
     navigator.geolocation.getCurrentPosition(
       async p => {
         const loc = await reverseGeocode(p.coords.latitude, p.coords.longitude);
@@ -347,7 +362,7 @@ export default function AskMotariPage() {
         setPickupQ(label);
         setLocating(false);
       },
-      () => { setError(t("motari.request.gps_denied") || "Could not read your location. Type your pickup instead."); setLocating(false); },
+      () => { setGpsAdvice(t("motari.request.gps_denied") || "Could not read your location. Type your pickup instead."); setLocating(false); },
       { enableHighAccuracy: true, timeout: 8000 },
     );
   };
@@ -613,6 +628,8 @@ export default function AskMotariPage() {
         selfAccuracyM={deviceAcc}
         route={!ride && route ? route.coordinates : null}
         onPick={ride ? undefined : pickOnMap}
+        // Below the menu button, because the bottom of this page is a sheet.
+        switchStyle={{ top: 56, right: 14, bottom: "auto" }}
       />
 
       {/* HAMBURGER — the topbar, folded into three lines */}
@@ -741,7 +758,7 @@ export default function AskMotariPage() {
       {!ride && (
         <AppTip
           storageKey="motari.app_tip"
-          style={{ position: "absolute", top: 56, left: 14, maxWidth: 250, zIndex: 998 }}
+          style={{ position: "absolute", top: 104, left: 14, maxWidth: 250, zIndex: 998 }}
         />
       )}
 
@@ -1117,6 +1134,12 @@ export default function AskMotariPage() {
               </div>
               )}
 
+              {/* Advice, not a failure, and worded as one: amber rather than
+                  red, and gone the moment the phone knows where it is or the
+                  passenger does what it asked. */}
+              {gpsAdvice && !pickup && (
+                <div style={{ color: "#fbbf24", fontSize: 12, marginBottom: 10 }}>{gpsAdvice}</div>
+              )}
               {error && <div style={{ color: "#f87171", fontSize: 12, marginBottom: 10 }}>{error}</div>}
 
               {/* The button arrives when there is something to press it for,
