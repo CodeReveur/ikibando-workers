@@ -17,6 +17,8 @@ import { useLanguage } from "@/lib/language-context";
 type AppInfo = {
   android: boolean;
   ios: boolean;
+  /** A release asset, when the build is published as one. */
+  url?: string;
   version?: string;
   sizeBytes?: number;
   updatedAt?: string;
@@ -102,7 +104,8 @@ export default function AppPage() {
         {/* A button is only offered when there is a build behind it. */}
         {info?.android ? (
           <a
-            href="/api/app/android"
+            href={info.url || "/api/app/android"}
+            {...(info.url ? { target: "_blank", rel: "noopener noreferrer" } : {})}
             style={{
               display: "inline-flex", alignItems: "center", gap: 9,
               background: "#f97316", color: "#000", borderRadius: 12,
