@@ -18,6 +18,8 @@ import { useEffect, useState } from "react";
 import { Bike, Download, Smartphone, MapPin, Bell, Wallet, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/lib/language-context";
 import Footer from "@/components/layout/footer";
+import { MobileAppSchema, BreadcrumbSchema } from "@/components/seo/json-ld";
+import { SITE_URL } from "@/lib/seo";
 
 type AppInfo = {
   android: boolean;
@@ -80,6 +82,18 @@ export default function AppPage() {
       background: "#111", minHeight: "100vh", color: "#f5f5f5",
       fontFamily: "Inter, DM Sans, system-ui, sans-serif",
     }}>
+      {/* Declared as software rather than prose, and carrying the numbers off
+          the release that is actually published rather than any written here. */}
+      <MobileAppSchema
+        version={info?.version}
+        sizeBytes={info?.sizeBytes}
+        updatedAt={info?.updatedAt}
+        downloadUrl={info?.url}
+      />
+      <BreadcrumbSchema items={[
+        { name: "Home", url: SITE_URL },
+        { name: "Ask Motari app", url: `${SITE_URL}/app` },
+      ]} />
       {/* 760 is the width of the navbar above it and of every other page on the
           site. This one was 900, so it visibly overhung the bar it sits under. */}
       <div style={{ maxWidth: 760, margin: "0 auto", padding: "40px 20px 56px" }}>

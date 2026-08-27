@@ -12,6 +12,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "",
     "/browse",
     "/jobs",
+    // The two Motari pages. /motari is where a ride is actually asked for and
+    // /app is where the build is handed out; both were missing entirely, so
+    // nothing about the moto side of the platform was discoverable at all.
+    "/motari",
+    "/app",
+    "/donate",
+    "/help",
     "/about",
     "/contact",
     "/blog",
@@ -26,14 +33,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticEntries: MetadataRoute.Sitemap = paths.map((path) => {
     const isMain = path === "";
     const isBrowseOrJobs = path.includes("browse") || path.includes("jobs");
-    const isInfo = path.includes("about") || path.includes("contact");
+    // Asking for a moto and getting the app are the two things a visitor most
+    // often arrives wanting, so they rank with browse and jobs rather than with
+    // the terms of service.
+    const isMotari = path === "/motari" || path === "/app";
+    const isInfo = path.includes("about") || path.includes("contact") || path === "/help";
     const isBlog = path === "/blog";
-    const priority = isMain ? 1.0 : isBrowseOrJobs ? 0.9 : isInfo || isBlog ? 0.7 : 0.5;
+    const priority = isMain ? 1.0
+      : isBrowseOrJobs || isMotari ? 0.9
+      : isInfo || isBlog ? 0.7
+      : 0.5;
 
     return {
       url: `${SITE_URL}${path}`,
       lastModified: now,
-      changeFrequency: (isMain || isBrowseOrJobs ? "daily" : isBlog ? "weekly" : "monthly") as
+      changeFrequency: (isMain || isBrowseOrJobs ? "daily"
+        // A new build lands here whenever one is published, which is far more
+        // often than the terms of service change.
+        : isBlog || isMotari ? "weekly"
+        : "monthly") as
         | "daily"
         | "weekly"
         | "monthly",

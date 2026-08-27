@@ -382,3 +382,75 @@ export function ServiceSchema({ name, description, url }: { name: string; descri
     />
   );
 }
+
+/**
+ * The Ask Motari app itself.
+ *
+ * SoftwareApplication is what a search engine understands an app to be, and it
+ * is the only schema here that can carry a version, a size, a price and the
+ * platform it runs on. Google will not invent those from prose, and without
+ * them the download page competes as an ordinary article against pages that
+ * declare themselves as software.
+ *
+ * The version and size are passed in rather than written here, because they
+ * come from whatever release is actually published: a number hard-coded into a
+ * schema is a number that will one day be a lie told to a crawler.
+ */
+export function MobileAppSchema({
+  version,
+  sizeBytes,
+  updatedAt,
+  downloadUrl,
+}: {
+  version?: string;
+  sizeBytes?: number;
+  updatedAt?: string;
+  downloadUrl?: string;
+}) {
+  return (
+    <JsonLd
+      data={{
+        "@context": "https://schema.org",
+        "@type": "MobileApplication",
+        "@id": `${SITE_URL}/app#app`,
+        name: "Ask Motari",
+        alternateName: ["Ask Motari app", "Motari"],
+        applicationCategory: "TravelApplication",
+        operatingSystem: "Android 6.0 and later",
+        url: `${SITE_URL}/app`,
+        ...(downloadUrl ? { downloadUrl, installUrl: `${SITE_URL}/app` } : {}),
+        ...(version ? { softwareVersion: version } : {}),
+        ...(sizeBytes ? { fileSize: `${Math.round(sizeBytes / 1024 / 1024)}MB` } : {}),
+        ...(updatedAt ? { datePublished: updatedAt } : {}),
+        description:
+          "Ask Motari is the moto taxi app for MpahMapu in Rwanda. Ask for a moto or send "
+          + "a parcel in a few taps, agree the fare before the ride starts, and follow it on "
+          + "the map. Motari take the work, get paid, and settle the daily fee.",
+        inLanguage: ["en", "fr", "rw", "sw"],
+        // Free to install and free to ask for a ride; the fare is between the
+        // passenger and the motari, and stating a price of 0 for the software
+        // is what the offer is actually about.
+        offers: {
+          "@type": "Offer",
+          price: "0",
+          priceCurrency: "RWF",
+          availability: "https://schema.org/InStock",
+        },
+        featureList: [
+          "Ask for a moto taxi from the map or by typing the place",
+          "Send a parcel by moto",
+          "A price agreed before the ride starts",
+          "Verified motari with plates you can check",
+          "Follow the ride on the map, in streets or satellite",
+          "Spoken turn by turn directions for the motari",
+          "Pay in cash or by mobile money",
+          "English, French, Kinyarwanda and Kiswahili",
+        ],
+        // Reference the brand entity rather than declaring a second, unlinked one.
+        publisher: { "@id": ORG_ID },
+        author: { "@id": ORG_ID },
+        areaServed: { "@type": "Country", name: "Rwanda" },
+      }}
+    />
+  );
+}
