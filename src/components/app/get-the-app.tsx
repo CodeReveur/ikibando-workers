@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * The Motari app, offered wherever someone is already standing still.
+ * Ask Motari, the app, offered wherever someone is already standing still.
  *
  * It used to be a navbar tab, which crowded the bar on a phone and put the
  * offer in front of people who had not asked for anything yet. It reads better
@@ -107,7 +107,7 @@ export function AppCard({ blurb, compact = false, tone = "dark", style }: {
           color: light ? "#111" : "#fff", fontSize: compact ? 13.5 : 15, fontWeight: 800,
           letterSpacing: "-0.01em", display: "flex", alignItems: "baseline", gap: 7,
         }}>
-          {t("app.title") || "Motari"}
+          {t("app.title") || "Ask Motari"}
           {build.version && (
             <span style={{ color: light ? "#9ca3af" : "#5a5a5a", fontSize: 10.5, fontWeight: 600 }}>
               v{build.version}
@@ -185,7 +185,7 @@ export function AppTip({ storageKey, style }: { storageKey: string; style?: Reac
         style={{ flex: 1, minWidth: 0, textDecoration: "none" }}
       >
         <div style={{ color: "#fff", fontSize: 11.5, fontWeight: 800, lineHeight: 1.3 }}>
-          {t("app.tip_title") || "Motari, on your phone"}
+          {t("app.tip_title") || "Ask Motari, on your phone"}
         </div>
         <div style={{ color: "#f97316", fontSize: 10.5, fontWeight: 700, marginTop: 1 }}>
           {t("common.nav.get_app") || "Get the app"}
@@ -230,7 +230,7 @@ export function AppPill({ style }: { style?: React.CSSProperties }) {
     >
       <AppIcon size={24} />
       <span style={{ color: "#e8e8e8", fontSize: 12.5, fontWeight: 700 }}>
-        {t("app.title") || "Motari"}
+        {t("app.title") || "Ask Motari"}
       </span>
       <span style={{ color: "#3a3a3a", fontSize: 12 }}>·</span>
       <span style={{ color: "#f97316", fontSize: 12.5, fontWeight: 800 }}>
@@ -257,7 +257,7 @@ export function AppFooterLink() {
       <AppIcon size={26} />
       <span>
         <span style={{ display: "block", fontSize: 12, fontWeight: 800, color: "#fff", lineHeight: 1.3 }}>
-          {t("app.title") || "Motari"}
+          {t("app.title") || "Ask Motari"}
         </span>
         <span style={{ display: "block", fontSize: 10.5, color: "#f97316", fontWeight: 700 }}>
           {t("common.nav.get_app") || "Get the app"}

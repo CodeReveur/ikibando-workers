@@ -327,7 +327,7 @@
     }
   },
   "app": {
-    "title": "Motari",
+    "title": "Ask Motari",
     "subtitle": "The moto taxi app for MpahMapu",
     "blurb": "Ask for a moto or send a delivery in a few taps, and follow it on the map. Motari sign in to take the work, get paid, and settle the daily fee.",
     "get_it": "Get the app",
@@ -338,7 +338,7 @@
     "ios_soon": "iPhone: not yet. Use the website in the meantime, it does everything the app does.",
     "no_install_title": "Would rather not install anything?",
     "no_install_body": "Ask Motari works in the browser, and your phone can keep it on the home screen like an app.",
-    "tip_title": "Motari, on your phone",
+    "tip_title": "Ask Motari, on your phone",
     "feature": {
       "nearby": {
         "title": "A motari, where you are",

@@ -326,7 +326,7 @@
     }
   },
   "app": {
-    "title": "Motari",
+    "title": "Ask Motari",
     "subtitle": "Programu ya bodaboda ya MpahMapu",
     "blurb": "Omba pikipiki au tuma kifurushi kwa mibonyezo michache, kisha ufuatilie ramanini. Motari huingia kuchukua kazi, kulipwa, na kulipa ada ya siku.",
     "get_it": "Pata programu",
@@ -337,7 +337,7 @@
     "ios_soon": "iPhone: bado. Tumia tovuti kwa sasa, inafanya kila kitu programu inachofanya.",
     "no_install_title": "Hutaki kusakinisha chochote?",
     "no_install_body": "Ask Motari inafanya kazi kwenye kivinjari, na simu yako inaweza kuiweka kwenye skrini ya mwanzo kama programu.",
-    "tip_title": "Motari kwenye simu yako",
+    "tip_title": "Ask Motari kwenye simu yako",
     "feature": {
       "nearby": {
         "title": "Motari, pale ulipo",

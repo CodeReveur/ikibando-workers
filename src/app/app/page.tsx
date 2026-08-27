@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * The app page: where the Motari build is handed out.
+ * The app page: where the Ask Motari build is handed out.
  *
  * It is reached from the hero, the footer, both maps and half the pages on the
  * site, so it is the one place that has to do the whole job: say what the app
@@ -94,7 +94,7 @@ export default function AppPage() {
           </span>
           <div>
             <h1 style={{ color: "#fff", fontSize: 28, fontWeight: 900, letterSpacing: "-0.8px", margin: 0 }}>
-              {t("app.title") || "Motari"}
+              {t("app.title") || "Ask Motari"}
             </h1>
             <div style={{ color: "#8a8a8a", fontSize: 13, marginTop: 2 }}>
               {t("app.subtitle") || "The moto taxi app for MpahMapu"}

@@ -326,7 +326,7 @@
     }
   },
   "app": {
-    "title": "Motari",
+    "title": "Ask Motari",
     "subtitle": "Porogaramu ya moto ya MpahMapu",
     "blurb": "Saba moto cyangwa wohereze ipaki mu makanda make, hanyuma ubikurikire ku ikarita. Abamotari binjira bagafata akazi, bakishyurwa, kandi bakishyura amafaranga y’umunsi.",
     "get_it": "Fata porogaramu",
@@ -337,7 +337,7 @@
     "ios_soon": "iPhone: ntiraboneka. Koresha urubuga mu gihe, rukora ibyo porogaramu ikora byose.",
     "no_install_title": "Ntushaka gushyiraho ikintu?",
     "no_install_body": "Ask Motari ikorera muri mushakisha, kandi telefone yawe ishobora kuyibika ku rupapuro rw’imbere nka porogaramu.",
-    "tip_title": "Motari kuri telefone yawe",
+    "tip_title": "Ask Motari kuri telefone yawe",
     "feature": {
       "nearby": {
         "title": "Motari, aho uri",

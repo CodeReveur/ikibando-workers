@@ -326,7 +326,7 @@
     }
   },
   "app": {
-    "title": "Motari",
+    "title": "Ask Motari",
     "subtitle": "L’application moto-taxi de MpahMapu",
     "blurb": "Demandez une moto ou envoyez un colis en quelques touches, et suivez le trajet sur la carte. Les motari se connectent pour prendre le travail, être payés et régler la redevance du jour.",
     "get_it": "Obtenir l’application",
@@ -337,7 +337,7 @@
     "ios_soon": "iPhone : pas encore. Utilisez le site en attendant, il fait tout ce que fait l’application.",
     "no_install_title": "Vous préférez ne rien installer ?",
     "no_install_body": "Ask Motari fonctionne dans le navigateur, et votre téléphone peut le garder sur l’écran d’accueil comme une application.",
-    "tip_title": "Motari, sur votre téléphone",
+    "tip_title": "Ask Motari, sur votre téléphone",
     "feature": {
       "nearby": {
         "title": "Un motari, là où vous êtes",
