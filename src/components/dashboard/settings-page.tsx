@@ -12,6 +12,7 @@ import { useSession } from "@/components/dashboard/session-ctx";
 import { PageLoader } from "@/components/dashboard/ui";
 import { useToast } from "@/components/ui/toast";
 import { useLanguage } from "@/lib/language-context";
+import { PasswordInput } from "@/components/ui/password-input";
 import {
   updateProfile,
   changePassword,
@@ -1226,14 +1227,16 @@ function PasswordSection({
             <label style={fieldLabel}>{t("settings_page.security.confirm_password")}</label>
             <div style={{ position: "relative" }}>
               <Lock size={13} color="#444" style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
-              <input
-                type="password"
+              <PasswordInput
                 value={confirm}
-                onChange={e => setConfirm(e.target.value)}
+                onChange={setConfirm}
+                autoComplete="new-password"
                 style={fieldInputNoPad}
                 placeholder={t("settings_page.security.confirm_password_placeholder")}
                 onFocus={e => (e.currentTarget.style.borderColor = "#f97316")}
                 onBlur={e => (e.currentTarget.style.borderColor = "#222")}
+                eyeRight={34}
+                padRight={60}
               />
               {confirm && (
                 <span style={{ position: "absolute", right: 13, top: "50%", transform: "translateY(-50%)", display: "flex" }}>

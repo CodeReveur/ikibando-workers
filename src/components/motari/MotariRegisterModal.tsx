@@ -6,6 +6,7 @@ import {
   apiError, type AuthResult,
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
+import { PasswordInput } from "@/components/ui/password-input";
 import { formatRwPhone, isValidRwPhone } from "@/lib/phone";
 import { Bike, X } from "lucide-react";
 
@@ -174,8 +175,9 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
             </div>
             <div>
               <span style={label}>{t("motari.register.password") || "Password"}</span>
-              <input style={input} value={password} onChange={e => setPassword(e.target.value)}
-                     placeholder={t("motari.register.password_hint") || "At least 8 characters"} type="password" maxLength={100} />
+              <PasswordInput style={input} value={password} onChange={setPassword}
+                             autoComplete="new-password"
+                             placeholder={t("motari.register.password_hint") || "At least 8 characters"} />
             </div>
 
             {error && <div style={{ color: "#f87171", fontSize: 12 }}>{error}</div>}

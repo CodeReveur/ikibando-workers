@@ -6,6 +6,7 @@ import {
   apiError, type AuthResult,
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Bike, X } from "lucide-react";
 
 /**
@@ -157,8 +158,8 @@ export function MotariLoginModal({ open, onClose, onRegister }: {
             </div>
             <div>
               <span style={label}>{t("motari.register.password") || "Password"}</span>
-              <input style={input} type="password" value={password} onChange={e => setPassword(e.target.value)}
-                     onKeyDown={e => e.key === "Enter" && submitLogin()} maxLength={100} />
+              <PasswordInput style={input} value={password} onChange={setPassword}
+                             onEnter={submitLogin} />
             </div>
             {error && <div style={{ color: "#f87171", fontSize: 12 }}>{error}</div>}
             <button onClick={submitLogin} disabled={busy || !email || !password} style={cta(!busy && !!email && !!password)}>
