@@ -371,6 +371,10 @@
     "install_note": "Nta kiguzi kiriho kandi nta konti ikenewe kugira ngo usabe moto. Abamotari binjira bakoresheje konti biyandikishije kuri uru rubuga.",
     "size_note": "Nka MB 55. Kuri interineti ya telefone, ni nka videwo ngufi."
   },
+  "referral": {
+    "invites_you": "{name} aragutumira",
+    "invite_hint": "Rangiza kwiyandikisha, azamenya ko waje."
+  },
   "contact": {
     "hero": {
       "tag": "Twandikire",

@@ -371,6 +371,10 @@
     "install_note": "Hakuna malipo na hakuna akaunti inayohitajika kuomba pikipiki. Motari huingia kwa akaunti waliyosajili kwenye tovuti hii.",
     "size_note": "Takriban MB 55. Kwa data ya simu, ni sawa na video fupi."
   },
+  "referral": {
+    "invites_you": "{name} anakualika",
+    "invite_hint": "Maliza kujisajili naye atajua umefika."
+  },
   "contact": {
     "hero": {
       "tag": "Wasiliana nasi",

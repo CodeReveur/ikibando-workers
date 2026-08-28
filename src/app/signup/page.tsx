@@ -10,6 +10,7 @@ import { getAndClearRedirect } from "@/lib/auth-redirect";
 import { RegistrationWizard } from "@/components/auth/registration-wizard";
 import { useToast } from "@/components/ui/toast";
 import { useLanguage } from "@/lib/language-context";
+import { InvitedBy } from "@/components/ui/invited-by";
 
 declare global {
   interface Window {
@@ -604,6 +605,11 @@ export default function SignUpPage() {
 
             <h1 className="auth-title">{t("signup.hero.title")}</h1>
             <p className="auth-subtitle">{t("signup.hero.subtitle")}</p>
+
+            {/* Somebody arriving from an invite link should be told whose it
+                was. The code was already being read here; it just went into a
+                hidden piece of state and the page looked like anybody else's. */}
+            <InvitedBy code={referralCode} style={{ marginTop: 14 }} />
 
             {/* Social */}
             <div className="auth-social-group">

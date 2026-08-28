@@ -371,6 +371,10 @@
     "install_note": "Rien n’est facturé et aucun compte n’est nécessaire pour demander une moto. Les motari se connectent avec le compte créé sur ce site.",
     "size_note": "Environ 55 Mo. En données mobiles, à peu près le poids d’une courte vidéo."
   },
+  "referral": {
+    "invites_you": "{name} vous invite",
+    "invite_hint": "Terminez votre inscription et il saura que vous êtes arrivé."
+  },
   "contact": {
     "hero": {
       "tag": "Entrer en contact",

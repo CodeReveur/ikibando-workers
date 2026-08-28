@@ -6,6 +6,7 @@ import {
   apiError, type AuthResult,
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
+import { InvitedBy, useReferralCode } from "@/components/ui/invited-by";
 import { PasswordInput } from "@/components/ui/password-input";
 import { formatRwPhone, isValidRwPhone } from "@/lib/phone";
 import { Bike, X } from "lucide-react";
@@ -34,6 +35,7 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const referralCode = useReferralCode();
   const [code, setCode] = useState("");
   const [auth, setAuth] = useState<AuthResult | null>(null);
   const [busy, setBusy] = useState(false);
@@ -60,6 +62,7 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
         phone: phone.trim(),
         password,
         role: "MOTARI",
+        referralCode: referralCode || undefined,
       });
       setAuth(result);
       localStorage.setItem("access_token", result.accessToken);
@@ -173,6 +176,8 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
               <input style={input} value={email} onChange={e => setEmail(e.target.value)}
                      placeholder="you@example.com" type="email" maxLength={120} />
             </div>
+            <InvitedBy code={referralCode} />
+
             <div>
               <span style={label}>{t("motari.register.password") || "Password"}</span>
               <PasswordInput style={input} value={password} onChange={setPassword}

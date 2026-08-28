@@ -372,6 +372,10 @@
     "install_note": "Nothing is charged and no account is needed to ask for a moto. Motari sign in with the account they registered on this site.",
     "size_note": "About 55 MB. On mobile data that is roughly the size of a short video."
   },
+  "referral": {
+    "invites_you": "{name} invites you",
+    "invite_hint": "Finish signing up and they will know you arrived."
+  },
   "contact": {
     "hero": {
       "tag": "Get in touch",
