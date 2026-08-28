@@ -1955,6 +1955,22 @@ export async function getMotariState(token: string): Promise<MotariState> {
   return data.data;
 }
 
+/** Bonuses earned, bonuses within reach, and the invite code. One call. */
+export interface MotariRewards {
+  claimableRwf: number;
+  feeFreeRwf: number;
+  offers: {
+    code: string; title: string; description?: string; amountRwf: number;
+    earned: boolean; target: number; done: number; note?: string | null;
+  }[];
+  referral: { code: string; invited: number; riding: number; earnedRwf: number; waiting: number };
+}
+
+export async function getMotariRewards(token: string): Promise<MotariRewards> {
+  const { data } = await http.get("/api/rides/driver/rewards", { headers: authHeader(token) });
+  return data.data;
+}
+
 export async function saveMotariProfile(
   payload: { plateNumber: string; licenseNumber?: string; brandModel?: string; legalName?: string },
   token: string,

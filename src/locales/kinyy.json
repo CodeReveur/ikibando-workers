@@ -2791,5 +2791,17 @@
       "support_will_call": "UBUFASHA BUZAKUGANA",
       "cannot_cancel": "Motari afite umuzigo, ntibishobora guhagarikwa hano. Muhamagare mubyumvikaneho."
     }
+  },
+  "rewards": {
+    "bring_someone": "ZANA UNDI",
+    "referral_how": "Ha uyu kode umuntu wiyandikisha gutwara moto. Iyo arangije urugendo rwe rwa mbere, urahembwa.",
+    "copy": "Fata kode",
+    "copied": "Kode yafashwe.",
+    "share": "Sangiza kode",
+    "share_text": "Twara na Ask Motari. Iyandikishe hano, kode yanjye {code} isanzwe irimo: https://mpahmapu.com/motari?register=1&ref={code}",
+    "invited": "WATUMIYE",
+    "riding": "BATWARA",
+    "earned_from": "WABONYE",
+    "waiting_on_first_ride": "{count} biyandikishije ariko ntibarangiza urugendo. Uzahembwa igihe bazarangiriza."
   }
 }

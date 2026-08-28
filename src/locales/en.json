@@ -2792,5 +2792,17 @@
       "support_will_call": "SUPPORT WILL BE IN TOUCH",
       "cannot_cancel": "Your motari has the parcel, so this cannot be cancelled here. Call them to arrange it."
     }
+  },
+  "rewards": {
+    "bring_someone": "BRING SOMEONE IN",
+    "referral_how": "Give this code to somebody signing up to ride. When they finish their first ride, you are paid.",
+    "copy": "Copy the code",
+    "copied": "Code copied.",
+    "share": "Share the code",
+    "share_text": "Ride with Ask Motari. Sign up here and my code {code} is already on it: https://mpahmapu.com/motari?register=1&ref={code}",
+    "invited": "INVITED",
+    "riding": "RIDING",
+    "earned_from": "EARNED",
+    "waiting_on_first_ride": "{count} have signed up but not finished a ride yet. You are paid when they do."
   }
 }

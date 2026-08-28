@@ -5,7 +5,8 @@ import { MotariMap, type MapPoint, type ExtraPoint } from "@/components/motari/M
 import { getRoute, fmtDistance, fmtDuration, type RouteResult, type RouteStep } from "@/lib/routing";
 import { useTurnByTurn } from "@/lib/turn-by-turn";
 import {
-  getMotariState, getMotariHistory, saveMotariProfile, setMotariOnline, motariHeartbeat,
+  getMotariState, getMotariHistory, getMotariRewards, type MotariRewards,
+  saveMotariProfile, setMotariOnline, motariHeartbeat,
   acceptRide, declineRide, motariArrived, motariComplete, motariCancelRide,
   motariParcelReceived, motariParcelDelivered,
   setMotariCourier, setMotariPayout, payMotariFees, submitContact,
@@ -19,7 +20,7 @@ import { formatRwPhone, isValidRwPhone } from "@/lib/phone";
 import { InstallPrompt } from "@/components/motari/InstallPrompt";
 import {
   Bike, Phone, Power, CheckCircle2, X, Star, LogOut, ChevronDown, ChevronUp, Globe, Package,
-  AlertTriangle, Volume2, VolumeX, Navigation,
+  AlertTriangle, Volume2, VolumeX, Navigation, Gift, Copy, Share2,
   CornerUpLeft, CornerUpRight, ArrowUp, RotateCcw, Flag,
 } from "lucide-react";
 
@@ -194,6 +195,22 @@ export default function MotariDrivePage() {
     }
   }, [tab, state?.activeRide?.status]);
 
+  /*
+   * The invite code, and what it has been worth.
+   *
+   * Asked for when the tab that shows it opens, not on the five second poll: it
+   * is a code rather than a live figure, and it does not change while somebody
+   * is reading it out to a friend.
+   */
+  const [rewards, setRewards] = useState<MotariRewards | null>(null);
+  useEffect(() => {
+    if (tab !== "more" || rewards) return;
+    getMotariRewards(token()).then(setRewards).catch(() => {
+      // Nothing drawn. A missing code is better than a card explaining why
+      // there is no code.
+    });
+  }, [tab, rewards]);
+
   /**
    * How tight a fix has to be before it is worth telling passengers about.
    *
@@ -338,6 +355,29 @@ export default function MotariDrivePage() {
   const guiding = !!ride && ["ASSIGNED", "ARRIVED", "IN_RIDE"].includes(ride.status);
   const { next: nextTurn, muted: voiceMuted, setMuted: setVoiceMuted } =
     useTurnByTurn(navRoute, myPos, guiding);
+
+  /** Copied, said so briefly, and then quiet again. */
+  const [copied, setCopied] = useState(false);
+  const copyInvite = (code: string) => {
+    navigator.clipboard?.writeText(code)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
+      })
+      .catch(() => { /* a browser that will not copy still shows the code */ });
+  };
+
+  /**
+   * The link carries the code, so one tap opens the sign-up form with the
+   * invitation already on it. The same message the app sends.
+   */
+  const inviteWhatsApp = (code: string) => {
+    const text = (t("rewards.share_text")
+      || "Ride with Ask Motari. Sign up here and my code {code} is already on it: "
+       + "https://mpahmapu.com/motari?register=1&ref={code}")
+      .replace(/\{code\}/g, code);
+    return "https://wa.me/?text=" + encodeURIComponent(text);
+  };
 
   const seekers: ExtraPoint[] = !ride && online
     ? (state?.nearby ?? []).map(n => ({
@@ -1201,6 +1241,98 @@ export default function MotariDrivePage() {
                 {/* ══ SETTINGS ══ */}
                 {tab === "more" && (
                   <div style={{ display: "grid", gap: 10 }}>
+
+                    {/* Bring somebody in. A code two taps away is a code nobody
+                        shares, so it sits at the top of the tab a motari opens
+                        to look at their own account. */}
+                    {rewards?.referral?.code && (
+                      <div style={{ ...card, padding: "12px 13px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 8 }}>
+                          <Gift size={12} color="#f97316" />
+                          <span style={{ ...micro, color: "#8a8a8a" }}>
+                            {t("rewards.bring_someone") || "BRING SOMEONE IN"}
+                          </span>
+                        </div>
+
+                        <div style={{ color: "#999", fontSize: 11.5, lineHeight: 1.55, marginBottom: 11 }}>
+                          {t("rewards.referral_how")
+                            || "Give this code to somebody signing up to ride. When they finish their first ride, you are paid."}
+                        </div>
+
+                        <div style={{ display: "flex", gap: 7, alignItems: "stretch" }}>
+                          <div style={{
+                            flex: 1, minWidth: 0, background: "#000",
+                            border: "1px solid #f97316", borderRadius: 10,
+                            padding: "10px 12px", color: "#fff",
+                            fontSize: 17, fontWeight: 900, letterSpacing: 2.5,
+                            overflow: "hidden", textOverflow: "ellipsis",
+                          }}>
+                            {rewards.referral.code}
+                          </div>
+                          <button
+                            onClick={() => copyInvite(rewards.referral.code)}
+                            title={t("rewards.copy") || "Copy the code"}
+                            aria-label={t("rewards.copy") || "Copy the code"}
+                            style={{
+                              border: "1px solid #2a2a2a", background: "none", borderRadius: 10,
+                              padding: "0 12px", cursor: "pointer", color: "#888", lineHeight: 0,
+                            }}
+                          >
+                            <Copy size={14} />
+                          </button>
+                          <a
+                            href={inviteWhatsApp(rewards.referral.code)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={t("rewards.share") || "Share the code"}
+                            aria-label={t("rewards.share") || "Share the code"}
+                            style={{
+                              display: "flex", alignItems: "center",
+                              border: "1px solid #2a2a2a", borderRadius: 10,
+                              padding: "0 12px", color: "#888",
+                            }}
+                          >
+                            <Share2 size={14} />
+                          </a>
+                        </div>
+
+                        <div style={{ display: "flex", gap: 14, marginTop: 11 }}>
+                          <div>
+                            <div style={{ color: "#fff", fontSize: 14, fontWeight: 900 }}>
+                              {rewards.referral.invited}
+                            </div>
+                            <div style={micro}>{t("rewards.invited") || "INVITED"}</div>
+                          </div>
+                          <div>
+                            <div style={{ color: "#fff", fontSize: 14, fontWeight: 900 }}>
+                              {rewards.referral.riding}
+                            </div>
+                            <div style={micro}>{t("rewards.riding") || "RIDING"}</div>
+                          </div>
+                          <div>
+                            <div style={{ color: "#fff", fontSize: 14, fontWeight: 900 }}>
+                              {fmt(rewards.referral.earnedRwf)}
+                            </div>
+                            <div style={micro}>{t("rewards.earned_from") || "EARNED"}</div>
+                          </div>
+                        </div>
+
+                        {rewards.referral.waiting > 0 && (
+                          <div style={{ ...micro, marginTop: 9, lineHeight: 1.5 }}>
+                            {(t("rewards.waiting_on_first_ride")
+                              || "{count} have signed up but not finished a ride yet. You are paid when they do.")
+                              .replace("{count}", String(rewards.referral.waiting))}
+                          </div>
+                        )}
+
+                        {copied && (
+                          <div style={{ color: "#4ade80", fontSize: 11, marginTop: 8 }}>
+                            {t("rewards.copied") || "Code copied."}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     {state?.profile && (
                       <>
                         {/* Instant payout: on, and to which number */}

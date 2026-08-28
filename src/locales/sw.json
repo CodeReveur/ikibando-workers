@@ -2791,5 +2791,17 @@
       "support_will_call": "MSAADA WATAWASILIANA",
       "cannot_cancel": "Motari ana mzigo, hii haiwezi kufutwa hapa. Mpigie simu mpange naye."
     }
+  },
+  "rewards": {
+    "bring_someone": "LETA MTU",
+    "referral_how": "Mpe msimbo huu mtu anayejisajili kuendesha. Akimaliza safari yake ya kwanza, unalipwa.",
+    "copy": "Nakili msimbo",
+    "copied": "Msimbo umenakiliwa.",
+    "share": "Shiriki msimbo",
+    "share_text": "Endesha na Ask Motari. Jisajili hapa, msimbo wangu {code} tayari upo: https://mpahmapu.com/motari?register=1&ref={code}",
+    "invited": "WALIOALIKWA",
+    "riding": "WANAENDESHA",
+    "earned_from": "UMEPATA",
+    "waiting_on_first_ride": "{count} wamejisajili lakini bado hawajamaliza safari. Utalipwa watakapomaliza."
   }
 }

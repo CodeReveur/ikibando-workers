@@ -2791,5 +2791,17 @@
       "support_will_call": "LE SUPPORT VOUS CONTACTERA",
       "cannot_cancel": "Votre motari a le colis, cela ne peut plus être annulé ici. Appelez le pour vous arranger."
     }
+  },
+  "rewards": {
+    "bring_someone": "FAITES VENIR QUELQU’UN",
+    "referral_how": "Donnez ce code à quelqu’un qui s’inscrit pour rouler. Dès qu’il termine sa première course, vous êtes payé.",
+    "copy": "Copier le code",
+    "copied": "Code copié.",
+    "share": "Partager le code",
+    "share_text": "Roulez avec Ask Motari. Inscrivez-vous ici, mon code {code} y est déjà : https://mpahmapu.com/motari?register=1&ref={code}",
+    "invited": "INVITÉS",
+    "riding": "ROULENT",
+    "earned_from": "GAGNÉ",
+    "waiting_on_first_ride": "{count} se sont inscrits sans avoir encore terminé une course. Vous serez payé quand ils le feront."
   }
 }
