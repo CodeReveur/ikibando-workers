@@ -68,6 +68,32 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
       localStorage.setItem("access_token", result.accessToken);
       localStorage.setItem("refresh_token", result.refreshToken);
       localStorage.setItem("user", JSON.stringify(result.user));
+
+      /*
+       * The moto is saved here, with the account, not after the code.
+       *
+       * It was typed on this page and then held until the email was confirmed,
+       * so anybody who closed the tab at the code screen left an account with
+       * the role of a motari and no moto attached to it. Those accounts could
+       * not be verified, could not take work, and did not appear on the panel
+       * that would have chased them: they had simply been thrown away while
+       * looking like a successful sign-up.
+       *
+       * The plate is on the screen and the account exists; there is nothing an
+       * email code adds to writing it down.
+       */
+      await saveMotariProfile(
+        { plateNumber: plate, brandModel: brand || undefined, legalName: legalName.trim() },
+        result.accessToken,
+      );
+
+      // An account that does not have to confirm anything is already live, so
+      // there is no code screen to send them to.
+      if (result.user?.emailVerified) {
+        window.location.href = "/drive";
+        return;
+      }
+
       setStep("VERIFY");
       setNotice(t("motari.register.code_sent") || "We emailed you a 6 digit code.");
     } catch (e) { setError(apiError(e)); }
@@ -80,12 +106,8 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
     setError("");
     try {
       await verifyEmailCode(email.trim(), code.trim());
-      // The account is live: register the moto so the login redirect knows
-      // this worker is a motari, then land on the driver surface.
-      await saveMotariProfile(
-        { plateNumber: plate, brandModel: brand || undefined, legalName: legalName.trim() },
-        auth.accessToken,
-      );
+      // The moto was saved with the account. This step only confirms the email,
+      // and then lands them on the driver surface.
       window.location.href = "/drive";
       return;
     } catch (e) { setError(apiError(e)); }
