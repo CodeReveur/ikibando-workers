@@ -2660,7 +2660,11 @@
       "signin": "Se connecter",
       "signup_prompt": "Vous conduisez une moto-taxi ?",
       "saving": "Enregistrement…",
-      "finish_hint": "Ajoutez votre moto pour terminer. Votre plaque est ce que les passagers vérifient avant de monter."
+      "finish_hint": "Ajoutez votre moto pour terminer. Votre plaque est ce que les passagers vérifient avant de monter.",
+      "plate_checking": "Vérification auprès de RURA…",
+      "plate_ok": "Enregistrée auprès de RURA.",
+      "plate_bad": "RURA n’a aucune trace de cette plaque. Vérifiez-la et réessayez.",
+      "plate_unknown": "Impossible de vérifier cette plaque pour le moment. Elle sera vérifiée manuellement."
     },
     "dash": {
       "online": "En ligne",

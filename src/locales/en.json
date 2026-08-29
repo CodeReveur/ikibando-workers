@@ -2661,7 +2661,11 @@
       "signin": "Sign in",
       "signup_prompt": "Driving a moto taxi?",
       "saving": "Saving…",
-      "finish_hint": "Add your moto to finish setting up. Your plate is what passengers check before they ride."
+      "finish_hint": "Add your moto to finish setting up. Your plate is what passengers check before they ride.",
+      "plate_checking": "Checking with RURA…",
+      "plate_ok": "Registered with RURA.",
+      "plate_bad": "RURA has no record of this plate. Check it and try again.",
+      "plate_unknown": "We could not check this plate just now. It will be verified by hand."
     },
     "dash": {
       "online": "Online",

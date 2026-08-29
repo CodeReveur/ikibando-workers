@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
-  registerWithEmail, verifyEmailCode, resendOtpCode, saveMotariProfile,
+  registerWithEmail, verifyEmailCode, resendOtpCode, saveMotariProfile, checkPlateNumber,
   apiError, type AuthResult,
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
@@ -38,6 +38,45 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
    * than copied onto a working screen: two forms for one fact is how the two
    * came to disagree about when it gets saved.
    */
+  /*
+   * Whether the plate is a real, authorised moto.
+   *
+   * Asked two seconds after the field is left rather than while somebody is
+   * typing: a plate is six characters and checking each of them would ask a
+   * public regulator six questions to answer one. Two seconds is long enough
+   * for a correction and short enough that the answer is there before they
+   * reach the button.
+   */
+  const [plateState, setPlateState] = useState<"idle" | "checking" | "valid" | "invalid" | "unknown">("idle");
+  const [plateNote, setPlateNote] = useState("");
+  const plateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const checkPlate = (value: string) => {
+    if (plateTimer.current) clearTimeout(plateTimer.current);
+    const raw = value.trim();
+    if (raw.replace(/[^A-Za-z0-9]/g, "").length < 5) {
+      setPlateState("idle");
+      setPlateNote("");
+      return;
+    }
+    setPlateState("checking");
+    setPlateNote("");
+    plateTimer.current = setTimeout(async () => {
+      try {
+        const r = await checkPlateNumber(raw);
+        setPlateState(r.verdict === "VALID" ? "valid" : r.verdict === "INVALID" ? "invalid" : "unknown");
+        setPlateNote(r.message || "");
+        // Shown back in the form the regulator uses, so what was checked and
+        // what is on the moto are visibly the same thing.
+        if (r.display) setPlate(r.display);
+      } catch {
+        // A check we could not make is not a plate we know to be wrong.
+        setPlateState("unknown");
+        setPlateNote("");
+      }
+    }, 2000);
+  };
+
   const [finishing, setFinishing] = useState(false);
   useEffect(() => {
     try {
@@ -62,16 +101,22 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
 
   if (!open) return null;
 
+  // An unchecked or unreachable plate does not block: only one the regulator
+  // has actually refused. A registration held up by somebody else's website
+  // being down is a worse failure than a plate verified by hand later.
+  const plateBlocks = plateState === "invalid" || plateState === "checking";
+
   const formValid =
     legalName.trim().split(/\s+/).length >= 2 &&
     plate.trim().length >= 4 &&
     isValidRwPhone(phone) &&
     /.+@.+\..+/.test(email) &&
-    password.length >= 8;
+    password.length >= 8 &&
+    !plateBlocks;
 
   /** Just the moto, onto the account already signed in on this device. */
   const submitMotoOnly = async () => {
-    if (busy || plate.trim().length < 4) return;
+    if (busy || plate.trim().length < 4 || plateBlocks) return;
     setBusy(true);
     setError("");
     try {
@@ -217,8 +262,27 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
               <div>
                 <span style={label}>{t("motari.register.plate") || "Plate number"}</span>
-                <input style={input} value={plate} onChange={e => setPlate(e.target.value)}
-                       placeholder="RC 123 A" maxLength={20} />
+                <input style={{ ...input, borderColor: plateState === "invalid" ? "#7f1d1d" : undefined }}
+                       value={plate}
+                       onChange={e => { setPlate(e.target.value); setPlateState("idle"); setPlateNote(""); }}
+                       onBlur={e => checkPlate(e.target.value)}
+                       placeholder="RA 123B" maxLength={20} />
+                {plateState !== "idle" && (
+                  <div style={{
+                    fontSize: 11, marginTop: 4, lineHeight: 1.5,
+                    color: plateState === "valid" ? "#4ade80"
+                         : plateState === "invalid" ? "#f87171"
+                         : "#9a9a9a",
+                  }}>
+                    {plateState === "checking" && (t("motari.register.plate_checking") || "Checking with RURA…")}
+                    {plateState === "valid" && (t("motari.register.plate_ok") || "Registered with RURA.")}
+                    {plateState === "invalid" && (plateNote
+                      || t("motari.register.plate_bad")
+                      || "RURA has no record of this plate. Check it and try again.")}
+                    {plateState === "unknown" && (t("motari.register.plate_unknown")
+                      || "We could not check this plate just now. It will be verified by hand.")}
+                  </div>
+                )}
               </div>
               <div>
                 <span style={label}>{t("motari.register.brand") || "Brand or model"}</span>

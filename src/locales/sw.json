@@ -2660,7 +2660,11 @@
       "signin": "Ingia",
       "signup_prompt": "Unaendesha pikipiki?",
       "saving": "Inahifadhi…",
-      "finish_hint": "Ongeza pikipiki yako kumaliza usajili. Namba yako ndiyo abiria wanayoangalia kabla ya kupanda."
+      "finish_hint": "Ongeza pikipiki yako kumaliza usajili. Namba yako ndiyo abiria wanayoangalia kabla ya kupanda.",
+      "plate_checking": "Tunathibitisha na RURA…",
+      "plate_ok": "Imesajiliwa na RURA.",
+      "plate_bad": "RURA haina kumbukumbu ya namba hii. Iangalie kisha ujaribu tena.",
+      "plate_unknown": "Hatukuweza kuithibitisha kwa sasa. Itathibitishwa kwa mkono."
     },
     "dash": {
       "online": "Mtandaoni",

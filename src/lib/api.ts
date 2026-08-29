@@ -2040,3 +2040,17 @@ export const motariCancelRide = (rideId: string, reason: string | undefined, tok
   motariAction(rideId, "cancel", token, { reason });
 
 export { daysAgo };
+
+/** Whether RURA knows this plate. VALID, INVALID, or UNKNOWN when it could not be asked. */
+export interface PlateCheck {
+  verdict: "VALID" | "INVALID" | "UNKNOWN";
+  plate: string;
+  display: string;
+  documentUrl?: string | null;
+  message?: string | null;
+}
+
+export async function checkPlateNumber(plate: string): Promise<PlateCheck> {
+  const { data } = await http.get("/api/rides/public/plate-check", { params: { plate } });
+  return data.data;
+}

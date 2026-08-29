@@ -2660,7 +2660,11 @@
       "signin": "Injira",
       "signup_prompt": "Utwara moto?",
       "saving": "Turimo kubika…",
-      "finish_hint": "Ongeraho moto yawe urangize kwiyandikisha. Plaque yawe ni yo abagenzi bareba mbere yo kurira."
+      "finish_hint": "Ongeraho moto yawe urangize kwiyandikisha. Plaque yawe ni yo abagenzi bareba mbere yo kurira.",
+      "plate_checking": "Turimo kugenzura kuri RURA…",
+      "plate_ok": "Yanditswe kuri RURA.",
+      "plate_bad": "RURA nta nyandiko ifite kuri iyi plaque. Reba neza wongere ugerageze.",
+      "plate_unknown": "Ntitwashoboye kugenzura iyi plaque ubu. Izagenzurwa n’abakozi."
     },
     "dash": {
       "online": "Kuri interineti",
