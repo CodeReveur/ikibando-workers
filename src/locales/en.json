@@ -2659,7 +2659,9 @@
       "back": "Back to Ask Motari",
       "have_account": "Already registered?",
       "signin": "Sign in",
-      "signup_prompt": "Driving a moto taxi?"
+      "signup_prompt": "Driving a moto taxi?",
+      "saving": "Saving…",
+      "finish_hint": "Add your moto to finish setting up. Your plate is what passengers check before they ride."
     },
     "dash": {
       "online": "Online",
@@ -2747,7 +2749,8 @@
       "cash_declared": "Passenger says they paid cash. It stands shortly unless you say otherwise.",
       "not_paid": "I was not paid",
       "awaiting_payment": "Waiting for the passenger to pay",
-      "rate_passenger": "Rate this passenger"
+      "rate_passenger": "Rate this passenger",
+      "add_moto": "Add your moto"
     },
     "login": {
       "title": "Sign in",

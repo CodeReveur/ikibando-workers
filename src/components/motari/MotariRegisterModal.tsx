@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   registerWithEmail, verifyEmailCode, resendOtpCode, saveMotariProfile,
   apiError, type AuthResult,
@@ -29,6 +29,24 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
   const { t } = useLanguage();
 
   const [step, setStep] = useState<"FORM" | "VERIFY">("FORM");
+
+  /**
+   * Adding a moto to an account that already exists.
+   *
+   * Reached from the driver screen by the accounts that were left without one.
+   * The moto questions are the same questions, so they are asked here rather
+   * than copied onto a working screen: two forms for one fact is how the two
+   * came to disagree about when it gets saved.
+   */
+  const [finishing, setFinishing] = useState(false);
+  useEffect(() => {
+    try {
+      const wants = new URLSearchParams(window.location.search).get("finish") === "1";
+      setFinishing(wants && !!localStorage.getItem("access_token"));
+    } catch {
+      // No window or no storage: an ordinary registration, then.
+    }
+  }, []);
   const [legalName, setLegalName] = useState("");
   const [plate, setPlate] = useState("");
   const [brand, setBrand] = useState("");
@@ -50,6 +68,22 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
     isValidRwPhone(phone) &&
     /.+@.+\..+/.test(email) &&
     password.length >= 8;
+
+  /** Just the moto, onto the account already signed in on this device. */
+  const submitMotoOnly = async () => {
+    if (busy || plate.trim().length < 4) return;
+    setBusy(true);
+    setError("");
+    try {
+      await saveMotariProfile(
+        { plateNumber: plate, brandModel: brand || undefined, legalName: legalName.trim() || undefined },
+        localStorage.getItem("access_token") || "",
+      );
+      window.location.href = "/drive";
+      return;
+    } catch (e) { setError(apiError(e)); }
+    setBusy(false);
+  };
 
   const submitForm = async () => {
     if (!formValid || busy) return;
@@ -166,7 +200,11 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
           </button>
         </div>
         <p style={{ color: "#777", fontSize: 11.5, margin: "0 0 18px", lineHeight: 1.6 }}>
-          {t("motari.register.subtitle") || "One form. Your plate is what passengers check before they ride."}
+          {finishing
+            ? (t("motari.register.finish_hint")
+               || "Add your moto to finish setting up. Your plate is what passengers check before they ride.")
+            : (t("motari.register.subtitle")
+               || "One form. Your plate is what passengers check before they ride.")}
         </p>
 
         {step === "FORM" ? (
@@ -188,31 +226,48 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
                        placeholder="TVS, Bajaj Boxer" maxLength={60} />
               </div>
             </div>
+            {!finishing && (
             <div>
               <span style={label}>{t("motari.register.phone") || "Phone number"}</span>
               <input style={input} value={phone} onChange={e => setPhone(formatRwPhone(e.target.value))}
                      placeholder="07xxxxxxxx" inputMode="numeric" maxLength={10} />
             </div>
+            )}
+            {!finishing && (
             <div>
               <span style={label}>{t("motari.register.email") || "Email"}</span>
               <input style={input} value={email} onChange={e => setEmail(e.target.value)}
                      placeholder="you@example.com" type="email" maxLength={120} />
             </div>
-            <InvitedBy code={referralCode} />
+            )}
+            {!finishing && <InvitedBy code={referralCode} />}
 
+            {!finishing && (
             <div>
               <span style={label}>{t("motari.register.password") || "Password"}</span>
               <PasswordInput style={input} value={password} onChange={setPassword}
                              autoComplete="new-password"
                              placeholder={t("motari.register.password_hint") || "At least 8 characters"} />
             </div>
+            )}
 
             {error && <div style={{ color: "#f87171", fontSize: 12 }}>{error}</div>}
 
-            <button onClick={submitForm} disabled={!formValid || busy} style={cta(formValid && !busy)}>
-              {busy ? (t("motari.register.creating") || "Creating account…") : (t("motari.register.cta") || "Create motari account")}
-            </button>
+            {finishing ? (
+              <button onClick={submitMotoOnly}
+                      disabled={busy || plate.trim().length < 4}
+                      style={cta(!busy && plate.trim().length >= 4)}>
+                {busy
+                  ? (t("motari.register.saving") || "Saving…")
+                  : (t("motari.dash.save_moto") || "Save moto")}
+              </button>
+            ) : (
+              <button onClick={submitForm} disabled={!formValid || busy} style={cta(formValid && !busy)}>
+                {busy ? (t("motari.register.creating") || "Creating account…") : (t("motari.register.cta") || "Create motari account")}
+              </button>
+            )}
 
+            {!finishing && (
             <p style={{ color: "#555", fontSize: 11, textAlign: "center", margin: 0 }}>
               {t("motari.register.have_account") || "Already registered?"}{" "}
               {onSignIn ? (
@@ -225,6 +280,7 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
                 </a>
               )}
             </p>
+            )}
           </div>
         ) : (
           <div style={{ display: "grid", gap: 12 }}>

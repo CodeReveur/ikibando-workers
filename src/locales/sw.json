@@ -2658,7 +2658,9 @@
       "back": "Rudi kwa Omba Motari",
       "have_account": "Tayari umejisajili?",
       "signin": "Ingia",
-      "signup_prompt": "Unaendesha pikipiki?"
+      "signup_prompt": "Unaendesha pikipiki?",
+      "saving": "Inahifadhi…",
+      "finish_hint": "Ongeza pikipiki yako kumaliza usajili. Namba yako ndiyo abiria wanayoangalia kabla ya kupanda."
     },
     "dash": {
       "online": "Mtandaoni",
@@ -2746,7 +2748,8 @@
       "cash_declared": "Abiria anasema amelipa cash. Itathibitishwa usiposema vinginevyo.",
       "not_paid": "Sikulipwa",
       "awaiting_payment": "Unasubiri abiria alipe",
-      "rate_passenger": "Mpe alama abiria huyu"
+      "rate_passenger": "Mpe alama abiria huyu",
+      "add_moto": "Ongeza pikipiki yako"
     },
     "login": {
       "title": "Ingia",

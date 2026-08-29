@@ -2658,7 +2658,9 @@
       "back": "Subira kuri Saba Motari",
       "have_account": "Usanzwe wiyandikishije?",
       "signin": "Injira",
-      "signup_prompt": "Utwara moto?"
+      "signup_prompt": "Utwara moto?",
+      "saving": "Turimo kubika…",
+      "finish_hint": "Ongeraho moto yawe urangize kwiyandikisha. Plaque yawe ni yo abagenzi bareba mbere yo kurira."
     },
     "dash": {
       "online": "Kuri interineti",
@@ -2746,7 +2748,8 @@
       "cash_declared": "Umugenzi avuga ko yishyuye cash. Bizemezwa keretse ubivuguruje.",
       "not_paid": "Sinishyuwe",
       "awaiting_payment": "Utegereje umugenzi yishyure",
-      "rate_passenger": "Tanga amanota kuri uyu mugenzi"
+      "rate_passenger": "Tanga amanota kuri uyu mugenzi",
+      "add_moto": "Ongeraho moto yawe"
     },
     "login": {
       "title": "Injira",

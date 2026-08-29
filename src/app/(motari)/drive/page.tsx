@@ -6,7 +6,7 @@ import { getRoute, fmtDistance, fmtDuration, type RouteResult, type RouteStep } 
 import { useTurnByTurn } from "@/lib/turn-by-turn";
 import {
   getMotariState, getMotariHistory, getMotariRewards, type MotariRewards,
-  saveMotariProfile, setMotariOnline, motariHeartbeat,
+  setMotariOnline, motariHeartbeat,
   acceptRide, declineRide, motariArrived, motariComplete, motariCancelRide,
   motariParcelReceived, motariParcelDelivered,
   setMotariCourier, setMotariPayout, payMotariFees, submitContact,
@@ -84,9 +84,6 @@ export default function MotariDrivePage() {
   }, [offerId, state?.offer?.expiresInSeconds]);
 
   // profile form (only when the account has no moto yet)
-  const [legalName, setLegalName] = useState("");
-  const [plate, setPlate] = useState("");
-  const [brand, setBrand] = useState("");
 
   // settings: payout preferences and the phone-change request
   const [payPhone, setPayPhone] = useState("");
@@ -165,9 +162,20 @@ export default function MotariDrivePage() {
     stopSoundLoop("incoming-delivery");
   }, []);
 
-  /* ── session: present until logout; a dead session goes to sign in ──────── */
+  /*
+   * No session, no driver screen.
+   *
+   * This redirected in an effect and then carried on rendering, so somebody
+   * signed out saw the whole working surface with an empty state behind it,
+   * which reads as an account with no moto rather than as no account. The gate
+   * is held below until the state has actually arrived.
+   */
+  const [signedOut, setSignedOut] = useState(false);
   useEffect(() => {
-    if (!localStorage.getItem("access_token")) { window.location.href = "/signin"; return; }
+    if (!localStorage.getItem("access_token")) {
+      setSignedOut(true);
+      window.location.href = "/signin";
+    }
   }, []);
 
   const refresh = useCallback(async () => {
@@ -175,8 +183,16 @@ export default function MotariDrivePage() {
       setState(await getMotariState(token()));
       setError("");
     } catch (e) {
-      // The axios layer already retried with the refresh token; only a truly
-      // dead session (or server outage) lands here. Stay put, show the error.
+      // The axios layer already retried with the refresh token, so a 401 here
+      // is a session that is genuinely finished. Showing the driver screen to
+      // somebody in that position is how a signed out visitor ended up being
+      // asked to register a moto.
+      const status = (e as { response?: { status?: number } })?.response?.status;
+      if (status === 401 || status === 403) {
+        setSignedOut(true);
+        window.location.href = "/signin";
+        return;
+      }
       setError(apiError(e));
     } finally { setLoading(false); }
   }, []);
@@ -424,7 +440,9 @@ export default function MotariDrivePage() {
     background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 12, padding: 12,
   };
 
-  if (loading) {
+  // Leaving for the sign in page counts as loading: the browser has not moved
+  // yet, and half a driver screen in the meantime is what caused this.
+  if (loading || signedOut) {
     return (
       <div style={{ position: "fixed", inset: 0, background: "#000", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div className="w-8 h-8 rounded-full border-2 border-t-transparent border-[#f97316] animate-spin" />
@@ -809,18 +827,18 @@ export default function MotariDrivePage() {
                 {/* ══ RIDES ══ */}
                 {tab === "rides" && (
                   !state?.profile ? (
+                    /* The moto is registered on the registration page, which is
+                       the one place that asks for it and the one place that
+                       knows what a complete answer looks like. This is a
+                       working screen; a second copy of that form here is how
+                       the two drifted apart in the first place. */
                     <div style={{ display: "grid", gap: 10 }}>
                       <p style={{ color: "#999", fontSize: 12, margin: 0, lineHeight: 1.6 }}>
                         {t("motari.dash.no_profile") || "Register your moto to start driving."}
                       </p>
-                      <input style={input} placeholder={t("motari.register.legal_name") || "Legal name"} value={legalName} onChange={e => setLegalName(e.target.value)} maxLength={120} />
-                      <input style={input} placeholder={t("motari.register.plate") || "Plate number"} value={plate} onChange={e => setPlate(e.target.value)} maxLength={20} />
-                      <input style={input} placeholder={t("motari.register.brand") || "Brand or model"} value={brand} onChange={e => setBrand(e.target.value)} maxLength={60} />
-                      <button disabled={busy || plate.trim().length < 4}
-                        onClick={() => act(() => saveMotariProfile({ plateNumber: plate, brandModel: brand || undefined, legalName: legalName || undefined }, token()))}
-                        style={cta(!busy && plate.trim().length >= 4)}>
-                        {t("motari.dash.save_moto") || "Save moto"}
-                      </button>
+                      <a href="/motari?register=1&finish=1" style={{ ...cta(true), textAlign: "center", textDecoration: "none" }}>
+                        {t("motari.dash.add_moto") || "Add your moto"}
+                      </a>
                     </div>
                   ) : fees?.paused ? (
                     <div style={{ display: "grid", gap: 10 }}>

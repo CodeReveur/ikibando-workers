@@ -2658,7 +2658,9 @@
       "back": "Retour à Ask Motari",
       "have_account": "Déjà inscrit ?",
       "signin": "Se connecter",
-      "signup_prompt": "Vous conduisez une moto-taxi ?"
+      "signup_prompt": "Vous conduisez une moto-taxi ?",
+      "saving": "Enregistrement…",
+      "finish_hint": "Ajoutez votre moto pour terminer. Votre plaque est ce que les passagers vérifient avant de monter."
     },
     "dash": {
       "online": "En ligne",
@@ -2746,7 +2748,8 @@
       "cash_declared": "Le passager dit avoir payé en espèces. Cela sera validé sauf avis contraire.",
       "not_paid": "Je n’ai pas été payé",
       "awaiting_payment": "En attente du paiement du passager",
-      "rate_passenger": "Notez ce passager"
+      "rate_passenger": "Notez ce passager",
+      "add_moto": "Ajouter votre moto"
     },
     "login": {
       "title": "Se connecter",
