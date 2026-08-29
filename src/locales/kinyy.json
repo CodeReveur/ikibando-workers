@@ -2664,7 +2664,8 @@
       "plate_checking": "Turimo kugenzura kuri RURA…",
       "plate_ok": "Yanditswe kuri RURA.",
       "plate_bad": "RURA nta nyandiko ifite kuri iyi plaque. Reba neza wongere ugerageze.",
-      "plate_unknown": "Ntitwashoboye kugenzura iyi plaque ubu. Izagenzurwa n’abakozi."
+      "plate_unknown": "Ntitwashoboye kugera kuri RURA ngo twemeze iyi plaque. Ongera ugerageze nyuma y’akanya.",
+      "plate_pending": "Sohoka muri uyu mwanya kugira ngo plaque igenzurwe kuri RURA."
     },
     "dash": {
       "online": "Kuri interineti",

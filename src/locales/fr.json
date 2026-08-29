@@ -2664,7 +2664,8 @@
       "plate_checking": "Vérification auprès de RURA…",
       "plate_ok": "Enregistrée auprès de RURA.",
       "plate_bad": "RURA n’a aucune trace de cette plaque. Vérifiez-la et réessayez.",
-      "plate_unknown": "Impossible de vérifier cette plaque pour le moment. Elle sera vérifiée manuellement."
+      "plate_unknown": "Impossible de joindre RURA pour confirmer cette plaque. Réessayez dans un instant.",
+      "plate_pending": "Quittez ce champ pour vérifier la plaque auprès de RURA."
     },
     "dash": {
       "online": "En ligne",

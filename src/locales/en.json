@@ -2665,7 +2665,8 @@
       "plate_checking": "Checking with RURA…",
       "plate_ok": "Registered with RURA.",
       "plate_bad": "RURA has no record of this plate. Check it and try again.",
-      "plate_unknown": "We could not check this plate just now. It will be verified by hand."
+      "plate_unknown": "We could not reach RURA to confirm this plate. Please try again in a moment.",
+      "plate_pending": "Leave this field to check the plate with RURA."
     },
     "dash": {
       "online": "Online",

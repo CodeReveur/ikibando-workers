@@ -101,10 +101,10 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
 
   if (!open) return null;
 
-  // An unchecked or unreachable plate does not block: only one the regulator
-  // has actually refused. A registration held up by somebody else's website
-  // being down is a worse failure than a plate verified by hand later.
-  const plateBlocks = plateState === "invalid" || plateState === "checking";
+  // Nothing goes through unconfirmed. A plate RURA denies and one it could not
+  // be asked about are both refused, and the field says which: the first is the
+  // motari's to fix, the second is ours and will pass on a retry.
+  const plateBlocks = plateState !== "valid";
 
   const formValid =
     legalName.trim().split(/\s+/).length >= 2 &&
@@ -267,7 +267,7 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
                        onChange={e => { setPlate(e.target.value); setPlateState("idle"); setPlateNote(""); }}
                        onBlur={e => checkPlate(e.target.value)}
                        placeholder="RA 123B" maxLength={20} />
-                {plateState !== "idle" && (
+                {plate.trim().length >= 4 && (
                   <div style={{
                     fontSize: 11, marginTop: 4, lineHeight: 1.5,
                     color: plateState === "valid" ? "#4ade80"
@@ -280,7 +280,9 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
                       || t("motari.register.plate_bad")
                       || "RURA has no record of this plate. Check it and try again.")}
                     {plateState === "unknown" && (t("motari.register.plate_unknown")
-                      || "We could not check this plate just now. It will be verified by hand.")}
+                      || "We could not reach RURA to confirm this plate. Please try again in a moment.")}
+                    {plateState === "idle" && (t("motari.register.plate_pending")
+                      || "Leave this field to check the plate with RURA.")}
                   </div>
                 )}
               </div>

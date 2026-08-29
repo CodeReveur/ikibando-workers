@@ -2664,7 +2664,8 @@
       "plate_checking": "Tunathibitisha na RURA…",
       "plate_ok": "Imesajiliwa na RURA.",
       "plate_bad": "RURA haina kumbukumbu ya namba hii. Iangalie kisha ujaribu tena.",
-      "plate_unknown": "Hatukuweza kuithibitisha kwa sasa. Itathibitishwa kwa mkono."
+      "plate_unknown": "Hatukuweza kuifikia RURA kuthibitisha namba hii. Jaribu tena baada ya muda mfupi.",
+      "plate_pending": "Toka kwenye kisanduku hiki ili namba ithibitishwe na RURA."
     },
     "dash": {
       "online": "Mtandaoni",
