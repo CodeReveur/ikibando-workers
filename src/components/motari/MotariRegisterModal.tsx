@@ -39,22 +39,24 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
    * came to disagree about when it gets saved.
    */
   /*
-   * Whether the plate is a real, authorised moto.
+   * Whether the plate is a real, authorised moto that nobody else has.
    *
-   * Asked two seconds after the field is left rather than while somebody is
-   * typing: a plate is six characters and checking each of them would ask a
-   * public regulator six questions to answer one. Two seconds is long enough
-   * for a correction and short enough that the answer is there before they
-   * reach the button.
+   * Checked two seconds after somebody stops typing, not when they leave the
+   * field. Waiting for them to leave means the answer arrives at the moment
+   * their attention has already moved on, and somebody who types their plate
+   * last and reaches straight for the button never sees it at all. Two seconds
+   * of stillness is long enough that a plate is not checked letter by letter,
+   * and short enough that the answer is waiting by the time they look up.
    */
-  const [plateState, setPlateState] = useState<"idle" | "checking" | "valid" | "invalid" | "unknown">("idle");
+  const [plateState, setPlateState] =
+    useState<"idle" | "checking" | "valid" | "invalid" | "unknown" | "taken">("idle");
   const [plateNote, setPlateNote] = useState("");
   const plateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const checkPlate = (value: string) => {
     if (plateTimer.current) clearTimeout(plateTimer.current);
-    const raw = value.trim();
-    if (raw.replace(/[^A-Za-z0-9]/g, "").length < 5) {
+    const typed = value.trim();
+    if (typed.replace(/[^A-Za-z0-9]/g, "").length < 5) {
       setPlateState("idle");
       setPlateNote("");
       return;
@@ -63,14 +65,21 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
     setPlateNote("");
     plateTimer.current = setTimeout(async () => {
       try {
-        const r = await checkPlateNumber(raw);
-        setPlateState(r.verdict === "VALID" ? "valid" : r.verdict === "INVALID" ? "invalid" : "unknown");
+        const r = await checkPlateNumber(typed);
+        // Taken is its own answer. A plate can be perfectly real and still
+        // unusable here, and calling that invalid would send somebody off to
+        // argue with RURA about a plate RURA is happy with.
+        setPlateState(
+          r.verdict === "VALID" ? (r.taken ? "taken" : "valid")
+          : r.verdict === "INVALID" ? "invalid"
+          : "unknown");
         setPlateNote(r.message || "");
         // Shown back in the form the regulator uses, so what was checked and
-        // what is on the moto are visibly the same thing.
-        if (r.display) setPlate(r.display);
+        // what is on the moto are visibly the same thing. Only once it is
+        // settled: rewriting the box while somebody is still typing moves the
+        // caret out from under them.
+        if (r.display && r.verdict !== "UNKNOWN") setPlate(r.display);
       } catch {
-        // A check we could not make is not a plate we know to be wrong.
         setPlateState("unknown");
         setPlateNote("");
       }
@@ -86,6 +95,56 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
       // No window or no storage: an ordinary registration, then.
     }
   }, []);
+  /*
+   * What is wrong with each field, and whether anybody has left it yet.
+   *
+   * Checked when a field is left rather than while it is being typed in: a
+   * half-written email is not a mistake, it is somebody mid-word, and marking
+   * it red while they type is the form arguing with them. Once they have left
+   * it, though, it keeps checking as they fix it, so the red goes the moment
+   * the problem does rather than making them leave the field again to find out.
+   */
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const rules: Record<string, (v: string) => string> = {
+    legalName: v => !v.trim() ? (t("motari.register.err_name") || "Your name as written on your ID.")
+      : v.trim().split(/\s+/).length < 2
+        ? (t("motari.register.err_name_two") || "Both your names, as on your ID.")
+        : "",
+    phone: v => !v.trim() ? (t("motari.register.err_phone") || "A number passengers can call.")
+      : !isValidRwPhone(v) ? (t("motari.register.err_phone_bad") || "That is not a Rwandan number.") : "",
+    email: v => !v.trim() ? (t("motari.register.err_email") || "An email address.")
+      : !/.+@.+\..+/.test(v) ? (t("motari.register.err_email_bad") || "That does not look like an email address.") : "",
+    password: v => v.length < 8
+      ? (t("motari.register.err_password") || "At least 8 characters.") : "",
+  };
+
+  const check = (name: string, value: string) => {
+    const rule = rules[name];
+    if (!rule) return;
+    setErrors(prev => ({ ...prev, [name]: rule(value) }));
+  };
+
+  /** Left a field: from here on it is checked on every keystroke. */
+  const leave = (name: string, value: string) => {
+    setTouched(prev => ({ ...prev, [name]: true }));
+    check(name, value);
+  };
+
+  /** Typed in a field: only re-checked once they have already left it once. */
+  const typed = (name: string, value: string) => {
+    if (touched[name]) check(name, value);
+  };
+
+  /** Red border and a line underneath, but only after they have left it. */
+  const fieldError = (name: string) => (touched[name] ? errors[name] || "" : "");
+
+  const fieldStyle = (name: string) => ({
+    ...input,
+    ...(fieldError(name) ? { borderColor: "#7f1d1d" } : {}),
+  });
+
   const [legalName, setLegalName] = useState("");
   const [plate, setPlate] = useState("");
   const [brand, setBrand] = useState("");
@@ -106,12 +165,17 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
   // motari's to fix, the second is ours and will pass on a retry.
   const plateBlocks = plateState !== "valid";
 
+  /*
+   * Every rule, asked of the current values rather than of what was last
+   * checked. A form that submits on stale validation is a form that submits
+   * whatever was true a moment ago.
+   */
   const formValid =
-    legalName.trim().split(/\s+/).length >= 2 &&
+    !rules.legalName(legalName) &&
+    !rules.phone(phone) &&
+    !rules.email(email) &&
+    !rules.password(password) &&
     plate.trim().length >= 4 &&
-    isValidRwPhone(phone) &&
-    /.+@.+\..+/.test(email) &&
-    password.length >= 8 &&
     !plateBlocks;
 
   /** Just the moto, onto the account already signed in on this device. */
@@ -209,6 +273,12 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
     fontSize: 8.5, fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase",
     color: "#666", display: "block", margin: "0 0 5px",
   };
+  /** The reason a field is red, said under it. Nothing when there is none. */
+  const FieldNote = ({ name }: { name: string }) => {
+    const e = fieldError(name);
+    return e ? <div style={{ color: "#f87171", fontSize: 11, marginTop: 4, lineHeight: 1.5 }}>{e}</div> : null;
+  };
+
   const cta = (enabled: boolean): React.CSSProperties => ({
     width: "100%", background: enabled ? "#f97316" : "#1a1a1a",
     color: enabled ? "#000" : "#555", borderRadius: 10, padding: "12px 20px",
@@ -256,22 +326,25 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
           <div style={{ display: "grid", gap: 12 }}>
             <div>
               <span style={label}>{t("motari.register.legal_name") || "Legal name"}</span>
-              <input style={input} value={legalName} onChange={e => setLegalName(e.target.value)}
+              <input style={fieldStyle("legalName")} value={legalName}
+                     onChange={e => { setLegalName(e.target.value); typed("legalName", e.target.value); }}
+                     onBlur={e => leave("legalName", e.target.value)}
                      placeholder={t("motari.register.legal_name_hint") || "As written on your ID"} maxLength={120} />
+              <FieldNote name="legalName" />
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
               <div>
                 <span style={label}>{t("motari.register.plate") || "Plate number"}</span>
-                <input style={{ ...input, borderColor: plateState === "invalid" ? "#7f1d1d" : undefined }}
+                <input style={{ ...input, borderColor: plateState === "invalid" || plateState === "taken" ? "#7f1d1d" : undefined }}
                        value={plate}
-                       onChange={e => { setPlate(e.target.value); setPlateState("idle"); setPlateNote(""); }}
+                       onChange={e => { setPlate(e.target.value); checkPlate(e.target.value); }}
                        onBlur={e => checkPlate(e.target.value)}
                        placeholder="RA 123B" maxLength={20} />
-                {plate.trim().length >= 4 && (
+                {plateState !== "idle" && (
                   <div style={{
                     fontSize: 11, marginTop: 4, lineHeight: 1.5,
                     color: plateState === "valid" ? "#4ade80"
-                         : plateState === "invalid" ? "#f87171"
+                         : plateState === "invalid" || plateState === "taken" ? "#f87171"
                          : "#9a9a9a",
                   }}>
                     {plateState === "checking" && (t("motari.register.plate_checking") || "Checking with RURA…")}
@@ -281,8 +354,9 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
                       || "RURA has no record of this plate. Check it and try again.")}
                     {plateState === "unknown" && (t("motari.register.plate_unknown")
                       || "We could not reach RURA to confirm this plate. Please try again in a moment.")}
-                    {plateState === "idle" && (t("motari.register.plate_pending")
-                      || "Leave this field to check the plate with RURA.")}
+                    {plateState === "taken" && (plateNote
+                      || t("motari.register.plate_taken")
+                      || "A valid plate, but another motari has already registered it.")}
                   </div>
                 )}
               </div>
@@ -295,15 +369,22 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
             {!finishing && (
             <div>
               <span style={label}>{t("motari.register.phone") || "Phone number"}</span>
-              <input style={input} value={phone} onChange={e => setPhone(formatRwPhone(e.target.value))}
+              <input style={fieldStyle("phone")}
+                     value={phone}
+                     onChange={e => { const v = formatRwPhone(e.target.value); setPhone(v); typed("phone", v); }}
+                     onBlur={e => leave("phone", e.target.value)}
                      placeholder="07xxxxxxxx" inputMode="numeric" maxLength={10} />
+              <FieldNote name="phone" />
             </div>
             )}
             {!finishing && (
             <div>
               <span style={label}>{t("motari.register.email") || "Email"}</span>
-              <input style={input} value={email} onChange={e => setEmail(e.target.value)}
+              <input style={fieldStyle("email")} value={email}
+                     onChange={e => { setEmail(e.target.value); typed("email", e.target.value); }}
+                     onBlur={e => leave("email", e.target.value)}
                      placeholder="you@example.com" type="email" maxLength={120} />
+              <FieldNote name="email" />
             </div>
             )}
             {!finishing && <InvitedBy code={referralCode} />}
@@ -311,9 +392,12 @@ export function MotariRegisterModal({ open, onClose, onSignIn }: {
             {!finishing && (
             <div>
               <span style={label}>{t("motari.register.password") || "Password"}</span>
-              <PasswordInput style={input} value={password} onChange={setPassword}
+              <PasswordInput style={fieldStyle("password")} value={password}
+                             onChange={v => { setPassword(v); typed("password", v); }}
+                             onBlur={e => leave("password", e.target.value)}
                              autoComplete="new-password"
                              placeholder={t("motari.register.password_hint") || "At least 8 characters"} />
+              <FieldNote name="password" />
             </div>
             )}
 

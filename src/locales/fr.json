@@ -2665,7 +2665,14 @@
       "plate_ok": "Enregistrée auprès de RURA.",
       "plate_bad": "RURA n’a aucune trace de cette plaque. Vérifiez-la et réessayez.",
       "plate_unknown": "Impossible de joindre RURA pour confirmer cette plaque. Réessayez dans un instant.",
-      "plate_pending": "Quittez ce champ pour vérifier la plaque auprès de RURA."
+      "err_name": "Votre nom tel qu’il figure sur votre pièce d’identité.",
+      "err_name_two": "Vos deux noms, comme sur votre pièce d’identité.",
+      "err_phone": "Un numéro que les passagers peuvent appeler.",
+      "err_phone_bad": "Ce n’est pas un numéro rwandais.",
+      "err_email": "Une adresse email.",
+      "err_email_bad": "Cela ne ressemble pas à une adresse email.",
+      "err_password": "Au moins 8 caractères.",
+      "plate_taken": "Plaque valide, mais déjà enregistrée par un autre motari."
     },
     "dash": {
       "online": "En ligne",

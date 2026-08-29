@@ -2046,6 +2046,7 @@ export interface PlateCheck {
   verdict: "VALID" | "INVALID" | "UNKNOWN";
   plate: string;
   display: string;
+  taken: boolean;
   documentUrl?: string | null;
   message?: string | null;
 }

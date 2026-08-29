@@ -2665,7 +2665,14 @@
       "plate_ok": "Imesajiliwa na RURA.",
       "plate_bad": "RURA haina kumbukumbu ya namba hii. Iangalie kisha ujaribu tena.",
       "plate_unknown": "Hatukuweza kuifikia RURA kuthibitisha namba hii. Jaribu tena baada ya muda mfupi.",
-      "plate_pending": "Toka kwenye kisanduku hiki ili namba ithibitishwe na RURA."
+      "err_name": "Jina lako kama lilivyo kwenye kitambulisho.",
+      "err_name_two": "Majina yako yote mawili, kama yalivyo kwenye kitambulisho.",
+      "err_phone": "Namba ambayo abiria wanaweza kupiga.",
+      "err_phone_bad": "Hii si namba ya Rwanda.",
+      "err_email": "Anwani ya barua pepe.",
+      "err_email_bad": "Hii haionekani kama anwani ya barua pepe.",
+      "err_password": "Angalau herufi 8.",
+      "plate_taken": "Namba ni sahihi, lakini motari mwingine ameisajili tayari."
     },
     "dash": {
       "online": "Mtandaoni",

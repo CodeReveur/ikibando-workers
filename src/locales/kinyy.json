@@ -2665,7 +2665,14 @@
       "plate_ok": "Yanditswe kuri RURA.",
       "plate_bad": "RURA nta nyandiko ifite kuri iyi plaque. Reba neza wongere ugerageze.",
       "plate_unknown": "Ntitwashoboye kugera kuri RURA ngo twemeze iyi plaque. Ongera ugerageze nyuma y’akanya.",
-      "plate_pending": "Sohoka muri uyu mwanya kugira ngo plaque igenzurwe kuri RURA."
+      "err_name": "Amazina yawe nk’uko ari ku ndangamuntu.",
+      "err_name_two": "Amazina yombi, nk’uko ari ku ndangamuntu.",
+      "err_phone": "Nimero abagenzi bashobora guhamagara.",
+      "err_phone_bad": "Iyi si nimero yo mu Rwanda.",
+      "err_email": "Aderesi ya email.",
+      "err_email_bad": "Ibi ntibisa na aderesi ya email.",
+      "err_password": "Nibura inyuguti 8.",
+      "plate_taken": "Plaque ni nzima, ariko undi motari yarayanditse."
     },
     "dash": {
       "online": "Kuri interineti",

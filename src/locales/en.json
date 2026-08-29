@@ -2666,7 +2666,14 @@
       "plate_ok": "Registered with RURA.",
       "plate_bad": "RURA has no record of this plate. Check it and try again.",
       "plate_unknown": "We could not reach RURA to confirm this plate. Please try again in a moment.",
-      "plate_pending": "Leave this field to check the plate with RURA."
+      "err_name": "Your name as written on your ID.",
+      "err_name_two": "Both your names, as on your ID.",
+      "err_phone": "A number passengers can call.",
+      "err_phone_bad": "That is not a Rwandan number.",
+      "err_email": "An email address.",
+      "err_email_bad": "That does not look like an email address.",
+      "err_password": "At least 8 characters.",
+      "plate_taken": "A valid plate, but another motari has already registered it."
     },
     "dash": {
       "online": "Online",
