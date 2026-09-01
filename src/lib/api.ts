@@ -53,10 +53,37 @@ function drainQueue(err: unknown, token?: string) {
   _queue = [];
 }
 
+/** Drop the session and send them to sign in, remembering where they were. */
+function endSession(): void {
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
+  try { sessionStorage.setItem("auth_redirect", window.location.href); } catch {}
+  window.location.href = "/signin";
+}
+
+/*
+ * The two answers that mean the account itself is closed.
+ *
+ * The server checks this on every request now, not only at sign-in, so somebody suspended
+ * while signed in starts getting these mid-session. Without this they would sit in a working
+ * app where nothing works: every request refused, no explanation, and a session in local
+ * storage that will never be valid again. Retrying or refreshing cannot help, because the
+ * refusal is about who they are rather than about the token.
+ */
+const CLOSED = ["ACCOUNT_SUSPENDED", "ACCOUNT_DEACTIVATED"];
+
 http.interceptors.response.use(
   r => r,
   async error => {
     const orig = error.config;
+
+    if (typeof window !== "undefined"
+        && error.response?.status === 403
+        && CLOSED.includes(error.response?.data?.code)) {
+      endSession();
+      return Promise.reject(error);
+    }
+
     if (error.response?.status !== 401 || orig._retry || typeof window === "undefined") {
       return Promise.reject(error);
     }
@@ -84,10 +111,7 @@ http.interceptors.response.use(
     } catch (refreshErr) {
       drainQueue(refreshErr);
       _refreshing = false;
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
-      try { sessionStorage.setItem("auth_redirect", window.location.href); } catch {}
-      window.location.href = "/signin";
+      endSession();
       return Promise.reject(refreshErr);
     }
   }
