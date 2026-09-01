@@ -115,11 +115,35 @@ export default function AskMotariPage() {
   /// better first guess than an empty box, and it costs no search to show.
   const [recent, setRecent] = useState<PlaceSuggestion[]>([]);
   const formRef = useRef<HTMLDivElement | null>(null);
+
+  /*
+   * How tall the sheet is at this moment, so the map's own controls can sit
+   * just above it.
+   *
+   * It cannot be a number written here: the sheet is a summary line when
+   * minimised and most of the screen when a ride is under way, and it grows
+   * and shrinks as the form fills in. Anything guessed would be under the
+   * sheet half the time and stranded in the middle of the map the other half.
+   */
+  const sheetRef = useRef<HTMLDivElement | null>(null);
+  const [sheetH, setSheetH] = useState(0);
   const [locating, setLocating] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [offerFare, setOfferFare] = useState("");
   const [editingFare, setEditingFare] = useState(false);
+
+  useEffect(() => {
+    const el = sheetRef.current;
+    if (!el) return;
+    const measure = () => setSheetH(el.getBoundingClientRect().height);
+    measure();
+    // Every reason the sheet changes height is a layout change, not a state
+    // change we could hook: a list opening, a keyboard, a longer address.
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   // Places come back from the device, so a returning passenger is offered
   // where they have been rather than a blank list.
@@ -710,8 +734,15 @@ export default function AskMotariPage() {
         selfAccuracyM={deviceAcc}
         route={!ride && route ? route.coordinates : null}
         onPick={ride ? undefined : pickOnMap}
-        // Below the menu button, because the bottom of this page is a sheet.
-        switchStyle={{ top: 56, right: 14, bottom: "auto" }}
+        /*
+         * Low on the map, just clear of the sheet.
+         *
+         * It belongs near the bottom, where a map's own controls live and
+         * where a thumb already is. Flush with the bottom of the map would
+         * put it under the sheet, which is how it became unreachable before,
+         * so it rides on top of whatever height the sheet currently has.
+         */
+        switchStyle={{ right: 14, top: "auto", bottom: sheetH + 12 }}
       />
 
       {/* HAMBURGER — the topbar, folded into three lines */}
@@ -849,7 +880,7 @@ export default function AskMotariPage() {
         position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 1000,
         display: "flex", justifyContent: "center", pointerEvents: "none",
       }}>
-        <div style={{
+        <div ref={sheetRef} style={{
           ...glass, pointerEvents: "auto", width: "100%", maxWidth: 560,
           borderRadius: "20px 20px 0 0", borderBottom: "none",
           padding: minimized ? "8px 14px 12px" : "8px 14px 16px",
