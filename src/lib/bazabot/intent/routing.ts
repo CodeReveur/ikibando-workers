@@ -153,6 +153,29 @@ export function keywordAugment(message: string): PlannedCall[] {
   if (/\b(fee|fees|commission|charge|charges|percent|percentage|pricing|price|rate|rates|cost|costs|cut|deduction)\b/.test(m)) {
     calls.push({ tool: "getPricing", args: {} });
   }
+  /*
+   * Asking for the app: fetch what is actually published rather than describing it.
+   *
+   * A download answer is only worth anything if it carries the real link and the real version,
+   * and those change without this file changing. "apk" and "install" are in here because that
+   * is what people type when the word "download" does not occur to them.
+   */
+  if (/\b(download|downloading|install|installing|apk|app store|play store|get the app)\b/.test(m)) {
+    calls.push({ tool: "getAppDownload", args: {} });
+  }
+
+  /*
+   * A plate in the message: check it, rather than explain how checking works.
+   *
+   * Somebody stuck on registration types the plate itself - "RM356X is not accepted" - and the
+   * useful answer is what RURA says about that plate, including whether it is already taken.
+   * Two or three letters and three digits is specific enough not to catch ordinary words.
+   */
+  const plate = m.match(/\b([a-z]{2,3}\s?\d{3}\s?[a-z]?)\b/);
+  if (plate && /\b(plate|moto|motari|register|registration|rura|number)\b/.test(m)) {
+    calls.push({ tool: "checkMotoPlate", args: { plate: plate[1].toUpperCase().replace(/\s+/g, "") } });
+  }
+
   // Informational questions → ground with the knowledge base as a safety net.
   if (/\b(how|what|why|when|where|which|explain|escrow|refund|cancel|verify|verified|withdraw|payout|policy|fee|pay|paid|hire|apply|badge|dispute|complete)\b/.test(m)) {
     calls.push({ tool: "searchKnowledge", args: { query: message } });

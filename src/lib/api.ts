@@ -2065,6 +2065,21 @@ export const motariCancelRide = (rideId: string, reason: string | undefined, tok
 
 export { daysAgo };
 
+/** What there is to download, as the release page asks for it. */
+export interface AppRelease {
+  android: boolean;
+  ios: boolean;
+  url?: string | null;
+  version?: string | null;
+  sizeBytes?: number | null;
+  updatedAt?: string | null;
+}
+
+export async function getAppRelease(): Promise<AppRelease> {
+  const { data } = await http.get("/api/app/info");
+  return data?.data ?? { android: false, ios: false };
+}
+
 /** Whether RURA knows this plate. VALID, INVALID, or UNKNOWN when it could not be asked. */
 export interface PlateCheck {
   verdict: "VALID" | "INVALID" | "UNKNOWN";

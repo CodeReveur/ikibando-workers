@@ -323,6 +323,69 @@ export function buildCatalog(deps: CatalogDeps = {}): Tool[] {
       },
     },
 
+    // ── The app ──────────────────────────────────────────────────────────────
+    {
+      name: "getAppDownload",
+      description: "Get the Ask Motari Android app: current version, size and the download link, plus how to install it.",
+      params: [],
+      schema: z.object({}),
+      requiresAuth: false,
+      explain: "I looked up the app download",
+      async execute(): Promise<ToolResult> {
+        const r = await api.getAppRelease().catch(() => null);
+        if (!r || !r.android || !r.url) {
+          // Better to say the build is not up than to hand over a link that fails.
+          return ok("There is no Android build published right now. The full service works in the " +
+            "browser at /motari in the meantime, and iPhone users add that page to the home screen " +
+            "with Share then Add to Home Screen.", { android: false },
+            [{ kind: "action", id: "app", title: "Ask Motari in the browser",
+               subtitle: "Works on any phone, nothing to install",
+               url: "/motari", cta: "Open Ask Motari" }]);
+        }
+        const size = r.sizeBytes ? `${Math.round(r.sizeBytes / 1024 / 1024)} MB` : "";
+        const label = [r.version ? `version ${r.version}` : "", size].filter(Boolean).join(", ");
+        return ok(
+          `The Ask Motari Android app${label ? ` (${label})` : ""} ` +
+          "is downloaded from the app page. Tap Download for Android, open the file from Downloads, " +
+          "allow installing from this source when Android asks, then Install and Open. Say yes to " +
+          "location, notifications and sound, because a motari cannot be found or hear work arrive " +
+          "without them. There is no iPhone build: on iPhone, open the site and use Share then " +
+          "Add to Home Screen.",
+          r,
+          [{ kind: "action", id: "apk", title: "Download Ask Motari for Android",
+             subtitle: [r.version ? `Version ${r.version}` : null, size].filter(Boolean).join(" · ") || undefined,
+             url: "/app", cta: "Get the app" }]);
+      },
+    },
+
+    // ── Registering a moto ───────────────────────────────────────────────────
+    {
+      name: "checkMotoPlate",
+      description: "Check whether a moto plate number is registered with RURA and free to use, before someone signs up as a motari.",
+      params: [{ name: "plate", type: "string", required: true, description: "A Rwandan plate, e.g. RA 123B or RM356X" }],
+      schema: z.object({ plate: z.string().trim().min(4).max(12) }),
+      requiresAuth: false,
+      explain: "I checked that plate with RURA",
+      async execute(a): Promise<ToolResult> {
+        const r = await api.checkPlateNumber(a.plate).catch(() => null);
+        if (!r) return fail("The plate check could not be reached just now. Try again in a moment.");
+        const shown = r.display || a.plate;
+        // Taken is its own answer: the plate is real, it is simply already spoken for, and
+        // telling somebody it is invalid would send them to argue with RURA about nothing.
+        if (r.verdict === "VALID" && r.taken) {
+          return ok(`${shown} is a real plate, but another motari has already registered it. ` +
+            "If it is genuinely their moto, support can sort it out; nobody can register the same plate twice.");
+        }
+        if (r.verdict === "VALID") return ok(`${shown} is registered with RURA and free to use.`);
+        if (r.verdict === "INVALID") {
+          return ok(`RURA has no record of ${shown}. Registration will not go through with it. ` +
+            "Check the plate on the moto itself, letter by letter.");
+        }
+        return ok("RURA could not be reached to confirm that plate just now, so it is neither " +
+          "confirmed nor refused. Trying again in a moment usually works.");
+      },
+    },
+
     // ── Pricing / fees ───────────────────────────────────────────────────────
     {
       name: "getPricing",

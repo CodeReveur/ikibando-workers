@@ -83,6 +83,7 @@ function toolStatus(tool: string): string {
     searchBookings: "Looking up your jobs…", getProfile: "Reading your profile…",
     updateProfile: "Updating your profile…", checkVerification: "Checking verification…",
     getPricing: "Checking the fees…", searchKnowledge: "Searching the help center…",
+    getAppDownload: "Checking the app download…", checkMotoPlate: "Checking that plate with RURA…",
     searchFAQ: "Checking the FAQ…", searchHelp: "Searching help articles…",
   };
   return map[tool] ?? "Looking that up…";

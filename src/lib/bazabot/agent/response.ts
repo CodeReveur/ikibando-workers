@@ -5,7 +5,7 @@
  */
 import type { AgentAction, Suggestion } from "../types";
 
-const TOOL_NAME_LEAKS = /\b(searchJobs|searchWorkers|searchCategories|searchLocations|getWallet|getTransactions|getNotifications|searchBookings|getProfile|updateProfile|checkVerification|getPricing|searchKnowledge|searchFAQ|searchHelp)\s*\(/g;
+const TOOL_NAME_LEAKS = /\b(searchJobs|searchWorkers|searchCategories|searchLocations|getWallet|getTransactions|getNotifications|searchBookings|getProfile|updateProfile|checkVerification|getPricing|getAppDownload|checkMotoPlate|searchKnowledge|searchFAQ|searchHelp)\s*\(/g;
 
 /** Remove code fences, obvious JSON dumps and internal identifiers. */
 export function sanitizeReply(text: string): string {
