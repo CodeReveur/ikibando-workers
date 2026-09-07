@@ -1859,6 +1859,12 @@ export interface MotariState {
     instantPayout: boolean;
     payoutMethod: "MTN_MOMO" | "AIRTEL_MONEY";
     payoutPhone?: string;
+    /** "MTN MoMo" or "Airtel Money", worked out from the payout number. */
+    payoutOperator?: string;
+    /** What one withdrawal costs. */
+    withdrawFeeRwf?: number;
+    /** How much of the balance is bonus money, which comes out with no fee. */
+    bonusFreeRwf?: number;
     totalRides: number;
   };
   activeRide?: RideDto;
@@ -2008,6 +2014,18 @@ export async function setMotariPayout(
   token: string,
 ): Promise<MotariState> {
   const { data } = await http.post("/api/rides/driver/payout", payload, { headers: authHeader(token) });
+  return data.data;
+}
+
+/**
+ * Take money out of the wallet to the number on the account.
+ *
+ * No amount means everything that can go. There is no code to confirm, because the money can
+ * only reach the number already on the account: there is nothing for a code to protect.
+ */
+export async function withdrawMotariWallet(amount: number | undefined, token: string): Promise<MotariState> {
+  const { data } = await http.post("/api/rides/driver/withdraw",
+    amount ? { amount } : {}, { headers: authHeader(token) });
   return data.data;
 }
 

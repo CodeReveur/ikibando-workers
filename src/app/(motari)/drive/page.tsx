@@ -12,6 +12,7 @@ import {
   setMotariCourier, setMotariPayout, payMotariFees, submitContact,
   ratePassenger, denyCashPayment, apiError,
   type MotariState, type MotariHistory, type RideDto,
+  withdrawMotariWallet, getBonuses, claimBonuses,
 } from "@/lib/api";
 import { useLanguage } from "@/lib/language-context";
 import { AppTip } from "@/components/app/get-the-app";
@@ -87,6 +88,15 @@ export default function MotariDrivePage() {
 
   // settings: payout preferences and the phone-change request
   const [payPhone, setPayPhone] = useState("");
+  /*
+   * Bonus money, which is in the wallet but not spendable until it is claimed.
+   *
+   * A motari earning a welcome bonus or a referral could see the figure in the app and had no
+   * way on the web to turn it into money: the claim lives on the worker dashboard, which a
+   * motari never reaches because signing in as one goes straight here.
+   */
+  const [claimable, setClaimable] = useState(0);
+  const [amountOut, setAmountOut] = useState("");
   const [phoneReq, setPhoneReq] = useState("");
   const [phoneReqSent, setPhoneReqSent] = useState(false);
 
@@ -171,6 +181,19 @@ export default function MotariDrivePage() {
    * is held below until the state has actually arrived.
    */
   const [signedOut, setSignedOut] = useState(false);
+
+  // Asked for once the tab is opened rather than on every poll: it changes when a bonus is
+  // awarded, which is rare, and the money tab is where the number is of any use.
+  useEffect(() => {
+    if (tab !== "money") return;
+    const t = token();
+    if (!t) return;
+    let alive = true;
+    getBonuses(t)
+      .then(b => { if (alive) setClaimable(b.claimable ?? 0); })
+      .catch(() => { /* the tab is still worth showing without it */ });
+    return () => { alive = false; };
+  }, [tab]);
   useEffect(() => {
     if (!localStorage.getItem("access_token")) {
       setSignedOut(true);
@@ -1129,6 +1152,92 @@ export default function MotariDrivePage() {
                       </div>
                     </div>
 
+                    {/* A bonus waiting to be claimed. Money, but not yet spendable. */}
+                    {claimable > 0 && (
+                      <div style={{ ...card, padding: "10px 12px", borderColor: "#7c3a10",
+                                    display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+                        <div style={{ minWidth: 0 }}>
+                          <div style={{ color: "#fff", fontSize: 12, fontWeight: 800 }}>
+                            {fmt(claimable)} {t("motari.dash.bonus_waiting") || "in bonuses"}
+                          </div>
+                          <div style={micro}>
+                            {t("motari.dash.bonus_hint") || "Claim it into your wallet. It comes out with no fee."}
+                          </div>
+                        </div>
+                        <button
+                          disabled={busy}
+                          onClick={() => act(async () => {
+                            await claimBonuses(token());
+                            setClaimable(0);
+                            return await getMotariState(token());
+                          })}
+                          style={{
+                            borderRadius: 8, padding: "8px 14px", fontSize: 9, fontWeight: 900,
+                            letterSpacing: "0.07em", textTransform: "uppercase", cursor: "pointer",
+                            fontFamily: "inherit", background: "#f97316", color: "#000",
+                            border: "none", flexShrink: 0,
+                          }}
+                        >
+                          {t("motari.dash.claim") || "Claim"}
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Taking it out. */}
+                    {history.walletBalanceRwf > 0 && (
+                      <div style={{ ...card, padding: "10px 12px" }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+                          <div style={{ minWidth: 0 }}>
+                            <div style={{ color: "#fff", fontSize: 12, fontWeight: 700 }}>
+                              {t("motari.dash.take_out") || "Take money out"}
+                            </div>
+                            <div style={micro}>
+                              {/* Where it goes, said before they press it rather than after. */}
+                              {(t("motari.dash.take_out_to") || "To {phone} on {operator}")
+                                .replace("{phone}", state?.profile?.payoutPhone || "your number")
+                                .replace("{operator}", state?.profile?.payoutOperator || "mobile money")}
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ display: "flex", gap: 6, marginTop: 9 }}>
+                          <input
+                            style={{ ...input, flex: 1, padding: "8px 10px" }}
+                            placeholder={(t("motari.dash.all_of_it") || "All of it") + ` (${fmt(history.walletBalanceRwf)})`}
+                            value={amountOut}
+                            onChange={e => setAmountOut(e.target.value.replace(/[^0-9]/g, ""))}
+                            inputMode="numeric" maxLength={9}
+                          />
+                          <button
+                            disabled={busy}
+                            onClick={() => act(async () => {
+                              const r = await withdrawMotariWallet(
+                                amountOut ? Number(amountOut) : undefined, token());
+                              setAmountOut("");
+                              setHistory(await getMotariHistory(token()));
+                              return r;
+                            })}
+                            style={{
+                              borderRadius: 8, padding: "8px 16px", fontSize: 9, fontWeight: 900,
+                              letterSpacing: "0.06em", textTransform: "uppercase", fontFamily: "inherit",
+                              cursor: busy ? "not-allowed" : "pointer", flexShrink: 0,
+                              background: "#f97316", color: "#000", border: "none",
+                            }}
+                          >
+                            {t("motari.dash.send") || "Send"}
+                          </button>
+                        </div>
+                        <div style={{ ...micro, marginTop: 6 }}>
+                          {/* The fee, and the part of the balance it does not apply to. */}
+                          {(state?.profile?.bonusFreeRwf ?? 0) > 0
+                            ? (t("motari.dash.fee_note_bonus") || "{fee} fee, waived on the first {free} of bonus money.")
+                                .replace("{fee}", fmt(state?.profile?.withdrawFeeRwf ?? 0))
+                                .replace("{free}", fmt(state?.profile?.bonusFreeRwf ?? 0))
+                            : (t("motari.dash.fee_note") || "{fee} fee per withdrawal.")
+                                .replace("{fee}", fmt(state?.profile?.withdrawFeeRwf ?? 0))}
+                        </div>
+                      </div>
+                    )}
+
                     {/* The daily platform fee, always visible here. */}
                     {fees && (
                       <div style={{
@@ -1380,48 +1489,24 @@ export default function MotariDrivePage() {
                             </button>
                           </div>
 
+                          {/*
+                            Where it goes, stated rather than asked for.
+
+                            This used to open a network picker and a phone box the moment the
+                            switch went on: the same number the motari registered with, asked
+                            for a second time, with the network they are already on offered as
+                            a choice. Two chances to get wrong what the account already knows,
+                            and a mistyped payout number sends real money to a stranger. The
+                            registered number is used, and 078 and 079 are MTN while 072 and
+                            073 are Airtel, which the number itself says.
+                          */}
                           {state.profile.instantPayout && (
-                            <div style={{ display: "grid", gap: 7, marginTop: 9 }}>
-                              <div style={{ display: "flex", gap: 6 }}>
-                                {(["MTN_MOMO", "AIRTEL_MONEY"] as const).map(m => (
-                                  <button key={m} disabled={busy}
-                                    onClick={() => act(() => setMotariPayout({ payoutMethod: m }, token()))}
-                                    style={{
-                                      flex: 1, borderRadius: 8, padding: "7px 4px", fontSize: 9.5, fontWeight: 800,
-                                      cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.04em",
-                                      background: state.profile!.payoutMethod === m ? "#f97316" : "#0a0a0a",
-                                      color: state.profile!.payoutMethod === m ? "#000" : "#888",
-                                      border: state.profile!.payoutMethod === m ? "none" : "1px solid #1f1f1f",
-                                    }}>
-                                    {m === "MTN_MOMO" ? "MTN MoMo" : "Airtel Money"}
-                                  </button>
-                                ))}
-                              </div>
-                              <div style={{ display: "flex", gap: 6 }}>
-                                <input
-                                  style={{ ...input, flex: 1, padding: "8px 10px" }}
-                                  placeholder={state.profile.payoutPhone || "07xxxxxxxx"}
-                                  value={payPhone}
-                                  onChange={e => setPayPhone(formatRwPhone(e.target.value))}
-                                  inputMode="numeric" maxLength={10}
-                                />
-                                <button
-                                  disabled={busy || !isValidRwPhone(payPhone)}
-                                  onClick={() => act(async () => {
-                                    const r = await setMotariPayout({ payoutPhone: payPhone }, token());
-                                    setPayPhone("");
-                                    return r;
-                                  })}
-                                  style={{
-                                    borderRadius: 8, padding: "8px 14px", fontSize: 9, fontWeight: 900,
-                                    letterSpacing: "0.06em", textTransform: "uppercase", fontFamily: "inherit",
-                                    cursor: isValidRwPhone(payPhone) ? "pointer" : "not-allowed",
-                                    background: isValidRwPhone(payPhone) ? "#f97316" : "#1a1a1a",
-                                    color: isValidRwPhone(payPhone) ? "#000" : "#555", border: "none", flexShrink: 0,
-                                  }}
-                                >
-                                  {t("motari.dash.save") || "Save"}
-                                </button>
+                            <div style={{ ...micro, marginTop: 9, lineHeight: 1.6 }}>
+                              {(t("motari.dash.payout_to") || "Sent to {phone} on {operator}, the number on your account.")
+                                .replace("{phone}", state.profile.payoutPhone || "your number")
+                                .replace("{operator}", state.profile.payoutOperator || "mobile money")}
+                              <div style={{ color: "#555" }}>
+                                {t("motari.dash.payout_change") || "To change it, ask support below."}
                               </div>
                             </div>
                           )}
