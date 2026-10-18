@@ -527,7 +527,6 @@ export default function AskMotariPage() {
   /** A trip nobody can measure needs a price before anyone can be sent for it. */
   const priceOk = !needsNamedPrice || priced >= (quote?.minFareRwf ?? 500);
   const canSubmit = !!pickup &&
-      name.trim().length >= 2 &&
       isValidRwPhone(phone) &&
       priceOk &&
       courierOk &&
@@ -539,7 +538,7 @@ export default function AskMotariPage() {
     setError("");
     try {
       const r = await requestRide({
-        name: name.trim(),
+        name: "Passenger",
         phone: phone.trim(),
         pickupLat: pickup.latitude, pickupLng: pickup.longitude, pickupName: pickup.label,
         ...(dest
@@ -674,35 +673,37 @@ export default function AskMotariPage() {
     position: "absolute", left: 10, top: 17, transform: "translateY(-50%)",
   };
   const suggestBox: React.CSSProperties = {
-    position: "absolute", left: 0, right: 0, top: 38, zIndex: 30,
-    background: "#0a0a0a", border: "1px solid #262626", borderRadius: 10, overflow: "hidden",
-    boxShadow: "0 12px 32px rgba(0,0,0,0.85)",
+    position: "absolute", left: 0, right: 0, top: 40, zIndex: 40,
+    background: "#0c0c0c", border: "1px solid #292929", borderRadius: 12,
+    maxHeight: 280, overflowY: "auto", overflowX: "hidden",
+    boxShadow: "0 16px 36px rgba(0,0,0,0.92)",
   };
   /// The bar across the top of any open list: what it is, and the way to shut
   /// it. Nothing the passenger opens should be something they cannot close.
   const listHead = (label: string) => (
     <div style={{
       display: "flex", alignItems: "center", justifyContent: "space-between",
-      padding: "7px 9px 7px 13px", borderBottom: "1px solid #1a1a1a",
+      padding: "6px 10px 6px 12px", borderBottom: "1px solid #1a1a1a",
+      background: "#111", position: "sticky", top: 0, zIndex: 2,
     }}>
-      <span style={{ ...micro, color: "#777" }}>{label}</span>
+      <span style={{ ...micro, color: "#888", fontSize: 8.5 }}>{label}</span>
       <button
         onClick={() => setOpenList(null)}
         aria-label={t("common.buttons.close") || "Close"}
         style={{
           background: "none", border: "none", cursor: "pointer", color: "#888",
-          display: "flex", alignItems: "center", padding: 4, borderRadius: 6,
+          display: "flex", alignItems: "center", padding: 3, borderRadius: 6,
         }}
       >
-        <X size={13} />
+        <X size={12} />
       </button>
     </div>
   );
 
   const suggestItem: React.CSSProperties = {
-    display: "block", width: "100%", textAlign: "left", padding: "9px 13px",
-    background: "none", border: "none", borderBottom: "1px solid #1a1a1a",
-    color: "#eee", fontSize: 12.5, cursor: "pointer", fontFamily: "inherit",
+    display: "flex", alignItems: "flex-start", gap: 8, width: "100%", textAlign: "left",
+    padding: "8px 12px", background: "none", border: "none", borderBottom: "1px solid #181818",
+    color: "#eee", fontSize: 11.5, cursor: "pointer", fontFamily: "inherit",
   };
   const cta = (enabled: boolean, bg = "#f97316"): React.CSSProperties => ({
     width: "100%", background: enabled ? bg : "#1a1a1a",
@@ -945,52 +946,12 @@ export default function AskMotariPage() {
                 )}
               </div>
 
-              {/* Once the fare is agreed the three answers above fold to a line
-                  each, so the part still being filled in is the part on screen.
-                  Tapping one puts just that field back. */}
-              {folded && (
-                <div style={{ marginBottom: 12 }}>
-                  {([
-                    ["from", "#f97316", t("motari.request.from_label") || "From",
-                      pickupQ || (t("motari.request.my_location") || "Where I am")],
-                    ["to", "#16a34a", t("motari.request.to_label") || "To",
-                      destQ.trim() || (t("motari.request.meter_ride") || "Meter ride")],
-                    ["fare", "#f97316", t("motari.request.fare_label") || "Fare", fmt(priced)],
-                  ] as const).map(([key, dot, label, value]) => (
-                    <button
-                      key={key}
-                      onClick={() => setEditing(editing === key ? null : key)}
-                      style={{
-                        display: "flex", alignItems: "center", gap: 10, width: "100%",
-                        background: "none", border: "none", padding: "0 0 10px",
-                        cursor: "pointer", fontFamily: "inherit", textAlign: "left",
-                      }}
-                    >
-                      <span style={{ width: 8, height: 8, borderRadius: "50%", background: dot, flexShrink: 0 }} />
-                      <span style={{ ...micro, width: 42, flexShrink: 0 }}>{label}</span>
-                      <span style={{
-                        flex: 1, color: "#fff", fontSize: 12.5, fontWeight: 700,
-                        overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                      }}>{value}</span>
-                      <span style={{
-                        width: 26, height: 26, borderRadius: 8, flexShrink: 0,
-                        background: "#0a0a0a", border: "1px solid #1f1f1f",
-                        display: "flex", alignItems: "center", justifyContent: "center", color: "#f97316",
-                      }}>
-                        <Pencil size={11} />
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              )}
-
               {/* pickup */}
-              <div style={{ position: "relative", marginBottom: 8,
-                            display: !folded || editing === "from" ? undefined : "none" }}>
+              <div style={{ position: "relative", marginBottom: 8 }}>
                 <MapPin size={12} color="#f97316" style={iconLeft} />
                 <input
                   style={input}
-                  placeholder={t("motari.request.pickup_placeholder") || "From"}
+                  placeholder={t("motari.request.pickup_placeholder") || "From (pickup)"}
                   onFocus={() => setOpenList("pickup")}
                   value={pickupQ}
                   onChange={e => { setPickupQ(e.target.value); if (pickup) setPickup(null); }}
@@ -1024,8 +985,11 @@ export default function AskMotariPage() {
                         setOpenList(null);
                         remember(sg);
                       }}>
-                        <b>{sg.label}</b>
-                        <span style={{ display: "block", color: "#777", fontSize: 11.5, marginTop: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sg.fullName}</span>
+                        <MapPin size={12} color="#f97316" style={{ flexShrink: 0, marginTop: 2 }} />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <b style={{ display: "block", color: "#fff", fontSize: 12 }}>{sg.label}</b>
+                          <span style={{ display: "block", color: "#777", fontSize: 10.5, marginTop: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sg.fullName}</span>
+                        </div>
                       </button>
                     ))}
                     {pickupSug.length === 0 && pickupQ.trim().length < 2 && recent.map((sg, i) => (
@@ -1034,30 +998,47 @@ export default function AskMotariPage() {
                         setPickupQ(sg.label);
                         setOpenList(null);
                       }}>
-                        <b>{sg.label}</b>
+                        <MapPin size={12} color="#888" style={{ flexShrink: 0, marginTop: 2 }} />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <b style={{ display: "block", color: "#fff", fontSize: 12 }}>{sg.label}</b>
+                        </div>
                       </button>
                     ))}
                     {!searchingPickup && pickupSug.length === 0 && pickupQ.trim().length >= 2 && (
-                      <div style={{ padding: "10px 13px", fontSize: 11.5, color: "#888" }}>
-                        {t("motari.request.no_match") || "No match. Tap the map to drop a pin."}
-                      </div>
+                      <button
+                        type="button"
+                        style={{ ...suggestItem, borderBottom: "none", background: "#17120a" }}
+                        onClick={() => {
+                          const dev = deviceRef.current || { lat: -1.9441, lng: 30.0619 };
+                          setPickup({ latitude: dev.lat, longitude: dev.lng, label: pickupQ.trim() });
+                          setOpenList(null);
+                        }}
+                      >
+                        <MapPin size={13} color="#f97316" style={{ flexShrink: 0, marginTop: 2 }} />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <b style={{ color: "#fff", fontSize: 11.5 }}>
+                            {t("motari.request.use_typed") || "Use typed pickup:"} "{pickupQ.trim()}"
+                          </b>
+                          <span style={{ display: "block", color: "#888", fontSize: 10.5, marginTop: 1 }}>
+                            Driver will meet you at this typed address
+                          </span>
+                        </div>
+                      </button>
                     )}
                   </div>
                 )}
               </div>
 
               {/* destination */}
-              <div style={{ position: "relative", marginBottom: 10,
-                            display: !folded || editing === "to" ? undefined : "none" }}>
+              <div style={{ position: "relative", marginBottom: 8 }}>
                 <Flag size={12} color={kind === "COURIER" && !dest ? "#f97316" : "#16a34a"} style={iconLeft} />
                 <input
-                  // A parcel's destination is required: the field says so until it is picked.
                   style={kind === "COURIER" && !hasDestination
                     ? { ...input, borderColor: "#7c3a10" }
                     : input}
                   placeholder={kind === "COURIER"
                     ? (t("motari.request.destination_required") || "To (required for parcels)")
-                    : (t("motari.request.destination_placeholder") || "To (optional)")}
+                    : (t("motari.request.destination_placeholder") || "To (destination)")}
                   onFocus={() => setOpenList("dest")}
                   value={destQ}
                   onChange={e => {
@@ -1096,8 +1077,11 @@ export default function AskMotariPage() {
                         setDestSettled(true);
                         remember(sg);
                       }}>
-                        <b>{sg.label}</b>
-                        <span style={{ display: "block", color: "#777", fontSize: 11.5, marginTop: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sg.fullName}</span>
+                        <MapPin size={12} color="#16a34a" style={{ flexShrink: 0, marginTop: 2 }} />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <b style={{ display: "block", color: "#fff", fontSize: 12 }}>{sg.label}</b>
+                          <span style={{ display: "block", color: "#777", fontSize: 10.5, marginTop: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sg.fullName}</span>
+                        </div>
                       </button>
                     ))}
                     {destSug.length === 0 && !typedDest && destQ.trim().length < 2 && recent.map((sg, i) => (
@@ -1107,39 +1091,70 @@ export default function AskMotariPage() {
                         setOpenList(null);
                         setDestSettled(true);
                       }}>
-                        <b>{sg.label}</b>
+                        <MapPin size={12} color="#888" style={{ flexShrink: 0, marginTop: 2 }} />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <b style={{ display: "block", color: "#fff", fontSize: 12 }}>{sg.label}</b>
+                        </div>
                       </button>
                     ))}
-                    {/* A place the map has never heard of is still a place. Saying
-                        so is a choice the passenger makes and closes, not a notice
-                        that sits over the form until they give up. */}
-                    {!searchingDest && destSug.length === 0 && typedDest && (
+                    {/* Fallback option when location is typed: choose to send typed address */}
+                    {typedDest && (
                       <button
-                        style={{ ...suggestItem, borderBottom: "none" }}
+                        type="button"
+                        style={{ ...suggestItem, borderBottom: "none", background: "#1a130b" }}
                         onClick={() => { setDestSettled(true); setOpenList(null); }}
                       >
-                        <b style={{ color: "#fff" }}>
-                          {t("motari.request.use_typed") || "We will send your motari here"}
-                        </b>
-                        <span style={{ display: "block", color: "#888", fontSize: 11.5, marginTop: 2 }}>
-                          {t("motari.request.typed_hint")
-                            || "Not on the map, so name what you will pay"}
-                        </span>
+                        <MapPin size={13} color="#f97316" style={{ flexShrink: 0, marginTop: 2 }} />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <b style={{ display: "block", color: "#f97316", fontSize: 12 }}>
+                            {t("motari.request.use_typed") || "Send typed address:"} "{typedDest}"
+                          </b>
+                          <span style={{ display: "block", color: "#888", fontSize: 10.5, marginTop: 1 }}>
+                            {t("motari.request.typed_hint") || "Not on the map, so name what you will pay"}
+                          </span>
+                        </div>
                       </button>
                     )}
                   </div>
                 )}
               </div>
 
-              {/* A ride with nowhere named runs on the meter. Saying so is an
-                  answer to the question, not a refusal to answer it. */}
-              {!folded && kind === "RIDE" && !destSettled && !destQ.trim() && (
+              {/* Styled option button if destination is typed directly and not pinned */}
+              {typedDest && !dest && (
                 <button
+                  type="button"
+                  onClick={() => { setDestSettled(true); setOpenList(null); }}
+                  style={{
+                    width: "100%", marginBottom: 8,
+                    background: destSettled ? "#14532d" : "#1a120b",
+                    border: destSettled ? "1px solid #22c55e" : "1px solid #f97316",
+                    borderRadius: 9, padding: "7px 11px",
+                    display: "flex", alignItems: "center", gap: 8, textAlign: "left",
+                    cursor: "pointer", fontFamily: "inherit",
+                  }}
+                >
+                  <MapPin size={13} color={destSettled ? "#4ade80" : "#f97316"} style={{ flexShrink: 0 }} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ color: "#fff", fontSize: 11.5, fontWeight: 700 }}>
+                      {destSettled ? (t("motari.request.typed_confirmed") || "Using typed address:") : (t("motari.request.use_typed") || "Send typed address:")} <b>"{typedDest}"</b>
+                    </div>
+                    <div style={{ color: "#888", fontSize: 10, marginTop: 1 }}>
+                      {destSettled ? (t("motari.request.typed_confirmed_hint") || "Driver will navigate by this address. Set your fare.") : (t("motari.request.typed_hint") || "Not pinned on map · Click to send typed address")}
+                    </div>
+                  </div>
+                  {destSettled ? <Check size={13} color="#4ade80" /> : <ChevronDown size={13} color="#f97316" />}
+                </button>
+              )}
+
+              {/* Meter ride option if destination is empty in RIDE mode */}
+              {kind === "RIDE" && !destSettled && !destQ.trim() && (
+                <button
+                  type="button"
                   onClick={() => { setDest(null); setDestSettled(true); }}
                   style={{
-                    width: "100%", marginBottom: 10, background: "transparent",
-                    border: "1px solid #1f1f1f", borderRadius: 10, padding: "9px 14px",
-                    color: "#888", fontSize: 10.5, fontWeight: 800, cursor: "pointer",
+                    width: "100%", marginBottom: 8, background: "transparent",
+                    border: "1px solid #1f1f1f", borderRadius: 9, padding: "7px 12px",
+                    color: "#888", fontSize: 10, fontWeight: 800, cursor: "pointer",
                     fontFamily: "inherit", letterSpacing: "0.06em", textTransform: "uppercase",
                   }}
                 >
@@ -1147,78 +1162,8 @@ export default function AskMotariPage() {
                 </button>
               )}
 
-              {/* trip chips: km · min · fare */}
-              {/* How much. It arrives once there is somewhere to go, because
-                  before that there is nothing to price. A destination taken off
-                  the map has a route behind it, so the box opens with that price
-                  and the passenger only has to agree; one typed as free text has
-                  nothing to measure, so the price is theirs to name. */}
-              {placesDone && (!folded || editing === "fare") && (
-                <div style={{ marginBottom: 12 }}>
-                  <div style={{ display: "flex", alignItems: "baseline", marginBottom: 6 }}>
-                    <span style={micro}>
-                      {pricedByRoute
-                        ? (t("motari.request.approx_amount") || "Approximate fare")
-                        : (t("motari.request.name_price") || "What will you pay?")}
-                    </span>
-                    {pricedByRoute && route?.distanceM != null && (
-                      <span style={{ ...micro, marginLeft: "auto", color: "#555" }}>
-                        {km(route.distanceM)}
-                      </span>
-                    )}
-                  </div>
-
-                  {pricedByRoute ? (
-                    <div style={{ color: "#888", fontSize: 11.5, lineHeight: 1.45, marginBottom: 8 }}>
-                      {t("motari.request.approx_hint")
-                        || "Worked out from the route. You can change it, but this is what motari expect."}
-                    </div>
-                  ) : quote && !measurable ? (
-                    <div style={{ color: "#888", fontSize: 11.5, lineHeight: 1.45, marginBottom: 8 }}>
-                      {t("motari.request.meter_card")
-                        || `No destination, so the meter runs: ${fmt(quote.baseFareRwf)} to start, ${fmt(quote.perKmRwf)} per kilometre.`}
-                    </div>
-                  ) : null}
-
-                  <div style={{ position: "relative" }}>
-                    <span style={{
-                      position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)",
-                      color: "#555", fontSize: 11, fontWeight: 800, pointerEvents: "none",
-                    }}>RWF</span>
-                    <input
-                      style={{ ...input, paddingLeft: 46, fontSize: 17, fontWeight: 900, color: "#f97316" }}
-                      value={offerFare}
-                      onChange={e => { setFareTouched(true); setOfferFare(e.target.value.replace(/\D/g, "")); }}
-                      inputMode="numeric"
-                      maxLength={7}
-                      placeholder={`${t("motari.request.at_least") || "At least"} ${fmt(minFare)}`}
-                    />
-                  </div>
-
-                  {priced > 0 && priced < minFare && (
-                    <div style={{ color: "#fbbf24", fontSize: 11, marginTop: 6 }}>
-                      {t("motari.request.too_little") || `Less than the ${fmt(minFare)} this trip starts at.`}
-                    </div>
-                  )}
-
-                  {folded && editing === "fare" && (
-                    <button
-                      onClick={() => setEditing(null)}
-                      style={{
-                        width: "100%", marginTop: 8, background: "transparent",
-                        border: "1px solid #1f1f1f", borderRadius: 10, padding: "8px 14px",
-                        color: "#888", fontSize: 10.5, fontWeight: 800, cursor: "pointer",
-                        fontFamily: "inherit", letterSpacing: "0.06em", textTransform: "uppercase",
-                      }}
-                    >
-                      {t("motari.request.done") || "Done"}
-                    </button>
-                  )}
-                </div>
-              )}
-
               {/* what is being sent (delivery only) */}
-              {kind === "COURIER" && !folded && (
+              {kind === "COURIER" && (
                 <div style={{ position: "relative", marginBottom: 8 }}>
                   <Package size={12} color="#f97316" style={iconLeft} />
                   <input
@@ -1231,41 +1176,82 @@ export default function AskMotariPage() {
                 </div>
               )}
 
-              {/* Who is asking, once the money is agreed. */}
-              {fareDone && !editing && (
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
-                <div style={{ position: "relative" }}>
-                  <User size={12} color="#555" style={iconLeft} />
-                  <input style={input} placeholder={t("motari.request.your_name") || "Your name"}
-                         value={name} onChange={e => setName(e.target.value)} maxLength={120} />
+              {/* Fare (Money) field */}
+              <div style={{ marginBottom: 8 }}>
+                <div style={{ display: "flex", alignItems: "baseline", marginBottom: 5 }}>
+                  <span style={micro}>
+                    {pricedByRoute
+                      ? (t("motari.request.approx_amount") || "Approximate fare")
+                      : (t("motari.request.name_price") || "What will you pay?")}
+                  </span>
+                  {pricedByRoute && route?.distanceM != null && (
+                    <span style={{ ...micro, marginLeft: "auto", color: "#555" }}>
+                      {km(route.distanceM)}
+                    </span>
+                  )}
                 </div>
+
+                {pricedByRoute ? (
+                  <div style={{ color: "#888", fontSize: 11, lineHeight: 1.4, marginBottom: 6 }}>
+                    {t("motari.request.approx_hint")
+                      || "Worked out from the route. You can change it, but this is what motari expect."}
+                  </div>
+                ) : quote && !measurable ? (
+                  <div style={{ color: "#888", fontSize: 11, lineHeight: 1.4, marginBottom: 6 }}>
+                    {t("motari.request.meter_card")
+                      || `No destination, so the meter runs: ${fmt(quote.baseFareRwf)} to start, ${fmt(quote.perKmRwf)} per kilometre.`}
+                  </div>
+                ) : null}
+
                 <div style={{ position: "relative" }}>
-                  <Phone size={12} color="#555" style={iconLeft} />
-                  <input style={input} placeholder={t("motari.request.your_phone") || "07xx…"}
-                         value={phone} onChange={e => setPhone(formatRwPhone(e.target.value))} inputMode="numeric" maxLength={10} />
+                  <span style={{
+                    position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)",
+                    color: "#555", fontSize: 11, fontWeight: 800, pointerEvents: "none",
+                  }}>RWF</span>
+                  <input
+                    style={{ ...input, paddingLeft: 46, fontSize: 16, fontWeight: 900, color: "#f97316" }}
+                    value={offerFare}
+                    onChange={e => { setFareTouched(true); setOfferFare(e.target.value.replace(/\D/g, "")); }}
+                    inputMode="numeric"
+                    maxLength={7}
+                    placeholder={`${t("motari.request.at_least") || "At least"} ${fmt(minFare)}`}
+                  />
                 </div>
+
+                {priced > 0 && priced < minFare && (
+                  <div style={{ color: "#fbbf24", fontSize: 10.5, marginTop: 4 }}>
+                    {t("motari.request.too_little") || `Less than the ${fmt(minFare)} this trip starts at.`}
+                  </div>
+                )}
               </div>
-              )}
 
-              {/* Advice, not a failure, and worded as one: amber rather than
-                  red, and gone the moment the phone knows where it is or the
-                  passenger does what it asked. */}
+              {/* Phone number field */}
+              <div style={{ position: "relative", marginBottom: 12 }}>
+                <Phone size={12} color="#555" style={iconLeft} />
+                <input
+                  style={input}
+                  placeholder={t("motari.request.your_phone") || "07xxxxxxxx (Phone number)"}
+                  value={phone}
+                  onChange={e => setPhone(formatRwPhone(e.target.value))}
+                  inputMode="numeric"
+                  maxLength={10}
+                />
+              </div>
+
+              {/* Advice and error alerts */}
               {gpsAdvice && !pickup && (
-                <div style={{ color: "#fbbf24", fontSize: 12, marginBottom: 10 }}>{gpsAdvice}</div>
+                <div style={{ color: "#fbbf24", fontSize: 11.5, marginBottom: 8 }}>{gpsAdvice}</div>
               )}
-              {error && <div style={{ color: "#f87171", fontSize: 12, marginBottom: 10 }}>{error}</div>}
+              {error && <div style={{ color: "#f87171", fontSize: 11.5, marginBottom: 8 }}>{error}</div>}
 
-              {/* The button arrives when there is something to press it for,
-                  rather than sitting greyed out through the whole form. */}
-              {fareDone && whoDone && !editing && (
-                <button onClick={submit} disabled={!canSubmit} style={cta(canSubmit)}>
-                  {busy
-                    ? (t("motari.request.requesting") || "Requesting…")
-                    : kind === "COURIER"
-                      ? (t("motari.request.find_delivery") || "Find me a delivery motari")
-                      : (t("motari.request.find") || "Find me a motari")}
-                </button>
-              )}
+              {/* Request button: always visible upfront */}
+              <button onClick={submit} disabled={!canSubmit} style={cta(canSubmit)}>
+                {busy
+                  ? (t("motari.request.requesting") || "Requesting…")
+                  : kind === "COURIER"
+                    ? (t("motari.request.find_delivery") || "Find me a delivery motari")
+                    : (t("motari.request.find") || "Find me a motari")}
+              </button>
 
               <div style={{ ...micro, textAlign: "center", marginTop: 10, color: "#555" }}>
                 {t("motari.request.trust") || "Verified drivers · Plates you can check · Cash or MoMo"}

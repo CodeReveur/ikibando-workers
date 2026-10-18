@@ -29,6 +29,8 @@ export default function SignUpPage() {
   const { t } = useLanguage();
   const { error: toastError } = useToast();
   const [showPassword, setShowPassword] = useState(false);
+  const [signupRole, setSignupRole] = useState<"WORKER" | "EMPLOYER" | "MOTARI">("WORKER");
+  const [isGoogleSignup, setIsGoogleSignup] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", password: "" });
   const [loading, setLoading] = useState<"google" | "facebook" | "email" | null>(null);
   const [fieldErrors, setFieldErrors] = useState({ name: "", email: "", phone: "", password: "" });
@@ -65,7 +67,14 @@ export default function SignUpPage() {
 
   // Capture a referral code from the invite link (?ref=CODE).
   useEffect(() => {
-    const ref = new URLSearchParams(window.location.search).get("ref");
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get("ref");
+    const r = params.get("role");
+    if (r && (r.toUpperCase() === "MOTARI" || r.toUpperCase() === "EMPLOYER" || r.toUpperCase() === "WORKER")) {
+      setSignupRole(r.toUpperCase() as "WORKER" | "EMPLOYER" | "MOTARI");
+    } else if (params.get("motari") === "1" || params.get("drive") === "1" || params.get("register") === "1") {
+      setSignupRole("MOTARI");
+    }
     if (ref) setReferralCode(ref.trim().toUpperCase());
   }, []);
 
@@ -179,8 +188,9 @@ export default function SignUpPage() {
   /* ── Google handler (button mounts only when a client id is configured) ── */
   const onGoogleSuccess = async ({ access_token }: { access_token: string }) => {
       setLoading("google");
+      setIsGoogleSignup(true);
       try {
-        const result = await signupWithGoogle(access_token);
+        const result = await signupWithGoogle(access_token, signupRole);
         if (!result.user.onboardingCompleted) {
           setAuthResult(result);
           setShowRoleSelect(true);
@@ -256,8 +266,9 @@ export default function SignUpPage() {
     }
 
     setLoading("email");
+    setIsGoogleSignup(false);
     try {
-      const result = await registerWithEmail({ ...form, role: "WORKER", referralCode: referralCode || undefined });
+      const result = await registerWithEmail({ ...form, role: signupRole, referralCode: referralCode || undefined });
       if (!result.user.onboardingCompleted) {
         setAuthResult(result);
         setShowRoleSelect(true);
@@ -397,6 +408,44 @@ export default function SignUpPage() {
           color: var(--auth-muted);
           margin: 0 0 clamp(12px, 4vw, 22px);
           line-height: 1.4;
+        }
+
+        .auth-role-tabs {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 6px;
+          margin-bottom: clamp(12px, 3.5vw, 18px);
+          background: #161616;
+          padding: 4px;
+          border-radius: 12px;
+          border: 1px solid var(--auth-panel-border);
+        }
+
+        .auth-role-tab {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 5px;
+          padding: clamp(7px, 2.2vw, 9px) 4px;
+          background: transparent;
+          border: 1px solid transparent;
+          border-radius: 9px;
+          font-size: clamp(10px, 2.6vw, 12px);
+          font-weight: 700;
+          color: #888;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .auth-role-tab:hover {
+          color: #bbb;
+        }
+
+        .auth-role-tab.active {
+          background: #242424;
+          border-color: #383838;
+          color: #fff;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.35);
         }
 
         .auth-social-group {
@@ -611,6 +660,34 @@ export default function SignUpPage() {
                 hidden piece of state and the page looked like anybody else's. */}
             <InvitedBy code={referralCode} style={{ marginTop: 14 }} />
 
+            {/* Role / User Type Selector */}
+            <div className="auth-role-tabs">
+              <button
+                type="button"
+                onClick={() => setSignupRole("WORKER")}
+                className={`auth-role-tab ${signupRole === "WORKER" ? "active" : ""}`}
+              >
+                <span>👷</span>
+                <span>{t("common.nav.job_seeker") || "Job Seeker"}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setSignupRole("EMPLOYER")}
+                className={`auth-role-tab ${signupRole === "EMPLOYER" ? "active" : ""}`}
+              >
+                <span>🏢</span>
+                <span>{t("common.nav.employer") || "Employer"}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setSignupRole("MOTARI")}
+                className={`auth-role-tab ${signupRole === "MOTARI" ? "active" : ""}`}
+              >
+                <span>🏍️</span>
+                <span>{t("motari.title") || "Motari"}</span>
+              </button>
+            </div>
+
             {/* Social */}
             <div className="auth-social-group">
               {GOOGLE_AUTH_ENABLED && (
@@ -708,9 +785,9 @@ export default function SignUpPage() {
             {/* Motari have their own signup: different field set (plate, brand, permit). */}
             <p style={{ textAlign: "center", fontSize: 12.5, color: "#666", marginTop: 6 }}>
               {t("motari.register.signup_prompt") || "Driving a moto taxi?"}{" "}
-              <a href="/motari?register=1" style={{ color: "#f97316", fontWeight: 700, textDecoration: "none" }}>
+              <button type="button" onClick={() => setSignupRole("MOTARI")} style={{ background: "none", border: "none", color: "#f97316", fontWeight: 700, textDecoration: "none", cursor: "pointer", padding: 0 }}>
                 {t("motari.menu.register") || "Register as motari"}
-              </a>
+              </button>
             </p>
           </div>
         </div>
@@ -719,6 +796,8 @@ export default function SignUpPage() {
         <RegistrationWizard
           email={form.email || authResult?.user?.email || ""}
           authResult={authResult}
+          initialRole={signupRole}
+          isGoogle={isGoogleSignup}
           showRoleSelect={showRoleSelect}
           slideMode={slideMode}
           onComplete={() => saveAndRedirect(authResult)}
@@ -737,7 +816,7 @@ function saveAndRedirect(result: AuthResult) {
   localStorage.setItem("refresh_token", result.refreshToken);
   localStorage.setItem("user", JSON.stringify(result.user));
   const stored = getAndClearRedirect();
-  const defaultDest = result.user.role === "EMPLOYER" ? "/owner" : "/seeker";
+  const defaultDest = result.user.role === "EMPLOYER" ? "/owner" : result.user.role === "MOTARI" ? "/drive" : "/seeker";
   window.location.href = stored || defaultDest;
 }
 

@@ -660,13 +660,17 @@
       "completed_title": "Tout est prêt !",
       "completed_subtitle": "Nous vous redirigeons vers votre tableau de bord…",
       "badge_offer_title": "Une dernière chose : votre badge de travail",
-      "badge_offer_subtitle": "Un badge vérifié inspire confiance et vous fait embaucher plus vite. Vous pouvez aussi le faire plus tard."
+      "badge_offer_subtitle": "Un badge vérifié inspire confiance et vous fait embaucher plus vite. Vous pouvez aussi le faire plus tard.",
+      "motari_title": "Détails de la moto",
+      "motari_subtitle": "Fournissez les détails de votre moto pour commencer à conduire"
     },
     "roles": {
       "worker_label": "Trouver du travail",
       "worker_desc": "Parcourir & postuler à des emplois",
       "employer_label": "Embaucher des travailleurs",
       "employer_desc": "Publier des offres & recruter des talents",
+      "motari_label": "Chauffeur Motari",
+      "motari_desc": "Transporter des passagers & livrer des colis",
       "continue_btn": "Continuer en tant que {role}"
     },
     "otp": {

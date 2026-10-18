@@ -660,13 +660,17 @@
       "completed_title": "Byose byamaze gutungana!",
       "completed_subtitle": "Turakugeza ahabanza hawe…",
       "badge_offer_title": "Ikintu cya nyuma: ikarita yawe y’akazi",
-      "badge_offer_subtitle": "Ikarita yemejwe yongera icyizere kandi ituma ubona akazi vuba. Ushobora no kuyikora nyuma."
+      "badge_offer_subtitle": "Ikarita yemejwe yongera icyizere kandi ituma ubona akazi vuba. Ushobora no kuyikora nyuma.",
+      "motari_title": "Amakuru ya moto",
+      "motari_subtitle": "Shyiraho amakuru ya moto yawe kugira ngo utangire gutwara"
     },
     "roles": {
       "worker_label": "Shaka akazi",
       "worker_desc": "Reba & andikira akazi",
       "employer_label": "Tanga akazi",
       "employer_desc": "Shyiraho akazi & tanga akazi",
+      "motari_label": "Kora nk'umunyamotari",
+      "motari_desc": "Gutwara abagenzi & kugeza imizigo",
       "continue_btn": "Komeza nka {role}"
     },
     "otp": {

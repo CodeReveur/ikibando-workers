@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useRef, KeyboardEvent, useEffect } from "react";
-import { CheckCircle2, Loader2, X } from "lucide-react";
-import { OnboardingData, submitOnboarding, verifyEmailCode, resendOtpCode, AuthResult, getJobCategories, JobCategoryMeta, Address, AccountType } from "@/lib/api";
+import { CheckCircle2, Loader2, X, Phone, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { OnboardingData, submitOnboarding, verifyEmailCode, resendOtpCode, AuthResult, getJobCategories, JobCategoryMeta, Address, AccountType, saveMotariProfile, checkPlateNumber, apiError } from "@/lib/api";
 import { AddressPicker, isAddressComplete } from "@/components/ui/address-picker";
 import { useToast } from "@/components/ui/toast";
 import { useLanguage } from "@/lib/language-context";
 import { BadgeSubmissionWizard } from "./badge-submission-wizard";
 
-type Step = "ROLE_SELECT" | "EMAIL_VERIFY" | "ACCOUNT_TYPE" | "EMPLOYER_DETAILS" | "PERSONAL" | "LOCATION_AVAILABILITY" | "EQUIPMENT" | "BADGE_OFFER" | "COMPLETED";
+type Step = "ROLE_SELECT" | "EMAIL_VERIFY" | "ACCOUNT_TYPE" | "EMPLOYER_DETAILS" | "PERSONAL" | "LOCATION_AVAILABILITY" | "EQUIPMENT" | "MOTARI_DETAILS" | "BADGE_OFFER" | "COMPLETED";
 
 const ACCOUNT_TYPES: { value: AccountType; label: string; icon: string; desc: string }[] = [
   { value: "INDIVIDUAL", label: "Individual", icon: "🧍", desc: "Just me, working solo" },
@@ -24,6 +24,9 @@ interface Props {
   authResult: AuthResult | null;
   isLogin?: boolean;
   showRoleSelect?: boolean;
+  initialRole?: "WORKER" | "EMPLOYER" | "MOTARI";
+  isGoogle?: boolean;
+  hasPassword?: boolean;
   /**
    * Manual (email/password) signups run in "slide" mode: a continuous flow with
    * a progress bar (no step markers), sliding transitions, and a silent
@@ -41,7 +44,7 @@ interface Props {
  */
 const PROGRESS_STEPS: Step[] = [
   "ROLE_SELECT", "ACCOUNT_TYPE", "EMPLOYER_DETAILS", "PERSONAL",
-  "LOCATION_AVAILABILITY", "EQUIPMENT", "EMAIL_VERIFY", "BADGE_OFFER", "COMPLETED",
+  "LOCATION_AVAILABILITY", "EQUIPMENT", "MOTARI_DETAILS", "EMAIL_VERIFY", "BADGE_OFFER", "COMPLETED",
 ];
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -79,7 +82,7 @@ const STEP_NUMBER: Partial<Record<Step, string>> = {
 
 // Data-collection steps that are safe to resume a draft into (prerequisites -
 // role selection and email verification - already satisfied).
-const DATA_STEPS: Step[] = ["ACCOUNT_TYPE", "EMPLOYER_DETAILS", "PERSONAL", "LOCATION_AVAILABILITY", "EQUIPMENT"];
+const DATA_STEPS: Step[] = ["ACCOUNT_TYPE", "EMPLOYER_DETAILS", "PERSONAL", "LOCATION_AVAILABILITY", "EQUIPMENT", "MOTARI_DETAILS"];
 
 function capitalize(str: string) {
   return str
@@ -88,17 +91,57 @@ function capitalize(str: string) {
     .join(" ");
 }
 
-export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect, slideMode, onComplete }: Props) {
+export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect, initialRole, isGoogle, hasPassword, slideMode, onComplete }: Props) {
   const { t } = useLanguage();
   const { error: toastError, success: toastSuccess } = useToast();
-  const [step, setStep] = useState<Step>(showRoleSelect ? "ROLE_SELECT" : "EMAIL_VERIFY");
+  const [step, setStep] = useState<Step>(showRoleSelect ? "ROLE_SELECT" : (initialRole === "MOTARI" || authResult?.user?.role === "MOTARI") ? "MOTARI_DETAILS" : "EMAIL_VERIFY");
   const [loading, setLoading] = useState(false);
   // Slide mode defers email verification to the end and offers a badge last.
   const [emailVerified, setEmailVerified] = useState<boolean>(!!authResult?.user?.emailVerified);
   const [showBadge, setShowBadge] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<"WORKER" | "EMPLOYER">(
-    (authResult?.user?.role as "WORKER" | "EMPLOYER") || "WORKER"
+  const [selectedRole, setSelectedRole] = useState<"WORKER" | "EMPLOYER" | "MOTARI">(
+    (initialRole || (authResult?.user?.role as any)) || "WORKER"
   );
+
+  // Motari-specific fields (only missing information requested)
+  const [plateNumber, setPlateNumber] = useState("");
+  const [brandModel, setBrandModel] = useState("");
+  const [motariPhone, setMotariPhone] = useState(authResult?.user?.phone || "");
+  const [motariPassword, setMotariPassword] = useState("");
+  const [showMotariPassword, setShowMotariPassword] = useState(false);
+  const [plateState, setPlateState] = useState<"idle" | "checking" | "valid" | "invalid" | "taken">("idle");
+  const [plateNote, setPlateNote] = useState("");
+  const plateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const isPhoneMissing = !authResult?.user?.phone || authResult.user.phone.trim().length === 0;
+  const isPasswordMissing = isGoogle || (hasPassword === false) || (authResult?.user?.hasPassword === false);
+
+  const handlePlateChange = (val: string) => {
+    setPlateNumber(val);
+    if (plateTimer.current) clearTimeout(plateTimer.current);
+    const typed = val.trim();
+    if (typed.replace(/[^A-Za-z0-9]/g, "").length < 4) {
+      setPlateState("idle");
+      setPlateNote("");
+      return;
+    }
+    setPlateState("checking");
+    setPlateNote("");
+    plateTimer.current = setTimeout(async () => {
+      try {
+        const r = await checkPlateNumber(typed);
+        setPlateState(
+          r.verdict === "VALID" ? (r.taken ? "taken" : "valid")
+          : r.verdict === "INVALID" ? "invalid"
+          : "idle"
+        );
+        setPlateNote(r.message || "");
+        if (r.display && r.verdict === "VALID") setPlateNumber(r.display);
+      } catch {
+        setPlateState("idle");
+      }
+    }, 1200);
+  };
 
   const ACCOUNT_TYPES_LOCALIZED = [
     { value: "INDIVIDUAL" as AccountType, label: t("onboarding.account_types.individual.label") || "Individual", icon: "🧍", desc: t("onboarding.account_types.individual.desc") || "Just me, working solo" },
@@ -141,6 +184,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
     PERSONAL: t("onboarding.steps.step1") || "Step 1",
     LOCATION_AVAILABILITY: t("onboarding.steps.step2") || "Step 2",
     EQUIPMENT: t("onboarding.steps.step3") || "Step 3",
+    MOTARI_DETAILS: t("onboarding.steps.motari") || "Vehicle Details",
   };
 
   const [verifyCode, setVerifyCode] = useState("");
@@ -241,7 +285,11 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
   // login jumped to the badge step instead of resuming at the missing step.
   const buildDraftPayload = (): OnboardingData => {
     const p: Record<string, unknown> = {};
-    if (showRoleSelect && selectedRole) p.role = selectedRole;
+    if (selectedRole) p.role = selectedRole;
+    if (plateNumber.trim()) p.plateNumber = plateNumber.trim();
+    if (brandModel.trim()) p.brandModel = brandModel.trim();
+    if (motariPhone.trim()) p.phone = motariPhone.trim();
+    if (motariPassword.trim()) p.password = motariPassword.trim();
     if (dob) p.dob = dob;
     if (gender) p.gender = gender;
     if (education) p.educationLevel = education;
@@ -320,6 +368,8 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
       let next: Step | null = null;
       if (showRoleSelect) {
         next = "ROLE_SELECT";
+      } else if (u.role === "MOTARI" || selectedRole === "MOTARI" || initialRole === "MOTARI") {
+        next = "MOTARI_DETAILS";
       } else if (!u.emailVerified && !isLogin) {
         next = "EMAIL_VERIFY";
       } else if (u.role === "EMPLOYER") {
@@ -352,12 +402,73 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
 
   const handleRoleSelectContinue = async () => {
     const u = authResult?.user;
+    if (selectedRole === "MOTARI") {
+      setStep("MOTARI_DETAILS");
+      return;
+    }
     // Slide mode collects everything first and verifies email near the end.
     if (!slideMode && !u?.emailVerified && !isLogin) {
       setStep("EMAIL_VERIFY");
     } else {
       setStep("ACCOUNT_TYPE");
       getJobCategories().then(setCategories).catch(console.error);
+    }
+  };
+
+  const handleMotariSubmit = async () => {
+    if (loading || plateNumber.trim().length < 4) return;
+    if (isPhoneMissing && (!motariPhone.trim() || motariPhone.trim().replace(/\D/g, "").length < 8)) {
+      toastError(t("motari.register.err_phone") || "Please enter a valid phone number");
+      return;
+    }
+    if (isPasswordMissing && motariPassword.length < 8) {
+      toastError(t("motari.register.err_password") || "Password must be at least 8 characters");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const token = authResult?.accessToken || localStorage.getItem("access_token") || "";
+
+      await saveMotariProfile(
+        {
+          plateNumber: plateNumber.trim(),
+          brandModel: brandModel.trim() || undefined,
+          legalName: authResult?.user?.name,
+        },
+        token
+      );
+
+      const updatedUser = await submitOnboarding(
+        {
+          role: "MOTARI",
+          phone: motariPhone.trim() || undefined,
+          password: motariPassword || undefined,
+          plateNumber: plateNumber.trim(),
+          brandModel: brandModel.trim() || undefined,
+        },
+        token,
+        true
+      );
+
+      if (authResult?.user) {
+        authResult.user.role = "MOTARI";
+        authResult.user.onboardingCompleted = true;
+        if (motariPhone.trim()) authResult.user.phone = motariPhone.trim();
+        localStorage.setItem("user", JSON.stringify(authResult.user));
+      }
+
+      toastSuccess(t("motari.register.success") || "Motari registration completed!");
+
+      if (!authResult?.user?.emailVerified && !updatedUser.emailVerified && !isLogin) {
+        setStep("EMAIL_VERIFY");
+      } else {
+        onComplete();
+      }
+    } catch (e) {
+      toastError(apiError(e, "Failed to complete registration"));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -551,6 +662,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
               {step === "PERSONAL" && t("onboarding.headers.personal_title")}
               {step === "LOCATION_AVAILABILITY" && t("onboarding.headers.location_title")}
               {step === "EQUIPMENT" && t("onboarding.headers.equipment_title")}
+              {step === "MOTARI_DETAILS" && (t("onboarding.headers.motari_title") || "Moto taxi details")}
               {step === "BADGE_OFFER" && (t("onboarding.headers.badge_offer_title") || "One last thing: your working badge")}
               {step === "COMPLETED" && t("onboarding.headers.completed_title")}
             </h2>
@@ -562,6 +674,7 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
               {step === "PERSONAL" && t("onboarding.headers.personal_subtitle")}
               {step === "LOCATION_AVAILABILITY" && t("onboarding.headers.location_subtitle")}
               {step === "EQUIPMENT" && t("onboarding.headers.equipment_subtitle")}
+              {step === "MOTARI_DETAILS" && (t("onboarding.headers.motari_subtitle") || "Provide your motorcycle details to start driving")}
               {step === "BADGE_OFFER" && (t("onboarding.headers.badge_offer_subtitle") || "A verified badge builds trust and gets you hired faster. You can also do it later.")}
               {step === "COMPLETED" && t("onboarding.headers.completed_subtitle")}
             </p>
@@ -578,42 +691,57 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
           {/* ── Role Select ── */}
           {step === "ROLE_SELECT" && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                {(["WORKER", "EMPLOYER"] as const).map((r) => {
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {(["WORKER", "EMPLOYER", "MOTARI"] as const).map((r) => {
                   const active = selectedRole === r;
                   return (
                     <button
                       key={r}
                       type="button"
                       onClick={() => setSelectedRole(r)}
-                      className={`flex flex-col items-center justify-center gap-3 rounded-xl border p-5 transition-all ${
+                      className={`flex flex-col items-center justify-center gap-3 rounded-xl border p-4 sm:p-5 transition-all text-center ${
                         active
                           ? "bg-[#f97316]/10 border-[#f97316]"
                           : "bg-[#1a1a1a] border-[#2a2a2a] hover:border-gray-500"
                       }`}
                     >
-                      <span className="text-3xl">{r === "WORKER" ? "👷" : "🏢"}</span>
-                      <div className="text-center">
+                      <span className="text-3xl">
+                        {r === "WORKER" ? "👷" : r === "EMPLOYER" ? "🏢" : "🏍️"}
+                      </span>
+                      <div>
                         <p className={`text-sm font-bold ${active ? "text-[#f97316]" : "text-white"}`}>
-                          {r === "WORKER" ? t("onboarding.roles.worker_label") : t("onboarding.roles.employer_label")}
+                          {r === "WORKER"
+                            ? t("onboarding.roles.worker_label")
+                            : r === "EMPLOYER"
+                            ? t("onboarding.roles.employer_label")
+                            : t("onboarding.roles.motari_label") || "Motari"}
                         </p>
                         <p className="text-[11px] text-gray-500 mt-0.5">
-                          {r === "WORKER" ? t("onboarding.roles.worker_desc") : t("onboarding.roles.employer_desc")}
+                          {r === "WORKER"
+                            ? t("onboarding.roles.worker_desc")
+                            : r === "EMPLOYER"
+                            ? t("onboarding.roles.employer_desc")
+                            : t("onboarding.roles.motari_desc") || "Drive & earn with moto rides"}
                         </p>
                       </div>
                     </button>
                   );
                 })}
               </div>
-              {/* Motari never signs up here: their field set (plate, brand, permit) has
-                  its own dedicated modal, linked below the form and on the map page. */}
               <button
                 onClick={handleRoleSelectContinue}
                 disabled={loading}
                 className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-50 text-white text-sm font-bold py-3 rounded-xl transition-colors mt-2 flex items-center justify-center gap-2"
               >
                 {loading && <Loader2 size={15} className="animate-spin" />}
-                {t("onboarding.roles.continue_btn", { role: selectedRole === "WORKER" ? t("common.nav.job_seeker") || "Job Seeker" : t("common.nav.employer") || "Employer" })}
+                {t("onboarding.roles.continue_btn", {
+                  role:
+                    selectedRole === "WORKER"
+                      ? t("common.nav.job_seeker") || "Job Seeker"
+                      : selectedRole === "EMPLOYER"
+                      ? t("common.nav.employer") || "Employer"
+                      : t("onboarding.roles.motari_label") || "Motari",
+                })}
               </button>
             </div>
           )}
@@ -1110,6 +1238,150 @@ export function RegistrationWizard({ email, authResult, isLogin, showRoleSelect,
               >
                 {t("onboarding.equipment.skip_btn")}
               </button>
+            </div>
+          )}
+
+          {/* ── Motari Details (Plate, Brand, and only missing phone/password) ── */}
+          {step === "MOTARI_DETAILS" && (
+            <div className="space-y-4">
+              {/* Plate number */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-semibold text-gray-300">
+                    {t("motari.register.plate_number") || "Plate Number (Icyapa)"} <span className="text-[#f97316]">*</span>
+                  </label>
+                  {plateState === "checking" && (
+                    <span className="text-[11px] text-[#f97316] flex items-center gap-1 font-medium">
+                      <Loader2 size={11} className="animate-spin" /> {t("motari.register.checking_plate") || "Checking..."}
+                    </span>
+                  )}
+                  {plateState === "valid" && (
+                    <span className="text-[11px] text-green-400 flex items-center gap-1 font-medium">
+                      <CheckCircle2 size={12} /> {t("motari.register.valid_plate") || "Valid RURA Plate"}
+                    </span>
+                  )}
+                  {plateState === "taken" && (
+                    <span className="text-[11px] text-red-400 flex items-center gap-1 font-medium">
+                      <AlertCircle size={12} /> {t("motari.register.plate_taken") || "Already registered"}
+                    </span>
+                  )}
+                  {plateState === "invalid" && (
+                    <span className="text-[11px] text-amber-400 flex items-center gap-1 font-medium">
+                      <AlertCircle size={12} /> {t("motari.register.invalid_plate") || "e.g. RA 123 A"}
+                    </span>
+                  )}
+                </div>
+                <input
+                  type="text"
+                  placeholder="RA 123 A"
+                  value={plateNumber}
+                  onChange={(e) => handlePlateChange(e.target.value)}
+                  className={`w-full bg-[#1a1a1a] border rounded-xl px-4 py-3 text-sm text-white uppercase tracking-wider font-mono outline-none transition-colors ${
+                    plateState === "valid"
+                      ? "border-green-500/60 focus:border-green-500"
+                      : plateState === "taken"
+                      ? "border-red-500/60 focus:border-red-500"
+                      : "border-[#2a2a2a] focus:border-[#f97316]"
+                  }`}
+                  maxLength={12}
+                  autoFocus
+                />
+                {plateNote && (
+                  <p className={`text-[11px] mt-1 ${plateState === "taken" ? "text-red-400" : "text-gray-400"}`}>
+                    {plateNote}
+                  </p>
+                )}
+              </div>
+
+              {/* Moto Brand / Model */}
+              <div>
+                <label className="text-xs font-semibold text-gray-300 block mb-1.5">
+                  {t("motari.register.brand_model") || "Moto Brand & Model"}
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. TVS HLX 125, Bajaj Boxer BM 150"
+                  value={brandModel}
+                  onChange={(e) => setBrandModel(e.target.value)}
+                  className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-[#f97316] transition-colors"
+                  maxLength={50}
+                />
+              </div>
+
+              {/* Only show Phone if missing from signup (e.g. Google OAuth) */}
+              {isPhoneMissing && (
+                <div>
+                  <label className="text-xs font-semibold text-gray-300 block mb-1.5">
+                    {t("motari.register.phone") || "Phone Number (MoMo / WhatsApp)"} <span className="text-[#f97316]">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    inputMode="tel"
+                    placeholder="078 123 4567"
+                    value={motariPhone}
+                    onChange={(e) => setMotariPhone(e.target.value)}
+                    className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-[#f97316] transition-colors"
+                  />
+                  <p className="text-[11px] text-gray-500 mt-1">
+                    {t("motari.register.phone_hint") || "Used for rider calls and MoMo cashouts."}
+                  </p>
+                </div>
+              )}
+
+              {/* Only show Password if missing from signup (e.g. Google OAuth) */}
+              {isPasswordMissing && (
+                <div>
+                  <label className="text-xs font-semibold text-gray-300 block mb-1.5">
+                    {t("motari.register.password") || "Set Account Password"} <span className="text-[#f97316]">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showMotariPassword ? "text" : "password"}
+                      placeholder="At least 8 characters"
+                      value={motariPassword}
+                      onChange={(e) => setMotariPassword(e.target.value)}
+                      className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-3 text-sm text-white pr-11 outline-none focus:border-[#f97316] transition-colors"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowMotariPassword(!showMotariPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+                    >
+                      {showMotariPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-gray-500 mt-1">
+                    {t("motari.register.password_hint") || "Enables direct sign-in on the Motari mobile app."}
+                  </p>
+                </div>
+              )}
+
+              {/* Complete Motari registration */}
+              <button
+                onClick={handleMotariSubmit}
+                disabled={
+                  loading ||
+                  plateNumber.trim().length < 4 ||
+                  plateState === "taken" ||
+                  plateState === "checking" ||
+                  (isPhoneMissing && (!motariPhone.trim() || motariPhone.trim().replace(/\D/g, "").length < 8)) ||
+                  (isPasswordMissing && motariPassword.length < 8)
+                }
+                className="w-full bg-[#f97316] hover:bg-[#ea6a0a] disabled:opacity-40 text-white text-sm font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 mt-4"
+              >
+                {loading && <Loader2 size={15} className="animate-spin" />}
+                {t("motari.register.submit_btn") || "Complete & Start Driving"}
+              </button>
+
+              {showRoleSelect && (
+                <button
+                  type="button"
+                  onClick={() => setStep("ROLE_SELECT")}
+                  className="w-full text-center text-xs text-gray-500 hover:text-gray-300 transition-colors py-1"
+                >
+                  ← {t("common.back") || "Change account type"}
+                </button>
+              )}
             </div>
           )}
 

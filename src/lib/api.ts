@@ -134,6 +134,7 @@ export interface AuthResult {
     phone: string | null;
     role: string;
     totpEnabled: boolean;
+    hasPassword?: boolean;
     emailVerified: boolean;
     onboardingCompleted: boolean;
     defaultAutoRelease?: boolean;
@@ -233,7 +234,7 @@ export async function loginWithGoogle(accessToken: string): Promise<AuthResult> 
 /** Create a NEW account. Rejected if this Google identity already has one. */
 export async function signupWithGoogle(
   accessToken: string,
-  role?: "WORKER" | "EMPLOYER"
+  role?: "WORKER" | "EMPLOYER" | "MOTARI"
 ): Promise<AuthResult> {
   const { data } = await http.post("/api/auth/oauth/google", {
     token: accessToken,
@@ -287,21 +288,26 @@ export type AccountType = "INDIVIDUAL" | "TEAM" | "COMPANY" | "CREW";
 
 export interface OnboardingData {
   role?: string;
-  dob: string;
+  phone?: string;
+  password?: string;
+  plateNumber?: string;
+  brandModel?: string;
+  licenseNumber?: string;
+  dob?: string;
   /** Optional, self-declared. See Gender on the server. */
   gender?: string;
-  educationLevel: string;
+  educationLevel?: string;
   /** Primary/legacy single category slug. */
-  experienceType: string;
+  experienceType?: string;
   /** All selected category slugs - a worker may practise several fields. */
   experienceTypes?: string[];
   /** Account identifier. Team/Company/Crew may carry members + TIN. */
   accountType?: AccountType;
   tin?: string;
   teamMembers?: string[];
-  location: Address;
-  equipment: { name: string; available: boolean }[];
-  availability: string[];
+  location?: Address;
+  equipment?: { name: string; available: boolean }[];
+  availability?: string[];
 }
 
 export async function verifyEmailCode(email: string, code: string): Promise<void> {

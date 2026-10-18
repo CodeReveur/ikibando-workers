@@ -660,13 +660,17 @@
       "completed_title": "Kila kitu tayari!",
       "completed_subtitle": "Tunakupeleka kwenye dashibodi yako…",
       "badge_offer_title": "Jambo la mwisho: beji yako ya kazi",
-      "badge_offer_subtitle": "Beji iliyothibitishwa huongeza uaminifu na kukufanya uajiriwe haraka. Unaweza pia kuifanya baadaye."
+      "badge_offer_subtitle": "Beji iliyothibitishwa huongeza uaminifu na kukufanya uajiriwe haraka. Unaweza pia kuifanya baadaye.",
+      "motari_title": "Maelezo ya pikipiki",
+      "motari_subtitle": "Weka maelezo ya pikipiki yako ili kuanza safari"
     },
     "roles": {
       "worker_label": "Tafuta Kazi",
       "worker_desc": "Vinjari & omba kazi",
       "employer_label": "Ajiri Wafanyakazi",
       "employer_desc": "Chapisha kazi & ajiri vipaji",
+      "motari_label": "Dereva wa Pikipiki (Bodaboda)",
+      "motari_desc": "Beba abiria & huduma za usafirishaji",
       "continue_btn": "Endelea kama {role}"
     },
     "otp": {

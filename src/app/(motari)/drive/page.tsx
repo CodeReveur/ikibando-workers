@@ -301,8 +301,22 @@ export default function MotariDrivePage() {
     return () => navigator.geolocation.clearWatch(watchId);
   }, [t]);
 
+function isMandatoryOnlineHours(): boolean {
+  const h = new Date().getHours();
+  return h >= 5 && h < 21;
+}
+
   /* ── Heartbeat to the platform only while online ────────────────────────── */
-  const online = !!state?.profile?.online;
+  const mandatoryOnline = isMandatoryOnlineHours();
+  const online = mandatoryOnline || !!state?.profile?.online;
+
+  // Auto-sync online mode during mandatory hours (5am to 21pm)
+  useEffect(() => {
+    if (mandatoryOnline && state?.profile && !state.profile.online && !busy) {
+      setMotariOnline(true, token()).then(setState).catch(() => {});
+    }
+  }, [mandatoryOnline, state?.profile?.online, busy]);
+
   useEffect(() => {
     if (!online) return;
     const beat = setInterval(() => {
@@ -706,21 +720,23 @@ export default function MotariDrivePage() {
           )}
         </div>
 
-        {/* Online toggle, top right */}
-        <button
-          onClick={() => !ride && act(() => setMotariOnline(!online, token()))}
-          disabled={busy || !!ride}
-          style={{
-            position: "absolute", top: 14, right: 14, zIndex: 999, ...glass,
-            borderRadius: 999, padding: "7px 13px", display: "flex", alignItems: "center", gap: 6,
-            fontWeight: 900, fontSize: 9.5, letterSpacing: "0.1em", textTransform: "uppercase",
-            color: online ? "#22c55e" : "#888", cursor: ride ? "not-allowed" : "pointer",
-            borderColor: online ? "#14532d" : "#1f1f1f", fontFamily: "inherit",
-          }}
-        >
-          <Power size={11} />
-          {online ? (t("motari.dash.online") || "Online") : (t("motari.dash.offline") || "Offline")}
-        </button>
+        {/* Online toggle, top right — absent from 5am to 21pm, appears after 21pm */}
+        {!mandatoryOnline && (
+          <button
+            onClick={() => !ride && act(() => setMotariOnline(!online, token()))}
+            disabled={busy || !!ride}
+            style={{
+              position: "absolute", top: 14, right: 14, zIndex: 999, ...glass,
+              borderRadius: 999, padding: "7px 13px", display: "flex", alignItems: "center", gap: 6,
+              fontWeight: 900, fontSize: 9.5, letterSpacing: "0.1em", textTransform: "uppercase",
+              color: online ? "#22c55e" : "#888", cursor: ride ? "not-allowed" : "pointer",
+              borderColor: online ? "#14532d" : "#1f1f1f", fontFamily: "inherit",
+            }}
+          >
+            <Power size={11} />
+            {online ? (t("motari.dash.online") || "Online") : (t("motari.dash.offline") || "Offline")}
+          </button>
+        )}
 
         {/* INCOMING OFFER — top left; when the countdown ends it moves to the next motari */}
         {state?.offer && !ride && offerLeft > 0 && (
@@ -1071,7 +1087,7 @@ export default function MotariDrivePage() {
                     </div>
                   ) : (
                     <div style={{ display: "grid", gap: 8 }}>
-                      {!online ? (
+                      {!online && !mandatoryOnline ? (
                         <button disabled={busy} onClick={() => act(() => setMotariOnline(true, token()))} style={cta(!busy)}>
                           <Power size={12} style={{ display: "inline", verticalAlign: "-1px", marginRight: 6 }} />
                           {t("motari.dash.go_online") || "Go online"}
