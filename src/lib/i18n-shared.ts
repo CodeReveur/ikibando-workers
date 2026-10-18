@@ -8,10 +8,9 @@ export type Language = "en" | "fr" | "sw" | "kinyy";
 export const LANGUAGES: Language[] = ["en", "fr", "sw", "kinyy"];
 
 /**
- * The site ships Kinyarwanda first - this is the language a visitor with no stored preference and
- * no ?lang gets, so it is also what a crawler sees and what belongs in <html lang>.
+ * The platform defaults to English ("en") across the application.
  */
-export const DEFAULT_LANGUAGE: Language = "kinyy";
+export const DEFAULT_LANGUAGE: Language = "en";
 
 const dictionaries: Record<Language, unknown> = { en, fr, sw, kinyy };
 

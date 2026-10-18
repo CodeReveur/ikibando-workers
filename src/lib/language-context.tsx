@@ -34,9 +34,16 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       }
     }
     if (!activeLang) {
-      const saved = localStorage.getItem("MpahMapu_lang");
-      if (isLanguage(saved)) {
-        activeLang = saved;
+      const migrated = localStorage.getItem("MpahMapu_lang_en_default_v1");
+      if (!migrated) {
+        localStorage.setItem("MpahMapu_lang_en_default_v1", "1");
+        localStorage.setItem("MpahMapu_lang", DEFAULT_LANGUAGE);
+        activeLang = DEFAULT_LANGUAGE;
+      } else {
+        const saved = localStorage.getItem("MpahMapu_lang");
+        if (isLanguage(saved)) {
+          activeLang = saved;
+        }
       }
     }
     if (activeLang) {
@@ -82,7 +89,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     }
   }, [language, mounted, pathname, t]);
 
-  // Prevent hydration mismatches by returning default "kinyy" during SSR/initial client paint
+  // Prevent hydration mismatches by returning default "en" during SSR/initial client paint
   const value = {
     language: mounted ? language : DEFAULT_LANGUAGE,
     setLanguage,
