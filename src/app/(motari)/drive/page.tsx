@@ -302,8 +302,9 @@ export default function MotariDrivePage() {
   }, [t]);
 
 function isMandatoryOnlineHours(): boolean {
-  const h = new Date().getHours();
-  return h >= 5 && h < 21;
+  const now = new Date();
+  const kigaliHour = (now.getUTCHours() + 2) % 24;
+  return kigaliHour >= 5 && kigaliHour < 21;
 }
 
   /* ── Heartbeat to the platform only while online ────────────────────────── */
@@ -457,24 +458,26 @@ function isMandatoryOnlineHours(): boolean {
   const tipTop = switchTop + 52;
 
   const glass: React.CSSProperties = {
-    background: "rgba(0,0,0,0.94)", backdropFilter: "blur(12px)", border: "1px solid #1f1f1f",
+    background: "rgba(18,18,18,0.96)", backdropFilter: "blur(14px)", border: "1px solid #2e2e2e",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.7)",
   };
   const micro: React.CSSProperties = {
-    fontSize: 8.5, fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", color: "#666",
+    fontSize: 8.5, fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", color: "#888",
   };
   const input: React.CSSProperties = {
-    width: "100%", background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 9,
+    width: "100%", background: "#141414", border: "1px solid #2e2e2e", borderRadius: 9,
     padding: "10px 12px", color: "#fff", fontSize: 12.5, fontWeight: 500,
     outline: "none", fontFamily: "inherit", boxSizing: "border-box",
   };
   const cta = (enabled: boolean, bg = "#f97316"): React.CSSProperties => ({
-    width: "100%", background: enabled ? bg : "#1a1a1a", color: enabled ? "#000" : "#555",
-    borderRadius: 10, padding: "11px 20px", fontWeight: 900, fontSize: 11.5,
-    letterSpacing: "0.04em", border: "none", cursor: enabled ? "pointer" : "not-allowed",
-    fontFamily: "inherit", textTransform: "uppercase",
+    width: "100%", background: enabled ? bg : "#20160d", color: enabled ? "#000" : "#8e8e93",
+    borderRadius: 10, padding: "11px 20px", fontWeight: 900, fontSize: 12,
+    letterSpacing: "0.04em", border: enabled ? "none" : "1px solid #3d2512", cursor: enabled ? "pointer" : "not-allowed",
+    fontFamily: "inherit", textTransform: "uppercase", transition: "all 0.15s ease",
   });
   const card: React.CSSProperties = {
-    background: "#0a0a0a", border: "1px solid #1f1f1f", borderRadius: 12, padding: 12,
+    background: "#161616", border: "1px solid #2e2e2e", borderRadius: 12, padding: "12px 14px",
+    boxShadow: "0 4px 16px rgba(0,0,0,0.4)",
   };
 
   // Leaving for the sign in page counts as loading: the browser has not moved
@@ -852,11 +855,11 @@ function isMandatoryOnlineHours(): boolean {
                     ["more", t("motari.dash.tab_settings") || "Settings"],
                   ] as const).map(([key, label]) => (
                     <button key={key} onClick={() => setTab(key)} style={{
-                      flex: 1, borderRadius: 999, padding: "7px 4px", fontSize: 9.5, fontWeight: 900,
-                      letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", fontFamily: "inherit",
-                      background: tab === key ? "#f97316" : "transparent",
-                      color: tab === key ? "#000" : "#777",
-                      border: tab === key ? "none" : "1px solid #1f1f1f",
+                      flex: 1, borderRadius: 8, padding: "7px 4px", fontSize: 10, fontWeight: 800,
+                      letterSpacing: "0.04em", textTransform: "uppercase", cursor: "pointer", fontFamily: "inherit",
+                      background: tab === key ? "#f97316" : "#141414",
+                      color: tab === key ? "#000" : "#888",
+                      border: tab === key ? "1px solid #f97316" : "1px solid #2e2e2e",
                     }}>
                       {label}
                     </button>
@@ -1094,17 +1097,29 @@ function isMandatoryOnlineHours(): boolean {
                         </button>
                       ) : (
                         <>
-                          <div style={{ ...micro }}>
+                          <div style={{ ...micro, color: "#aaa" }}>
                             {(state?.nearby?.length ?? 0)} {t("motari.dash.seeking") || "passengers seeking"}
                             {gpsError && <span style={{ color: "#f87171" }}> · {gpsError}</span>}
                           </div>
                           {(state?.nearby?.length ?? 0) === 0 ? (
-                            <p style={{ color: "#666", fontSize: 12, margin: 0 }}>
-                              {t("motari.dash.no_requests") || "No requests around you. Stay online, this refreshes on its own."}
-                            </p>
+                            <div style={{
+                              ...card, textAlign: "center", padding: "16px 14px",
+                              border: "1px dashed #333", background: "#141414",
+                            }}>
+                              <div style={{ color: "#4ade80", fontSize: 12, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                                <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#4ade80", display: "inline-block" }} />
+                                Active On Road · Radar Active
+                              </div>
+                              <p style={{ color: "#888", fontSize: 11.5, margin: "6px 0 0", lineHeight: 1.5 }}>
+                                {t("motari.dash.no_requests") || "No requests around you right now. Stay online, new ride and delivery offers alert here automatically."}
+                              </p>
+                            </div>
                           ) : (
                             state!.nearby!.map(n => (
-                              <div key={n.id} style={{ ...card, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
+                              <div key={n.id} style={{
+                                ...card, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10,
+                                borderColor: "#333",
+                              }}>
                                 <div style={{ minWidth: 0 }}>
                                   <div style={{ fontSize: 12.5, fontWeight: 700, color: "#fff", lineHeight: 1.4, overflowWrap: "anywhere" }}>
                                     {n.kind === "COURIER" && (
@@ -1119,13 +1134,13 @@ function isMandatoryOnlineHours(): boolean {
                                     )}
                                     {n.pickupName || "Pinned pickup"}
                                     {n.parcelNote && (
-                                      <span style={{ display: "block", fontSize: 11, color: "#aaa", fontWeight: 500 }}>
+                                      <span style={{ display: "block", fontSize: 11, color: "#f97316", fontWeight: 500, marginTop: 1 }}>
                                         {n.parcelNote}
                                       </span>
                                     )}
                                   </div>
-                                  <div style={{ fontSize: 11, color: "#888", marginTop: 2 }}>
-                                    {km(n.distanceToPickupM)} {t("motari.dash.away") || "away"} · {n.destName ? `→ ${n.destName}` : (t("motari.dash.open_ride") || "open ride")}
+                                  <div style={{ fontSize: 11, color: "#888", marginTop: 3 }}>
+                                    <span style={{ color: "#aaa" }}>{km(n.distanceToPickupM)} away</span> · {n.destName ? `→ ${n.destName}` : (t("motari.dash.open_ride") || "open ride")}
                                     {(n.offeredFareRwf ?? n.quotedFareRwf) != null && (
                                       <b style={{ color: "#f97316" }}>
                                         {" · "}{fmt((n.offeredFareRwf ?? n.quotedFareRwf)!)}
@@ -1135,8 +1150,8 @@ function isMandatoryOnlineHours(): boolean {
                                   </div>
                                 </div>
                                 <button disabled={busy} onClick={() => act(() => acceptRide(n.id, token()))} style={{
-                                  background: "#f97316", color: "#000", borderRadius: 999, padding: "8px 18px",
-                                  fontWeight: 900, fontSize: 10.5, border: "none", cursor: "pointer",
+                                  background: "#f97316", color: "#000", borderRadius: 8, padding: "8px 14px",
+                                  fontWeight: 900, fontSize: 11, border: "none", cursor: "pointer",
                                   fontFamily: "inherit", textTransform: "uppercase", flexShrink: 0,
                                 }}>
                                   {t("motari.dash.accept") || "Accept"}
